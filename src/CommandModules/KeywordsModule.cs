@@ -43,8 +43,12 @@ namespace wow2.CommandModules
 
             if (keyword == null)
             {
-                await ReplyAsync(embed: MessageEmbedPresets.Verbose($"Invalid usage of command: no keyword specified.", VerboseMessageSeverity.Error));
+                await ReplyAsync(embed: MessageEmbedPresets.Verbose($"In order to add a keyword, you must specify it in the command.", VerboseMessageSeverity.Warning));
                 return;
+            }
+            if (values.Length == 0)
+            {
+                await ReplyAsync(embed: MessageEmbedPresets.Verbose($"No values for the keyword were specified. Having a keyword without values is useless.", VerboseMessageSeverity.Warning));
             }
 
             // Create new dictionary key if necessary
@@ -58,7 +62,7 @@ namespace wow2.CommandModules
                     keywordsDictionary[keyword].Add(value);
             }
 
-            await ReplyAsync(embed: MessageEmbedPresets.Verbose($"Added {keyword} with {values.Length} values", VerboseMessageSeverity.Info));
+            await ReplyAsync(embed: MessageEmbedPresets.Verbose($"Added values to keyword: `{keyword}`\nIt now has `{values.Length}` total values.", VerboseMessageSeverity.Info));
             await DataManager.SaveGuildDataToFileAsync(Context.Message.GetGuild().Id);
         }
 
@@ -71,13 +75,13 @@ namespace wow2.CommandModules
 
             if (keyword == null)
             {
-                await ReplyAsync(embed: MessageEmbedPresets.Verbose($"Invalid usage of command: no keyword specified.", VerboseMessageSeverity.Error));
+                await ReplyAsync(embed: MessageEmbedPresets.Verbose($"In order to remove a keyword, you must specify it in the command.", VerboseMessageSeverity.Warning));
                 return;
             }
 
             if (!keywordsDictionary.ContainsKey(keyword))
             {
-                await ReplyAsync(embed: MessageEmbedPresets.Verbose($"No such keyword `{keyword}` exists.", VerboseMessageSeverity.Error));
+                await ReplyAsync(embed: MessageEmbedPresets.Verbose($"No such keyword `{keyword}` exists. Did you make a typo?", VerboseMessageSeverity.Warning));
                 return;
             }
 
