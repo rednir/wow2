@@ -18,12 +18,10 @@ namespace wow2
             switch (severity)
             {
                 case VerboseMessageSeverity.Info:
-                    embedBuilder.WithTitle("Info");
                     embedBuilder.WithColor(Color.Blue);
                     break;
 
                 case VerboseMessageSeverity.Warning:
-                    embedBuilder.WithTitle("Warning");
                     embedBuilder.WithColor(Color.LightOrange);
                     break;
 
