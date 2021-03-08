@@ -77,6 +77,7 @@ namespace wow2
             await File.WriteAllTextAsync($"{AppDataDirPath}/GuildData/{guildId}.json", JsonSerializer.Serialize(guildData));
         }
 
+        /// <summary>If the data file for the specified guild does not exist, one will be created and loaded. Otherwise this does nothing.</summary>
         public static async Task EnsureGuildDataFileExistsAsync(ulong guildId)
         {
             if (!File.Exists($"{AppDataDirPath}/GuildData/{guildId}.json"))
