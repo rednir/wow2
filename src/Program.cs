@@ -8,7 +8,7 @@ namespace wow2
 {
     public class Program
     {
-        public static DiscordShardedClient Client;
+        public static DiscordSocketClient Client;
 
         private static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
 
@@ -18,7 +18,8 @@ namespace wow2
 
             await DataManager.Initialize();
 
-            Client = new DiscordShardedClient(new DiscordSocketConfig() { TotalShards = 1 });
+            //Client = new DiscordShardedClient(new DiscordSocketConfig() { TotalShards = 1 });
+            Client = new DiscordSocketClient();
 
             await Client.LoginAsync(TokenType.Bot, token);
             await Client.StartAsync();
