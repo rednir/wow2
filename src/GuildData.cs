@@ -8,10 +8,8 @@ namespace wow2
 {
     public class GuildData
     {
-        public Dictionary<string, List<string>> Keywords { get; set; } = new Dictionary<string, List<string>>()
-        {
-            {"test", new List<string>() {"a", "b"}},
-            {"another test", new List<string>() {"c", "d", "e"}}
-        };
+        public Config Config = new Config();
+
+        public Dictionary<string, List<string>> Keywords { get; set; } = new Dictionary<string, List<string>>();
     }
 }
