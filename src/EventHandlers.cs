@@ -12,13 +12,13 @@ namespace wow2
     public static class EventHandlers
     {
         public static readonly string CommandPrefix = "!wow2";
-        private static CommandService Commands;
+        public static CommandService BotCommandService;
 
         public static async Task InstallCommandsAsync()
         {
-            Commands = new CommandService();
-            Commands.Log += LogAsync;
-            await Commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: null);
+            BotCommandService = new CommandService();
+            BotCommandService.Log += LogAsync;
+            await BotCommandService.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: null);
         }
 
         public static async Task LogAsync(LogMessage logMessage)
@@ -60,7 +60,7 @@ namespace wow2
             // The message is not a user message.
             if (socketMessage == null) return;
 
-            IResult result = await Commands.ExecuteAsync
+            IResult result = await BotCommandService.ExecuteAsync
             (
                 context: new SocketCommandContext(Program.Client, (SocketUserMessage)socketMessage),
                 argPos: CommandPrefix.Length,

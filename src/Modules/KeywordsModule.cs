@@ -10,6 +10,7 @@ using ExtentionMethods;
 
 namespace wow2.Modules
 {
+    [Name("Keywords")]
     [Group("keywords")]
     [Alias("keyword")]
     public class KeywordsModule : ModuleBase<SocketCommandContext>
