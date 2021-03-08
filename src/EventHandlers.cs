@@ -16,12 +16,24 @@ namespace wow2
         public static async Task InstallCommandsAsync()
         {
             Commands = new CommandService();
+            Commands.Log += LogAsync;
             await Commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: null);
         }
 
         public static async Task LogAsync(LogMessage logMessage)
         {
-            await Task.Run(() => Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] {logMessage.Message}"));
+            if (logMessage.Exception is CommandException commandException)
+            {
+                Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] Command '{commandException.Command.Name}' failed in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
+                Console.WriteLine($" ------ START OF EXCEPTION ------\n{commandException}\n------ END OF EXCEPTION ------");
+
+                // Also notify the guild that this error happened in.
+                await commandException.Context.Channel.SendMessageAsync(embed: MessageEmbedPresets.Verbose($"An unhandled exception was thrown and was automatically reported.", VerboseMessageSeverity.Error));
+            }
+            else
+            {
+                Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] {logMessage.Message}");
+            }
         }
 
         public static async Task MessageRecievedAsync(SocketMessage recievedMessage)
@@ -29,12 +41,13 @@ namespace wow2
             // TODO: check self id instead
             if (recievedMessage.Author.IsBot) return;
 
-            await KeywordsModule.CheckMessageForKeywordAsync(recievedMessage);
-
             if (recievedMessage.Content.StartsWith(CommandPrefix))
             {
                 await CommandRecievedAsync(recievedMessage);
+                return;
             }
+
+            await KeywordsModule.CheckMessageForKeywordAsync(recievedMessage);
         }
 
         public static async Task CommandRecievedAsync(SocketMessage socketMessage)
