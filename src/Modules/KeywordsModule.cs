@@ -8,7 +8,7 @@ using Discord.WebSocket;
 using Discord.Commands;
 using ExtentionMethods;
 
-namespace wow2.CommandModules
+namespace wow2.Modules
 {
     [Group("keywords")]
     [Alias("keyword")]
@@ -49,6 +49,7 @@ namespace wow2.CommandModules
             if (values.Length == 0)
             {
                 await ReplyAsync(embed: MessageEmbedPresets.Verbose($"No values for the keyword were specified. Having a keyword without values is useless.", VerboseMessageSeverity.Warning));
+                return;
             }
 
             // Create new dictionary key if necessary
@@ -62,7 +63,7 @@ namespace wow2.CommandModules
                     keywordsDictionary[keyword].Add(value);
             }
 
-            await ReplyAsync(embed: MessageEmbedPresets.Verbose($"Added values to keyword: `{keyword}`\nIt now has `{values.Length}` total values.", VerboseMessageSeverity.Info));
+            await ReplyAsync(embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{values.Length}` total values.", VerboseMessageSeverity.Info));
             await DataManager.SaveGuildDataToFileAsync(Context.Message.GetGuild().Id);
         }
 

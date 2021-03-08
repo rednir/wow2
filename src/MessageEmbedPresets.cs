@@ -1,5 +1,7 @@
 using System;
 using Discord;
+using Discord.Commands;
+using wow2.Modules;
 
 namespace wow2
 {
@@ -31,6 +33,15 @@ namespace wow2
                     break;
             }
             embedBuilder.WithDescription(description);
+
+            return embedBuilder.Build();
+        }
+
+        public static Embed Help()
+        {
+            var embedBuilder = new EmbedBuilder();
+
+            embedBuilder.WithDescription("help text");
 
             return embedBuilder.Build();
         }

@@ -4,7 +4,7 @@ using System.Reflection;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
-using wow2.CommandModules;
+using wow2.Modules;
 using ExtentionMethods;
 
 namespace wow2
@@ -60,12 +60,23 @@ namespace wow2
             // The message is not a user message.
             if (socketMessage == null) return;
 
-            await Commands.ExecuteAsync
+            IResult result = await Commands.ExecuteAsync
             (
                 context: new SocketCommandContext(Program.Client, (SocketUserMessage)socketMessage),
                 argPos: CommandPrefix.Length,
                 services: null
             );
+            
+            switch (result.Error)
+            {
+                case CommandError.BadArgCount:
+                    await socketMessage.Channel.SendMessageAsync(embed: MessageEmbedPresets.Verbose("Invalid usage of command.\nYou typed either too little or too many parameters.", VerboseMessageSeverity.Warning));
+                    break;
+
+                case CommandError.UnknownCommand:
+                    await socketMessage.Channel.SendMessageAsync(embed: MessageEmbedPresets.Verbose("No such command.\nDid you make a typo?", VerboseMessageSeverity.Warning));
+                    break;
+            }
         }
     }
 }
