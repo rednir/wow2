@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Text;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
@@ -16,7 +17,7 @@ namespace wow2.CommandModules
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
         public static async Task CheckMessageForKeywordAsync(SocketMessage message)
         {
-            var keywordsDictionary = GetKeywordsDictionary(message.GetGuild());
+            var keywordsDictionary = GetKeywordsDictionaryForGuild(message.GetGuild());
             string content = message.Content.ToLower();
 
             // Replace unnecessary symbols with a whitespace.
@@ -35,29 +36,91 @@ namespace wow2.CommandModules
         }
         
         [Command("add")]
-        [Summary("Adds a value to a keyword, creating a new keyword if it doesn't exist.")]
+        [Summary("Adds value(s) to a keyword, creating a new keyword if it doesn't exist.")]
         public async Task AddAsync(string keyword = null, params string[] values)
         {
-            var keywordsDictionary = GetKeywordsDictionary(Context.Message.GetGuild());
+            var keywordsDictionary = GetKeywordsDictionaryForGuild(Context.Message.GetGuild());
 
-            if (!keywordsDictionary.ContainsKey(keyword))
+            if (keyword == null)
+            {
+                await ReplyAsync(embed: MessageEmbedPresets.Verbose($"Invalid usage of command: no keyword specified.", VerboseMessageSeverity.Error));
+                return;
+            }
+
+            // Create new dictionary key if necessary
+            if (!keywordsDictionary.ContainsKey(keyword)) 
                 keywordsDictionary.Add(keyword, new List<string>());
 
+            // Add the keywords
             foreach (string value in values)
             {
-                keywordsDictionary[keyword].Add(value);
+                if (!keywordsDictionary[keyword].Contains(value))
+                    keywordsDictionary[keyword].Add(value);
             }
 
-            await ReplyAsync($"Added {keyword} with {values.Length} values");
+            await ReplyAsync(embed: MessageEmbedPresets.Verbose($"Added {keyword} with {values.Length} values", VerboseMessageSeverity.Info));
             await DataManager.SaveGuildDataToFileAsync(Context.Message.GetGuild().Id);
-
-            foreach(var a in GetKeywordsDictionary(Context.Message.GetGuild()))
-            {
-                Console.WriteLine(a);
-            }
         }
 
-        private static Dictionary<string, List<string>> GetKeywordsDictionary(SocketGuild guild)
+        [Command("remove")]
+        [Alias("delete")]
+        [Summary("Removes value(s) from a keyword, or if none are specified, removes all values and the keyword.")]
+        public async Task RemoveAsync(string keyword = null, params string[] values)
+        {
+            var keywordsDictionary = GetKeywordsDictionaryForGuild(Context.Message.GetGuild());
+
+            if (keyword == null)
+            {
+                await ReplyAsync(embed: MessageEmbedPresets.Verbose($"Invalid usage of command: no keyword specified.", VerboseMessageSeverity.Error));
+                return;
+            }
+
+            if (!keywordsDictionary.ContainsKey(keyword))
+            {
+                await ReplyAsync(embed: MessageEmbedPresets.Verbose($"No such keyword `{keyword}` exists.", VerboseMessageSeverity.Error));
+                return;
+            }
+
+            if (values.Length == 0)
+            {
+                // No values have been specified, so assume the user wants to remove all values.
+                keywordsDictionary.Remove(keyword);
+                await ReplyAsync(embed: MessageEmbedPresets.Verbose($"Sucessfully removed keyword `{keyword}`.", VerboseMessageSeverity.Info));
+            }
+            else
+            {
+                // Iterate through and remove the values from the guild's data.
+                List<string> unsuccessfulRemoves = new List<string>();
+                foreach (string value in values)
+                {
+                    if (!keywordsDictionary[keyword].Remove(value))
+                        unsuccessfulRemoves.Add(value);
+                }
+                if (keywordsDictionary[keyword].Count == 0)
+                {
+                    // Discard keyword with no values.
+                    keywordsDictionary.Remove(keyword);
+                }
+
+                if (unsuccessfulRemoves.Count == 0)
+                {
+                    await ReplyAsync(embed: MessageEmbedPresets.Verbose($"Sucessfully removed `{values.Length}` values from {keyword}.", VerboseMessageSeverity.Info));
+                }
+                else
+                {
+                    // Make a string of all unsuccessful removes.
+                    var stringBuilderForUnsuccessfulRemoves = new StringBuilder();
+                    foreach (string value in unsuccessfulRemoves)
+                    {
+                        stringBuilderForUnsuccessfulRemoves.Append($"`{value}`\n");
+                    }
+                    await ReplyAsync(embed: MessageEmbedPresets.Verbose($"The following values could not be removed, probably because they don't exist.\n{stringBuilderForUnsuccessfulRemoves.ToString()}", VerboseMessageSeverity.Warning));
+                }
+            }
+            await DataManager.SaveGuildDataToFileAsync(Context.Message.GetGuild().Id);
+        }
+
+        private static Dictionary<string, List<string>> GetKeywordsDictionaryForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Keywords;
     }
 }
