@@ -37,7 +37,7 @@ namespace wow2
                         string guildDataJson = await File.ReadAllTextAsync(fileInfo.FullName);
                         DictionaryOfGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
 
-                        Console.WriteLine($"Loaded {guildId}");
+                        Console.WriteLine($"Loaded guild data for {guildId}");
                     }
                     catch (Exception)
                     {
