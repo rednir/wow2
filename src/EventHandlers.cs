@@ -29,8 +29,6 @@ namespace wow2
             // TODO: check self id instead
             if (recievedMessage.Author.IsBot) return;
 
-            //await recievedMessage.Channel.SendMessageAsync($"{DataManager.DictionaryOfGuildData[((SocketGuildChannel)recievedMessage.Channel).Id].Keywords.Count}");
-
             await KeywordsModule.CheckMessageForKeywordAsync(recievedMessage);
 
             if (recievedMessage.Content.StartsWith(CommandPrefix))
