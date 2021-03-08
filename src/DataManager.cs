@@ -67,5 +67,11 @@ namespace wow2
 
             await File.WriteAllTextAsync($"{AppDataDirPath}/GuildData/{guildId}.json", JsonSerializer.Serialize(guildData));
         }
+
+        public static async Task EnsureGuildDataFileExistsAsync(ulong guildId)
+        {
+            if (!File.Exists($"{AppDataDirPath}/GuildData/{guildId}.json"))
+                await SaveGuildDataToFileAsync(guildId);
+        }
     }
 }

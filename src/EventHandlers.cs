@@ -5,6 +5,7 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using wow2.CommandModules;
+using ExtentionMethods;
 
 namespace wow2
 {
@@ -40,6 +41,8 @@ namespace wow2
         {
             // TODO: check self id instead
             if (recievedMessage.Author.IsBot) return;
+
+            await DataManager.EnsureGuildDataFileExistsAsync(recievedMessage.GetGuild().Id);
 
             if (recievedMessage.Content.StartsWith(CommandPrefix))
             {
