@@ -3,31 +3,31 @@ using Discord;
 
 namespace wow2
 {
-    public class MessageEmbedPresets
+    public enum VerboseMessageSeverity
     {
-        public enum VerboseSeverity
-        {
-            Info, Warning, Error
-        }
+        Info, Warning, Error
+    }
 
+    public static class MessageEmbedPresets
+    {
         /// <summary>Builds and returns an embed for letting the user know the result of an action</summary>
-        public Embed Verbose(string description, VerboseSeverity severity = VerboseSeverity.Info)
+        public static Embed Verbose(string description, VerboseMessageSeverity severity = VerboseMessageSeverity.Info)
         {
             var embedBuilder = new EmbedBuilder();
 
             switch (severity)
             {
-                case VerboseSeverity.Info:
+                case VerboseMessageSeverity.Info:
                     embedBuilder.WithTitle("Info");
                     embedBuilder.WithColor(Color.Blue);
                     break;
-                
-                case VerboseSeverity.Warning:
+
+                case VerboseMessageSeverity.Warning:
                     embedBuilder.WithTitle("Warning");
                     embedBuilder.WithColor(Color.LightOrange);
                     break;
 
-                case VerboseSeverity.Error:
+                case VerboseMessageSeverity.Error:
                     embedBuilder.WithTitle("Error");
                     embedBuilder.WithColor(Color.Red);
                     break;
