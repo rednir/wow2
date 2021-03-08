@@ -37,24 +37,34 @@ namespace wow2
                         string guildDataJson = await File.ReadAllTextAsync(fileInfo.FullName);
                         DictionaryOfGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
 
-                        Console.WriteLine($"Loaded guild data for {guildId}");
+                        Console.WriteLine($"Loaded guild data for {guildId} (mass load)");
                     }
                     catch (Exception)
                     {
-                        Console.WriteLine($"Failed to load from file {fileInfo.Name}");
+                        Console.WriteLine($"Failed to load from file {fileInfo.Name} (mass load)");
                     }
                 }
             }
             else
             {
-                // Load data for one guild
-                // TODO
+                try
+                {
+                    // Load data for one guild
+                    string guildDataJson = await File.ReadAllTextAsync($"{AppDataDirPath}/GuildData/{specifiedGuildId}.json");
+                    DictionaryOfGuildData[specifiedGuildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
+
+                    Console.WriteLine($"Loaded guild data for {specifiedGuildId} (specific load)");
+                }
+                catch
+                {
+                    Console.WriteLine($"Failed to load for guild {specifiedGuildId} (specific load)");
+                }
             }
         }
 
         public static async Task SaveGuildDataToFileAsync(ulong guildId)
         {
-            GuildData guildData = null;
+            GuildData guildData = new GuildData();
             foreach (ulong id in DictionaryOfGuildData.Keys)
             {
                 if (id == guildId)
@@ -63,7 +73,6 @@ namespace wow2
                     break;
                 }
             }
-            if (guildData == null) throw new ArgumentNullException();
 
             await File.WriteAllTextAsync($"{AppDataDirPath}/GuildData/{guildId}.json", JsonSerializer.Serialize(guildData));
         }
@@ -71,7 +80,10 @@ namespace wow2
         public static async Task EnsureGuildDataFileExistsAsync(ulong guildId)
         {
             if (!File.Exists($"{AppDataDirPath}/GuildData/{guildId}.json"))
+            {
                 await SaveGuildDataToFileAsync(guildId);
+                await LoadGuildDataFromFileAsync(guildId);
+            }
         }
     }
 }
