@@ -15,33 +15,40 @@ namespace wow2
         /// <summary>Builds and returns an embed for letting the user know the result of an action</summary>
         public static Embed Verbose(string description, VerboseMessageSeverity severity = VerboseMessageSeverity.Info)
         {
-            var embedBuilder = new EmbedBuilder();
+            var embedBuilder = new EmbedBuilder()
+            {
+                Description = description
+            };
 
             switch (severity)
             {
                 case VerboseMessageSeverity.Info:
-                    embedBuilder.WithColor(Color.Blue);
+                    embedBuilder.Color = Color.Blue;
                     break;
 
                 case VerboseMessageSeverity.Warning:
-                    embedBuilder.WithColor(Color.LightOrange);
+                    embedBuilder.Color = Color.LightOrange;
                     break;
 
                 case VerboseMessageSeverity.Error:
-                    embedBuilder.WithTitle("Error");
-                    embedBuilder.WithColor(Color.Red);
+                    embedBuilder.Title = "Something bad happened...";
+                    embedBuilder.Color = Color.Red;
                     break;
             }
-            embedBuilder.WithDescription(description);
 
             return embedBuilder.Build();
         }
 
-        public static Embed Help()
+        /// <summary>Builds and returns an embed for responding to some user action.</summary>
+        public static Embed GenericResponse(string description, string title = "")
         {
-            var embedBuilder = new EmbedBuilder();
+            var embedBuilder = new EmbedBuilder()
+            {
+                Description = description
+            };
 
-            embedBuilder.WithDescription("help text");
+            embedBuilder.Color = Color.LightGrey;
+            embedBuilder.Title = title;
 
             return embedBuilder.Build();
         }

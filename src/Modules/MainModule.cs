@@ -12,7 +12,7 @@ namespace wow2.Modules
         [Command("help")]
         public async Task HelpAsync()
         {
-            await ReplyAsync(embed: MessageEmbedPresets.Help());
+            await ReplyAsync(embed: MessageEmbedPresets.GenericResponse("", "Help"));
         }
     }
 }
