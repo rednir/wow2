@@ -16,7 +16,8 @@ namespace wow2
         {
             string token = File.ReadAllText("discord.token");
 
-            await DataManager.Initialize();
+            await DataManager.InitializeAsync();
+            await EventHandlers.InstallCommandsAsync();
 
             //Client = new DiscordShardedClient(new DiscordSocketConfig() { TotalShards = 1 });
             Client = new DiscordSocketClient();

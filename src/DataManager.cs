@@ -16,13 +16,13 @@ namespace wow2
         public static Dictionary<ulong, GuildData> DictionaryOfGuildData { get; set; } = new Dictionary<ulong, GuildData>();
 
         /// <summary>TODO</summary>
-        public static async Task Initialize()
+        public static async Task InitializeAsync()
         {
             AppDataDirInfo = Directory.CreateDirectory($"{AppDataDirPath}/GuildData");
-            await LoadGuildDataToFile();
+            await LoadGuildDataToFileAsync();
         }
 
-        public static async Task LoadGuildDataToFile(ulong specifiedGuildId = 0)
+        public static async Task LoadGuildDataToFileAsync(ulong specifiedGuildId = 0)
         {
             if (specifiedGuildId == 0)
             {
@@ -52,9 +52,19 @@ namespace wow2
             }
         }
 
-        public static async Task SaveGuildDataToFile(ulong guildId, GuildData guildData)
+        public static async Task SaveGuildDataToFileAsync(ulong guildId)
         {
-            DictionaryOfGuildData[guildId] = guildData;
+            GuildData guildData = null;
+            foreach (ulong id in DictionaryOfGuildData.Keys)
+            {
+                if (id == guildId)
+                {
+                    guildData = DictionaryOfGuildData[id];
+                    break;
+                }
+            }
+            if (guildData == null) throw new ArgumentNullException();
+            
             await File.WriteAllTextAsync($"{AppDataDirPath}/GuildData/{guildId}.json", JsonSerializer.Serialize(guildData));
         }
     }
