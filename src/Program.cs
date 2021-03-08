@@ -19,7 +19,6 @@ namespace wow2
             await DataManager.InitializeAsync();
             await EventHandlers.InstallCommandsAsync();
 
-            //Client = new DiscordShardedClient(new DiscordSocketConfig() { TotalShards = 1 });
             Client = new DiscordSocketClient();
 
             await Client.LoginAsync(TokenType.Bot, token);
