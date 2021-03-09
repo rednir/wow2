@@ -11,7 +11,7 @@ namespace wow2
 {
     public static class EventHandlers
     {
-        public static readonly string CommandPrefix = "!wow2";
+        public static string CommandPrefix { get; } = "!wow";
         public static CommandService BotCommandService;
 
         public static async Task InstallCommandsAsync()
@@ -60,10 +60,16 @@ namespace wow2
             // The message is not a user message.
             if (socketMessage == null) return;
 
+            if (socketMessage.Content == CommandPrefix)
+            {
+                await socketMessage.Channel.SendMessageAsync(embed: MessageEmbedPresets.Verbose($"To view a list of commands, type `{CommandPrefix} help`"));
+                //return;
+            }
+
             IResult result = await BotCommandService.ExecuteAsync
             (
                 context: new SocketCommandContext(Program.Client, (SocketUserMessage)socketMessage),
-                argPos: CommandPrefix.Length,
+                argPos: CommandPrefix.Length + 1,
                 services: null
             );
             
