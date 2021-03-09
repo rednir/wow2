@@ -31,7 +31,7 @@ namespace wow2.Modules
                 {
                     // If the keyword has multiple values, the value will be chosen randomly.
                     int chosenValueIndex = new Random().Next(keywordsDictionary[keyword].Count);
-                    await message.Channel.SendMessageAsync(keywordsDictionary[keyword][chosenValueIndex]);
+                    await message.Channel.SendMessageAsync(embed: MessageEmbedPresets.GenericResponse(keywordsDictionary[keyword][chosenValueIndex]));
                 }
             }
         }

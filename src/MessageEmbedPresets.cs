@@ -45,20 +45,20 @@ namespace wow2
         {
             var embedBuilder = new EmbedBuilder()
             {
-                Description = description
+                Title = title,
+                Description = description,
+                Color = Color.LightGrey
             };
-
-            embedBuilder.Color = Color.LightGrey;
-            embedBuilder.Title = title;
 
             return embedBuilder.Build();
         }
 
+        /// <summary>Builds and returns an embed for showing a list of commands.</summary>
         public static Embed Help(List<EmbedFieldBuilder> fieldBuilders)
         {
             var embedBuilder = new EmbedBuilder()
             {
-                Title = "Help",
+                Title = "Command Help",
                 Fields = fieldBuilders,
                 Color = Color.DarkGrey
             };
