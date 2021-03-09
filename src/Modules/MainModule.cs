@@ -17,10 +17,10 @@ namespace wow2.Modules
         [Command("help")]
         public async Task HelpAsync()
         {
-            await ReplyAsync(embed: MessageEmbedPresets.GenericResponse(CommandInfoIntoMessage(), "Help"));
+            await ReplyAsync(embed: MessageEmbedPresets.Help(CommandInfoIntoMessage()));
         }
 
-        private string CommandInfoIntoMessage()
+        private List<EmbedFieldBuilder> CommandInfoIntoMessage()
         {
             // Sort the commands into a dictionary
             var commandsSortedByModules = new Dictionary<ModuleInfo, List<CommandInfo>>();
@@ -31,25 +31,25 @@ namespace wow2.Modules
             }
 
             // Create a help text string for each module
-            List<string> listOfModuleHelpTexts = new List<string>();
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             foreach (ModuleInfo module in commandsSortedByModules.Keys)
             {
-                var stringBuilderForModule = new StringBuilder();
-                stringBuilderForModule.AppendLine(module.Name);
+                var fieldBuilderForModule = new EmbedFieldBuilder();
+                fieldBuilderForModule.Name = module.Name;
 
-                stringBuilderForModule.AppendLine("```");
+                //fieldBuilderForModule.AppendLine("```");
                 foreach (CommandInfo command in commandsSortedByModules[module])
                 {
                     // Append each command info
-                    stringBuilderForModule.AppendLine($"{command.Name}");
+                    fieldBuilderForModule.Value += $"`{EventHandlers.CommandPrefix} {module.Aliases.First()} {command.Aliases.First()}`\n";
                 }
-                stringBuilderForModule.AppendLine("```");
+                //fieldBuilderForModule.AppendLine("```");
 
-                listOfModuleHelpTexts.Add(stringBuilderForModule.ToString());
+                listOfFieldBuilders.Add(fieldBuilderForModule);
             }
 
             // TODO: ability to only return one module's help text
-            return String.Join("\n", listOfModuleHelpTexts);
+            return listOfFieldBuilders;
         }
     }
 }

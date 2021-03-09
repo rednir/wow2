@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Discord;
 using Discord.Commands;
 using wow2.Modules;
@@ -49,6 +50,18 @@ namespace wow2
 
             embedBuilder.Color = Color.LightGrey;
             embedBuilder.Title = title;
+
+            return embedBuilder.Build();
+        }
+
+        public static Embed Help(List<EmbedFieldBuilder> fieldBuilders)
+        {
+            var embedBuilder = new EmbedBuilder()
+            {
+                Title = "Help",
+                Fields = fieldBuilders,
+                Color = Color.DarkGrey
+            };
 
             return embedBuilder.Build();
         }
