@@ -37,15 +37,28 @@ namespace wow2.Modules
                 var fieldBuilderForModule = new EmbedFieldBuilder();
                 fieldBuilderForModule.Name = module.Name;
 
-                //fieldBuilderForModule.AppendLine("```");
                 foreach (CommandInfo command in commandsSortedByModules[module])
                 {
                     // Append each command info
-                    fieldBuilderForModule.Value += $"`{EventHandlers.CommandPrefix} {module.Aliases.First()} {command.Aliases.First()}`\n";
+                    string parametersInfo = "";
+                    foreach (ParameterInfo parameter in command.Parameters)
+                    {
+                        // Create a string of the command's parameters
+                        string optionalText = !parameter.IsOptional ? "optional:" : "";
+                        parametersInfo += $" [{optionalText}{parameter.Name.ToUpper()}]";
+                    }
+                    fieldBuilderForModule.Value += $"`{EventHandlers.CommandPrefix} {(module.Aliases.FirstOrDefault() == "" ? "" : $"{module.Aliases.First()} ")}{command.Name}{parametersInfo}`\n";
                 }
-                //fieldBuilderForModule.AppendLine("```");
 
-                listOfFieldBuilders.Add(fieldBuilderForModule);
+                // TODO: find a way to get name attribute of this class instead of hardcoding module name.
+                if (module.Name == "Main")
+                {
+                    listOfFieldBuilders.Insert(0, fieldBuilderForModule);
+                }
+                else
+                {
+                    listOfFieldBuilders.Add(fieldBuilderForModule);
+                }
             }
 
             // TODO: ability to only return one module's help text
