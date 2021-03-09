@@ -25,11 +25,16 @@ namespace wow2
         {
             if (logMessage.Exception is CommandException commandException)
             {
-                Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] Command '{commandException.Command.Name}' failed in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
+                Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
                 Console.WriteLine($" ------ START OF EXCEPTION ------\n{commandException}\n------ END OF EXCEPTION ------");
 
                 // Also notify the guild that this error happened in.
-                await commandException.Context.Channel.SendMessageAsync(embed: MessageEmbedPresets.Verbose($"An unhandled exception was thrown and was automatically reported.", VerboseMessageSeverity.Error));
+                await commandException.Context.Channel.SendMessageAsync(embed: MessageEmbedPresets.Verbose($"An unhandled exception was thrown when executing command `{commandException.Command.Name}` and was automatically reported.", VerboseMessageSeverity.Error));
+            }
+            else if (logMessage.Exception != null)
+            {
+                Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] Exception was thrown:");
+                Console.WriteLine($" ------ START OF EXCEPTION ------\n{logMessage.Exception}\n------ END OF EXCEPTION ------");
             }
             else
             {
@@ -63,7 +68,7 @@ namespace wow2
             if (socketMessage.Content == CommandPrefix)
             {
                 await socketMessage.Channel.SendMessageAsync(embed: MessageEmbedPresets.Verbose($"To view a list of commands, type `{CommandPrefix} help`"));
-                //return;
+                return;
             }
 
             IResult result = await BotCommandService.ExecuteAsync
