@@ -23,9 +23,6 @@ namespace ExtentionMethods
             else
             {
                 string url = matches[0].Value.ToString();
-                Console.WriteLine(url);
-                Console.WriteLine(stringContainingUrl.IndexOf("http") + (url.Length));
-                Console.WriteLine((url.Length));
                 return (stringContainingUrl.Substring(stringContainingUrl.IndexOf("http") + url.Length), url);
             }
         }
