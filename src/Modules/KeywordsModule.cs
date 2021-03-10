@@ -37,6 +37,7 @@ namespace wow2.Modules
                     
                     var strippedUrlAndString = keywordsDictionary[keyword][chosenValueIndex].StripUrlIfExists();
 
+                    // TODO: only use stripped url if it points to image.
                     // Remember the messages that are actually keyword responses by adding them to a list.
                     RestUserMessage sentKeywordResponseMessage = await message.Channel.SendMessageAsync(
                         embed: MessageEmbedPresets.GenericResponse(strippedUrlAndString.newString, imageUrl: strippedUrlAndString.url)

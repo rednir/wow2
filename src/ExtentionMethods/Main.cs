@@ -24,6 +24,7 @@ namespace ExtentionMethods
             {
                 string url = matches[0].Value.ToString();
                 return (stringContainingUrl.Substring(stringContainingUrl.IndexOf("http") + url.Length), url);
+                
             }
         }
     }
