@@ -86,5 +86,11 @@ namespace wow2
                 await LoadGuildDataFromFileAsync(guildId);
             }
         }
+
+        public static Dictionary<string, List<string>> GetKeywordsDictionaryForGuild(SocketGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Keywords;
+
+        public static Config GetConfigForGuild(SocketGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Config;
     }
 }

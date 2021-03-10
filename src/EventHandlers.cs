@@ -29,7 +29,9 @@ namespace wow2
                 Console.WriteLine($" ------ START OF EXCEPTION ------\n{commandException}\n------ END OF EXCEPTION ------");
 
                 // Also notify the guild that this error happened in.
-                await commandException.Context.Channel.SendMessageAsync(embed: MessageEmbedPresets.Verbose($"An unhandled exception was thrown when executing command `{commandException.Command.Name}` and was automatically reported.", VerboseMessageSeverity.Error));
+                await commandException.Context.Channel.SendMessageAsync(
+                    embed: MessageEmbedPresets.Verbose($"An unhandled exception was thrown when executing command `{commandException.Command.Name}` and was automatically reported.", VerboseMessageSeverity.Error)
+                );
             }
             else if (logMessage.Exception != null)
             {
@@ -42,10 +44,23 @@ namespace wow2
             }
         }
 
+        public static async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
+        {
+            IUserMessage message = await cachedMessage.GetOrDownloadAsync();
+
+            if (reaction.UserId != Program.Client.CurrentUser.Id)
+            {
+                if (await KeywordsModule.DeleteMessageIfKeywordResponse(message))
+                {
+                    Console.WriteLine($"Message was deleted in channel `{channel.Name}` due to reaction added by `{reaction.User}` ({reaction.UserId})");
+                    return;
+                }
+            }
+        }
+
         public static async Task MessageRecievedAsync(SocketMessage recievedMessage)
         {
-            // TODO: check self id instead
-            if (recievedMessage.Author.IsBot) return;
+            if (recievedMessage.Author.Id == Program.Client.CurrentUser.Id) return;
 
             await DataManager.EnsureGuildDataFileExistsAsync(recievedMessage.GetGuild().Id);
 
@@ -67,7 +82,9 @@ namespace wow2
 
             if (socketMessage.Content == CommandPrefix)
             {
-                await socketMessage.Channel.SendMessageAsync(embed: MessageEmbedPresets.Verbose($"To view a list of commands, type `{CommandPrefix} help`"));
+                await socketMessage.Channel.SendMessageAsync(
+                    embed: MessageEmbedPresets.Verbose($"To view a list of commands, type `{CommandPrefix} help`")
+                );
                 return;
             }
 
@@ -77,15 +94,19 @@ namespace wow2
                 argPos: CommandPrefix.Length + 1,
                 services: null
             );
-            
+
             switch (result.Error)
             {
                 case CommandError.BadArgCount:
-                    await socketMessage.Channel.SendMessageAsync(embed: MessageEmbedPresets.Verbose("Invalid usage of command.\nYou typed either too little or too many parameters.", VerboseMessageSeverity.Warning));
+                    await socketMessage.Channel.SendMessageAsync(
+                        embed: MessageEmbedPresets.Verbose("Invalid usage of command.\nYou typed either too little or too many parameters.", VerboseMessageSeverity.Warning)
+                    );
                     break;
 
                 case CommandError.UnknownCommand:
-                    await socketMessage.Channel.SendMessageAsync(embed: MessageEmbedPresets.Verbose("No such command.\nDid you make a typo?", VerboseMessageSeverity.Warning));
+                    await socketMessage.Channel.SendMessageAsync(
+                        embed: MessageEmbedPresets.Verbose("No such command.\nDid you make a typo?", VerboseMessageSeverity.Warning)
+                    );
                     break;
             }
         }

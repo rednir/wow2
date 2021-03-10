@@ -17,10 +17,12 @@ namespace wow2.Modules
         [Command("help")]
         public async Task HelpAsync()
         {
-            await ReplyAsync(embed: MessageEmbedPresets.Help(CommandInfoIntoMessage()));
+            await ReplyAsync(
+                embed: MessageEmbedPresets.Fields(CommandInfoToEmbedFields(), "Command Help")
+            );
         }
 
-        private List<EmbedFieldBuilder> CommandInfoIntoMessage()
+        private List<EmbedFieldBuilder> CommandInfoToEmbedFields()
         {
             // Sort the commands into a dictionary
             var commandsSortedByModules = new Dictionary<ModuleInfo, List<CommandInfo>>();

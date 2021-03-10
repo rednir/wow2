@@ -53,14 +53,15 @@ namespace wow2
             return embedBuilder.Build();
         }
 
-        /// <summary>Builds and returns an embed for showing a list of commands.</summary>
-        public static Embed Help(List<EmbedFieldBuilder> fieldBuilders)
+        /// <summary>Builds and returns an embed for showing a list of fields, for example, showing command help.</summary>
+        public static Embed Fields(List<EmbedFieldBuilder> fieldBuilders, string title = "", string description = "")
         {
             var embedBuilder = new EmbedBuilder()
             {
-                Title = "Command Help",
+                Title = title,
+                Description = description,
                 Fields = fieldBuilders,
-                Color = Color.DarkGrey
+                Color = Color.Blue
             };
 
             return embedBuilder.Build();

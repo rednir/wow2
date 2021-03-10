@@ -25,6 +25,7 @@ namespace wow2
             await Client.StartAsync();
 
             Client.Log += EventHandlers.LogAsync;
+            Client.ReactionAdded += EventHandlers.ReactionAddedAsync;
             Client.MessageReceived += EventHandlers.MessageRecievedAsync;
 
             await Task.Delay(-1);
