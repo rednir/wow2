@@ -7,7 +7,6 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using ExtentionMethods;
-using wow2;
 
 namespace wow2.Modules
 {
