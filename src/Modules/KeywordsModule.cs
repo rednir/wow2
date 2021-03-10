@@ -181,6 +181,9 @@ namespace wow2.Modules
             var keywordsDictionary = DataManager.GetKeywordsDictionaryForGuild(Context.Message.GetGuild());
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
 
+            // TODO: dont show value previews if too many keywords.
+            // TODO: upload file instead if embed max reached
+
             foreach (var keywordPair in keywordsDictionary)
             {
                 string nameToShow = (keywordPair.Value.Count > 1) ? ($"{keywordPair.Key} ({keywordPair.Value.Count} values):") : ($"{keywordPair.Key}:");
