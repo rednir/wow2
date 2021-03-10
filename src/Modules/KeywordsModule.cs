@@ -100,7 +100,7 @@ namespace wow2.Modules
             }
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{values.Length}` total values.", VerboseMessageSeverity.Info)
+                embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{values.Length}` total value().", VerboseMessageSeverity.Info)
             );
             await DataManager.SaveGuildDataToFileAsync(Context.Message.GetGuild().Id);
         }
@@ -154,7 +154,7 @@ namespace wow2.Modules
                 if (unsuccessfulRemoves.Count == 0)
                 {
                     await ReplyAsync(
-                        embed: MessageEmbedPresets.Verbose($"Sucessfully removed `{values.Length}` values from {keyword}.", VerboseMessageSeverity.Info)
+                        embed: MessageEmbedPresets.Verbose($"Sucessfully removed `{values.Length}` value(s) from {keyword}.", VerboseMessageSeverity.Info)
                     );
                 }
                 else
@@ -171,6 +171,30 @@ namespace wow2.Modules
                 }
             }
             await DataManager.SaveGuildDataToFileAsync(Context.Message.GetGuild().Id);
+        }
+
+        [Command("list")]
+        [Alias("show", "all")]
+        [Summary("Shows a list of all keywords.")]
+        public async Task ListAsync()
+        {
+            var keywordsDictionary = DataManager.GetKeywordsDictionaryForGuild(Context.Message.GetGuild());
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+
+            foreach (var keywordPair in keywordsDictionary)
+            {
+                string nameToShow = (keywordPair.Value.Count > 1) ? ($"{keywordPair.Key} ({keywordPair.Value.Count} values):") : ($"{keywordPair.Key}:");
+                string valueToShow = (keywordPair.Value[0].Length > 50) ? ($"`{keywordPair.Value[0].Substring(0, 47)}...`") : ($"`{keywordPair.Value[0]}`");
+
+                var fieldBuilderForKeyword = new EmbedFieldBuilder()
+                {
+                    Name = nameToShow,
+                    Value = valueToShow
+                };
+                listOfFieldBuilders.Add(fieldBuilderForKeyword);
+            }
+
+            await ReplyAsync(embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Keywords", $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*"));
         }
     }
 }
