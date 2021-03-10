@@ -41,13 +41,14 @@ namespace wow2
         }
 
         /// <summary>Builds and returns an embed for responding to some user action.</summary>
-        public static Embed GenericResponse(string description, string title = "")
+        public static Embed GenericResponse(string description, string title = "", string imageUrl = "")
         {
             var embedBuilder = new EmbedBuilder()
             {
                 Title = title,
                 Description = description,
-                Color = Color.LightGrey
+                Color = Color.LightGrey,
+                ImageUrl = imageUrl
             };
 
             return embedBuilder.Build();

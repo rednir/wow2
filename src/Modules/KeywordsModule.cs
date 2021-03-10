@@ -34,10 +34,12 @@ namespace wow2.Modules
                 {
                     // If the keyword has multiple values, the value will be chosen randomly.
                     int chosenValueIndex = new Random().Next(keywordsDictionary[keyword].Count);
+                    
+                    var strippedUrlAndString = keywordsDictionary[keyword][chosenValueIndex].StripUrlIfExists();
 
                     // Remember the messages that are actually keyword responses by adding them to a list.
                     RestUserMessage sentKeywordResponseMessage = await message.Channel.SendMessageAsync(
-                        embed: MessageEmbedPresets.GenericResponse(keywordsDictionary[keyword][chosenValueIndex])
+                        embed: MessageEmbedPresets.GenericResponse(strippedUrlAndString.newString, imageUrl: strippedUrlAndString.url)
                     );
                     ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
 
@@ -55,9 +57,6 @@ namespace wow2.Modules
         {
             foreach (ulong id in ListOfResponsesId)
             {
-                Console.WriteLine(id);
-                Console.WriteLine(messageToCheck.Id);
-                Console.WriteLine("\n-\n");
                 if (id == messageToCheck.Id)
                 {
                     await messageToCheck.DeleteAsync();
@@ -147,7 +146,7 @@ namespace wow2.Modules
                 }
                 if (keywordsDictionary[keyword].Count == 0)
                 {
-                    // Discard keyword with no values.
+                    // Discard keyword if it has no values.
                     keywordsDictionary.Remove(keyword);
                 }
 
