@@ -36,9 +36,11 @@ namespace wow2.Modules
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             foreach (ModuleInfo module in commandsSortedByModules.Keys)
             {
-                var fieldBuilderForModule = new EmbedFieldBuilder();
-                fieldBuilderForModule.Name = module.Name;
-
+                var fieldBuilderForModule = new EmbedFieldBuilder()
+                {
+                    Name = module.Name
+                };
+                
                 foreach (CommandInfo command in commandsSortedByModules[module])
                 {
                     // Append each command info
