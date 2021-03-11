@@ -100,7 +100,7 @@ namespace wow2.Modules
             }
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{values.Length}` total value().", VerboseMessageSeverity.Info)
+                embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total value().", VerboseMessageSeverity.Info)
             );
             await DataManager.SaveGuildDataToFileAsync(Context.Message.GetGuild().Id);
         }
