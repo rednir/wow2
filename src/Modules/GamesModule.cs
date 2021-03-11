@@ -90,7 +90,7 @@ namespace wow2.Modules
                 var fieldBuilderForParticipant = new EmbedFieldBuilder()
                 {
                     Name = participant.Key.Username,
-                    Value = $"{participant.Value} messages ({participant.Value / dictionaryOfParticipants.Values.Sum() * 100}% helpful)",
+                    Value = $"{participant.Value} messages ({(float)participant.Value / (float)dictionaryOfParticipants.Values.Sum() * 100f}% helpful)",
                     IsInline = true
                 };
                 listOfFieldBuilders.Add(fieldBuilderForParticipant);
