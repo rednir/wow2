@@ -90,5 +90,8 @@ namespace wow2
 
         public static KeywordsModuleConfig GetKeywordsConfigForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Keywords;
+
+        public static GamesModuleConfig GetGamesConfigForGuild(SocketGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Games;
     }
 }
