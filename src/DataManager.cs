@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Discord.WebSocket;
+using wow2.Modules.Config;
 
 namespace wow2
 {
@@ -87,10 +88,7 @@ namespace wow2
             }
         }
 
-        public static Dictionary<string, List<string>> GetKeywordsDictionaryForGuild(SocketGuild guild)
+        public static KeywordsModuleConfig GetKeywordsConfigForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Keywords;
-
-        public static Config GetConfigForGuild(SocketGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Config;
     }
 }

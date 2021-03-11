@@ -3,13 +3,12 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord.WebSocket;
+using wow2.Modules.Config;
 
 namespace wow2
 {
     public class GuildData
     {
-        public Config Config { get; set; } = new Config();
-
-        public Dictionary<string, List<string>> Keywords { get; set; } = new Dictionary<string, List<string>>();
+        public KeywordsModuleConfig Keywords { get; set; } = new KeywordsModuleConfig();
     }
 }
