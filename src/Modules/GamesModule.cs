@@ -54,6 +54,7 @@ namespace wow2.Modules
         }
 
         [Command("counting")]
+        [Alias("count")]
         public async Task CountingAsync()
         {
             var config = DataManager.GetGamesConfigForGuild(Context.Message.GetGuild());
@@ -71,6 +72,8 @@ namespace wow2.Modules
 
         private async Task EndCounting()
         {
+            Program.Client.MessageReceived -= MessageRecievedForCountingAsync;
+
             var config = DataManager.GetGamesConfigForGuild(Context.Message.GetGuild());
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             var dictionaryOfParticipants = new Dictionary<SocketUser, int>();
@@ -87,7 +90,7 @@ namespace wow2.Modules
                 var fieldBuilderForParticipant = new EmbedFieldBuilder()
                 {
                     Name = participant.Key.Username,
-                    Value = $"{participant.Value} messages ({dictionaryOfParticipants.Values.Sum() / participant.Value * 100}% helpful)",
+                    Value = $"{participant.Value} messages ({participant.Value / dictionaryOfParticipants.Values.Sum() * 100}% helpful)",
                     IsInline = true
                 };
                 listOfFieldBuilders.Add(fieldBuilderForParticipant);
