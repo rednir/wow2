@@ -85,19 +85,26 @@ namespace wow2.Modules
                 dictionaryOfParticipants[message.Author]++;
             }
 
+            // Build fields for each participant.
             foreach (KeyValuePair<SocketUser, int> participant in dictionaryOfParticipants)
             {
                 var fieldBuilderForParticipant = new EmbedFieldBuilder()
                 {
                     Name = participant.Key.Username,
-                    Value = $"{participant.Value} messages ({(float)participant.Value / (float)dictionaryOfParticipants.Values.Sum() * 100f}% helpful)",
+                    Value = $"{participant.Value} messages ({Math.Round((float)participant.Value / (float)dictionaryOfParticipants.Values.Sum() * 100f)}% helpful)",
                     IsInline = true
                 };
                 listOfFieldBuilders.Add(fieldBuilderForParticipant);
             }
+            
+            string commentOnFinalNumber;
+            if (config.CountingNextNumber < 3) commentOnFinalNumber = "Pathetic.";
+            else if (config.CountingNextNumber < 25) commentOnFinalNumber = "There's plenty room for improvement.";
+            else if (config.CountingNextNumber < 75) commentOnFinalNumber = "Not bad!";
+            else commentOnFinalNumber = "Amazing!";
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Final Stats")
+                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Final Stats", $"*You counted up to {config.CountingNextNumber - 1}. {commentOnFinalNumber}*")
             );
         }
     }
