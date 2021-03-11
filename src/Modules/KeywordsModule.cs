@@ -48,13 +48,26 @@ namespace wow2.Modules
 
             // If the keyword has multiple values, the value will be chosen randomly.
             int chosenValueIndex = new Random().Next(keywordsDictionary[foundKeyword].Count);
+            KeywordValue chosenValue = keywordsDictionary[foundKeyword][chosenValueIndex];
 
-            //var strippedUrlAndString = keywordsDictionary[foundKeyword][chosenValueIndex].StripUrlIfExists();
+            // Get URL in message and seperate it (commented this out because even if url was not image, it would get seperated). 
+            //var strippedUrlAndString = keywordsDictionary[foundKeyword][chosenValueIndex].Content.StripUrlIfExists();
+            
+            // Check if first word is URL and assume it is an image (this is also bad)
+            //string valueImageUrl = chosenValue.Content.StartsWith("http") ? chosenValue.Content.Split(" ").First() : "";
+
+            RestUserMessage sentKeywordResponseMessage;
+            // Don't use embed message if the value to send contains a link.
+            if (chosenValue.Content.Contains("http://") || chosenValue.Content.Contains("https://"))
+            {
+                sentKeywordResponseMessage = await message.Channel.SendMessageAsync(chosenValue.Content);
+            }
+            else
+            {
+                sentKeywordResponseMessage = await message.Channel.SendMessageAsync(embed: MessageEmbedPresets.GenericResponse(chosenValue.Content));
+            }
 
             // Remember the messages that are actually keyword responses by adding them to a list.
-            RestUserMessage sentKeywordResponseMessage = await message.Channel.SendMessageAsync(
-                embed: MessageEmbedPresets.GenericResponse(keywordsDictionary[foundKeyword][chosenValueIndex].Content)
-            );
             ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
 
             if (DataManager.GetKeywordsConfigForGuild(message.GetGuild()).KeywordsReactToDelete)
