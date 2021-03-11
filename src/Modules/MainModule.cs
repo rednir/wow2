@@ -48,7 +48,10 @@ namespace wow2.Modules
                 {
                     Name = module.Name
                 };
-                
+
+                if (!String.IsNullOrWhiteSpace(module.Summary))
+                    fieldBuilderForModule.Value += $"*{module.Summary}*\n";
+
                 foreach (CommandInfo command in commandsSortedByModules[module])
                 {
                     // Append each command info

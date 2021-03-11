@@ -15,6 +15,7 @@ namespace wow2.Modules
     [Name("Keywords")]
     [Group("keywords")]
     [Alias("keyword")]
+    [Summary("If a user message contains a keyword, the bot can respond to it with a user-set value. The value will be chosen at random if there are multiple.")]
     public class KeywordsModule : ModuleBase<SocketCommandContext>
     {
         private static List<ulong> ListOfResponsesId = new List<ulong>();
