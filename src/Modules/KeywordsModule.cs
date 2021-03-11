@@ -39,7 +39,7 @@ namespace wow2.Modules
                 }
             }
 
-            // No keywords were found in the message.
+            // Return if no keywords were found in the message.
             if (listOfFoundKeywords.Count == 0) return false;
 
             // Prioritize the longest keyword if multiple keywords have been found.

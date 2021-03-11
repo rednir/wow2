@@ -108,6 +108,12 @@ namespace wow2
                     );
                     break;
 
+                case CommandError.ParseFailed:
+                    await socketMessage.Channel.SendMessageAsync(
+                        embed: MessageEmbedPresets.Verbose("Invalid usage of command.\nOne or more parameters were incorrect.", VerboseMessageSeverity.Warning)
+                    );
+                    break;
+
                 case CommandError.UnknownCommand:
                     await socketMessage.Channel.SendMessageAsync(
                         embed: MessageEmbedPresets.Verbose("No such command.\nDid you make a typo?", VerboseMessageSeverity.Warning)

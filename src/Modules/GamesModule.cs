@@ -20,9 +20,9 @@ namespace wow2.Modules
             if (recievedMessage.Author.IsBot) return;
 
             var config = DataManager.GetGamesConfigForGuild(Context.Message.GetGuild());
-            int userNumber;
+            float userNumber;
 
-            try { userNumber = Convert.ToInt32(recievedMessage.Content); }
+            try { userNumber = Convert.ToSingle(recievedMessage.Content); }
             catch { return; }
 
             // If this is the first counting message, there is no need to check if a user counts twice in a row.
@@ -40,14 +40,14 @@ namespace wow2.Modules
             config.CountingListOfMessages.Add(recievedMessage);
             if (userNumber == config.CountingNextNumber)
             {
-                config.CountingNextNumber++;
+                config.CountingNextNumber += config.CountingIncrement;
                 await recievedMessage.AddReactionAsync(new Emoji("✅"));
             }
             else
             {
                 await recievedMessage.AddReactionAsync(new Emoji("❎"));
                 await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.")
+                    embed: MessageEmbedPresets.Verbose($"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.CountingNextNumber}`")
                 );
                 await EndCounting();
             }
@@ -55,12 +55,13 @@ namespace wow2.Modules
 
         [Command("counting")]
         [Alias("count")]
-        public async Task CountingAsync()
+        public async Task CountingAsync(float increment = 1)
         {
             var config = DataManager.GetGamesConfigForGuild(Context.Message.GetGuild());
 
             config.CountingChannel = Context.Channel;
-            config.CountingNextNumber = 1;
+            config.CountingIncrement = increment;
+            config.CountingNextNumber = increment;
             config.CountingListOfMessages = new List<SocketMessage>();
 
             Program.Client.MessageReceived += MessageRecievedForCountingAsync;
@@ -98,13 +99,13 @@ namespace wow2.Modules
             }
             
             string commentOnFinalNumber;
-            if (config.CountingNextNumber < 3) commentOnFinalNumber = "Pathetic.";
-            else if (config.CountingNextNumber < 25) commentOnFinalNumber = "There's plenty room for improvement.";
-            else if (config.CountingNextNumber < 75) commentOnFinalNumber = "Not bad!";
+            if (config.CountingNextNumber < 3 * config.CountingIncrement) commentOnFinalNumber = "Pathetic.";
+            else if (config.CountingNextNumber < 25 * config.CountingIncrement) commentOnFinalNumber = "There's plenty room for improvement.";
+            else if (config.CountingNextNumber < 75 * config.CountingIncrement) commentOnFinalNumber = "Not bad!";
             else commentOnFinalNumber = "Amazing!";
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Final Stats", $"*You counted up to {config.CountingNextNumber - 1}. {commentOnFinalNumber}*")
+                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Final Stats", $"*You counted up to {config.CountingNextNumber - config.CountingIncrement}. {commentOnFinalNumber}*")
             );
         }
     }
