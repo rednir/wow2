@@ -62,7 +62,7 @@ namespace wow2
                 Title = title,
                 Description = description,
                 Fields = fieldBuilders,
-                Color = Color.Blue
+                Color = Color.LightGrey
             };
 
             return embedBuilder.Build();
