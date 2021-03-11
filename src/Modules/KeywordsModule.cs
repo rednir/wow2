@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using Discord;
 using Discord.WebSocket;
 using Discord.Rest;
@@ -19,10 +20,11 @@ namespace wow2.Modules
         private static List<ulong> ListOfResponsesId = new List<ulong>();
 
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
-        public static async Task CheckMessageForKeywordAsync(SocketMessage message)
+        public static async Task<bool> CheckMessageForKeywordAsync(SocketMessage message)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(message.GetGuild()).KeywordsDictionary;
             string content = message.Content.ToLower();
+            List<string> listOfFoundKeywords = new List<string>();
 
             // Replace unnecessary symbols with a whitespace.
             content = new Regex("[;!.\"?\'#,:*-_\t\r ]|[\n]{2}").Replace(content, " ");
@@ -32,24 +34,32 @@ namespace wow2.Modules
                 // Search for keyword with word boundaries, making sure that the keyword is not part of another word.
                 if (Regex.IsMatch(content, @"\b" + Regex.Escape(keyword.ToLower()) + @"\b"))
                 {
-                    // If the keyword has multiple values, the value will be chosen randomly.
-                    int chosenValueIndex = new Random().Next(keywordsDictionary[keyword].Count);
-                    
-                    var strippedUrlAndString = keywordsDictionary[keyword][chosenValueIndex].StripUrlIfExists();
-
-                    // TODO: only use stripped url if it points to image.
-                    // Remember the messages that are actually keyword responses by adding them to a list.
-                    RestUserMessage sentKeywordResponseMessage = await message.Channel.SendMessageAsync(
-                        embed: MessageEmbedPresets.GenericResponse(strippedUrlAndString.newString, imageUrl: strippedUrlAndString.url)
-                    );
-                    ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
-
-                    if (DataManager.GetKeywordsConfigForGuild(message.GetGuild()).KeywordsReactToDelete)
-                    {
-                        await sentKeywordResponseMessage.AddReactionAsync(new Emoji("🗑"));
-                    }
+                    listOfFoundKeywords.Add(keyword);
                 }
             }
+
+            // No keywords were found in the message.
+            if (listOfFoundKeywords.Count == 0) return false;
+
+            // Prioritize the longest keyword if multiple keywords have been found.
+            string foundKeyword = listOfFoundKeywords.OrderByDescending(s => s.Length).First();
+
+            // If the keyword has multiple values, the value will be chosen randomly.
+            int chosenValueIndex = new Random().Next(keywordsDictionary[foundKeyword].Count);
+
+            var strippedUrlAndString = keywordsDictionary[foundKeyword][chosenValueIndex].StripUrlIfExists();
+
+            // TODO: only use stripped url if it points to image.
+            // Remember the messages that are actually keyword responses by adding them to a list.
+            RestUserMessage sentKeywordResponseMessage = await message.Channel.SendMessageAsync(
+                embed: MessageEmbedPresets.GenericResponse(strippedUrlAndString.newString, imageUrl: strippedUrlAndString.url)
+            );
+            ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
+
+            if (DataManager.GetKeywordsConfigForGuild(message.GetGuild()).KeywordsReactToDelete)
+                await sentKeywordResponseMessage.AddReactionAsync(new Emoji("🗑"));
+
+            return true;
         }
 
         /// <summary>Checks if a message was a keyword response sent by the bot, deleting the message if so.</summary>
@@ -100,7 +110,7 @@ namespace wow2.Modules
             }
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total value().", VerboseMessageSeverity.Info)
+                embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total value.", VerboseMessageSeverity.Info)
             );
             await DataManager.SaveGuildDataToFileAsync(Context.Message.GetGuild().Id);
         }
