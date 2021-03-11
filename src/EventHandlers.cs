@@ -21,6 +21,11 @@ namespace wow2
             await BotCommandService.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: null);
         }
 
+        public static async Task ReadyAsync()
+        {
+            await Program.Client.SetGameAsync("!wow help");
+        }
+
         public static async Task LogAsync(LogMessage logMessage)
         {
             if (logMessage.Exception is CommandException commandException)

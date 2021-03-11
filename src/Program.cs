@@ -24,6 +24,7 @@ namespace wow2
             await Client.LoginAsync(TokenType.Bot, token);
             await Client.StartAsync();
 
+            Client.Ready += EventHandlers.ReadyAsync;
             Client.Log += EventHandlers.LogAsync;
             Client.ReactionAdded += EventHandlers.ReactionAddedAsync;
             Client.MessageReceived += EventHandlers.MessageRecievedAsync;
