@@ -1,10 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using Discord;
-using Discord.WebSocket;
 using Discord.Commands;
 using ExtentionMethods;
 

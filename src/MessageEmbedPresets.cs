@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
 using Discord;
-using Discord.Commands;
-using wow2.Modules;
 
 namespace wow2
 {
