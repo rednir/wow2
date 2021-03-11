@@ -8,6 +8,7 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Rest;
 using Discord.Commands;
+using wow2.Modules.Config;
 using ExtentionMethods;
 
 namespace wow2.Modules
@@ -48,12 +49,11 @@ namespace wow2.Modules
             // If the keyword has multiple values, the value will be chosen randomly.
             int chosenValueIndex = new Random().Next(keywordsDictionary[foundKeyword].Count);
 
-            var strippedUrlAndString = keywordsDictionary[foundKeyword][chosenValueIndex].StripUrlIfExists();
+            //var strippedUrlAndString = keywordsDictionary[foundKeyword][chosenValueIndex].StripUrlIfExists();
 
-            // TODO: only use stripped url if it points to image.
             // Remember the messages that are actually keyword responses by adding them to a list.
             RestUserMessage sentKeywordResponseMessage = await message.Channel.SendMessageAsync(
-                embed: MessageEmbedPresets.GenericResponse(strippedUrlAndString.newString, imageUrl: strippedUrlAndString.url)
+                embed: MessageEmbedPresets.GenericResponse(keywordsDictionary[foundKeyword][chosenValueIndex].Content)
             );
             ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
 
@@ -99,15 +99,15 @@ namespace wow2.Modules
                 return;
             }
 
-            // Create new dictionary key if necessary
+            // Create new dictionary key if necessary.
             if (!keywordsDictionary.ContainsKey(keyword))
-                keywordsDictionary.Add(keyword, new List<string>());
+                keywordsDictionary.Add(keyword, new List<KeywordValue>());
 
-            // Add the keywords
+            // Add the values to the keyword.
             foreach (string value in values)
             {
-                if (!keywordsDictionary[keyword].Contains(value))
-                    keywordsDictionary[keyword].Add(value);
+                if (keywordsDictionary[keyword].FindIndex(x => x.Content == value) == -1)
+                    keywordsDictionary[keyword].Add(new KeywordValue() { Content = value });
             }
 
             await ReplyAsync(
@@ -153,7 +153,7 @@ namespace wow2.Modules
                 List<string> unsuccessfulRemoves = new List<string>();
                 foreach (string value in values)
                 {
-                    if (!keywordsDictionary[keyword].Remove(value))
+                    if (keywordsDictionary[keyword].RemoveAll(x => x.Content == value) == 0)
                         unsuccessfulRemoves.Add(value);
                 }
                 if (keywordsDictionary[keyword].Count == 0)
@@ -198,7 +198,7 @@ namespace wow2.Modules
             foreach (var keywordPair in keywordsDictionary)
             {
                 string nameToShow = (keywordPair.Value.Count > 1) ? ($"{keywordPair.Key} ({keywordPair.Value.Count} values):") : ($"{keywordPair.Key}:");
-                string valueToShow = (keywordPair.Value[0].Length > 50) ? ($"`{keywordPair.Value[0].Substring(0, 47)}...`") : ($"`{keywordPair.Value[0]}`");
+                string valueToShow = (keywordPair.Value[0].Content.Length > 50) ? ($"`{keywordPair.Value[0].Content.Substring(0, 47)}...`") : ($"`{keywordPair.Value[0].Content}`");
 
                 var fieldBuilderForKeyword = new EmbedFieldBuilder()
                 {
