@@ -30,7 +30,6 @@ namespace wow2.Modules.Keywords
             // Replace unnecessary symbols with a whitespace.
             // TODO: for some reason this removes numbers too
             content = new Regex("[;!.\"?\'#,:*-_\t\r ]|[\n]{2}").Replace(content, " ");
-            Console.WriteLine(content);
 
             foreach (string keyword in keywordsDictionary.Keys)
             {
