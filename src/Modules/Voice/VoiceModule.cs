@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
 using Discord.Commands;
-using wow2.Modules.Config;
 
-namespace wow2.Modules
+namespace wow2.Modules.Voice
 {
     [Name("Voice")]
     [Group("vc")]

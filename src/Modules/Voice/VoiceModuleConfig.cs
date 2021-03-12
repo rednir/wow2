@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Discord.WebSocket;
 
-namespace wow2.Modules.Config
+namespace wow2.Modules.Voice
 {
     public class VoiceModuleConfig
     {

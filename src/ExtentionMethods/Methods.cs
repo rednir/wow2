@@ -3,7 +3,7 @@ using Discord.WebSocket;
 
 namespace ExtentionMethods
 {
-    public static class Main
+    public static class Methods
     {
         // Add overloads if necessary.
         public static SocketGuild GetGuild(this SocketMessage socketMessage)

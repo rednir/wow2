@@ -7,7 +7,7 @@ using Discord.WebSocket;
 using Discord.Commands;
 using ExtentionMethods;
 
-namespace wow2.Modules
+namespace wow2.Modules.Games
 {
     [Name("Games")]
     [Group("games")]

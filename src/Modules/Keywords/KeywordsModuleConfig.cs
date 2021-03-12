@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace wow2.Modules.Config
+namespace wow2.Modules.Keywords
 {
     public class KeywordsModuleConfig
     {

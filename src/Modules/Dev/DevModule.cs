@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Discord.Commands;
 
-namespace wow2.Modules
+namespace wow2.Modules.Dev
 {
     [Name("Dev (todo: shouldnt show in help text)")]
     [Group("dev")]

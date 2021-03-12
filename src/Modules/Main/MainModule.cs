@@ -6,7 +6,7 @@ using Discord;
 using Discord.Commands;
 using ExtentionMethods;
 
-namespace wow2.Modules
+namespace wow2.Modules.Main
 {
     [Name("Main")]
     public class MainModule : ModuleBase<SocketCommandContext>

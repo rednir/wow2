@@ -4,7 +4,7 @@ using System.Reflection;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
-using wow2.Modules;
+using wow2.Modules.Keywords;
 using ExtentionMethods;
 
 namespace wow2

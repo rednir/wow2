@@ -8,10 +8,9 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Rest;
 using Discord.Commands;
-using wow2.Modules.Config;
 using ExtentionMethods;
 
-namespace wow2.Modules
+namespace wow2.Modules.Keywords
 {
     [Name("Keywords")]
     [Group("keywords")]
@@ -54,7 +53,7 @@ namespace wow2.Modules
 
             // Get URL in message and seperate it (commented this out because even if url was not image, it would get seperated). 
             //var strippedUrlAndString = keywordsDictionary[foundKeyword][chosenValueIndex].Content.StripUrlIfExists();
-            
+
             // Check if first word is URL and assume it is an image (this is also bad)
             //string valueImageUrl = chosenValue.Content.StartsWith("http") ? chosenValue.Content.Split(" ").First() : "";
 

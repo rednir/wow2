@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Discord.WebSocket;
-using wow2.Modules.Config;
+using wow2.Modules.Keywords;
+using wow2.Modules.Games;
+using wow2.Modules.Voice;
 
 namespace wow2
 {
