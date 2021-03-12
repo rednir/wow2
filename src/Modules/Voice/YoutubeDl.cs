@@ -16,24 +16,27 @@ namespace wow2.Modules.Voice
             string standardOutput = "";
             string standardError = "";
 
-            using (var process = new Process())
+            await Task.Run(() =>
             {
-                // TODO: make youtube-dl path env variable
-                process.StartInfo.FileName = "youtube-dl";
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.Arguments = isUrl ? $"\"{searchOrUrl}\" {arguments}" : $"ytsearch:\"{searchOrUrl}\" {arguments}";
+                using (var process = new Process())
+                {
+                    // TODO: make youtube-dl path env variable
+                    process.StartInfo.FileName = "youtube-dl";
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+                    process.StartInfo.Arguments = isUrl ? $"\"{searchOrUrl}\" {arguments}" : $"ytsearch:\"{searchOrUrl}\" {arguments}";
 
-                process.OutputDataReceived += (sendingProcess, outline) => standardOutput += outline.Data + "\n";
-                process.ErrorDataReceived += (sendingProcess, outline) => standardError += outline.Data + "\n";
+                    process.OutputDataReceived += (sendingProcess, outline) => standardOutput += outline.Data + "\n";
+                    process.ErrorDataReceived += (sendingProcess, outline) => standardError += outline.Data + "\n";
 
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
+                    process.Start();
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
 
-                process.WaitForExit();
-            }
+                    process.WaitForExit();
+                }
+            });
 
             if (!string.IsNullOrWhiteSpace(standardError))
                 throw new ArgumentException(standardError);
