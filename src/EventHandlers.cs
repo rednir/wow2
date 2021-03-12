@@ -119,6 +119,12 @@ namespace wow2
                         embed: MessageEmbedPresets.Verbose("No such command.\nDid you make a typo?", VerboseMessageSeverity.Warning)
                     );
                     break;
+
+                case CommandError.UnmetPrecondition:
+                    await socketMessage.Channel.SendMessageAsync(
+                        embed: MessageEmbedPresets.Verbose("There was an unmet precondition.\nYou may lack the correct permissions to use this command.", VerboseMessageSeverity.Warning)
+                    );
+                    break;
             }
         }
     }

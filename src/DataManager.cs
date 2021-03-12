@@ -67,6 +67,7 @@ namespace wow2
             foreach (ulong id in DictionaryOfGuildData.Keys)
             {
                 await File.WriteAllTextAsync($"{AppDataDirPath}/GuildData/{id}.json", JsonSerializer.Serialize(DictionaryOfGuildData[id]));
+                Console.WriteLine($"Saved guild data for {id} (mass save)");
             }
         }
 
@@ -83,6 +84,7 @@ namespace wow2
                 }
             }
             await File.WriteAllTextAsync($"{AppDataDirPath}/GuildData/{guildId}.json", JsonSerializer.Serialize(guildData));
+            Console.WriteLine($"Saved guild data for {guildId} (specific save)");
         }
 
         /// <summary>If the data file for the specified guild does not exist, one will be created and loaded. Otherwise this does nothing.</summary>
