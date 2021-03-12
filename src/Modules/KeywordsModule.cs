@@ -16,7 +16,7 @@ namespace wow2.Modules
     [Name("Keywords")]
     [Group("keywords")]
     [Alias("keyword")]
-    [Summary("Bot responses to keywords in user messages.")]
+    [Summary("For automatically responding to keywords in user messages.")]
     public class KeywordsModule : ModuleBase<SocketCommandContext>
     {
         private static List<ulong> ListOfResponsesId = new List<ulong>();
@@ -29,7 +29,9 @@ namespace wow2.Modules
             List<string> listOfFoundKeywords = new List<string>();
 
             // Replace unnecessary symbols with a whitespace.
+            // TODO: for some reason this removes numbers too
             content = new Regex("[;!.\"?\'#,:*-_\t\r ]|[\n]{2}").Replace(content, " ");
+            Console.WriteLine(content);
 
             foreach (string keyword in keywordsDictionary.Keys)
             {
