@@ -23,7 +23,7 @@ namespace wow2.Modules
         public async Task UploadRawGuildData()
         {
             await Context.Channel.SendFileAsync(
-                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Message.GetGuild().Id}.json",
+                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json",
                 embed: MessageEmbedPresets.Verbose("Successfully uploaded a `.json` file containing all the saved data for this server.", VerboseMessageSeverity.Info)
             );
         }

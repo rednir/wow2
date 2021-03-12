@@ -97,7 +97,7 @@ namespace wow2.Modules
         [Summary("Adds value(s) to a keyword, creating a new keyword if it doesn't exist.")]
         public async Task AddAsync(string keyword = null, params string[] values)
         {
-            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Message.GetGuild()).KeywordsDictionary;
+            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
 
             if (keyword == null)
             {
@@ -128,7 +128,7 @@ namespace wow2.Modules
             await ReplyAsync(
                 embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total value.", VerboseMessageSeverity.Info)
             );
-            await DataManager.SaveGuildDataToFileAsync(Context.Message.GetGuild().Id);
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("remove")]
@@ -136,7 +136,7 @@ namespace wow2.Modules
         [Summary("Removes value(s) from a keyword, or if none are specified, removes all values and the keyword.")]
         public async Task RemoveAsync(string keyword = null, params string[] values)
         {
-            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Message.GetGuild()).KeywordsDictionary;
+            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
 
             if (keyword == null)
             {
@@ -196,7 +196,7 @@ namespace wow2.Modules
                     );
                 }
             }
-            await DataManager.SaveGuildDataToFileAsync(Context.Message.GetGuild().Id);
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("list")]
@@ -204,7 +204,7 @@ namespace wow2.Modules
         [Summary("Shows a list of all keywords.")]
         public async Task ListAsync()
         {
-            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Message.GetGuild()).KeywordsDictionary;
+            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
 
             // TODO: dont show value previews if too many keywords.
@@ -230,9 +230,9 @@ namespace wow2.Modules
         [Summary("Toggles whether bot responses to keywords should have a reaction, allowing a user to delete the message.")]
         public async Task ToggleReactToDeleteAsync()
         {
-            DataManager.GetKeywordsConfigForGuild(Context.Message.GetGuild()).KeywordsReactToDelete = !DataManager.GetKeywordsConfigForGuild(Context.Message.GetGuild()).KeywordsReactToDelete;
+            DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete = !DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete;
             await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"React to delete is now `{(DataManager.GetKeywordsConfigForGuild(Context.Message.GetGuild()).KeywordsReactToDelete ? "on" : "off")}` for keyword responses.", VerboseMessageSeverity.Info)
+                embed: MessageEmbedPresets.Verbose($"React to delete is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete ? "on" : "off")}` for keyword responses.", VerboseMessageSeverity.Info)
             );
         }
     }

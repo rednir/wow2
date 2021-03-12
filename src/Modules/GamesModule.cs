@@ -19,7 +19,7 @@ namespace wow2.Modules
         {
             if (recievedMessage.Author.IsBot) return;
 
-            var config = DataManager.GetGamesConfigForGuild(Context.Message.GetGuild());
+            var config = DataManager.GetGamesConfigForGuild(Context.Guild);
             float userNumber;
 
             try { userNumber = Convert.ToSingle(recievedMessage.Content); }
@@ -57,7 +57,7 @@ namespace wow2.Modules
         [Alias("count")]
         public async Task CountingAsync(float increment = 1)
         {
-            var config = DataManager.GetGamesConfigForGuild(Context.Message.GetGuild());
+            var config = DataManager.GetGamesConfigForGuild(Context.Guild);
 
             config.CountingChannel = Context.Channel;
             config.CountingIncrement = increment;
@@ -75,7 +75,7 @@ namespace wow2.Modules
         {
             Program.Client.MessageReceived -= MessageRecievedForCountingAsync;
 
-            var config = DataManager.GetGamesConfigForGuild(Context.Message.GetGuild());
+            var config = DataManager.GetGamesConfigForGuild(Context.Guild);
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             var dictionaryOfParticipants = new Dictionary<SocketUser, int>();
 

@@ -102,5 +102,8 @@ namespace wow2
 
         public static GamesModuleConfig GetGamesConfigForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Games;
+
+        public static VoiceModuleConfig GetVoiceConfigForGuild(SocketGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Voice;
     }
 }
