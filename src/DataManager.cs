@@ -23,46 +23,54 @@ namespace wow2
             await LoadGuildDataFromFileAsync();
         }
 
-        public static async Task LoadGuildDataFromFileAsync(ulong specifiedGuildId = 0)
+        /// <summary>Load all guild data from all files.</summary>
+        public static async Task LoadGuildDataFromFileAsync()
         {
-            if (specifiedGuildId == 0)
-            {
-                // Load data for all guilds
-                foreach (FileInfo fileInfo in AppDataDirInfo.EnumerateFiles())
-                {
-                    try
-                    {
-                        // Remove the ".json" at the end of the filename and convert to ulong.
-                        ulong guildId = Convert.ToUInt64(fileInfo.Name.Substring(0, fileInfo.Name.Length - 5));
-
-                        string guildDataJson = await File.ReadAllTextAsync(fileInfo.FullName);
-                        DictionaryOfGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
-
-                        Console.WriteLine($"Loaded guild data for {guildId} (mass load)");
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine($"Failed to load from file {fileInfo.Name} (mass load)");
-                    }
-                }
-            }
-            else
+            foreach (FileInfo fileInfo in AppDataDirInfo.EnumerateFiles())
             {
                 try
                 {
-                    // Load data for one guild
-                    string guildDataJson = await File.ReadAllTextAsync($"{AppDataDirPath}/GuildData/{specifiedGuildId}.json");
-                    DictionaryOfGuildData[specifiedGuildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
+                    // Remove the ".json" at the end of the filename and convert to ulong.
+                    ulong guildId = Convert.ToUInt64(fileInfo.Name.Substring(0, fileInfo.Name.Length - 5));
 
-                    Console.WriteLine($"Loaded guild data for {specifiedGuildId} (specific load)");
+                    string guildDataJson = await File.ReadAllTextAsync(fileInfo.FullName);
+                    DictionaryOfGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
+
+                    Console.WriteLine($"Loaded guild data for {guildId} (mass load)");
                 }
-                catch
+                catch (Exception)
                 {
-                    Console.WriteLine($"Failed to load for guild {specifiedGuildId} (specific load)");
+                    Console.WriteLine($"Failed to load from file {fileInfo.Name} (mass load)");
                 }
             }
         }
 
+        /// <summary>Load guild data from the corresponding file.</summary>
+        public static async Task LoadGuildDataFromFileAsync(ulong specifiedGuildId)
+        {
+            try
+            {
+                string guildDataJson = await File.ReadAllTextAsync($"{AppDataDirPath}/GuildData/{specifiedGuildId}.json");
+                DictionaryOfGuildData[specifiedGuildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
+
+                Console.WriteLine($"Loaded guild data for {specifiedGuildId} (specific load)");
+            }
+            catch
+            {
+                Console.WriteLine($"Failed to load for guild {specifiedGuildId} (specific load)");
+            }
+        }
+
+        /// <summary>Write all guild data to corresponding files.</summary>
+        public static async Task SaveGuildDataToFileAsync()
+        {
+            foreach (ulong id in DictionaryOfGuildData.Keys)
+            {
+                await File.WriteAllTextAsync($"{AppDataDirPath}/GuildData/{id}.json", JsonSerializer.Serialize(DictionaryOfGuildData[id]));
+            }
+        }
+
+        /// <summary>Write guild data to file for a specific guild.</summary>
         public static async Task SaveGuildDataToFileAsync(ulong guildId)
         {
             GuildData guildData = new GuildData();
@@ -74,7 +82,6 @@ namespace wow2
                     break;
                 }
             }
-
             await File.WriteAllTextAsync($"{AppDataDirPath}/GuildData/{guildId}.json", JsonSerializer.Serialize(guildData));
         }
 
