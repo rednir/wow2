@@ -13,23 +13,23 @@ namespace wow2
         /// <summary>Builds and returns an embed for letting the user know the result of an action</summary>
         public static Embed Verbose(string description, VerboseMessageSeverity severity = VerboseMessageSeverity.Info)
         {
-            var embedBuilder = new EmbedBuilder()
-            {
-                Description = description
-            };
+            var embedBuilder = new EmbedBuilder();
 
             switch (severity)
             {
                 case VerboseMessageSeverity.Info:
+                    embedBuilder.Description = $"{new Emoji("<:wowinfo:804732580423008297>")} {description}";
                     embedBuilder.Color = Color.Blue;
                     break;
 
                 case VerboseMessageSeverity.Warning:
+                    embedBuilder.Description = $"{new Emoji("<:wowwarning:804732632751407174>")} {description}";
                     embedBuilder.Color = Color.LightOrange;
                     break;
 
                 case VerboseMessageSeverity.Error:
-                    embedBuilder.Title = "Something bad happened...";
+                    embedBuilder.Title = $"{new Emoji("<:wowerror:804732656721199144>")} Something bad happened...";
+                    embedBuilder.Description = description;
                     embedBuilder.Color = Color.Red;
                     break;
             }
