@@ -2,8 +2,10 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 using Discord.Commands;
+using Discord.Audio;
 
 namespace wow2.Modules.Voice
 {
@@ -47,7 +49,7 @@ namespace wow2.Modules.Voice
             );
         }
 
-        [Command("add")]
+        [Command("add", RunMode = RunMode.Async)]
         [Alias("play")]
         public async Task AddAsync(params string[] splitSongRequest)
         {
@@ -87,6 +89,44 @@ namespace wow2.Modules.Voice
             );
 
             // TODO: if no song is playing and bot is in vc, play song.
+        }
+
+        // TODO: return if joining a vc that the bot is already in.
+        [Command("join", RunMode = RunMode.Async)]
+        public async Task JoinAsync()
+        {
+            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            IVoiceChannel voiceChannel = ((IGuildUser)Context.User).VoiceChannel ?? null;
+            
+            try
+            {
+                config.AudioClient = await voiceChannel.ConnectAsync(true);
+            }
+            catch (NullReferenceException)
+            {
+                await ReplyAsync(
+                    embed: MessageEmbedPresets.Verbose($"Join a voice channel first.", VerboseMessageSeverity.Warning)
+                );
+            }
+            catch (Exception ex) when (ex is WebSocketClosedException || ex is TaskCanceledException)
+            {
+            }
+        }
+
+        [Command("leave")]
+        public async Task LeaveAsync()
+        {
+            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+
+            if (config.AudioClient == null || config.AudioClient?.ConnectionState == ConnectionState.Disconnected)
+            {
+                await ReplyAsync(
+                    embed: MessageEmbedPresets.Verbose($"I'm not currently in a voice channel.", VerboseMessageSeverity.Warning)
+                );
+                return;
+            }
+
+            await config.AudioClient.StopAsync();
         }
     }
 }
