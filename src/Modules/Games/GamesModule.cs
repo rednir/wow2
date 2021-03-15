@@ -97,7 +97,7 @@ namespace wow2.Modules.Games
                 };
                 listOfFieldBuilders.Add(fieldBuilderForParticipant);
             }
-            
+
             string commentOnFinalNumber;
             if (config.CountingNextNumber < 3 * config.CountingIncrement) commentOnFinalNumber = "Pathetic.";
             else if (config.CountingNextNumber < 25 * config.CountingIncrement) commentOnFinalNumber = "There's plenty room for improvement.";

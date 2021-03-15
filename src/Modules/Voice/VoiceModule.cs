@@ -89,7 +89,7 @@ namespace wow2.Modules.Voice
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
             IVoiceChannel voiceChannel = ((IGuildUser)Context.User).VoiceChannel ?? null;
-            
+
             try
             {
                 config.AudioClient = await voiceChannel.ConnectAsync(true);

@@ -42,7 +42,6 @@ namespace wow2.Modules.Voice
                 throw new ArgumentException(standardError);
 
             var metadata = JsonSerializer.Deserialize<YoutubeVideoMetadata>(standardOutput);
-
             return metadata;
         }
     }
