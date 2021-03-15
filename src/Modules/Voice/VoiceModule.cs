@@ -96,9 +96,7 @@ namespace wow2.Modules.Voice
             }
             catch (NullReferenceException)
             {
-                await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"Join a voice channel first.", VerboseMessageSeverity.Warning)
-                );
+                throw new CommandReturnException("Join a voice channel first.", Context);
             }
             catch (Exception ex) when (ex is WebSocketClosedException || ex is TaskCanceledException)
             {
