@@ -67,7 +67,7 @@ namespace wow2.Modules.Games
             Program.Client.MessageReceived += MessageRecievedForCountingAsync;
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Counting has started.\nTo start off, type the number `{config.CountingNextNumber}` in this channel.", VerboseMessageSeverity.Info)
+                embed: MessageEmbedPresets.Verbose($"Counting has started.\nTo start off, type the number `{config.CountingNextNumber}` in this channel.")
             );
         }
 

@@ -115,7 +115,7 @@ namespace wow2.Modules.Keywords
             }
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total value.", VerboseMessageSeverity.Info)
+                embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total value.")
             );
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -138,7 +138,7 @@ namespace wow2.Modules.Keywords
                 // No values have been specified, so assume the user wants to remove all values.
                 keywordsDictionary.Remove(keyword);
                 await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"Sucessfully removed keyword `{keyword}`.", VerboseMessageSeverity.Info)
+                    embed: MessageEmbedPresets.Verbose($"Sucessfully removed keyword `{keyword}`.")
                 );
             }
             else
@@ -159,7 +159,7 @@ namespace wow2.Modules.Keywords
                 if (unsuccessfulRemoves.Count == 0)
                 {
                     await ReplyAsync(
-                        embed: MessageEmbedPresets.Verbose($"Sucessfully removed `{values.Length}` value(s) from {keyword}.", VerboseMessageSeverity.Info)
+                        embed: MessageEmbedPresets.Verbose($"Sucessfully removed `{values.Length}` value(s) from {keyword}.")
                     );
                 }
                 else
@@ -213,7 +213,7 @@ namespace wow2.Modules.Keywords
         {
             DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete = !DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete;
             await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"React to delete is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete ? "on" : "off")}` for keyword responses.", VerboseMessageSeverity.Info)
+                embed: MessageEmbedPresets.Verbose($"React to delete is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete ? "on" : "off")}` for keyword responses.")
             );
         }
     }

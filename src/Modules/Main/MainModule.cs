@@ -24,7 +24,7 @@ namespace wow2.Modules.Main
         {
             await Context.Channel.SendFileAsync(
                 filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json",
-                embed: MessageEmbedPresets.Verbose("Successfully uploaded a `.json` file containing all the saved data for this server.", VerboseMessageSeverity.Info)
+                embed: MessageEmbedPresets.Verbose("Successfully uploaded a `.json` file containing all the saved data for this server.")
             );
         }
 

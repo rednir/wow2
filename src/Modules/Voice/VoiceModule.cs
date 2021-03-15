@@ -45,7 +45,7 @@ namespace wow2.Modules.Voice
         {
             DataManager.GetVoiceConfigForGuild(Context.Guild).SongRequests.Clear();
             await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"The song request queue has been cleared.", VerboseMessageSeverity.Info)
+                embed: MessageEmbedPresets.Verbose($"The song request queue has been cleared.")
             );
         }
 
@@ -77,7 +77,7 @@ namespace wow2.Modules.Voice
             });
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}", VerboseMessageSeverity.Info)
+                embed: MessageEmbedPresets.Verbose($"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
             );
 
             // TODO: if no song is playing and bot is in vc, play song.
