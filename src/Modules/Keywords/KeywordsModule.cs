@@ -98,19 +98,10 @@ namespace wow2.Modules.Keywords
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
 
             if (keyword == null)
-            {
-                await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"In order to add a keyword, you must specify it in the command.", VerboseMessageSeverity.Warning)
-                );
-                return;
-            }
+                throw new CommandReturnException("In order to add a keyword, you must specify it in the command.", Context);
+
             if (values.Length == 0)
-            {
-                await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"No values for the keyword were specified. Having a keyword without values is useless.", VerboseMessageSeverity.Warning)
-                );
-                return;
-            }
+                throw new CommandReturnException("No values for the keyword were specified. Having a keyword without values is useless.", Context);
 
             // Create new dictionary key if necessary.
             if (!keywordsDictionary.ContainsKey(keyword))
@@ -137,20 +128,10 @@ namespace wow2.Modules.Keywords
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
 
             if (keyword == null)
-            {
-                await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"In order to remove a keyword, you must specify it in the command.", VerboseMessageSeverity.Warning)
-                );
-                return;
-            }
+                throw new CommandReturnException("In order to remove a keyword, you must specify it in the command.", Context);
 
             if (!keywordsDictionary.ContainsKey(keyword))
-            {
-                await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"No such keyword `{keyword}` exists. Did you make a typo?", VerboseMessageSeverity.Warning)
-                );
-                return;
-            }
+                throw new CommandReturnException($"No such keyword `{keyword}` exists. Did you make a typo?", Context);
 
             if (values.Length == 0)
             {
@@ -221,7 +202,9 @@ namespace wow2.Modules.Keywords
                 listOfFieldBuilders.Add(fieldBuilderForKeyword);
             }
 
-            await ReplyAsync(embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Keywords", $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*"));
+            await ReplyAsync(
+                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Keywords", $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*")
+            );
         }
 
         [Command("toggle-react-to-delete")]

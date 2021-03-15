@@ -18,7 +18,7 @@ namespace wow2
         {
             BotCommandService = new CommandService();
             BotCommandService.Log += LogAsync;
-            await BotCommandService.AddModulesAsync(assembly: Assembly.GetEntryAssembly(), services: null);
+            await BotCommandService.AddModulesAsync(Assembly.GetEntryAssembly(), null);
         }
 
         public static async Task ReadyAsync()
@@ -33,10 +33,12 @@ namespace wow2
                 Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
                 Console.WriteLine($" ------ START OF EXCEPTION ------\n{commandException}\n------ END OF EXCEPTION ------");
 
-                // Also notify the guild that this error happened in.
-                await commandException.Context.Channel.SendMessageAsync(
-                    embed: MessageEmbedPresets.Verbose($"An unhandled exception was thrown when executing command `{commandException.Command.Name}` and was automatically reported.", VerboseMessageSeverity.Error)
-                );
+                if (commandException.InnerException is not CommandReturnException)
+                {
+                    await commandException.Context.Channel.SendMessageAsync(
+                        embed: MessageEmbedPresets.Verbose($"An unhandled exception was thrown and was automatically reported.", VerboseMessageSeverity.Error)
+                    );
+                }
             }
             else if (logMessage.Exception != null)
             {
@@ -100,32 +102,37 @@ namespace wow2
                 services: null
             );
 
-            switch (result.Error)
+            if (result.Error.HasValue)
+                await SendErrorMessageToChannel(result.Error, socketMessage.Channel);
+        }
+
+        private static async Task SendErrorMessageToChannel(CommandError? commandError, IMessageChannel channel)
+        {
+            Embed embedToSend;
+            switch (commandError)
             {
                 case CommandError.BadArgCount:
-                    await socketMessage.Channel.SendMessageAsync(
-                        embed: MessageEmbedPresets.Verbose("Invalid usage of command.\nYou typed either too little or too many parameters.", VerboseMessageSeverity.Warning)
-                    );
+                    embedToSend = MessageEmbedPresets.Verbose("Invalid usage of command.\nYou typed either too little or too many parameters.", VerboseMessageSeverity.Warning);
                     break;
 
                 case CommandError.ParseFailed:
-                    await socketMessage.Channel.SendMessageAsync(
-                        embed: MessageEmbedPresets.Verbose("Invalid usage of command.\nOne or more parameters were incorrect.", VerboseMessageSeverity.Warning)
-                    );
+                    embedToSend = MessageEmbedPresets.Verbose("Invalid usage of command.\nOne or more parameters were incorrect.", VerboseMessageSeverity.Warning);
                     break;
 
                 case CommandError.UnknownCommand:
-                    await socketMessage.Channel.SendMessageAsync(
-                        embed: MessageEmbedPresets.Verbose("No such command.\nDid you make a typo?", VerboseMessageSeverity.Warning)
-                    );
+                    embedToSend = MessageEmbedPresets.Verbose("No such command.\nDid you make a typo?", VerboseMessageSeverity.Warning);
                     break;
 
                 case CommandError.UnmetPrecondition:
-                    await socketMessage.Channel.SendMessageAsync(
-                        embed: MessageEmbedPresets.Verbose("There was an unmet precondition.\nYou may lack the correct permissions to use this command.", VerboseMessageSeverity.Warning)
-                    );
+                    embedToSend = MessageEmbedPresets.Verbose("There was an unmet precondition.\nYou may lack the correct permissions to use this command.", VerboseMessageSeverity.Warning);
                     break;
+
+                default:
+                    return;
             }
+            await channel.SendMessageAsync(embed: embedToSend);
         }
+
+
     }
 }

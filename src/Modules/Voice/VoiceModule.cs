@@ -57,12 +57,7 @@ namespace wow2.Modules.Voice
             string songRequest = string.Join(" ", splitSongRequest);
 
             if (((SocketGuildUser)Context.User).VoiceChannel == null)
-            {
-                await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"Join a voice channel first before adding song requests.", VerboseMessageSeverity.Warning)
-                );
-                return;
-            }
+                throw new CommandReturnException("Join a voice channel first before adding song requests.", Context);
 
             YoutubeVideoMetadata metadata;
             try
@@ -71,10 +66,7 @@ namespace wow2.Modules.Voice
             }
             catch (ArgumentException ex)
             {
-                await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"The following error was thrown when trying to downloading video metadata:\n```{ex.Message}```", VerboseMessageSeverity.Warning)
-                );
-                return;
+                throw new CommandReturnException($"The following error was thrown when trying to downloading video metadata:\n```{ex.Message}```", Context);
             }
 
             config.SongRequests.Enqueue(new UserSongRequest()
@@ -119,12 +111,7 @@ namespace wow2.Modules.Voice
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
             if (config.AudioClient == null || config.AudioClient?.ConnectionState == ConnectionState.Disconnected)
-            {
-                await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"I'm not currently in a voice channel.", VerboseMessageSeverity.Warning)
-                );
-                return;
-            }
+                throw new CommandReturnException("I'm not currently in a voice channel.", Context);
 
             await config.AudioClient.StopAsync();
         }
