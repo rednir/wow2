@@ -93,29 +93,29 @@ namespace wow2.Modules.Keywords
 
         [Command("add")]
         [Summary("Adds value(s) to a keyword, creating a new keyword if it doesn't exist.")]
-        public async Task AddAsync(string keyword = null, params string[] values)
+        public async Task AddAsync(string keyword = null, params string[] valueSplit)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
 
             if (keyword == null)
-                throw new CommandReturnException("In order to add a keyword, you must specify it in the command.", Context);
+                throw new CommandReturnException("You forgot to type the keyword you want to add.", Context);
 
-            if (values.Length == 0)
-                throw new CommandReturnException("No values for the keyword were specified. Having a keyword without values is useless.", Context);
+            if (valueSplit.Length == 0)
+                throw new CommandReturnException("No value to add to the keyword was specified.", Context);
+
+            string value = string.Join(" ", valueSplit);
 
             // Create new dictionary key if necessary.
             if (!keywordsDictionary.ContainsKey(keyword))
                 keywordsDictionary.Add(keyword, new List<KeywordValue>());
 
-            // Add the values to the keyword.
-            foreach (string value in values)
-            {
-                if (keywordsDictionary[keyword].FindIndex(x => x.Content == value) == -1)
-                    keywordsDictionary[keyword].Add(new KeywordValue() { Content = value });
-            }
+            if (keywordsDictionary[keyword].FindIndex(x => x.Content == value) != -1)
+                throw new CommandReturnException("The value already exists in the keyword.", Context);
+
+            keywordsDictionary[keyword].Add(new KeywordValue() { Content = value });
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total value.")
+                embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.")
             );
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -123,7 +123,7 @@ namespace wow2.Modules.Keywords
         [Command("remove")]
         [Alias("delete")]
         [Summary("Removes value(s) from a keyword, or if none are specified, removes all values and the keyword.")]
-        public async Task RemoveAsync(string keyword = null, params string[] values)
+        public async Task RemoveAsync(string keyword = null, params string[] valueSplit)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
 
@@ -133,7 +133,7 @@ namespace wow2.Modules.Keywords
             if (!keywordsDictionary.ContainsKey(keyword))
                 throw new CommandReturnException($"No such keyword `{keyword}` exists. Did you make a typo?", Context);
 
-            if (values.Length == 0)
+            if (valueSplit.Length == 0)
             {
                 // No values have been specified, so assume the user wants to remove all values.
                 keywordsDictionary.Remove(keyword);
@@ -143,37 +143,21 @@ namespace wow2.Modules.Keywords
             }
             else
             {
+                string value = string.Join(" ", valueSplit);
+
                 // Iterate through and remove the values from the guild's data.
                 List<string> unsuccessfulRemoves = new List<string>();
-                foreach (string value in values)
-                {
-                    if (keywordsDictionary[keyword].RemoveAll(x => x.Content == value) == 0)
-                        unsuccessfulRemoves.Add(value);
-                }
-                if (keywordsDictionary[keyword].Count == 0)
-                {
-                    // Discard keyword if it has no values.
-                    keywordsDictionary.Remove(keyword);
-                }
+                if (keywordsDictionary[keyword].RemoveAll(x => x.Content == value) == 0)
+                    unsuccessfulRemoves.Add(value);
 
-                if (unsuccessfulRemoves.Count == 0)
-                {
-                    await ReplyAsync(
-                        embed: MessageEmbedPresets.Verbose($"Sucessfully removed `{values.Length}` value(s) from {keyword}.")
-                    );
-                }
-                else
-                {
-                    // Make a string of all unsuccessful removes.
-                    var stringBuilderForUnsuccessfulRemoves = new StringBuilder();
-                    foreach (string value in unsuccessfulRemoves)
-                    {
-                        stringBuilderForUnsuccessfulRemoves.Append($"`{value}`\n");
-                    }
-                    await ReplyAsync(
-                        embed: MessageEmbedPresets.Verbose($"The following values could not be removed, probably because they don't exist.\n{stringBuilderForUnsuccessfulRemoves.ToString()}", VerboseMessageSeverity.Warning)
-                    );
-                }
+                // Discard keyword if it has no values.
+                if (keywordsDictionary[keyword].Count == 0)
+                    keywordsDictionary.Remove(keyword);
+
+                await ReplyAsync(
+                    embed: MessageEmbedPresets.Verbose($"Sucessfully removed `{value}` from `{keyword}`.")
+                );
+
             }
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
