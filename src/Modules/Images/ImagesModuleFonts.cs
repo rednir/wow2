@@ -2,6 +2,7 @@ using SixLabors.Fonts;
 
 namespace wow2.Modules.Images
 {
+    // Rethink this
     public static class ImagesModuleFonts
     {
         private static FontCollection FontCollection = new FontCollection();
