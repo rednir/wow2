@@ -44,6 +44,9 @@ namespace ExtentionMethods
                 }
             }
 
+            // Remove unnecessary space after final word.
+            stringBuilder.Remove(stringBuilder.Length - 1, 1);
+
             return stringBuilder.ToString();
         }
     }
