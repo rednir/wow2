@@ -37,7 +37,7 @@ namespace wow2.Modules.Images
 
             using (Image image = Image.Load(templateToUsePath))
             {
-                image.Mutate(x => x.DrawText(quoteTextOptions, $"\"{quote.Wrap(50)}\"\n\n\t - {author}", ImagesModuleFonts.QuoteTextFont, Color.LightGrey, new PointF(350, 115)));
+                image.Mutate(x => x.DrawText(quoteTextOptions, $"\"{quote.Wrap(40)}\"\n\n\t - {author}", ImagesModuleFonts.QuoteTextFont, Color.LightGrey, new PointF(350, 115)));
 
                 await image.SaveAsJpegAsync(QuoteResultPath);
                 await Context.Channel.SendFileAsync(QuoteResultPath);
