@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using System.Text;
 using Discord.WebSocket;
 
 namespace ExtentionMethods
@@ -23,6 +24,27 @@ namespace ExtentionMethods
                 string url = matches[0].Value.ToString();
                 return (stringContainingUrl.Substring(stringContainingUrl.IndexOf("http") + url.Length), url);
             }
+        }
+
+        /// <returns>The string with newlines placed.</returns>
+        public static string Wrap(this string originalString, int maxCharsPerLine)
+        {
+            string[] splitString = originalString.Split(" ");
+            var stringBuilder = new StringBuilder();
+
+            int charsThisLine = 0;
+            foreach (string word in splitString)
+            {
+                stringBuilder.Append(word + " ");
+                charsThisLine += word.Length + 1;
+                if (charsThisLine > maxCharsPerLine)
+                {
+                    stringBuilder.AppendLine();
+                    charsThisLine = 0;
+                }
+            }
+
+            return stringBuilder.ToString();
         }
     }
 }
