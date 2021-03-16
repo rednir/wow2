@@ -5,6 +5,7 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using wow2.Modules.Keywords;
+using wow2.Modules.Games;
 using ExtentionMethods;
 
 namespace wow2
@@ -78,6 +79,7 @@ namespace wow2
             }
 
             await KeywordsModule.CheckMessageForKeywordAsync(recievedMessage);
+            await GamesModule.MessageRecievedForCountingAsync(recievedMessage);
         }
 
         public static async Task CommandRecievedAsync(SocketMessage socketMessage)
