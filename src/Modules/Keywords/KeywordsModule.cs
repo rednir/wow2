@@ -155,7 +155,6 @@ namespace wow2.Modules.Keywords
                 await ReplyAsync(
                     embed: MessageEmbedPresets.Verbose($"Sucessfully removed `{value}` from `{keyword}`.")
                 );
-
             }
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
