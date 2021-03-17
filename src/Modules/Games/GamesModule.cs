@@ -17,18 +17,18 @@ namespace wow2.Modules.Games
     {
         public static async Task MessageRecievedForCountingAsync(SocketMessage recievedMessage)
         {
-            var config = DataManager.GetGamesConfigForGuild(recievedMessage.GetGuild());
+            var config = DataManager.GetGamesConfigForGuild(recievedMessage.GetGuild()).Counting;
             float userNumber;
 
-            if (recievedMessage.Author.IsBot || config.CountingNextNumber == null) return;
+            if (recievedMessage.Author.IsBot || config.NextNumber == null || config.Channel != recievedMessage.Channel) return;
 
             try { userNumber = Convert.ToSingle(recievedMessage.Content); }
             catch { return; }
 
             // If this is the first counting message, there is no need to check if a user counts twice in a row.
-            if (config.CountingListOfMessages.Count != 0)
+            if (config.ListOfMessages.Count != 0)
             {
-                if (recievedMessage.Author == config.CountingListOfMessages.Last().Author)
+                if (recievedMessage.Author == config.ListOfMessages.Last().Author)
                 {
                     await recievedMessage.Channel.SendMessageAsync(
                         embed: MessageEmbedPresets.Verbose("Counting twice in a row is no fun.", VerboseMessageSeverity.Warning)
@@ -37,17 +37,17 @@ namespace wow2.Modules.Games
                 }
             }
 
-            config.CountingListOfMessages.Add(recievedMessage);
-            if (userNumber == config.CountingNextNumber)
+            config.ListOfMessages.Add(recievedMessage);
+            if (userNumber == config.NextNumber)
             {
-                config.CountingNextNumber += config.CountingIncrement;
+                config.NextNumber += config.Increment;
                 await recievedMessage.AddReactionAsync(new Emoji("✅"));
             }
             else
             {
                 await recievedMessage.AddReactionAsync(new Emoji("❎"));
                 await recievedMessage.Channel.SendMessageAsync(
-                    embed: MessageEmbedPresets.Verbose($"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.CountingNextNumber}`")
+                    embed: MessageEmbedPresets.Verbose($"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`")
                 );
                 await EndCounting(recievedMessage);
             }
@@ -57,26 +57,26 @@ namespace wow2.Modules.Games
         [Alias("count")]
         public async Task CountingAsync(float increment = 1)
         {
-            var config = DataManager.GetGamesConfigForGuild(Context.Guild);
+            var config = DataManager.GetGamesConfigForGuild(Context.Guild).Counting;
 
-            config.CountingChannel = Context.Channel;
-            config.CountingIncrement = increment;
-            config.CountingNextNumber = increment;
-            config.CountingListOfMessages = new List<SocketMessage>();
+            config.Channel = Context.Channel;
+            config.Increment = increment;
+            config.NextNumber = increment;
+            config.ListOfMessages = new List<SocketMessage>();
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Counting has started.\nTo start off, type the number `{config.CountingNextNumber}` in this channel.")
+                embed: MessageEmbedPresets.Verbose($"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.")
             );
         }
 
         private static async Task EndCounting(SocketMessage finalMessage)
         {
-            var config = DataManager.GetGamesConfigForGuild(finalMessage.GetGuild());
+            var config = DataManager.GetGamesConfigForGuild(finalMessage.GetGuild()).Counting;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             var dictionaryOfParticipants = new Dictionary<SocketUser, int>();
 
             // Get the participants and how many messages they sent
-            foreach (SocketMessage message in config.CountingListOfMessages)
+            foreach (SocketMessage message in config.ListOfMessages)
             {
                 dictionaryOfParticipants.TryAdd(message.Author, 0);
                 dictionaryOfParticipants[message.Author]++;
@@ -95,16 +95,16 @@ namespace wow2.Modules.Games
             }
 
             string commentOnFinalNumber;
-            if (config.CountingNextNumber < 3 * config.CountingIncrement) commentOnFinalNumber = "Pathetic.";
-            else if (config.CountingNextNumber < 25 * config.CountingIncrement) commentOnFinalNumber = "There's plenty room for improvement.";
-            else if (config.CountingNextNumber < 75 * config.CountingIncrement) commentOnFinalNumber = "Not bad!";
+            if (config.NextNumber < 3 * config.Increment) commentOnFinalNumber = "Pathetic.";
+            else if (config.NextNumber < 25 * config.Increment) commentOnFinalNumber = "There's plenty room for improvement.";
+            else if (config.NextNumber < 75 * config.Increment) commentOnFinalNumber = "Not bad!";
             else commentOnFinalNumber = "Amazing!";
 
             await finalMessage.Channel.SendMessageAsync(
-                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Final Stats", $"*You counted up to {config.CountingNextNumber - config.CountingIncrement}. {commentOnFinalNumber}*")
+                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Final Stats", $"*You counted up to {config.NextNumber - config.Increment}. {commentOnFinalNumber}*")
             );
 
-            config.CountingNextNumber = null;
+            config.NextNumber = null;
         }
     }
 }
