@@ -40,9 +40,9 @@ namespace wow2
 
                     Console.WriteLine($"Loaded guild data for {guildId} (mass load)");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to load from file {fileInfo.Name} (mass load)");
+                    Console.WriteLine($"Failed to load from file {fileInfo.Name} due to: {ex.Message} (mass load)");
                 }
             }
         }
@@ -57,9 +57,9 @@ namespace wow2
 
                 Console.WriteLine($"Loaded guild data for {specifiedGuildId} (specific load)");
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine($"Failed to load for guild {specifiedGuildId} (specific load)");
+                Console.WriteLine($"Failed to load for guild {specifiedGuildId} due to: {ex.Message} (specific load)");
             }
         }
 
