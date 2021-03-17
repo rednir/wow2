@@ -35,12 +35,15 @@ namespace ExtentionMethods
             int charsThisLine = 0;
             foreach (string word in splitString)
             {
-                stringBuilder.Append(word + " ");
                 charsThisLine += word.Length + 1;
                 if (charsThisLine > maxCharsPerLine)
                 {
-                    stringBuilder.AppendLine();
-                    charsThisLine = 0;
+                    stringBuilder.Append("\n" + word + " ");
+                    charsThisLine = word.Length;
+                }
+                else
+                {
+                    stringBuilder.Append(word + " ");
                 }
             }
 

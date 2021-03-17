@@ -22,14 +22,6 @@ namespace wow2.Modules.Images
         [Alias("quotes")]
         public async Task QuoteAsync(string quote, string author = null)
         {
-            var quoteTextOptions = new TextGraphicsOptions()
-            {
-                TextOptions = new TextOptions()
-                {
-                    TabWidth = 45
-                }
-            };
-
             var listOfTemplatePaths = Directory.EnumerateFiles("res/quotetemplates");
             string templateToUsePath = listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
             if (author == null)
@@ -37,7 +29,7 @@ namespace wow2.Modules.Images
 
             using (Image image = Image.Load(templateToUsePath))
             {
-                image.Mutate(x => x.DrawText(quoteTextOptions, $"\"{quote.Wrap(40)}\"\n\n\t - {author}", ImagesModuleFonts.QuoteTextFont, Color.LightGrey, new PointF(350, 115)));
+                image.Mutate(x => x.DrawText($"\"{quote.Wrap(40)}\"\n\n - {author}", ImagesModuleFonts.QuoteTextFont, Color.LightGrey, new PointF(350, 115)));
 
                 await image.SaveAsJpegAsync(QuoteResultPath);
                 await Context.Channel.SendFileAsync(QuoteResultPath);
