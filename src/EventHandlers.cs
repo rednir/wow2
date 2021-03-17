@@ -121,19 +121,19 @@ namespace wow2
             switch (commandError)
             {
                 case CommandError.BadArgCount:
-                    embedToSend = MessageEmbedPresets.Verbose("Invalid usage of command.\n\nYou either typed the wrong number of parameters, or forgot to put a parameter in \"quotes\"", VerboseMessageSeverity.Warning);
+                    embedToSend = MessageEmbedPresets.Verbose("**Invalid usage of command.**\nYou either typed the wrong number of parameters, or forgot to put a parameter in \"quotes\"", VerboseMessageSeverity.Warning);
                     break;
 
                 case CommandError.ParseFailed:
-                    embedToSend = MessageEmbedPresets.Verbose("Parsing arguments failed.\n\nYou probably typed a parameter that was the incorrect type.", VerboseMessageSeverity.Warning);
+                    embedToSend = MessageEmbedPresets.Verbose("**Parsing arguments failed.**\nYou probably typed a parameter that was the incorrect type.", VerboseMessageSeverity.Warning);
                     break;
 
                 case CommandError.UnknownCommand:
-                    embedToSend = MessageEmbedPresets.Verbose("That command doesn't exist.", VerboseMessageSeverity.Warning);
+                    embedToSend = MessageEmbedPresets.Verbose("**That command doesn't exist.**", VerboseMessageSeverity.Warning);
                     break;
 
                 case CommandError.UnmetPrecondition:
-                    embedToSend = MessageEmbedPresets.Verbose("Unmet precondition.\n\nYou most likely don't have the correct permissions to use this command.", VerboseMessageSeverity.Warning);
+                    embedToSend = MessageEmbedPresets.Verbose("**Unmet precondition.**\nYou most likely don't have the correct permissions to use this command.", VerboseMessageSeverity.Warning);
                     break;
 
                 default:
