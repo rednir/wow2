@@ -51,7 +51,7 @@ namespace wow2.Modules.Voice
 
         [Command("add", RunMode = RunMode.Async)]
         [Alias("play")]
-        public async Task AddAsync(params string[] splitSongRequest)
+        public async Task AddAsync([Name("request")] params string[] splitSongRequest)
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
             string songRequest = string.Join(" ", splitSongRequest);

@@ -93,12 +93,9 @@ namespace wow2.Modules.Keywords
 
         [Command("add")]
         [Summary("Adds value(s) to a keyword, creating a new keyword if it doesn't exist.")]
-        public async Task AddAsync(string keyword = null, params string[] valueSplit)
+        public async Task AddAsync(string keyword, [Name("value")] params string[] valueSplit)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
-
-            if (keyword == null)
-                throw new CommandReturnException("You forgot to type the keyword you want to add.", Context);
 
             if (valueSplit.Length == 0)
                 throw new CommandReturnException("No value to add to the keyword was specified.", Context);
@@ -123,12 +120,9 @@ namespace wow2.Modules.Keywords
         [Command("remove")]
         [Alias("delete")]
         [Summary("Removes value(s) from a keyword, or if none are specified, removes all values and the keyword.")]
-        public async Task RemoveAsync(string keyword = null, params string[] valueSplit)
+        public async Task RemoveAsync(string keyword, [Name("value")] params string[] valueSplit)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
-
-            if (keyword == null)
-                throw new CommandReturnException("In order to remove a keyword, you must specify it in the command.", Context);
 
             if (!keywordsDictionary.ContainsKey(keyword))
                 throw new CommandReturnException($"No such keyword `{keyword}` exists. Did you make a typo?", Context);

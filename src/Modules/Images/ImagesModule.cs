@@ -20,7 +20,7 @@ namespace wow2.Modules.Images
 
         [Command("quote")]
         [Alias("quotes")]
-        public async Task QuoteAsync(string author, params string[] quoteSplit)
+        public async Task QuoteAsync(string author, [Name("quote")] params string[] quoteSplit)
         {
             string quote = string.Join(" ", quoteSplit);
 

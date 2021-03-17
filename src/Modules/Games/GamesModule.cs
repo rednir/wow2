@@ -12,7 +12,7 @@ namespace wow2.Modules.Games
     [Name("Games")]
     [Group("games")]
     [Alias("game")]
-    [Summary("Some games idk")]
+    [Summary("For having a bit of fun.")]
     public class GamesModule : ModuleBase<SocketCommandContext>
     {
         public static async Task MessageRecievedForCountingAsync(SocketMessage recievedMessage)
