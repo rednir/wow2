@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Discord.WebSocket;
 
 namespace wow2.Modules.Games
 {
     public class GamesModuleConfig
     {
+        [JsonIgnore]
         public CountingConfig Counting { get; set; } = new CountingConfig();
     }
 
