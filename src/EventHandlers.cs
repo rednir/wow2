@@ -141,7 +141,5 @@ namespace wow2
             }
             await channel.SendMessageAsync(embed: embedToSend);
         }
-
-
     }
 }
