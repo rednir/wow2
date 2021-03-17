@@ -20,10 +20,8 @@ namespace wow2.Modules.Images
 
         [Command("quote")]
         [Alias("quotes")]
-        public async Task QuoteAsync(string author, [Name("quote")] params string[] quoteSplit)
+        public async Task QuoteAsync(string quote, string author = null)
         {
-            string quote = string.Join(" ", quoteSplit);
-
             var quoteTextOptions = new TextGraphicsOptions()
             {
                 TextOptions = new TextOptions()
@@ -34,6 +32,8 @@ namespace wow2.Modules.Images
 
             var listOfTemplatePaths = Directory.EnumerateFiles("res/quotetemplates");
             string templateToUsePath = listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
+            if (author == null)
+                author = Path.GetFileNameWithoutExtension(templateToUsePath);
 
             using (Image image = Image.Load(templateToUsePath))
             {
