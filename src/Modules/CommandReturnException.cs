@@ -1,7 +1,7 @@
 using System;
 using Discord.Commands;
 
-namespace wow2
+namespace wow2.Modules
 {
     /// <summary>The exception that is thrown when a command returns with a warning message.</summary>
     public class CommandReturnException : Exception
