@@ -18,7 +18,11 @@ namespace wow2
 
         public static async Task InstallCommandsAsync()
         {
-            BotCommandService = new CommandService();
+            var config = new CommandServiceConfig()
+            {
+                LogLevel = LogSeverity.Verbose
+            };
+            BotCommandService = new CommandService(config);
             BotCommandService.Log += LogAsync;
             await BotCommandService.AddModulesAsync(Assembly.GetEntryAssembly(), null);
         }
@@ -32,15 +36,15 @@ namespace wow2
         {
             if (logMessage.Exception is CommandException commandException)
             {
+                if (commandException.InnerException is CommandReturnException)
+                    return;
+
                 Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
                 Console.WriteLine($" ------ START OF EXCEPTION ------\n{commandException}\n------ END OF EXCEPTION ------");
 
-                if (commandException.InnerException is not CommandReturnException)
-                {
-                    await commandException.Context.Channel.SendMessageAsync(
-                        embed: MessageEmbedPresets.Verbose($"An unhandled exception was thrown and was automatically reported.", VerboseMessageSeverity.Error)
-                    );
-                }
+                await commandException.Context.Channel.SendMessageAsync(
+                    embed: MessageEmbedPresets.Verbose($"An unhandled exception was thrown and was automatically reported.", VerboseMessageSeverity.Error)
+                );
             }
             else if (logMessage.Exception != null)
             {
