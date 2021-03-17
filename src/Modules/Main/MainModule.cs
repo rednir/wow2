@@ -57,7 +57,7 @@ namespace wow2.Modules.Main
                     foreach (ParameterInfo parameter in command.Parameters)
                     {
                         // Create a string of the command's parameters
-                        string optionalText = !parameter.IsOptional ? "optional:" : "";
+                        string optionalText = parameter.IsOptional ? "optional:" : "";
                         parametersInfo += $" [{optionalText}{parameter.Name.ToUpper()}]";
                     }
                     fieldBuilderForModule.Value += $"`{EventHandlers.CommandPrefix} {(module.Aliases.FirstOrDefault() == "" ? "" : $"{module.Aliases.First()} ")}{command.Name}{parametersInfo}`\n";
