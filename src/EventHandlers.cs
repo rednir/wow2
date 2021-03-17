@@ -87,6 +87,8 @@ namespace wow2
         {
             var socketUserMessage = (SocketUserMessage)socketMessage;
 
+            Console.WriteLine($"{socketMessage.Author} executed a command ({socketMessage.Content})");
+
             // The message is not a user message.
             if (socketMessage == null) return;
 
