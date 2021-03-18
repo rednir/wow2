@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord;
@@ -92,7 +93,7 @@ namespace wow2.Modules.Voice
 
             try
             {
-                config.AudioClient = await voiceChannel.ConnectAsync(true);
+                config.AudioClient = await voiceChannel.ConnectAsync();
             }
             catch (NullReferenceException)
             {
@@ -112,6 +113,32 @@ namespace wow2.Modules.Voice
                 throw new CommandReturnException("I'm not currently in a voice channel.", Context);
 
             await config.AudioClient.StopAsync();
+        }
+
+        [Command("p", RunMode = RunMode.Async)]
+        public async Task StreamAudioAsync(string url)
+        {
+            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+
+            using (var ffmpeg = CreateStream(url))
+            using (var output = ffmpeg.StandardOutput.BaseStream)
+            using (var discord = config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
+            {
+                try { await output.CopyToAsync(discord); }
+                finally { await discord.FlushAsync(); }
+            }
+        }
+
+        private Process CreateStream(string url)
+        {
+            return Process.Start(new ProcessStartInfo
+            {
+                // TODO: Requiring bash is not ideal
+                FileName = "bash",
+                Arguments = $"-c \"youtube-dl '{url}' -o - | ffmpeg -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1\"",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+            });
         }
     }
 }
