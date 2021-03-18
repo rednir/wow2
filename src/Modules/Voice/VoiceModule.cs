@@ -22,9 +22,6 @@ namespace wow2.Modules.Voice
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
-            //if (config.SongRequests.Count <= 1)
-            //    throw new CommandReturnException("There's nothing in the queue... how sad.", Context);
-
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             int i = 0;
             foreach (UserSongRequest songRequest in config.SongRequests)
@@ -41,6 +38,9 @@ namespace wow2.Modules.Voice
                 };
                 listOfFieldBuilders.Add(fieldBuilderForSongRequest);
             }
+
+            if (listOfFieldBuilders.Count == 0)
+                throw new CommandReturnException("There's nothing in the queue... how sad.", Context);
 
             await ReplyAsync(
                 embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Up Next")
@@ -143,8 +143,13 @@ namespace wow2.Modules.Voice
                     title: request.VideoMetadata.title,
                     url: request.VideoMetadata.webpage_url,
                     thumbnailUrl: request.VideoMetadata.thumbnails[1]?.url,
+
                     timeRequested: request.TimeRequested,
-                    requestedBy: request.RequestedBy
+                    requestedBy: request.RequestedBy,
+
+                    viewCount: request.VideoMetadata.view_count,
+                    likeCount: request.VideoMetadata.like_count,
+                    dislikeCount: request.VideoMetadata.dislike_count
                 )
             );
         }
