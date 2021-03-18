@@ -8,6 +8,7 @@ namespace wow2.Modules.Voice
 {
     public class VoiceModuleConfig
     {
+        [JsonIgnore]
         public Queue<UserSongRequest> SongRequests { get; set; } = new Queue<UserSongRequest>();
 
         [JsonIgnore]

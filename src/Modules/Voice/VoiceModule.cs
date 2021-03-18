@@ -29,13 +29,17 @@ namespace wow2.Modules.Voice
             int i = 0;
             foreach (UserSongRequest songRequest in config.SongRequests)
             {
+                i++;
+
+                // Don't show song request if its currently playing.
+                if (i == 1 && !CheckIfAudioClientDisconnected(config.AudioClient)) continue;
+
                 var fieldBuilderForSongRequest = new EmbedFieldBuilder()
                 {
-                    Name = $"{i + 1}) {songRequest.VideoMetadata.title}",
-                    Value = $"Requested by {songRequest.RequestedBy.Username} at `{songRequest.TimeRequested.ToString("HH:mm")}`"
+                    Name = $"{i}) {songRequest.VideoMetadata.title}",
+                    Value = $"Requested by `{songRequest.RequestedBy.Username}` at `{songRequest.TimeRequested.ToString("HH:mm")}`"
                 };
                 listOfFieldBuilders.Add(fieldBuilderForSongRequest);
-                i++;
             }
 
             await ReplyAsync(
@@ -84,7 +88,7 @@ namespace wow2.Modules.Voice
                 embed: MessageEmbedPresets.Verbose($"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
             );
 
-            if (!CheckIfAudioClientDisconnected(config))
+            if (!CheckIfAudioClientDisconnected(config.AudioClient))
                 _ = ContinueAsync();
         }
 
@@ -126,7 +130,7 @@ namespace wow2.Modules.Voice
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
-            if (config.SongRequests.Count == 0 || CheckIfAudioClientDisconnected(config))
+            if (config.SongRequests.Count == 0 || CheckIfAudioClientDisconnected(config.AudioClient))
                 throw new CommandReturnException("Nothing is playing right now.", Context);
 
             await DisplayNowPlayingRequestAsync(config.SongRequests.Peek());
@@ -188,7 +192,7 @@ namespace wow2.Modules.Voice
             });
         }
 
-        private bool CheckIfAudioClientDisconnected(VoiceModuleConfig config)
-            => config.AudioClient == null || config.AudioClient?.ConnectionState == ConnectionState.Disconnected;
+        private bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
+            => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;
     }
 }
