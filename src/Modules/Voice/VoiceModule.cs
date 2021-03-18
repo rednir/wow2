@@ -81,10 +81,11 @@ namespace wow2.Modules.Voice
                 embed: MessageEmbedPresets.Verbose($"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
             );
 
-            // TODO: if no song is playing and bot is in vc, play song.
+            if (!CheckIfAudioClientDisconnected(config))
+                _ = ContinueAsync();
         }
 
-        // TODO: return if joining a vc that the bot is already in.
+        // TODO: return if joining a vc that the audio client is already in.
         [Command("join", RunMode = RunMode.Async)]
         public async Task JoinAsync()
         {
@@ -94,6 +95,7 @@ namespace wow2.Modules.Voice
             try
             {
                 config.AudioClient = await voiceChannel.ConnectAsync();
+                _ = ContinueAsync();
             }
             catch (NullReferenceException)
             {
@@ -115,8 +117,7 @@ namespace wow2.Modules.Voice
             await config.AudioClient.StopAsync();
         }
 
-        [Command("p", RunMode = RunMode.Async)]
-        public async Task StreamAudioAsync(string url)
+        private async Task StreamAudioAsync(string url)
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
@@ -126,6 +127,25 @@ namespace wow2.Modules.Voice
             {
                 try { await output.CopyToAsync(discord); }
                 finally { await discord.FlushAsync(); }
+            }
+
+            _ = ContinueAsync();
+        }
+
+        private async Task ContinueAsync()
+        {
+            Console.WriteLine("cont");
+            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            UserSongRequest nextRequest;
+
+            if (config.SongRequests.TryDequeue(out nextRequest))
+            {
+                Console.WriteLine("bout play " + nextRequest.VideoMetadata.title);
+                await StreamAudioAsync(nextRequest.VideoMetadata.webpage_url);
+            }
+            else
+            {
+                // queue is empty so disconnect?
             }
         }
 
@@ -140,5 +160,8 @@ namespace wow2.Modules.Voice
                 RedirectStandardOutput = true,
             });
         }
+
+        private bool CheckIfAudioClientDisconnected(VoiceModuleConfig config)
+            => config.AudioClient == null || config.AudioClient?.ConnectionState == ConnectionState.Disconnected;
     }
 }
