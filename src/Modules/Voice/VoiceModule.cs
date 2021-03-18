@@ -88,7 +88,8 @@ namespace wow2.Modules.Voice
                 embed: MessageEmbedPresets.Verbose($"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
             );
 
-            if (!CheckIfAudioClientDisconnected(config.AudioClient))
+            // Play song if it is the first in queue.
+            if (!CheckIfAudioClientDisconnected(config.AudioClient) && config.SongRequests.Count == 1)
                 _ = ContinueAsync();
         }
 
@@ -166,8 +167,8 @@ namespace wow2.Modules.Voice
 
         private async Task PlayRequestAsync(UserSongRequest request)
         {
-            await DisplayNowPlayingRequestAsync(request);
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            await DisplayNowPlayingRequestAsync(request);
 
             using (var ffmpeg = CreateStreamFromYoutubeUrl(request.VideoMetadata.webpage_url))
             using (var output = ffmpeg.StandardOutput.BaseStream)
