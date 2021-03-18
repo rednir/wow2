@@ -12,7 +12,7 @@ namespace wow2.Modules.Images
 
         public static Font QuoteTextFont
         {
-            get { return LightFontFamily.CreateFont(16, FontStyle.Regular); }
+            get { return LightFontFamily.CreateFont(32, FontStyle.Regular); }
         }
     }
 }
