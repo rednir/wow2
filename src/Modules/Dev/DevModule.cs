@@ -4,7 +4,7 @@ using Discord.Commands;
 
 namespace wow2.Modules.Dev
 {
-    [Name("Dev (todo: shouldnt show in help text)")]
+    [Name("Developer")]
     [Group("dev")]
     [RequireOwner(Group = "Permission")]
     public class DevModule : ModuleBase<SocketCommandContext>

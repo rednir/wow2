@@ -42,6 +42,12 @@ namespace wow2.Modules.Main
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             foreach (ModuleInfo module in commandsSortedByModules.Keys)
             {
+                if (module.Preconditions.OfType<RequireOwnerAttribute>().Any())
+                    continue;
+
+                foreach (var condition in module.Preconditions)
+                    Console.WriteLine(condition);
+
                 var fieldBuilderForModule = new EmbedFieldBuilder()
                 {
                     Name = module.Name
