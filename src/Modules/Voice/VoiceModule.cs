@@ -92,6 +92,16 @@ namespace wow2.Modules.Voice
                 _ = ContinueAsync();
         }
 
+        [Command("skip")]
+        [Alias("next")]
+        public async Task Skip()
+        {
+            await ReplyAsync(
+                embed: MessageEmbedPresets.Verbose("Skipping to the next request.")
+            );
+            _ = ContinueAsync();
+        }
+
         // TODO: return if joining a vc that the audio client is already in.
         [Command("join", RunMode = RunMode.Async)]
         public async Task JoinAsync()
@@ -135,7 +145,7 @@ namespace wow2.Modules.Voice
 
             await DisplayNowPlayingRequestAsync(config.SongRequests.Peek());
         }
-        
+
         private async Task DisplayNowPlayingRequestAsync(UserSongRequest request)
         {
             await ReplyAsync(
@@ -181,7 +191,8 @@ namespace wow2.Modules.Voice
             }
             else
             {
-                // queue is empty so disconnect?
+                // Song request queue is empty
+                await config.AudioClient.StopAsync();
             }
         }
 
