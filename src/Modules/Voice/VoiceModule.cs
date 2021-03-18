@@ -22,6 +22,9 @@ namespace wow2.Modules.Voice
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
+            //if (config.SongRequests.Count <= 1)
+            //    throw new CommandReturnException("There's nothing in the queue... how sad.", Context);
+
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             int i = 0;
             foreach (UserSongRequest songRequest in config.SongRequests)
@@ -29,7 +32,7 @@ namespace wow2.Modules.Voice
                 var fieldBuilderForSongRequest = new EmbedFieldBuilder()
                 {
                     Name = $"{i + 1}) {songRequest.VideoMetadata.title}",
-                    Value = $"Requested by {songRequest.Author.Username} at `{songRequest.TimeRequested.ToString("HH:mm")}`"
+                    Value = $"Requested by {songRequest.RequestedBy.Username} at `{songRequest.TimeRequested.ToString("HH:mm")}`"
                 };
                 listOfFieldBuilders.Add(fieldBuilderForSongRequest);
                 i++;
@@ -74,7 +77,7 @@ namespace wow2.Modules.Voice
             {
                 VideoMetadata = metadata,
                 TimeRequested = DateTime.Now,
-                Author = Context.User
+                RequestedBy = Context.User
             });
 
             await ReplyAsync(
@@ -117,11 +120,37 @@ namespace wow2.Modules.Voice
             await config.AudioClient.StopAsync();
         }
 
-        private async Task StreamAudioAsync(string url)
+        [Command("nowplaying")]
+        [Alias("np")]
+        public async Task NowPlayingAsync()
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
-            using (var ffmpeg = CreateStream(url))
+            if (config.SongRequests.Count == 0 || CheckIfAudioClientDisconnected(config))
+                throw new CommandReturnException("Nothing is playing right now.", Context);
+
+            await DisplayNowPlayingRequestAsync(config.SongRequests.Peek());
+        }
+        
+        private async Task DisplayNowPlayingRequestAsync(UserSongRequest request)
+        {
+            await ReplyAsync(
+                embed: MessageEmbedPresets.NowPlaying(
+                    title: request.VideoMetadata.title,
+                    url: request.VideoMetadata.webpage_url,
+                    thumbnailUrl: request.VideoMetadata.thumbnails[1]?.url,
+                    timeRequested: request.TimeRequested,
+                    requestedBy: request.RequestedBy
+                )
+            );
+        }
+
+        private async Task PlayRequestAsync(UserSongRequest request)
+        {
+            await DisplayNowPlayingRequestAsync(request);
+            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+
+            using (var ffmpeg = CreateStreamFromYoutubeUrl(request.VideoMetadata.webpage_url))
             using (var output = ffmpeg.StandardOutput.BaseStream)
             using (var discord = config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
             {
@@ -134,14 +163,12 @@ namespace wow2.Modules.Voice
 
         private async Task ContinueAsync()
         {
-            Console.WriteLine("cont");
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
             UserSongRequest nextRequest;
 
             if (config.SongRequests.TryDequeue(out nextRequest))
             {
-                Console.WriteLine("bout play " + nextRequest.VideoMetadata.title);
-                await StreamAudioAsync(nextRequest.VideoMetadata.webpage_url);
+                await PlayRequestAsync(nextRequest);
             }
             else
             {
@@ -149,7 +176,7 @@ namespace wow2.Modules.Voice
             }
         }
 
-        private Process CreateStream(string url)
+        private Process CreateStreamFromYoutubeUrl(string url)
         {
             return Process.Start(new ProcessStartInfo
             {

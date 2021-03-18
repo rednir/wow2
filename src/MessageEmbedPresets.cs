@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using Discord;
+using Discord.WebSocket;
 
 namespace wow2
 {
@@ -59,6 +61,28 @@ namespace wow2
                 Title = title,
                 Description = description,
                 Fields = fieldBuilders,
+                Color = Color.LightGrey
+            };
+
+            return embedBuilder.Build();
+        }
+
+        /// <summary>Builds and returns an embed for displaying media metadata.</summary>
+        public static Embed NowPlaying(string title, string url = "", DateTime timeRequested = new DateTime(), SocketUser requestedBy = null, string thumbnailUrl = "")
+        {
+            var authorBuilder = new EmbedAuthorBuilder()
+            {
+                Name = "Now Playing",
+                IconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png",
+                Url = url
+            };
+
+            var embedBuilder = new EmbedBuilder()
+            {
+                Author = authorBuilder,
+                Title = title,
+                ThumbnailUrl = thumbnailUrl,
+                Description = $"Requested at {timeRequested.ToString("HH:mm")} by {requestedBy.Mention}",
                 Color = Color.LightGrey
             };
 

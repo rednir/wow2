@@ -18,6 +18,6 @@ namespace wow2.Modules.Voice
     {
         public YoutubeVideoMetadata VideoMetadata { get; set; }
         public DateTime TimeRequested { get; set; }
-        public SocketUser Author { get; set; }
+        public SocketUser RequestedBy { get; set; }
     }
 }
