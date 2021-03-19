@@ -23,11 +23,36 @@ namespace wow2.Modules.Images
         [Alias("quotes")]
         public async Task QuoteAsync(string quote, string author = null)
         {
-            var listOfTemplatePaths = Directory.EnumerateFiles("res/quotetemplates");
-            string templateToUsePath = listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
+            const string templatesFolderPath = "res/quotetemplates";
+            var listOfTemplatePaths = Directory.EnumerateFiles(templatesFolderPath);
 
+            string templateToUsePath;
             if (author == null)
+            {
+                // Author has not been specified, so choose random template and use default name.
+                templateToUsePath = listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
                 author = Path.GetFileNameWithoutExtension(templateToUsePath);
+            }
+            else if (author.Length > 4)
+            {
+                // Check if author parameter matches the name of a quote template, and use it if so.
+                templateToUsePath = Directory.EnumerateFiles
+                (
+                    path: templatesFolderPath,
+                    searchPattern: $"*{author}*",
+                    enumerationOptions: new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive }
+                )
+                .FirstOrDefault();
+
+                // Default to random template if no template matches author parameter.
+                if (templateToUsePath == null)
+                    templateToUsePath = listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
+            }
+            else
+            {
+                // Assume the user didn't want a specific template because of the small length.
+                templateToUsePath = listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
+            }
 
             using (SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(templateToUsePath))
             {
@@ -42,18 +67,6 @@ namespace wow2.Modules.Images
                 await image.SaveAsync(fileStreamForImage, new JpegEncoder());
                 fileStreamForImage.Position = 0;
                 await Context.Channel.SendFileAsync(fileStreamForImage, "wow2quoteresult.jpg");
-            }
-        }
-
-        [Command("quote-list")]
-        [Alias("quotes-list", "quotelist")]
-        public async Task QuoteListAsync()
-        {
-            var listOfTemplatePaths = Directory.EnumerateFiles("res/quotetemplates");
-
-            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-            foreach (string path in listOfTemplatePaths)
-            {
             }
         }
     }
