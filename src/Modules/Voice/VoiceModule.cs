@@ -28,10 +28,7 @@ namespace wow2.Modules.Voice
             foreach (UserSongRequest songRequest in config.SongRequests)
             {
                 i++;
-
-                // Don't show song request if its currently playing.
-                if (i == 1 && !CheckIfAudioClientDisconnected(config.AudioClient)) continue;
-
+                
                 var fieldBuilderForSongRequest = new EmbedFieldBuilder()
                 {
                     Name = $"{i}) {songRequest.VideoMetadata.title}",
