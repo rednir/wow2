@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Discord.WebSocket;
+using wow2.Modules.Main;
 using wow2.Modules.Keywords;
 using wow2.Modules.Games;
 using wow2.Modules.Voice;
@@ -98,6 +99,9 @@ namespace wow2
                 await LoadGuildDataFromFileAsync(guildId);
             }
         }
+
+        public static MainModuleConfig GetMainConfigForGuild(SocketGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Main;
 
         public static KeywordsModuleConfig GetKeywordsConfigForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Keywords;

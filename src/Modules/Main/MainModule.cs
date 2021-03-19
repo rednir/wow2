@@ -25,6 +25,12 @@ namespace wow2.Modules.Main
             );
         }
 
+        [Command("alias")]
+        public async Task AliasAsync(string name, string command)
+        {
+            
+        }
+
         [Command("savedata")]
         public async Task UploadRawGuildData()
         {
