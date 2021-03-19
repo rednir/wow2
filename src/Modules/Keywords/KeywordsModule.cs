@@ -18,12 +18,10 @@ namespace wow2.Modules.Keywords
     [Summary("For automatically responding to keywords in user messages.")]
     public class KeywordsModule : ModuleBase<SocketCommandContext>
     {
-        private static List<ulong> ListOfResponsesId = new List<ulong>();
-
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
         public static async Task<bool> CheckMessageForKeywordAsync(SocketMessage message)
         {
-            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(message.GetGuild()).KeywordsDictionary;
+            var config = DataManager.GetKeywordsConfigForGuild(message.GetGuild());
             string content = message.Content.ToLower();
             List<string> listOfFoundKeywords = new List<string>();
 
@@ -31,7 +29,7 @@ namespace wow2.Modules.Keywords
             // TODO: for some reason this removes numbers too
             content = new Regex("[;!.\"?\'#,:*-_\t\r ]|[\n]{2}").Replace(content, " ");
 
-            foreach (string keyword in keywordsDictionary.Keys)
+            foreach (string keyword in config.KeywordsDictionary.Keys)
             {
                 // Search for keyword with word boundaries, making sure that the keyword is not part of another word.
                 if (Regex.IsMatch(content, @"\b" + Regex.Escape(keyword.ToLower()) + @"\b"))
@@ -47,8 +45,8 @@ namespace wow2.Modules.Keywords
             string foundKeyword = listOfFoundKeywords.OrderByDescending(s => s.Length).First();
 
             // If the keyword has multiple values, the value will be chosen randomly.
-            int chosenValueIndex = new Random().Next(keywordsDictionary[foundKeyword].Count);
-            KeywordValue chosenValue = keywordsDictionary[foundKeyword][chosenValueIndex];
+            int chosenValueIndex = new Random().Next(config.KeywordsDictionary[foundKeyword].Count);
+            KeywordValue chosenValue = config.KeywordsDictionary[foundKeyword][chosenValueIndex];
 
             // Get URL in message and seperate it (commented this out because even if url was not image, it would get seperated). 
             //var strippedUrlAndString = keywordsDictionary[foundKeyword][chosenValueIndex].Content.StripUrlIfExists();
@@ -67,11 +65,13 @@ namespace wow2.Modules.Keywords
                 sentKeywordResponseMessage = await message.Channel.SendMessageAsync(embed: MessageEmbedPresets.GenericResponse(chosenValue.Content));
             }
 
-            // Remember the messages that are actually keyword responses by adding them to a list.
-            ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
 
             if (DataManager.GetKeywordsConfigForGuild(message.GetGuild()).KeywordsReactToDelete)
                 await sentKeywordResponseMessage.AddReactionAsync(new Emoji("🗑"));
+
+            // Remember the messages that are actually keyword responses by adding them to a list.
+            config.ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
+            await DataManager.SaveGuildDataToFileAsync(message.GetGuild().Id);
 
             return true;
         }
@@ -80,14 +80,19 @@ namespace wow2.Modules.Keywords
         /// <returns>True if the message was deleted, otherwise false.</returns>
         public static async Task<bool> DeleteMessageIfKeywordResponse(IUserMessage messageToCheck)
         {
-            foreach (ulong id in ListOfResponsesId)
+            var config = DataManager.GetKeywordsConfigForGuild(messageToCheck.GetGuild());
+
+            foreach (ulong id in config.ListOfResponsesId)
             {
                 if (id == messageToCheck.Id)
                 {
                     await messageToCheck.DeleteAsync();
+                    config.ListOfResponsesId.Remove(id);
+                    await DataManager.SaveGuildDataToFileAsync(messageToCheck.GetGuild().Id);
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -187,6 +192,7 @@ namespace wow2.Modules.Keywords
         public async Task ToggleReactToDeleteAsync()
         {
             DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete = !DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete;
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
             await ReplyAsync(
                 embed: MessageEmbedPresets.Verbose($"React to delete is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete ? "on" : "off")}` for keyword responses.")
             );

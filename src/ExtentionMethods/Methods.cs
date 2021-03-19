@@ -1,13 +1,15 @@
 using System.Text.RegularExpressions;
 using System.Text;
+using Discord;
 using Discord.WebSocket;
 
 namespace ExtentionMethods
 {
     public static class Methods
     {
-        // Add overloads if necessary.
         public static SocketGuild GetGuild(this SocketMessage socketMessage)
+            => ((SocketGuildChannel)socketMessage.Channel).Guild;
+        public static SocketGuild GetGuild(this IUserMessage socketMessage)
             => ((SocketGuildChannel)socketMessage.Channel).Guild;
 
         /// <returns>The first url in the string and the new string without the url, or an empty string in place of the url if there is none.</returns>
