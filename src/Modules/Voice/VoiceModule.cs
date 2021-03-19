@@ -176,7 +176,7 @@ namespace wow2.Modules.Voice
             using (var discord = config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
             {
                 try { await output.CopyToAsync(discord, cancellationToken); }
-                finally { await discord.FlushAsync();  Console.WriteLine("Cancelled\n\n");}
+                finally { await discord.FlushAsync(); }
             }
 
             _ = ContinueAsync();
@@ -189,7 +189,6 @@ namespace wow2.Modules.Voice
 
             config.CtsForAudioStreaming.Cancel();
             config.CtsForAudioStreaming = new CancellationTokenSource();
-            Console.WriteLine("cancel: " + config.CtsForAudioStreaming.IsCancellationRequested);
 
             if (config.SongRequests.TryDequeue(out nextRequest))
             {
