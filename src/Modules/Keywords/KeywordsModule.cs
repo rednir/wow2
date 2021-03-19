@@ -18,6 +18,8 @@ namespace wow2.Modules.Keywords
     [Summary("For automatically responding to keywords in user messages.")]
     public class KeywordsModule : ModuleBase<SocketCommandContext>
     {
+        public const int MaxCountOfRememberedKeywordResponses = 100;
+
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
         public static async Task<bool> CheckMessageForKeywordAsync(SocketMessage message)
         {
@@ -38,7 +40,6 @@ namespace wow2.Modules.Keywords
                 }
             }
 
-            // Return if no keywords were found in the message.
             if (listOfFoundKeywords.Count == 0) return false;
 
             // Prioritize the longest keyword if multiple keywords have been found.
@@ -55,9 +56,9 @@ namespace wow2.Modules.Keywords
             //string valueImageUrl = chosenValue.Content.StartsWith("http") ? chosenValue.Content.Split(" ").First() : "";
 
             RestUserMessage sentKeywordResponseMessage;
-            // Don't use embed message if the value to send contains a link.
             if (chosenValue.Content.Contains("http://") || chosenValue.Content.Contains("https://"))
             {
+                // Don't use embed message if the value to send contains a link.
                 sentKeywordResponseMessage = await message.Channel.SendMessageAsync(chosenValue.Content);
             }
             else
@@ -65,13 +66,16 @@ namespace wow2.Modules.Keywords
                 sentKeywordResponseMessage = await message.Channel.SendMessageAsync(embed: MessageEmbedPresets.GenericResponse(chosenValue.Content));
             }
 
-
             if (DataManager.GetKeywordsConfigForGuild(message.GetGuild()).KeywordsReactToDelete)
                 await sentKeywordResponseMessage.AddReactionAsync(new Emoji("🗑"));
 
             // Remember the messages that are actually keyword responses by adding them to a list.
             config.ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
             await DataManager.SaveGuildDataToFileAsync(message.GetGuild().Id);
+
+            // Remove the oldest message if ListOfResponsesId has reached its max.
+            if (config.ListOfResponsesId.Count > MaxCountOfRememberedKeywordResponses)
+                config.ListOfResponsesId.RemoveAt(0);
 
             return true;
         }
