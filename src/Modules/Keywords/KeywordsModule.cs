@@ -28,7 +28,6 @@ namespace wow2.Modules.Keywords
             List<string> listOfFoundKeywords = new List<string>();
 
             // Replace unnecessary symbols with a whitespace.
-            // TODO: for some reason this removes numbers too
             content = new Regex("[;!.\"?\'#,:*-_\t\r ]|[\n]{2}").Replace(content, " ");
 
             foreach (string keyword in config.KeywordsDictionary.Keys)
@@ -48,13 +47,7 @@ namespace wow2.Modules.Keywords
             // If the keyword has multiple values, the value will be chosen randomly.
             int chosenValueIndex = new Random().Next(config.KeywordsDictionary[foundKeyword].Count);
             KeywordValue chosenValue = config.KeywordsDictionary[foundKeyword][chosenValueIndex];
-
-            // Get URL in message and seperate it (commented this out because even if url was not image, it would get seperated). 
-            //var strippedUrlAndString = keywordsDictionary[foundKeyword][chosenValueIndex].Content.StripUrlIfExists();
-
-            // Check if first word is URL and assume it is an image (this is also bad)
-            //string valueImageUrl = chosenValue.Content.StartsWith("http") ? chosenValue.Content.Split(" ").First() : "";
-
+            
             RestUserMessage sentKeywordResponseMessage;
             if (chosenValue.Content.Contains("http://") || chosenValue.Content.Contains("https://"))
             {
