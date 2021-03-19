@@ -21,7 +21,7 @@ namespace wow2.Modules.Main
         public async Task HelpAsync()
         {
             await ReplyAsync(
-                embed: MessageEmbedPresets.Fields(CommandInfoToEmbedFields(), "Command Help")
+                embed: MessageEmbedPresets.Fields(await CommandInfoToEmbedFields(), "Command Help")
             );
         }
 
@@ -49,11 +49,12 @@ namespace wow2.Modules.Main
             );
         }
 
-        private List<EmbedFieldBuilder> CommandInfoToEmbedFields()
+        private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFields()
         {
             // Sort the commands into a dictionary
+            var commands = await EventHandlers.BotCommandService.GetExecutableCommandsAsync(new CommandContext(Context.Client, Context.Message), null);
             var commandsSortedByModules = new Dictionary<ModuleInfo, List<CommandInfo>>();
-            foreach (CommandInfo command in EventHandlers.BotCommandService.Commands)
+            foreach (CommandInfo command in commands)
             {
                 commandsSortedByModules.TryAdd(command.Module, new List<CommandInfo>());
                 commandsSortedByModules[command.Module].Add(command);
@@ -63,12 +64,6 @@ namespace wow2.Modules.Main
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             foreach (ModuleInfo module in commandsSortedByModules.Keys)
             {
-                if (module.Preconditions.OfType<RequireOwnerAttribute>().Any())
-                    continue;
-
-                foreach (var condition in module.Preconditions)
-                    Console.WriteLine(condition);
-
                 var fieldBuilderForModule = new EmbedFieldBuilder()
                 {
                     Name = module.Name
