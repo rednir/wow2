@@ -84,6 +84,7 @@ namespace wow2
                 return;
             }
 
+            await MainModule.CheckForAliasAsync(recievedMessage);
             await KeywordsModule.CheckMessageForKeywordAsync(recievedMessage);
             await GamesModule.MessageRecievedForCountingAsync(recievedMessage);
         }
@@ -115,7 +116,7 @@ namespace wow2
                 await SendErrorMessageToChannel(result.Error, socketMessage.Channel);
         }
 
-        private static async Task SendErrorMessageToChannel(CommandError? commandError, IMessageChannel channel)
+        public static async Task SendErrorMessageToChannel(CommandError? commandError, IMessageChannel channel)
         {
             Embed embedToSend;
             switch (commandError)

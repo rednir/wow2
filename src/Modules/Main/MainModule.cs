@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using Discord;
+using Discord.WebSocket;
 using Discord.Commands;
 using ExtentionMethods;
 
@@ -26,9 +27,28 @@ namespace wow2.Modules.Main
         }
 
         [Command("alias")]
-        public async Task AliasAsync(string name, string command)
+        public async Task AliasAsync(string name, string definition)
         {
-            
+            var config = DataManager.GetMainConfigForGuild(Context.Guild);
+
+            if (!config.AliasesDictionary.TryAdd(name, definition))
+            {
+                if (definition != "")
+                    throw new CommandReturnException($"The alias `{name}` already exists.\nTo remove the alias, type `{EventHandlers.CommandPrefix} alias \"{name}\" \"\"`", Context);
+                
+                config.AliasesDictionary.Remove(name);
+                await ReplyAsync(
+                    embed: MessageEmbedPresets.Verbose($"The alias `{name}` was removed.")
+                );
+                return;
+            }
+
+            if (definition != "")
+                throw new CommandReturnException($"An alias should have a definition that isn't blank.", Context);
+
+            await ReplyAsync(
+                embed: MessageEmbedPresets.Verbose($"Typing `{name}` will now execute `{EventHandlers.CommandPrefix} {definition}`")
+            );
         }
 
         [Command("savedata")]
@@ -53,6 +73,26 @@ namespace wow2.Modules.Main
                     footer: $" - To view a list of commands, type `{EventHandlers.CommandPrefix} help`"
                 )
             );
+        }
+
+        public static async Task CheckForAliasAsync(SocketMessage message)
+        {
+            var config = DataManager.GetMainConfigForGuild(message.GetGuild());
+
+            if (config.AliasesDictionary.Where(a => a.Key.StartsWith(message.Content)).Count() != 0)
+            {
+                var context = new SocketCommandContext(Program.Client, (SocketUserMessage)message);
+
+                IResult result = await EventHandlers.BotCommandService.ExecuteAsync
+                (
+                    context: context,
+                    input: config.AliasesDictionary[message.Content],
+                    services: null
+                );
+
+                if (result.Error.HasValue)
+                    await EventHandlers.SendErrorMessageToChannel(result.Error, context.Message.Channel);
+            }
         }
 
         private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFields()
