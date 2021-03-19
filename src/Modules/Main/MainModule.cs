@@ -11,6 +11,12 @@ namespace wow2.Modules.Main
     [Name("Main")]
     public class MainModule : ModuleBase<SocketCommandContext>
     {
+        [Command("about")]
+        public async Task AboutAsync()
+        {
+            await ShowAboutAsync(Context);
+        }
+
         [Command("help")]
         public async Task HelpAsync()
         {
@@ -25,6 +31,21 @@ namespace wow2.Modules.Main
             await Context.Channel.SendFileAsync(
                 filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json",
                 embed: MessageEmbedPresets.Verbose("Successfully uploaded a `.json` file containing all the saved data for this server.")
+            );
+        }
+
+        public static async Task ShowAboutAsync(SocketCommandContext context)
+        {
+            const string githubLink = "https://github.com/rednir/wow2";
+            var appInfo = await Program.Client.GetApplicationInfoAsync();
+
+            await context.Channel.SendMessageAsync(
+                embed: MessageEmbedPresets.About(
+                    name: appInfo.Name,
+                    author: appInfo.Owner,
+                    description: $"{(string.IsNullOrWhiteSpace(appInfo.Description) ? "" : appInfo.Description)}\n{githubLink}",
+                    footer: $" - To view a list of commands, type `{EventHandlers.CommandPrefix} help`"
+                )
             );
         }
 

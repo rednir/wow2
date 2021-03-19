@@ -53,6 +53,31 @@ namespace wow2
             return embedBuilder.Build();
         }
 
+        /// <summary>Builds and returns an embed for displaying about text.</summary>
+        public static Embed About(string name, IUser author, string description = "", string footer = "")
+        {
+            var authorBuilder = new EmbedAuthorBuilder()
+            {
+                Name = $"Hosted by {author}",
+                IconUrl = author.GetAvatarUrl(),
+            };
+            var footerBuilder = new EmbedFooterBuilder()
+            {
+                Text = footer
+            };
+
+            var embedBuilder = new EmbedBuilder()
+            {
+                Title = name,
+                Description = description,
+                Author = authorBuilder,
+                Footer = footerBuilder,
+                Color = Color.LightGrey
+            };
+
+            return embedBuilder.Build();
+        }
+
         /// <summary>Builds and returns an embed for showing a list of fields, for example, showing command help.</summary>
         public static Embed Fields(List<EmbedFieldBuilder> fieldBuilders, string title = "", string description = "")
         {

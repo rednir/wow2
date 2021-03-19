@@ -5,6 +5,7 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using wow2.Modules;
+using wow2.Modules.Main;
 using wow2.Modules.Keywords;
 using wow2.Modules.Games;
 using ExtentionMethods;
@@ -90,23 +91,22 @@ namespace wow2
         public static async Task CommandRecievedAsync(SocketMessage socketMessage)
         {
             var socketUserMessage = (SocketUserMessage)socketMessage;
+            var context = new SocketCommandContext(Program.Client, (SocketUserMessage)socketMessage);
+
+            // Return if the message is not a user message.
+            if (socketMessage == null) return;
 
             Console.WriteLine($"{socketMessage.Author} executed a command ({socketMessage.Content})");
 
-            // The message is not a user message.
-            if (socketMessage == null) return;
-
             if (socketMessage.Content == CommandPrefix)
             {
-                await socketMessage.Channel.SendMessageAsync(
-                    embed: MessageEmbedPresets.Verbose($"To view a list of commands, type `{CommandPrefix} help`")
-                );
+                await MainModule.ShowAboutAsync(context);
                 return;
             }
 
             IResult result = await BotCommandService.ExecuteAsync
             (
-                context: new SocketCommandContext(Program.Client, (SocketUserMessage)socketMessage),
+                context: context,
                 argPos: CommandPrefix.Length + 1,
                 services: null
             );
