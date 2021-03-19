@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using Discord.WebSocket;
@@ -13,6 +14,9 @@ namespace wow2.Modules.Voice
 
         [JsonIgnore]
         public IAudioClient AudioClient { get; set; }
+
+        [JsonIgnore]
+        public CancellationTokenSource CtsForAudioStreaming { get; set; } = new CancellationTokenSource();
     }
 
     public class UserSongRequest

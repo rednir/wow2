@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord;
@@ -165,7 +166,7 @@ namespace wow2.Modules.Voice
             );
         }
 
-        private async Task PlayRequestAsync(UserSongRequest request)
+        private async Task PlayRequestAsync(UserSongRequest request, CancellationToken cancellationToken)
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
             await DisplayNowPlayingRequestAsync(request);
@@ -174,8 +175,8 @@ namespace wow2.Modules.Voice
             using (var output = ffmpeg.StandardOutput.BaseStream)
             using (var discord = config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
             {
-                try { await output.CopyToAsync(discord); }
-                finally { await discord.FlushAsync(); }
+                try { await output.CopyToAsync(discord, cancellationToken); }
+                finally { await discord.FlushAsync();  Console.WriteLine("Cancelled\n\n");}
             }
 
             _ = ContinueAsync();
@@ -186,9 +187,13 @@ namespace wow2.Modules.Voice
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
             UserSongRequest nextRequest;
 
+            config.CtsForAudioStreaming.Cancel();
+            config.CtsForAudioStreaming = new CancellationTokenSource();
+            Console.WriteLine("cancel: " + config.CtsForAudioStreaming.IsCancellationRequested);
+
             if (config.SongRequests.TryDequeue(out nextRequest))
             {
-                await PlayRequestAsync(nextRequest);
+                await PlayRequestAsync(nextRequest, config.CtsForAudioStreaming.Token);
             }
             else
             {
