@@ -20,8 +20,7 @@ namespace wow2.Modules.Voice
             {
                 using (var process = new Process())
                 {
-                    // TODO: make youtube-dl path env variable
-                    process.StartInfo.FileName = "youtube-dl";
+                    process.StartInfo.FileName = Environment.GetEnvironmentVariable("YOUTUBE_DL_PATH") ?? "youtube-dl";
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.RedirectStandardOutput = true;
                     process.StartInfo.RedirectStandardError = true;
