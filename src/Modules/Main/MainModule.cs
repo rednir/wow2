@@ -20,13 +20,13 @@ namespace wow2.Modules.Main
         }
 
         [Command("help")]
-        [Summary("If GROUPNAME is left empty, displays all commands. Otherwise displays detailed info about a specific group of commands.")]
-        public async Task HelpAsync([Name("GROUPNAME")] string group = null)
+        [Summary("If MODULE is left empty, displays all commands. Otherwise displays detailed info about a specific group of commands.")]
+        public async Task HelpAsync([Name("MODULE")] string group = null)
         {
             if (string.IsNullOrWhiteSpace(group))
             {
                 await ReplyAsync(
-                    embed: MessageEmbedPresets.Fields(await CommandInfoToEmbedFields(), "All Commands")
+                    embed: MessageEmbedPresets.Fields(await ModuleInfoToEmbedFields(), "Help")
                 );
             }
             else
@@ -136,49 +136,38 @@ namespace wow2.Modules.Main
             }
         }
 
-        /// <summary>Builds embed fields for all excecutable commands.</summary>
-        private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFields()
+        /// <summary>Builds embed fields for all command modules.</summary>
+        private async Task<List<EmbedFieldBuilder>> ModuleInfoToEmbedFields()
         {
-            // Sort the commands into a dictionary
-            var commands = await EventHandlers.BotCommandService.GetExecutableCommandsAsync(
-                new CommandContext(Context.Client, Context.Message), null
-            );
-            var commandsSortedByModules = new Dictionary<ModuleInfo, List<CommandInfo>>();
-            foreach (CommandInfo command in commands)
-            {
-                commandsSortedByModules.TryAdd(command.Module, new List<CommandInfo>());
-                commandsSortedByModules[command.Module].Add(command);
-            }
+            var listOfModules = EventHandlers.BotCommandService.Modules;
 
             // Create a help text string for each module
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-            foreach (ModuleInfo module in commandsSortedByModules.Keys)
+            await Task.Run(() =>
             {
-                var fieldBuilderForModule = new EmbedFieldBuilder()
+                foreach (ModuleInfo module in listOfModules)
                 {
-                    Name = module.Name
-                };
+                    var fieldBuilderForModule = new EmbedFieldBuilder()
+                    {
+                        Name = $"{module.Name} Module"
+                    };
 
-                if (!String.IsNullOrWhiteSpace(module.Summary))
-                    fieldBuilderForModule.Value += $"*{module.Summary}*\n";
+                    if (!String.IsNullOrWhiteSpace(module.Summary))
+                        fieldBuilderForModule.Value += $"*{module.Summary}*\n";
 
-                foreach (CommandInfo command in commandsSortedByModules[module])
-                {
-                    // Append each command info
-                    string parametersInfo = ParametersToString(command.Parameters);
-                    fieldBuilderForModule.Value += $"`{EventHandlers.CommandPrefix} {(string.IsNullOrWhiteSpace(module.Group) ? "" : $"{module.Group} ")}{command.Name}{parametersInfo}`\n";
-                }
+                    fieldBuilderForModule.Value += $"`{EventHandlers.CommandPrefix} help {module.Name.ToLower()}`";
 
-                // TODO: find a way to get name attribute of this class instead of hardcoding module name.
-                if (module.Name == "Main")
-                {
-                    listOfFieldBuilders.Insert(0, fieldBuilderForModule);
+                    // TODO: find a way to get name attribute of this class instead of hardcoding module name.
+                    if (module.Name == "Main")
+                    {
+                        listOfFieldBuilders.Insert(0, fieldBuilderForModule);
+                    }
+                    else
+                    {
+                        listOfFieldBuilders.Add(fieldBuilderForModule);
+                    }
                 }
-                else
-                {
-                    listOfFieldBuilders.Add(fieldBuilderForModule);
-                }
-            }
+            });
             return listOfFieldBuilders;
         }
 
