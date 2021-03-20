@@ -41,9 +41,10 @@ namespace wow2.Modules.Main
         [Command("alias")]
         [Alias("aliases")]
         [Summary("Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to \"\" to remove it.")]
-        public async Task AliasAsync(string name, string definition)
+        public async Task AliasAsync(string name, [Name("DEFINITION")] params string[] definitionSplit)
         {
             var config = DataManager.GetMainConfigForGuild(Context.Guild);
+            string definition = string.Join(" ", definitionSplit);
 
             if (!config.AliasesDictionary.TryAdd(name, definition))
             {
