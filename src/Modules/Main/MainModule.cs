@@ -166,7 +166,7 @@ namespace wow2.Modules.Main
                 {
                     // Append each command info
                     string parametersInfo = ParametersToString(command.Parameters);
-                    fieldBuilderForModule.Value += $"`{EventHandlers.CommandPrefix} {(module.Aliases.FirstOrDefault() == "" ? "" : $"{module.Aliases.First()} ")}{command.Name}{parametersInfo}`\n";
+                    fieldBuilderForModule.Value += $"`{EventHandlers.CommandPrefix} {(string.IsNullOrWhiteSpace(module.Group) ? "" : $"{module.Group} ")}{command.Name}{parametersInfo}`\n";
                 }
 
                 // TODO: find a way to get name attribute of this class instead of hardcoding module name.
@@ -199,7 +199,7 @@ namespace wow2.Modules.Main
             {
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"`{EventHandlers.CommandPrefix} {command.Module.Group} {command.Name}`",
+                    Name = $"`{EventHandlers.CommandPrefix} {(string.IsNullOrWhiteSpace(command.Module.Group) ? "" : $"{command.Module.Group} ")}{command.Name}{ParametersToString(command.Parameters)}`",
                     Value = $"*{(string.IsNullOrWhiteSpace(command.Summary) ? "No description provided." : command.Summary)}*"
                 });
             }
