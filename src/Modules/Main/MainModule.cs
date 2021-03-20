@@ -59,7 +59,10 @@ namespace wow2.Modules.Main
             }
 
             if (definition == "")
+            {
+                config.AliasesDictionary.Remove(name);
                 throw new CommandReturnException($"An alias should have a definition that isn't blank.", Context);
+            }
 
             await ReplyAsync(
                 embed: MessageEmbedPresets.Verbose($"Typing `{name}` will now execute `{EventHandlers.CommandPrefix} {definition}`")
