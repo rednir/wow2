@@ -15,3 +15,11 @@ Here are a few examples:
 
 ## Hosting the bot yourself
 To host the bot, you must have a bot token. Make sure you have created an application [here](https://discord.com/developers/applications), and added a bot user to it with sufficient privileges.
+
+### Dependencies
+- .NET 5.0
+- For voice commands:
+	- `libsodium` and `opus`
+		- 
+	- `youtube-dl`
+		- A custom path can be set with the YOUTUBE_DL_PATH environment variable.
