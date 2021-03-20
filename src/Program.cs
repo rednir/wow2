@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Discord;
-using Discord.Net;
+using Discord.Commands;
 using Discord.WebSocket;
 
 namespace wow2
@@ -12,7 +12,10 @@ namespace wow2
         private const string discordTokenFilePath = "discord.token";
         private const string discordTokenEnvironmentVariable = "DISCORD_BOT_TOKEN";
 
-        public static DiscordSocketClient Client;
+        public static DiscordSocketClient Client { get; set; }
+
+        public static async Task<IGuildUser> GetClientGuildUserAsync(SocketCommandContext context)
+            => (IGuildUser)(await context.Channel.GetUserAsync(context.Client.CurrentUser.Id));
 
         private static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
 

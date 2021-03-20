@@ -29,7 +29,7 @@ namespace wow2.Modules.Voice
             foreach (UserSongRequest songRequest in config.SongRequests)
             {
                 i++;
-                
+
                 var fieldBuilderForSongRequest = new EmbedFieldBuilder()
                 {
                     Name = $"{i}) {songRequest.VideoMetadata.title}",
@@ -105,17 +105,23 @@ namespace wow2.Modules.Voice
             _ = ContinueAsync();
         }
 
-        // TODO: return if joining a vc that the audio client is already in.
         [Command("join", RunMode = RunMode.Async)]
         [Summary("Joins the voice channel of the person that executed the command.")]
         public async Task JoinAsync()
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
-            IVoiceChannel voiceChannel = ((IGuildUser)Context.User).VoiceChannel ?? null;
+            IVoiceChannel voiceChannelToJoin = ((IGuildUser)Context.User).VoiceChannel ?? null;
+
+            if (!CheckIfAudioClientDisconnected(config.AudioClient))
+            {
+                IGuildUser guildUser = await Program.GetClientGuildUserAsync(Context);
+                if (guildUser.VoiceChannel == voiceChannelToJoin)
+                    throw new CommandReturnException("I'm already in this voice channel.", Context);
+            }
 
             try
             {
-                config.AudioClient = await voiceChannel.ConnectAsync();
+                config.AudioClient = await voiceChannelToJoin.ConnectAsync();
                 _ = ContinueAsync();
             }
             catch (NullReferenceException)
