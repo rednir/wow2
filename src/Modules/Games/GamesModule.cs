@@ -15,7 +15,7 @@ namespace wow2.Modules.Games
     [Summary("For having a bit of fun.")]
     public class GamesModule : ModuleBase<SocketCommandContext>
     {
-        public static async Task MessageRecievedForCountingAsync(SocketMessage recievedMessage)
+        public static async Task CheckMessageIsCountingAsync(SocketMessage recievedMessage)
         {
             var config = DataManager.GetGamesConfigForGuild(recievedMessage.GetGuild()).Counting;
             float userNumber;

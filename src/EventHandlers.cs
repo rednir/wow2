@@ -86,7 +86,7 @@ namespace wow2
 
             await MainModule.CheckForAliasAsync(recievedMessage);
             await KeywordsModule.CheckMessageForKeywordAsync(recievedMessage);
-            await GamesModule.MessageRecievedForCountingAsync(recievedMessage);
+            await GamesModule.CheckMessageIsCountingAsync(recievedMessage);
         }
 
         public static async Task CommandRecievedAsync(SocketMessage socketMessage)
