@@ -19,6 +19,7 @@ namespace wow2.Modules.Voice
     {
         [Command("list")]
         [Alias("queue", "upnext")]
+        [Summary("Show the song request queue.")]
         public async Task ListAsync()
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
@@ -47,6 +48,7 @@ namespace wow2.Modules.Voice
 
         [Command("clear")]
         [Alias("empty", "remove", "reset")]
+        [Summary("Clears the song request queue.")]
         public async Task ClearAsync()
         {
             DataManager.GetVoiceConfigForGuild(Context.Guild).SongRequests.Clear();
@@ -57,7 +59,8 @@ namespace wow2.Modules.Voice
 
         [Command("add", RunMode = RunMode.Async)]
         [Alias("play")]
-        public async Task AddAsync([Name("request")] params string[] splitSongRequest)
+        [Summary("Adds REQUEST to the song request queue. REQUEST can be a video URL or a search term.")]
+        public async Task AddAsync([Name("REQUEST")] params string[] splitSongRequest)
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
             string songRequest = string.Join(" ", splitSongRequest);
@@ -93,6 +96,7 @@ namespace wow2.Modules.Voice
 
         [Command("skip")]
         [Alias("next")]
+        [Summary("Stops the currently playing request and starts the next request if it exists.")]
         public async Task Skip()
         {
             await ReplyAsync(
@@ -103,6 +107,7 @@ namespace wow2.Modules.Voice
 
         // TODO: return if joining a vc that the audio client is already in.
         [Command("join", RunMode = RunMode.Async)]
+        [Summary("Joins the voice channel of the person that executed the command.")]
         public async Task JoinAsync()
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
@@ -123,6 +128,7 @@ namespace wow2.Modules.Voice
         }
 
         [Command("leave")]
+        [Summary("Leaves the voice channel.")]
         public async Task LeaveAsync()
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
@@ -133,8 +139,9 @@ namespace wow2.Modules.Voice
             await config.AudioClient.StopAsync();
         }
 
-        [Command("nowplaying")]
-        [Alias("np")]
+        [Command("np")]
+        [Alias("nowplaying")]
+        [Summary("Shows details about the currently playing song request.")]
         public async Task NowPlayingAsync()
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);

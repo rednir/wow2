@@ -13,13 +13,15 @@ namespace wow2.Modules.Main
     public class MainModule : ModuleBase<SocketCommandContext>
     {
         [Command("about")]
+        [Summary("Shows infomation about the bot.")]
         public async Task AboutAsync()
         {
             await ShowAboutAsync(Context);
         }
 
         [Command("help")]
-        public async Task HelpAsync([Name("groupname")] string group = null)
+        [Summary("If GROUPNAME is left empty, displays all commands. Otherwise displays detailed info about a specific group of commands.")]
+        public async Task HelpAsync([Name("GROUPNAME")] string group = null)
         {
             if (string.IsNullOrWhiteSpace(group))
             {
@@ -37,6 +39,7 @@ namespace wow2.Modules.Main
 
         [Command("alias")]
         [Alias("aliases")]
+        [Summary("Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to \"\" to remove it.\n")]
         public async Task AliasAsync(string name, string definition)
         {
             var config = DataManager.GetMainConfigForGuild(Context.Guild);
@@ -65,6 +68,7 @@ namespace wow2.Modules.Main
 
         [Command("alias-list")]
         [Alias("alias", "aliases", "list-alias", "list-aliases")]
+        [Summary("Displays a list of aliases.")]
         public async Task AliasAsync()
         {
             var config = DataManager.GetMainConfigForGuild(Context.Guild);
@@ -87,6 +91,7 @@ namespace wow2.Modules.Main
         }
 
         [Command("savedata")]
+        [Summary("Uploads the raw data stored about this server by the bot.")]
         public async Task UploadRawGuildData()
         {
             await Context.Channel.SendFileAsync(

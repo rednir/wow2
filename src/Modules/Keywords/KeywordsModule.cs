@@ -158,7 +158,7 @@ namespace wow2.Modules.Keywords
 
         [Command("list")]
         [Alias("show", "all")]
-        [Summary("Shows a list of all keywords.")]
+        [Summary("Shows a list of all keywords, and a preview of their values. Previews will not be shown if the list of keywords is too large.")]
         public async Task ListAsync()
         {
             const int maxFields = 16;
@@ -191,7 +191,7 @@ namespace wow2.Modules.Keywords
         }
 
         [Command("toggle-react-to-delete")]
-        [Summary("Toggles whether bot responses to keywords should have a reaction, allowing a user to delete the message.")]
+        [Summary("Toggles whether my responses to keywords should have a reaction, allowing a user to delete the message.")]
         public async Task ToggleReactToDeleteAsync()
         {
             DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete = !DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete;

@@ -21,6 +21,7 @@ namespace wow2.Modules.Images
     {
         [Command("quote")]
         [Alias("quotes")]
+        [Summary("Creates a fake quote of a famous person. If you want to use a specific person, set AUTHOR to their name.")]
         public async Task QuoteAsync(string quote, string author = null)
         {
             const string templatesFolderPath = "res/quotetemplates";

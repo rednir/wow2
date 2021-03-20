@@ -56,6 +56,7 @@ namespace wow2.Modules.Games
 
         [Command("counting")]
         [Alias("count")]
+        [Summary("Start counting in a text channel. INCREMENT is the number that will be added each time.")]
         public async Task CountingAsync(float increment = 1)
         {
             var config = DataManager.GetGamesConfigForGuild(Context.Guild).Counting;
