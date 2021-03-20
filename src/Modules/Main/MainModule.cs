@@ -102,14 +102,13 @@ namespace wow2.Modules.Main
 
         public static async Task ShowAboutAsync(SocketCommandContext context)
         {
-            const string githubLink = "https://github.com/rednir/wow2";
             var appInfo = await Program.Client.GetApplicationInfoAsync();
 
             await context.Channel.SendMessageAsync(
                 embed: MessageEmbedPresets.About(
                     name: appInfo.Name,
                     author: appInfo.Owner,
-                    description: $"{(string.IsNullOrWhiteSpace(appInfo.Description) ? "" : appInfo.Description)}\n{githubLink}",
+                    description: string.IsNullOrWhiteSpace(appInfo.Description) ? "" : appInfo.Description,
                     footer: $" - To view a list of commands, type `{EventHandlers.CommandPrefix} help`"
                 )
             );
