@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 using System.Text;
 using Discord;
@@ -54,5 +55,12 @@ namespace ExtentionMethods
 
             return stringBuilder.ToString();
         }
+
+        /// <summary>Check if a string starts with a given value, and also is not part of another word.</summary>
+        public static bool StartsWithWord(this string stringToCheck, string word) =>
+            // The stringToCheck starts with word, and has a space directly after the word.
+            (stringToCheck.StartsWith(word, true, null) && stringToCheck.IndexOf(" ") == word.Length)
+            // Or the stringToCheck is a direct match with the word.
+            || stringToCheck.Equals(word, StringComparison.CurrentCultureIgnoreCase);
     }
 }

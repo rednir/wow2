@@ -120,13 +120,7 @@ namespace wow2.Modules.Main
         {
             var config = DataManager.GetMainConfigForGuild(message.GetGuild());
 
-            var aliasesFound = config.AliasesDictionary.Where(a =>
-                // Message starts with alias, and has a space directly after the alias.
-                (message.Content.StartsWith(a.Key, true, null) && message.Content.IndexOf(" ") == a.Key.Length)
-                
-                // Message is a direct match with alias.
-                || message.Content.Equals(a.Key, StringComparison.CurrentCultureIgnoreCase)
-            );
+            var aliasesFound = config.AliasesDictionary.Where(a => message.Content.StartsWithWord(a.Key));
 
             if (aliasesFound.Count() != 0)
             {
