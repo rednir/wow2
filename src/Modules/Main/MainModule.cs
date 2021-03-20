@@ -19,11 +19,20 @@ namespace wow2.Modules.Main
         }
 
         [Command("help")]
-        public async Task HelpAsync()
+        public async Task HelpAsync([Name("groupname")] string group = null)
         {
-            await ReplyAsync(
-                embed: MessageEmbedPresets.Fields(await CommandInfoToEmbedFields(), "Command Help")
-            );
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                await ReplyAsync(
+                    embed: MessageEmbedPresets.Fields(await CommandInfoToEmbedFields(), "All Commands")
+                );
+            }
+            else
+            {
+                await ReplyAsync(
+                    embed: MessageEmbedPresets.Fields(await CommandInfoToEmbedFields(group), $"Command Help")
+                );
+            }
         }
 
         [Command("alias")]
@@ -123,10 +132,13 @@ namespace wow2.Modules.Main
             }
         }
 
+        /// <summary>Builds embed fields for all excecutable commands.</summary>
         private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFields()
         {
             // Sort the commands into a dictionary
-            var commands = await EventHandlers.BotCommandService.GetExecutableCommandsAsync(new CommandContext(Context.Client, Context.Message), null);
+            var commands = await EventHandlers.BotCommandService.GetExecutableCommandsAsync(
+                new CommandContext(Context.Client, Context.Message), null
+            );
             var commandsSortedByModules = new Dictionary<ModuleInfo, List<CommandInfo>>();
             foreach (CommandInfo command in commands)
             {
@@ -169,8 +181,30 @@ namespace wow2.Modules.Main
                     listOfFieldBuilders.Add(fieldBuilderForModule);
                 }
             }
+            return listOfFieldBuilders;
+        }
 
-            // TODO: ability to only return one module's help text
+        /// <summary>Builds embed fields for commands in a single module</summary>
+        private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFields(string specifiedModuleName)
+        {
+            // Find commands in module.
+            var listOfCommandInfo = (await EventHandlers.BotCommandService.GetExecutableCommandsAsync(
+                new CommandContext(Context.Client, Context.Message), null
+            ))
+            .Where(c => 
+                c.Module.Name.Equals(specifiedModuleName, StringComparison.CurrentCultureIgnoreCase)
+                || c.Module.Aliases.Contains(specifiedModuleName.ToLower())
+            );
+
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+            foreach (CommandInfo command in listOfCommandInfo)
+            {
+                listOfFieldBuilders.Add(new EmbedFieldBuilder()
+                {
+                    Name = $"`{EventHandlers.CommandPrefix} {command.Module.Group} {command.Name}`",
+                    Value = $"*{(string.IsNullOrWhiteSpace(command.Summary) ? "No description provided." : command.Summary)}*"
+                });
+            }
             return listOfFieldBuilders;
         }
     }
