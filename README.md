@@ -13,4 +13,5 @@ Here are a few examples:
 
 <img src="res/about/examples.png">
 
-## Hosting the bot
+## Hosting the bot yourself
+To host the bot, you must have a bot token. Make sure you have created an application [here](https://discord.com/developers/applications), and added a bot user to it with sufficient privileges.
