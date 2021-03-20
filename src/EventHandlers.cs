@@ -78,8 +78,9 @@ namespace wow2
 
             await DataManager.EnsureGuildDataFileExistsAsync(recievedMessage.GetGuild().Id);
 
-            if (recievedMessage.Content.StartsWith(CommandPrefix))
+            if (recievedMessage.Content.StartsWith(CommandPrefix) && recievedMessage.Content.IndexOf(" ") == CommandPrefix.Length)
             {
+                // The message starts with the command prefix and the prefix is not part of another word.
                 await CommandRecievedAsync(recievedMessage);
                 return;
             }
