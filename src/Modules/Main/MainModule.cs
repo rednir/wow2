@@ -10,6 +10,7 @@ using ExtentionMethods;
 namespace wow2.Modules.Main
 {
     [Name("Main")]
+    [Summary("Commands that don't fit anywhere else.")]
     public class MainModule : ModuleBase<SocketCommandContext>
     {
         [Command("about")]
@@ -39,7 +40,7 @@ namespace wow2.Modules.Main
 
         [Command("alias")]
         [Alias("aliases")]
-        [Summary("Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to \"\" to remove it.\n")]
+        [Summary("Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to \"\" to remove it.")]
         public async Task AliasAsync(string name, string definition)
         {
             var config = DataManager.GetMainConfigForGuild(Context.Guild);
