@@ -59,7 +59,7 @@ namespace wow2.Modules.Images
                 MemoryStream fileStreamForImage = new MemoryStream();
 
                 Size imageSize = image.Size();
-                int quoteXPos = (imageSize.Width / 2) + (imageSize.Width / 32);
+                int quoteXPos = imageSize.Width / 2;
                 int quoteYPos = (imageSize.Height / 2) - (imageSize.Height / 6) - (quote.Length / 4);
 
                 image.Mutate(x => x.DrawText($"\"{quote.Wrap(40)}\"\n\n - {author}", ImagesModuleFonts.QuoteTextFont, SixLabors.ImageSharp.Color.LightGrey, new PointF(quoteXPos, quoteYPos)));
