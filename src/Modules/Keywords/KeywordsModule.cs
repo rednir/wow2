@@ -161,15 +161,20 @@ namespace wow2.Modules.Keywords
         [Summary("Shows a list of all keywords.")]
         public async Task ListAsync()
         {
+            const int maxFields = 16;
+
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
 
-            // TODO: dont show value previews if too many keywords.
-            // TODO: upload file instead if embed max reached
+            if (keywordsDictionary.Count > maxFields)
+            {
+                await ListMinimalAsync();
+                return;
+            }
 
             foreach (var keywordPair in keywordsDictionary)
             {
-                string nameToShow = (keywordPair.Value.Count > 1) ? ($"{keywordPair.Key} ({keywordPair.Value.Count} values):") : ($"{keywordPair.Key}:");
+                string nameToShow = (keywordPair.Value.Count > 1) ? ($"{keywordPair.Key}:\t({keywordPair.Value.Count} values)") : ($"{keywordPair.Key}:");
                 string valueToShow = (keywordPair.Value[0].Content.Length > 50) ? ($"`{keywordPair.Value[0].Content.Substring(0, 47)}...`") : ($"`{keywordPair.Value[0].Content}`");
 
                 var fieldBuilderForKeyword = new EmbedFieldBuilder()
@@ -193,6 +198,22 @@ namespace wow2.Modules.Keywords
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
             await ReplyAsync(
                 embed: MessageEmbedPresets.Verbose($"React to delete is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete ? "on" : "off")}` for keyword responses.")
+            );
+        }
+
+        /// <summary>Alternative to list command, where only keywords are shown</summary>
+        private async Task ListMinimalAsync()
+        {
+            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
+            var descriptionBuilder = new StringBuilder($"*There are {keywordsDictionary.Count} keywords in total, as listed below.*\n\n");
+
+            foreach (var keywordPair in keywordsDictionary)
+            {
+                descriptionBuilder.Append($"{(keywordPair.Value.Count > 1 ? $"`{keywordPair.Key}` ({keywordPair.Value.Count} values)" : $"`{keywordPair.Key}`")}\n");
+            }
+
+            await ReplyAsync(
+                embed: MessageEmbedPresets.GenericResponse(descriptionBuilder.ToString(), "Keywords")
             );
         }
     }
