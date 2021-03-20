@@ -7,6 +7,7 @@ namespace wow2.Modules.Dev
     [Name("Developer")]
     [Group("dev")]
     [RequireOwner(Group = "Permission")]
+    [Summary("For developer things.")]
     public class DevModule : ModuleBase<SocketCommandContext>
     {
         [Command("load-guild-data")]
@@ -27,9 +28,5 @@ namespace wow2.Modules.Dev
             );
             if (alsoExit) Environment.Exit(0);
         }
-
-        [Command("throw")]
-        public Task ThrowAsync()
-            => throw new ArgumentException("This is a test error message.");
     }
 }
