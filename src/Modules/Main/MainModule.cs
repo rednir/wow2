@@ -81,7 +81,7 @@ namespace wow2.Modules.Main
         {
             var config = DataManager.GetMainConfigForGuild(message.GetGuild());
 
-            var aliasesFound = config.AliasesDictionary.Where(a => message.Content.StartsWith(a.Key));
+            var aliasesFound = config.AliasesDictionary.Where(a => message.Content.StartsWith(a.Key, true, null));
             if (aliasesFound.Count() != 0)
             {
                 var context = new SocketCommandContext(Program.Client, (SocketUserMessage)message);
@@ -90,7 +90,7 @@ namespace wow2.Modules.Main
                 IResult result = await EventHandlers.BotCommandService.ExecuteAsync
                 (
                     context: context,
-                    input: aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, ""),
+                    input: aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, "", true, null),
                     services: null
                 );
 
