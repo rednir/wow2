@@ -43,12 +43,14 @@ namespace wow2.Modules.Main
                 return;
             }
 
-            if (definition != "")
+            if (definition == "")
                 throw new CommandReturnException($"An alias should have a definition that isn't blank.", Context);
 
             await ReplyAsync(
                 embed: MessageEmbedPresets.Verbose($"Typing `{name}` will now execute `{EventHandlers.CommandPrefix} {definition}`")
             );
+
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("savedata")]
@@ -79,14 +81,16 @@ namespace wow2.Modules.Main
         {
             var config = DataManager.GetMainConfigForGuild(message.GetGuild());
 
-            if (config.AliasesDictionary.Where(a => a.Key.StartsWith(message.Content)).Count() != 0)
+            var aliasesFound = config.AliasesDictionary.Where(a => message.Content.StartsWith(a.Key));
+            if (aliasesFound.Count() != 0)
             {
                 var context = new SocketCommandContext(Program.Client, (SocketUserMessage)message);
+                var aliasToExecute = aliasesFound.First();
 
                 IResult result = await EventHandlers.BotCommandService.ExecuteAsync
                 (
                     context: context,
-                    input: config.AliasesDictionary[message.Content],
+                    input: aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, ""),
                     services: null
                 );
 
