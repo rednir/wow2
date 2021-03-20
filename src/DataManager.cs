@@ -33,8 +33,7 @@ namespace wow2
             {
                 try
                 {
-                    // Remove the ".json" at the end of the filename and convert to ulong.
-                    ulong guildId = Convert.ToUInt64(fileInfo.Name.Substring(0, fileInfo.Name.Length - 5));
+                    ulong guildId = Convert.ToUInt64(Path.GetFileNameWithoutExtension(fileInfo.FullName));
 
                     string guildDataJson = await File.ReadAllTextAsync(fileInfo.FullName);
                     DictionaryOfGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
