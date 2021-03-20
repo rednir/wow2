@@ -27,6 +27,7 @@ namespace wow2.Modules.Main
         }
 
         [Command("alias")]
+        [Alias("aliases")]
         public async Task AliasAsync(string name, string definition)
         {
             var config = DataManager.GetMainConfigForGuild(Context.Guild);
@@ -51,6 +52,29 @@ namespace wow2.Modules.Main
             );
 
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+        }
+
+        [Command("alias-list")]
+        [Alias("alias", "aliases", "list-alias", "list-aliases")]
+        public async Task AliasAsync()
+        {
+            var config = DataManager.GetMainConfigForGuild(Context.Guild);
+
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+            foreach (var aliasPair in config.AliasesDictionary)
+            {
+                var fieldBuilderForAlias = new EmbedFieldBuilder()
+                {
+                    Name = aliasPair.Key,
+                    Value = $"`{EventHandlers.CommandPrefix} {aliasPair.Value}`",
+                    IsInline = true
+                };
+                listOfFieldBuilders.Add(fieldBuilderForAlias);
+            }
+
+            await ReplyAsync(
+                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "List of Aliases", "To remove any of these aliases, just set the alias definition to \"\"")
+            );
         }
 
         [Command("savedata")]
