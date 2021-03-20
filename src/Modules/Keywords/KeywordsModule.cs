@@ -18,7 +18,8 @@ namespace wow2.Modules.Keywords
     [Summary("For automatically responding to keywords in user messages.")]
     public class KeywordsModule : ModuleBase<SocketCommandContext>
     {
-        public const int MaxCountOfRememberedKeywordResponses = 100;
+        public static IEmote ReactToDeleteEmote { get; } = new Emoji("🗑");
+        private const int MaxCountOfRememberedKeywordResponses = 100;
 
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
         public static async Task<bool> CheckMessageForKeywordAsync(SocketMessage message)
@@ -47,7 +48,7 @@ namespace wow2.Modules.Keywords
             // If the keyword has multiple values, the value will be chosen randomly.
             int chosenValueIndex = new Random().Next(config.KeywordsDictionary[foundKeyword].Count);
             KeywordValue chosenValue = config.KeywordsDictionary[foundKeyword][chosenValueIndex];
-            
+
             RestUserMessage sentKeywordResponseMessage;
             if (chosenValue.Content.Contains("http://") || chosenValue.Content.Contains("https://"))
             {
@@ -60,7 +61,7 @@ namespace wow2.Modules.Keywords
             }
 
             if (DataManager.GetKeywordsConfigForGuild(message.GetGuild()).KeywordsReactToDelete)
-                await sentKeywordResponseMessage.AddReactionAsync(new Emoji("🗑"));
+                await sentKeywordResponseMessage.AddReactionAsync(ReactToDeleteEmote);
 
             // Remember the messages that are actually keyword responses by adding them to a list.
             config.ListOfResponsesId.Add(sentKeywordResponseMessage.Id);

@@ -62,7 +62,7 @@ namespace wow2
         {
             IUserMessage message = await cachedMessage.GetOrDownloadAsync();
 
-            if (reaction.UserId != Program.Client.CurrentUser.Id)
+            if (reaction.UserId != Program.Client.CurrentUser.Id && reaction.Emote.Name == KeywordsModule.ReactToDeleteEmote.Name)
             {
                 if (await KeywordsModule.DeleteMessageIfKeywordResponse(message))
                 {
