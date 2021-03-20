@@ -48,7 +48,7 @@ namespace wow2.Modules.Main
             {
                 if (definition != "")
                     throw new CommandReturnException($"The alias `{name}` already exists.\nTo remove the alias, type `{EventHandlers.CommandPrefix} alias \"{name}\" \"\"`", Context);
-                
+
                 config.AliasesDictionary.Remove(name);
                 await ReplyAsync(
                     embed: MessageEmbedPresets.Verbose($"The alias `{name}` was removed.")
@@ -165,13 +165,7 @@ namespace wow2.Modules.Main
                 foreach (CommandInfo command in commandsSortedByModules[module])
                 {
                     // Append each command info
-                    string parametersInfo = "";
-                    foreach (ParameterInfo parameter in command.Parameters)
-                    {
-                        // Create a string of the command's parameters
-                        string optionalText = parameter.IsOptional ? "optional:" : "";
-                        parametersInfo += $" [{optionalText}{parameter.Name.ToUpper()}]";
-                    }
+                    string parametersInfo = ParametersToString(command.Parameters);
                     fieldBuilderForModule.Value += $"`{EventHandlers.CommandPrefix} {(module.Aliases.FirstOrDefault() == "" ? "" : $"{module.Aliases.First()} ")}{command.Name}{parametersInfo}`\n";
                 }
 
@@ -195,7 +189,7 @@ namespace wow2.Modules.Main
             var listOfCommandInfo = (await EventHandlers.BotCommandService.GetExecutableCommandsAsync(
                 new CommandContext(Context.Client, Context.Message), null
             ))
-            .Where(c => 
+            .Where(c =>
                 c.Module.Name.Equals(specifiedModuleName, StringComparison.CurrentCultureIgnoreCase)
                 || c.Module.Aliases.Contains(specifiedModuleName.ToLower())
             );
@@ -210,6 +204,17 @@ namespace wow2.Modules.Main
                 });
             }
             return listOfFieldBuilders;
+        }
+
+        private string ParametersToString(IReadOnlyList<ParameterInfo> parameters)
+        {
+            string parametersInfo = "";
+            foreach (ParameterInfo parameter in parameters)
+            {
+                string optionalText = parameter.IsOptional ? "optional:" : "";
+                parametersInfo += $" [{optionalText}{parameter.Name.ToUpper()}]";
+            }
+            return parametersInfo;
         }
     }
 }
