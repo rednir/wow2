@@ -45,21 +45,19 @@ namespace wow2
                 else if (commandException.InnerException is DirectoryNotFoundException || commandException.InnerException is FileNotFoundException)
                     verboseErrorMessage = "The host of the bot is missing required assets.";
 
-                Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
-                Console.WriteLine($" ------ START OF EXCEPTION ------\n{commandException}\n------ END OF EXCEPTION ------");
-
+                Logger.Log(commandException, $"Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
+                
                 await commandException.Context.Channel.SendMessageAsync(
                     embed: MessageEmbedPresets.Verbose(verboseErrorMessage, VerboseMessageSeverity.Error)
                 );
             }
             else if (logMessage.Exception != null)
             {
-                Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] Exception was thrown:");
-                Console.WriteLine($" ------ START OF EXCEPTION ------\n{logMessage.Exception}\n------ END OF EXCEPTION ------");
+                Logger.Log(logMessage.Exception);
             }
             else
             {
-                Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] {logMessage.Message}");
+                Logger.Log(logMessage);
             }
         }
 
