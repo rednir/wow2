@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using System.Reflection;
 using Discord;
@@ -37,14 +38,18 @@ namespace wow2
         {
             if (logMessage.Exception is CommandException commandException)
             {
+                string verboseErrorMessage = "An unhandled exception was thrown and was automatically reported.";
+
                 if (commandException.InnerException is CommandReturnException)
                     return;
+                else if (commandException.InnerException is DirectoryNotFoundException || commandException.InnerException is FileNotFoundException)
+                    verboseErrorMessage = "The host of the bot is missing required assets.";
 
                 Console.WriteLine($"Log: [{logMessage.Source}: {logMessage.Severity}] Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
                 Console.WriteLine($" ------ START OF EXCEPTION ------\n{commandException}\n------ END OF EXCEPTION ------");
 
                 await commandException.Context.Channel.SendMessageAsync(
-                    embed: MessageEmbedPresets.Verbose($"An unhandled exception was thrown and was automatically reported.", VerboseMessageSeverity.Error)
+                    embed: MessageEmbedPresets.Verbose(verboseErrorMessage, VerboseMessageSeverity.Error)
                 );
             }
             else if (logMessage.Exception != null)
