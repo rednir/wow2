@@ -14,7 +14,7 @@ namespace wow2
 {
     public static class DataManager
     {
-        public static string AppDataDirPath { get; } = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
+        public static readonly string AppDataDirPath = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
         public static DirectoryInfo AppDataDirInfo { get; set; }
 
         public static string GuildDataDirPath
