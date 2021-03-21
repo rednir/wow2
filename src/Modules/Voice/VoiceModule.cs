@@ -139,6 +139,9 @@ namespace wow2.Modules.Voice
         public async Task LeaveAsync()
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            
+            // Just in case.
+            config.CurrentlyPlayingAudio = false;
 
             if (config.AudioClient == null || config.AudioClient?.ConnectionState == ConnectionState.Disconnected)
                 throw new CommandReturnException("I'm not currently in a voice channel.", Context);
@@ -186,8 +189,16 @@ namespace wow2.Modules.Voice
             using (var output = ffmpeg.StandardOutput.BaseStream)
             using (var discord = config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
             {
-                try { await output.CopyToAsync(discord, cancellationToken); }
-                finally { await discord.FlushAsync(); }
+                try
+                {
+                    config.CurrentlyPlayingAudio = true;
+                    await output.CopyToAsync(discord, cancellationToken);
+                }
+                finally
+                {
+                    config.CurrentlyPlayingAudio = false;
+                    await discord.FlushAsync();
+                }
             }
 
             _ = ContinueAsync();
