@@ -16,6 +16,9 @@ namespace wow2.Modules.Voice
         public IAudioClient AudioClient { get; set; }
 
         [JsonIgnore]
+        public bool IsCurrentlyPlayingAudio { get; set; } = false;
+
+        [JsonIgnore]
         public CancellationTokenSource CtsForAudioStreaming { get; set; } = new CancellationTokenSource();
     }
 
