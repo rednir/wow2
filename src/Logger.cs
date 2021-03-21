@@ -6,8 +6,6 @@ namespace wow2
 {
     public static class Logger
     {
-        private static readonly string LogFolderPath = Environment.GetEnvironmentVariable("LOG_FOLDER");
-
         public static void Log(object message, LogSeverity severity = LogSeverity.Debug)
             => Output($"{DateTime.Now} [{severity.ToString()}] {message}");
 
