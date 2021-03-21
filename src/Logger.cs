@@ -1,11 +1,15 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Discord;
 
 namespace wow2
 {
     public static class Logger
     {
+        public static void LogProgramDetails()
+            => Output($"wow2 {Program.Version}\nhttps://github.com/rednir/wow2\n-----------------\nRuntime version: {Environment.Version}\n{RuntimeInformation.OSDescription}\n-----------------\n");
+
         public static void Log(object message, LogSeverity severity = LogSeverity.Debug)
             => Output($"{DateTime.Now} [{severity.ToString()}] {message}");
 

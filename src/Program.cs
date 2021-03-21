@@ -10,8 +10,10 @@ namespace wow2
 {
     public class Program
     {
-        private const string discordTokenFilePath = "discord.token";
-        private const string discordTokenEnvironmentVariable = "DISCORD_BOT_TOKEN";
+        public const string Version = "v1.0"; 
+
+        private const string DiscordTokenFilePath = "discord.token";
+        private const string DiscordTokenEnvironmentVariable = "DISCORD_BOT_TOKEN";
 
         private static bool IsDebugField;
         
@@ -34,6 +36,8 @@ namespace wow2
 
         private async Task MainAsync()
         {
+            Logger.LogProgramDetails();
+
             SetIsDebugField();
             await DataManager.InitializeAsync();
             await EventHandlers.InstallCommandsAsync();
@@ -55,21 +59,22 @@ namespace wow2
             string token = null;
             try
             {
-                token = (await File.ReadAllLinesAsync(discordTokenFilePath)).First();
+                token = (await File.ReadAllLinesAsync(DiscordTokenFilePath)).First();
                 await client.LoginAsync(TokenType.Bot, token);
-                Logger.Log($"Logged in with token found in {discordTokenFilePath}", LogSeverity.Info);
+                Logger.Log($"Logged in with token found in {DiscordTokenFilePath}", LogSeverity.Info);
             }
             catch
             {
                 try
                 {
-                    token = Environment.GetEnvironmentVariable(discordTokenEnvironmentVariable);
+                    token = Environment.GetEnvironmentVariable(DiscordTokenEnvironmentVariable);
                     await client.LoginAsync(TokenType.Bot, token);
-                    Logger.Log($"Logged in with token found in environment variable {discordTokenEnvironmentVariable}", LogSeverity.Info);
+                    Logger.Log($"Logged in with token found in environment variable {DiscordTokenEnvironmentVariable}", LogSeverity.Info);
                 }
                 catch
                 {
-                    Console.WriteLine($"A valid bot token was not found. You can enter it in manually below.\nIt is recommended to put your bot token in an environment variable called {discordTokenEnvironmentVariable}. Alternatively, you can put your bot token in a file named {discordTokenFilePath}, and place it in the working directory of this executable.\n\n");
+                    Logger.Log($"A valid bot token was not found, and must be entered in manually.", LogSeverity.Warning);
+                    Console.WriteLine($"\nIt is recommended to put your bot token in an environment variable called {DiscordTokenEnvironmentVariable}. Alternatively, you can put your bot token in a file named {DiscordTokenFilePath}, and place it in the working directory of this executable.\n");
                     await PromptUserForToken(client);
                 }
             }
@@ -87,7 +92,7 @@ namespace wow2
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"An exception was thrown: {ex.Message}");
+                    Logger.Log(ex.Message, LogSeverity.Error);
                 }
                 finally
                 {
