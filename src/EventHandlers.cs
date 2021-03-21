@@ -45,7 +45,7 @@ namespace wow2
                 else if (commandException.InnerException is DirectoryNotFoundException || commandException.InnerException is FileNotFoundException)
                     verboseErrorMessage = "The host of the bot is missing required assets.";
 
-                Logger.Log(commandException, $"Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
+                Logger.LogException(commandException, $"Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
                 
                 await commandException.Context.Channel.SendMessageAsync(
                     embed: MessageEmbedPresets.Verbose(verboseErrorMessage, VerboseMessageSeverity.Error)
@@ -53,7 +53,7 @@ namespace wow2
             }
             else if (logMessage.Exception != null)
             {
-                Logger.Log(logMessage.Exception);
+                Logger.LogException(logMessage.Exception);
             }
             else
             {
@@ -69,7 +69,7 @@ namespace wow2
             {
                 if (await KeywordsModule.DeleteMessageIfKeywordResponse(message))
                 {
-                    Console.WriteLine($"Message was deleted in channel `{channel.Name}` due to reaction added by `{reaction.User}` ({reaction.UserId})");
+                    Logger.Log($"Message was deleted in channel `{channel.Name}` due to reaction added by `{reaction.User}` ({reaction.UserId})", LogSeverity.Verbose);
                     return;
                 }
             }
@@ -100,8 +100,6 @@ namespace wow2
 
             // Return if the message is not a user message.
             if (socketMessage == null) return;
-
-            Console.WriteLine($"{socketMessage.Author} executed a command ({socketMessage.Content})");
 
             if (socketMessage.Content == CommandPrefix)
             {

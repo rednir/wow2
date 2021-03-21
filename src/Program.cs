@@ -37,7 +37,6 @@ namespace wow2
             await GetTokenAndLoginAsync(Client);
 
             SetIsDebugField();
-            Console.WriteLine(IsDebug);
             await DataManager.InitializeAsync();
             await EventHandlers.InstallCommandsAsync();
 
@@ -58,7 +57,7 @@ namespace wow2
             {
                 token = await File.ReadAllTextAsync(discordTokenFilePath);
                 await client.LoginAsync(TokenType.Bot, token);
-                Console.WriteLine($"Logged in with token found in {discordTokenFilePath}");
+                Logger.Log($"Logged in with token found in {discordTokenFilePath}", LogSeverity.Info);
             }
             catch
             {
@@ -66,7 +65,7 @@ namespace wow2
                 {
                     token = Environment.GetEnvironmentVariable(discordTokenEnvironmentVariable);
                     await client.LoginAsync(TokenType.Bot, token);
-                    Console.WriteLine($"Logged in with token found in environment variable {discordTokenEnvironmentVariable}");
+                    Logger.Log($"Logged in with token found in environment variable {discordTokenEnvironmentVariable}", LogSeverity.Info);
                 }
                 catch
                 {
