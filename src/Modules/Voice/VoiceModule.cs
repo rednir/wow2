@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -213,11 +214,13 @@ namespace wow2.Modules.Voice
 
         private Process CreateStreamFromYoutubeUrl(string url)
         {
+            string shellCommand = $"youtube-dl '{url}' -o - | ffmpeg -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
             return Process.Start(new ProcessStartInfo
             {
-                // TODO: Requiring bash is not ideal
-                FileName = "bash",
-                Arguments = $"-c \"youtube-dl '{url}' -o - | ffmpeg -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1\"",
+                FileName = isWindows ? "cmd" : "bash",
+                Arguments = $"{(isWindows ? "/c" : "-c")} \"{shellCommand}\"",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
             });

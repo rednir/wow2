@@ -7,6 +7,9 @@ namespace wow2.Modules.Voice
 {
     public class YoutubeDl
     {
+        public static string YoutubeDlPath = Environment.GetEnvironmentVariable("YOUTUBE_DL_PATH");
+        public static string FFmpegPath = Environment.GetEnvironmentVariable("FFMPEG_PATH");
+
         /// <summary>Looks up a URL or search term and gets the video metadata.</summary>
         /// <returns>Video metadata deserialized into <c>YoutubeVideoMetadata</c>.</returns>
         public static async Task<YoutubeVideoMetadata> GetMetadata(string searchOrUrl)
@@ -20,7 +23,7 @@ namespace wow2.Modules.Voice
             {
                 using (var process = new Process())
                 {
-                    process.StartInfo.FileName = Environment.GetEnvironmentVariable("YOUTUBE_DL_PATH") ?? "youtube-dl";
+                    process.StartInfo.FileName = YoutubeDlPath ?? "youtube-dl";
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.RedirectStandardOutput = true;
                     process.StartInfo.RedirectStandardError = true;
