@@ -31,6 +31,8 @@ namespace wow2
         /// <summary>Creates required directories if necessary and loads all guild data.</summary>
         public static async Task InitializeAsync()
         {
+            Directory.CreateDirectory(AppDataDirPath);
+            
             AppDataDirInfo = Directory.CreateDirectory(GuildDataDirPath);
             Directory.CreateDirectory(LogsDirPath);
 

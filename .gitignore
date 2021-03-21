@@ -1,3 +1,4 @@
 *.token
 bin/
 obj/
+DebugAppdata/

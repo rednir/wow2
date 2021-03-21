@@ -34,14 +34,12 @@ namespace wow2
 
         private async Task MainAsync()
         {
-            Client = new DiscordSocketClient();
-
-            await GetTokenAndLoginAsync(Client);
-
             SetIsDebugField();
             await DataManager.InitializeAsync();
             await EventHandlers.InstallCommandsAsync();
 
+            Client = new DiscordSocketClient();
+            await GetTokenAndLoginAsync(Client);
             await Client.StartAsync();
 
             Client.Ready += EventHandlers.ReadyAsync;

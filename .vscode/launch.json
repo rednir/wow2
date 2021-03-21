@@ -11,6 +11,9 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/bin/Debug/net5.0/wow2.dll",
+            "env": {
+                "WOW2_APPDATA_FOLDER": "./DebugAppdata"
+            },
             "args": [],
             "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
