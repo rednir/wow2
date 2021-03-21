@@ -14,7 +14,7 @@ Here are a few examples:
 <img src="res/about/examples.png">
 
 ## Hosting the bot yourself
-Download the excecutable from the [releases page](https://github.com/rednir/wow2/releases/)
+Download the executable from the [releases page](https://github.com/rednir/wow2/releases/)
 
 To host the bot, you must have a bot token. Make sure you have created an application [here](https://discord.com/developers/applications), and added a bot user to it with sufficient privileges.
 
