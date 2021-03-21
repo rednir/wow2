@@ -20,6 +20,6 @@ To host the bot, you must have a bot token. Make sure you have created an applic
 - .NET 5.0
 - For voice commands:
 	- `libsodium` and `opus`
-		- 
+		- Windows binaries are already included in releases.
 	- `youtube-dl`
 		- A custom path can be set with the YOUTUBE_DL_PATH environment variable.
