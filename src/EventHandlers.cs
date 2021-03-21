@@ -25,7 +25,7 @@ namespace wow2
                 LogLevel = LogSeverity.Verbose
             };
             BotCommandService = new CommandService(config);
-            BotCommandService.Log += LogAsync;
+            BotCommandService.Log += DiscordLogRecievedAsync;
             await BotCommandService.AddModulesAsync(Assembly.GetEntryAssembly(), null);
         }
 
@@ -34,7 +34,7 @@ namespace wow2
             await Program.Client.SetGameAsync("!wow help");
         }
 
-        public static async Task LogAsync(LogMessage logMessage)
+        public static async Task DiscordLogRecievedAsync(LogMessage logMessage)
         {
             if (logMessage.Exception is CommandException commandException)
             {
