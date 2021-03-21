@@ -17,12 +17,23 @@ namespace wow2
         public static string AppDataDirPath { get; } = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
         public static DirectoryInfo AppDataDirInfo { get; set; }
 
+        public static string GuildDataDirPath
+        {
+            get { return $"{AppDataDirPath}/GuildData"; }
+        }
+        public static string LogsDirPath
+        {
+            get { return $"{AppDataDirPath}/Logs"; }
+        }
+
         public static Dictionary<ulong, GuildData> DictionaryOfGuildData { get; set; } = new Dictionary<ulong, GuildData>();
 
         /// <summary>Creates required directories if necessary and loads all guild data.</summary>
         public static async Task InitializeAsync()
         {
-            AppDataDirInfo = Directory.CreateDirectory($"{AppDataDirPath}/GuildData");
+            AppDataDirInfo = Directory.CreateDirectory(GuildDataDirPath);
+            Directory.CreateDirectory(LogsDirPath);
+
             await LoadGuildDataFromFileAsync();
         }
 
@@ -68,7 +79,7 @@ namespace wow2
         {
             foreach (ulong id in DictionaryOfGuildData.Keys)
             {
-                await File.WriteAllTextAsync($"{AppDataDirPath}/GuildData/{id}.json", JsonSerializer.Serialize(DictionaryOfGuildData[id]));
+                await File.WriteAllTextAsync($"{GuildDataDirPath}/{id}.json", JsonSerializer.Serialize(DictionaryOfGuildData[id]));
                 Logger.Log($"Saved guild data for {id} (mass save)", LogSeverity.Verbose);
             }
         }
@@ -85,14 +96,14 @@ namespace wow2
                     break;
                 }
             }
-            await File.WriteAllTextAsync($"{AppDataDirPath}/GuildData/{guildId}.json", JsonSerializer.Serialize(guildData));
+            await File.WriteAllTextAsync($"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(guildData));
             Logger.Log($"Saved guild data for {guildId} (specific save)", LogSeverity.Verbose);
         }
 
         /// <summary>If the data file for the specified guild does not exist, one will be created and loaded. Otherwise this does nothing.</summary>
         public static async Task EnsureGuildDataFileExistsAsync(ulong guildId)
         {
-            if (!File.Exists($"{AppDataDirPath}/GuildData/{guildId}.json"))
+            if (!File.Exists($"{GuildDataDirPath}/{guildId}.json"))
             {
                 await SaveGuildDataToFileAsync(guildId);
                 await LoadGuildDataFromFileAsync(guildId);

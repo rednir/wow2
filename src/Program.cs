@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using Discord;
@@ -18,6 +19,7 @@ namespace wow2
         private static void SetIsDebugField()
             => IsDebugField = true;
 
+        public static readonly DateTime TimeStarted = DateTime.Now;
         public static DiscordSocketClient Client { get; set; }
         public static bool IsDebug
         {
@@ -55,7 +57,7 @@ namespace wow2
             string token = null;
             try
             {
-                token = await File.ReadAllTextAsync(discordTokenFilePath);
+                token = (await File.ReadAllLinesAsync(discordTokenFilePath)).First();
                 await client.LoginAsync(TokenType.Bot, token);
                 Logger.Log($"Logged in with token found in {discordTokenFilePath}", LogSeverity.Info);
             }

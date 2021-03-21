@@ -1,11 +1,13 @@
 using System;
-using System.Diagnostics;
+using System.IO;
 using Discord;
 
 namespace wow2
 {
     public static class Logger
     {
+        private static readonly string LogFolderPath = Environment.GetEnvironmentVariable("LOG_FOLDER");
+
         public static void Log(object message, LogSeverity severity = LogSeverity.Debug)
             => Output($"{DateTime.Now} [{severity.ToString()}] {message}");
 
@@ -16,7 +18,8 @@ namespace wow2
             => Output($"{DateTime.Now} [Exception] {message}\n------ START OF EXCEPTION ------\n\n{exception}\n\n------ END OF EXCEPTION ------");
 
         private static void Output(string message)
-        {
+        { 
+            File.AppendAllText($"{DataManager.LogsDirPath}/{Program.TimeStarted.ToString("yyyy-MM-dd_HH-mm-ss")}.log", message + "\n");
             Console.WriteLine(message);
         }
     }
