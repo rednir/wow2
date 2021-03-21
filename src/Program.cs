@@ -12,12 +12,23 @@ namespace wow2
         private const string discordTokenFilePath = "discord.token";
         private const string discordTokenEnvironmentVariable = "DISCORD_BOT_TOKEN";
 
+        private static bool IsDebugField;
+        
+        [System.Diagnostics.Conditional("DEBUG")]
+        private static void SetIsDebugField()
+            => IsDebugField = true;
+
         public static DiscordSocketClient Client { get; set; }
+        public static bool IsDebug
+        {
+            get { return IsDebugField; }
+        }
 
         public static async Task<IGuildUser> GetClientGuildUserAsync(SocketCommandContext context)
             => (IGuildUser)(await context.Channel.GetUserAsync(context.Client.CurrentUser.Id));
 
-        private static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
+        private static void Main(string[] args)
+            => new Program().MainAsync().GetAwaiter().GetResult();
 
         private async Task MainAsync()
         {
@@ -25,13 +36,15 @@ namespace wow2
 
             await GetTokenAndLoginAsync(Client);
 
+            SetIsDebugField();
+            Console.WriteLine(IsDebug);
             await DataManager.InitializeAsync();
             await EventHandlers.InstallCommandsAsync();
 
             await Client.StartAsync();
 
             Client.Ready += EventHandlers.ReadyAsync;
-            Client.Log += EventHandlers.LogAsync;
+            Client.Log += EventHandlers.DiscordLogRecievedAsync;
             Client.ReactionAdded += EventHandlers.ReactionAddedAsync;
             Client.MessageReceived += EventHandlers.MessageRecievedAsync;
 
