@@ -128,11 +128,11 @@ namespace wow2
                     break;
 
                 case CommandError.ParseFailed:
-                    embedToSend = MessageEmbedPresets.Verbose("**Parsing arguments failed.**\nYou probably typed a parameter that was the incorrect type.", VerboseMessageSeverity.Warning);
+                    embedToSend = MessageEmbedPresets.Verbose("**Parsing arguments failed.**\nYou might have typed an invalid parameter.", VerboseMessageSeverity.Warning);
                     break;
 
                 case CommandError.UnknownCommand:
-                    embedToSend = MessageEmbedPresets.Verbose("**That command doesn't exist.**", VerboseMessageSeverity.Warning);
+                    embedToSend = MessageEmbedPresets.Verbose("**That command doesn't exist.\n**Did you make a typo?", VerboseMessageSeverity.Warning);
                     break;
 
                 case CommandError.UnmetPrecondition:
