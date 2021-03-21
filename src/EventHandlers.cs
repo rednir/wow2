@@ -81,16 +81,19 @@ namespace wow2
 
             await DataManager.EnsureGuildDataFileExistsAsync(recievedMessage.GetGuild().Id);
 
+            await GamesModule.CheckMessageIsCountingAsync(recievedMessage);
             if (recievedMessage.Content.StartsWithWord(CommandPrefix))
             {
                 // The message starts with the command prefix and the prefix is not part of another word.
                 await CommandRecievedAsync(recievedMessage);
                 return;
             }
-
-            await MainModule.CheckForAliasAsync(recievedMessage);
-            await KeywordsModule.CheckMessageForKeywordAsync(recievedMessage);
-            await GamesModule.CheckMessageIsCountingAsync(recievedMessage);
+            if (!await MainModule.CheckForAliasAsync(recievedMessage))
+            {
+                // Only check for keyword when the message is not an alias/command.
+                await KeywordsModule.CheckMessageForKeywordAsync(recievedMessage);
+                return;
+            }
         }
 
         public static async Task CommandRecievedAsync(SocketMessage socketMessage)

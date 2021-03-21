@@ -119,7 +119,7 @@ namespace wow2.Modules.Main
             );
         }
 
-        public static async Task CheckForAliasAsync(SocketMessage message)
+        public static async Task<bool> CheckForAliasAsync(SocketMessage message)
         {
             var config = DataManager.GetMainConfigForGuild(message.GetGuild());
 
@@ -139,7 +139,10 @@ namespace wow2.Modules.Main
 
                 if (result.Error.HasValue)
                     await EventHandlers.SendErrorMessageToChannel(result.Error, context.Message.Channel);
+
+                return true;
             }
+            return false;
         }
 
         /// <summary>Builds embed fields for all command modules.</summary>
