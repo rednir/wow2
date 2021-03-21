@@ -21,8 +21,15 @@ namespace wow2
 
         private static void Output(string message)
         { 
-            File.AppendAllText($"{DataManager.LogsDirPath}/{Program.TimeStarted.ToString("yyyy-MM-dd_HH-mm-ss")}.log", message + "\n");
-            Console.WriteLine(message);
+            try
+            {
+                File.AppendAllText($"{DataManager.LogsDirPath}/{Program.TimeStarted.ToString("yyyy-MM-dd_HH-mm-ss")}.log", message + "\n");
+            }
+            catch {}
+            finally
+            {
+                Console.WriteLine(message);
+            }
         }
     }
 }

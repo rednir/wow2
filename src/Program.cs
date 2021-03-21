@@ -37,7 +37,7 @@ namespace wow2
         private async Task MainAsync()
         {
             Logger.LogProgramDetails();
-
+            
             SetIsDebugField();
             await DataManager.InitializeAsync();
             await EventHandlers.InstallCommandsAsync();
