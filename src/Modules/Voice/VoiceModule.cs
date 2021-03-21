@@ -214,7 +214,7 @@ namespace wow2.Modules.Voice
 
         private Process CreateStreamFromYoutubeUrl(string url)
         {
-            string shellCommand = $"{YoutubeDl.YoutubeDlPath} '{url}' -o - | {YoutubeDl.FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
+            string shellCommand = $"{YoutubeDl.YoutubeDlPath} {url} -o - | {YoutubeDl.FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
             return Process.Start(new ProcessStartInfo
