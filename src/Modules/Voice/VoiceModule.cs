@@ -219,7 +219,7 @@ namespace wow2.Modules.Voice
             else
             {
                 // Song request queue is empty
-                await config.AudioClient.StopAsync();
+                throw new CommandReturnException("**The queue is empty.**\nI'll stay in the voice channel... in silence...", Context);
             }
         }
 
