@@ -32,7 +32,7 @@ namespace wow2
         public static async Task InitializeAsync()
         {
             Directory.CreateDirectory(AppDataDirPath);
-            
+
             AppDataDirInfo = Directory.CreateDirectory(GuildDataDirPath);
             Directory.CreateDirectory(LogsDirPath);
 

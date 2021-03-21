@@ -20,12 +20,12 @@ namespace wow2
             => Output($"{DateTime.Now} [Exception] {message}\n------ START OF EXCEPTION ------\n\n{exception}\n\n------ END OF EXCEPTION ------");
 
         private static void Output(string message)
-        { 
+        {
             try
             {
                 File.AppendAllText($"{DataManager.LogsDirPath}/{Program.TimeStarted.ToString("yyyy-MM-dd_HH-mm-ss")}.log", message + "\n");
             }
-            catch {}
+            catch { }
             finally
             {
                 Console.WriteLine(message);

@@ -139,7 +139,7 @@ namespace wow2.Modules.Voice
         public async Task LeaveAsync()
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
-            
+
             // Just in case.
             config.IsCurrentlyPlayingAudio = false;
 

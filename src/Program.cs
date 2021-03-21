@@ -10,13 +10,13 @@ namespace wow2
 {
     public class Program
     {
-        public const string Version = "v1.0"; 
+        public const string Version = "v1.0";
 
         private const string DiscordTokenFilePath = "discord.token";
         private const string DiscordTokenEnvironmentVariable = "DISCORD_BOT_TOKEN";
 
         private static bool IsDebugField;
-        
+
         [System.Diagnostics.Conditional("DEBUG")]
         private static void SetIsDebugField()
             => IsDebugField = true;
@@ -37,7 +37,7 @@ namespace wow2
         private async Task MainAsync()
         {
             Logger.LogProgramDetails();
-            
+
             SetIsDebugField();
             await DataManager.InitializeAsync();
             await EventHandlers.InstallCommandsAsync();

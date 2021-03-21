@@ -46,7 +46,7 @@ namespace wow2
                     verboseErrorMessage = "The host of the bot is missing required assets.";
 
                 Logger.LogException(commandException, $"Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
-                
+
                 await commandException.Context.Channel.SendMessageAsync(
                     embed: MessageEmbedPresets.Verbose(verboseErrorMessage, VerboseMessageSeverity.Error)
                 );
