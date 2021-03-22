@@ -8,6 +8,7 @@ namespace wow2.Verbose
 {
     public static class Messenger
     {
+        /// <summary>Notify a channel about a successful action.</summary>
         public static async Task SendSuccessAsync(ISocketMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
@@ -16,6 +17,7 @@ namespace wow2.Verbose
             }
             .Build());
 
+        /// <summary>Notify a channel about some infomation.</summary>
         public static async Task SendInfoAsync(ISocketMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
@@ -24,6 +26,7 @@ namespace wow2.Verbose
             }
             .Build());
 
+        /// <summary>Notify a channel about a handled unsuccessful action.</summary>
         public static async Task SendWarningAsync(ISocketMessageChannel channel, string description, string title = null)
              => await channel.SendMessageAsync(embed: new EmbedBuilder()
              {
@@ -31,7 +34,8 @@ namespace wow2.Verbose
                  Color = Color.LightOrange
              }
             .Build());
-
+        
+        /// <summary>Notify a channel about an unhandled error.</summary>
         public static async Task SendErrorAsync(ISocketMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
