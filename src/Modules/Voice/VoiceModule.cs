@@ -90,7 +90,7 @@ namespace wow2.Modules.Voice
             await Messenger.SendSuccessAsync(Context.Channel, $"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}");
 
             // Play song if it is the first in queue.
-            if (!CheckIfAudioClientDisconnected(config.AudioClient) && !config.IsCurrentlyPlayingAudio)
+            if (!CheckIfAudioClientDisconnected(config.AudioClient) && config.CurrentlyPlayingSongRequest == null)
                 _ = ContinueAsync();
         }
 
@@ -137,8 +137,7 @@ namespace wow2.Modules.Voice
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
-            // Just in case.
-            config.IsCurrentlyPlayingAudio = false;
+            config.CurrentlyPlayingSongRequest = null;
 
             if (config.AudioClient == null || config.AudioClient?.ConnectionState == ConnectionState.Disconnected)
                 throw new CommandReturnException(Context, "I'm not currently in a voice channel.");
@@ -199,12 +198,12 @@ namespace wow2.Modules.Voice
             {
                 try
                 {
-                    config.IsCurrentlyPlayingAudio = true;
+                    config.CurrentlyPlayingSongRequest = request;
                     await output.CopyToAsync(discord, cancellationToken);
                 }
                 finally
                 {
-                    config.IsCurrentlyPlayingAudio = false;
+                    config.CurrentlyPlayingSongRequest = null;
                     await discord.FlushAsync();
                 }
             }
@@ -222,7 +221,6 @@ namespace wow2.Modules.Voice
 
             if (config.SongRequests.TryDequeue(out nextRequest))
             {
-                config.CurrentlyPlayingSongRequest = nextRequest;
                 await PlayRequestAsync(nextRequest, config.CtsForAudioStreaming.Token);
             }
             else
