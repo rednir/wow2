@@ -59,7 +59,7 @@ namespace wow2.Modules.Keywords
             }
             else
             {
-                sentKeywordResponseMessage = await message.Channel.SendMessageAsync(embed: MessageEmbedPresets.GenericResponse(chosenValue.Content));
+                sentKeywordResponseMessage = await message.Channel.SendMessageAsync(embed: Messenger.GenericResponse(chosenValue.Content));
             }
 
             if (DataManager.GetKeywordsConfigForGuild(message.GetGuild()).KeywordsReactToDelete)
@@ -116,9 +116,7 @@ namespace wow2.Modules.Keywords
 
             keywordsDictionary[keyword].Add(new KeywordValue() { Content = value });
 
-            await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.")
-            );
+            await Messenger.SendSuccessAsync(Context.Channel, $"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.");
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
@@ -136,9 +134,7 @@ namespace wow2.Modules.Keywords
             {
                 // No values have been specified, so assume the user wants to remove the keyword.
                 keywordsDictionary.Remove(keyword);
-                await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"Sucessfully removed keyword `{keyword}`.")
-                );
+                await Messenger.SendSuccessAsync(Context.Channel, $"Sucessfully removed keyword `{keyword}`.");
             }
             else
             {
@@ -151,9 +147,7 @@ namespace wow2.Modules.Keywords
                 if (keywordsDictionary[keyword].Count == 0)
                     keywordsDictionary.Remove(keyword);
 
-                await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"Sucessfully removed `{value}` from `{keyword}`.")
-                );
+                await Messenger.SendSuccessAsync(Context.Channel, $"Sucessfully removed `{value}` from `{keyword}`.");
             }
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -188,7 +182,7 @@ namespace wow2.Modules.Keywords
             }
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Keywords", $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*")
+                embed: Messenger.Fields(listOfFieldBuilders, "Keywords", $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*")
             );
         }
 
@@ -198,9 +192,7 @@ namespace wow2.Modules.Keywords
         {
             DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete = !DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"React to delete is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete ? "on" : "off")}` for keyword responses.")
-            );
+            await Messenger.SendSuccessAsync(Context.Channel, $"React to delete is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete ? "on" : "off")}` for keyword responses.");
         }
 
         /// <summary>Alternative to list command, where only keywords are shown</summary>
@@ -215,7 +207,7 @@ namespace wow2.Modules.Keywords
             }
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.GenericResponse(descriptionBuilder.ToString(), "Keywords")
+                embed: Messenger.GenericResponse(descriptionBuilder.ToString(), "Keywords")
             );
         }
     }

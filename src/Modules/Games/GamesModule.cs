@@ -32,9 +32,7 @@ namespace wow2.Modules.Games
             {
                 if (recievedMessage.Author == config.ListOfMessages.Last().Author)
                 {
-                    await recievedMessage.Channel.SendMessageAsync(
-                        embed: MessageEmbedPresets.Verbose("Counting twice in a row is no fun.", VerboseMessageSeverity.Warning)
-                    );
+                    await Messenger.SendWarningAsync(recievedMessage.Channel, "Counting twice in a row is no fun.");
                     return;
                 }
             }
@@ -49,9 +47,7 @@ namespace wow2.Modules.Games
             else
             {
                 await recievedMessage.AddReactionAsync(new Emoji("❎"));
-                await recievedMessage.Channel.SendMessageAsync(
-                    embed: MessageEmbedPresets.Verbose($"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`")
-                );
+                await Messenger.SendInfoAsync(recievedMessage.Channel, $"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`");
                 await EndCountingAsync(recievedMessage);
             }
         }
@@ -71,9 +67,7 @@ namespace wow2.Modules.Games
             if (await EndCountingIfNumberIsInvalidAsync(Context.Message, increment))
                 return;
 
-            await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.")
-            );
+            await Messenger.SendInfoAsync(Context.Channel, $"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.");
         }
 
         private static async Task EndCountingAsync(SocketMessage finalMessage)
@@ -109,7 +103,7 @@ namespace wow2.Modules.Games
             else commentOnFinalNumber = "";
 
             await finalMessage.Channel.SendMessageAsync(
-                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Final Stats", $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*")
+                embed: Messenger.Fields(listOfFieldBuilders, "Final Stats", $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*")
             );
 
             config.NextNumber = null;
@@ -120,9 +114,7 @@ namespace wow2.Modules.Games
         {
             if (number >= float.MaxValue || number <= float.MinValue)
             {
-                await message.Channel.SendMessageAsync(
-                    embed: MessageEmbedPresets.Verbose("Woah, that's a big number.\nHate to be a killjoy, but even a computer has its limits.", VerboseMessageSeverity.Warning)
-                );
+                await Messenger.SendWarningAsync(message.Channel, "Woah, that's a big number.\nHate to be a killjoy, but even a computer has its limits.");
                 await EndCountingAsync(message);
                 return true;
             }

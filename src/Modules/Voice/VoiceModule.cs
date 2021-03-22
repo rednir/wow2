@@ -45,7 +45,7 @@ namespace wow2.Modules.Voice
                 throw new CommandReturnException("There's nothing in the queue... how sad.", Context);
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "Up Next")
+                embed: Messenger.Fields(listOfFieldBuilders, "Up Next")
             );
         }
 
@@ -55,9 +55,7 @@ namespace wow2.Modules.Voice
         public async Task ClearAsync()
         {
             DataManager.GetVoiceConfigForGuild(Context.Guild).SongRequests.Clear();
-            await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"The song request queue has been cleared.")
-            );
+            await Messenger.SendSuccessAsync(Context.Channel, $"The song request queue has been cleared.");
         }
 
         [Command("add", RunMode = RunMode.Async)]
@@ -88,9 +86,7 @@ namespace wow2.Modules.Voice
                 RequestedBy = Context.User
             });
 
-            await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
-            );
+            await Messenger.SendSuccessAsync(Context.Channel, $"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}");
 
             // Play song if it is the first in queue.
             if (!CheckIfAudioClientDisconnected(config.AudioClient) && !config.IsCurrentlyPlayingAudio)
@@ -102,9 +98,7 @@ namespace wow2.Modules.Voice
         [Summary("Stops the currently playing request and starts the next request if it exists.")]
         public async Task Skip()
         {
-            await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose("Skipping to the next request.")
-            );
+            await Messenger.SendInfoAsync(Context.Channel, "Skipping to the next request.");
             _ = ContinueAsync();
         }
 
@@ -167,7 +161,7 @@ namespace wow2.Modules.Voice
         private async Task DisplayNowPlayingRequestAsync(UserSongRequest request)
         {
             await ReplyAsync(
-                embed: MessageEmbedPresets.NowPlaying(
+                embed: Messenger.NowPlaying(
                     title: request.VideoMetadata.title,
                     url: request.VideoMetadata.webpage_url,
                     thumbnailUrl: request.VideoMetadata.thumbnails[1]?.url,
@@ -220,8 +214,7 @@ namespace wow2.Modules.Voice
             }
             else
             {
-                // Song request queue is empty
-                throw new CommandReturnException("**The queue is empty.**\nI'll stay in the voice channel... in silence...", Context);
+                await Messenger.SendInfoAsync(Context.Channel, "**The queue is empty.**\nI'll stay in the voice channel... in silence...");
             }
         }
 

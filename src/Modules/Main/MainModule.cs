@@ -29,13 +29,13 @@ namespace wow2.Modules.Main
             if (string.IsNullOrWhiteSpace(group))
             {
                 await ReplyAsync(
-                    embed: MessageEmbedPresets.Fields(await ModuleInfoToEmbedFields(), "Help")
+                    embed: Messenger.Fields(await ModuleInfoToEmbedFields(), "Help")
                 );
             }
             else
             {
                 await ReplyAsync(
-                    embed: MessageEmbedPresets.Fields(await CommandInfoToEmbedFields(group), $"Command Help")
+                    embed: Messenger.Fields(await CommandInfoToEmbedFields(group), $"Command Help")
                 );
             }
         }
@@ -54,9 +54,7 @@ namespace wow2.Modules.Main
                     throw new CommandReturnException($"The alias `{name}` already exists.\nTo remove the alias, type `{EventHandlers.CommandPrefix} alias \"{name}\" \"\"`", Context);
 
                 config.AliasesDictionary.Remove(name);
-                await ReplyAsync(
-                    embed: MessageEmbedPresets.Verbose($"The alias `{name}` was removed.")
-                );
+                await Messenger.SendSuccessAsync(Context.Channel, $"The alias `{name}` was removed.");
                 return;
             }
 
@@ -66,9 +64,7 @@ namespace wow2.Modules.Main
                 throw new CommandReturnException($"An alias should have a definition that isn't blank.", Context);
             }
 
-            await ReplyAsync(
-                embed: MessageEmbedPresets.Verbose($"Typing `{name}` will now execute `{EventHandlers.CommandPrefix} {definition}`")
-            );
+            await Messenger.SendSuccessAsync(Context.Channel, $"Typing `{name}` will now execute `{EventHandlers.CommandPrefix} {definition}`");
 
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -93,7 +89,7 @@ namespace wow2.Modules.Main
             }
 
             await ReplyAsync(
-                embed: MessageEmbedPresets.Fields(listOfFieldBuilders, "List of Aliases", "To remove any of these aliases, just set the alias definition to \"\"")
+                embed: Messenger.Fields(listOfFieldBuilders, "List of Aliases", "To remove any of these aliases, just set the alias definition to \"\"")
             );
         }
 
@@ -102,8 +98,8 @@ namespace wow2.Modules.Main
         public async Task UploadRawGuildData()
         {
             await Context.Channel.SendFileAsync(
-                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json",
-                embed: MessageEmbedPresets.Verbose("Successfully uploaded a `.json` file containing all the saved data for this server.")
+                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json"
+                //embed: Messenger.SendSuccess("Successfully uploaded a `.json` file containing all the saved data for this server.")
             );
         }
 
@@ -112,7 +108,7 @@ namespace wow2.Modules.Main
             var appInfo = await Program.Client.GetApplicationInfoAsync();
 
             await context.Channel.SendMessageAsync(
-                embed: MessageEmbedPresets.About(
+                embed: Messenger.About(
                     name: appInfo.Name,
                     author: appInfo.Owner,
                     description: string.IsNullOrWhiteSpace(appInfo.Description) ? "" : appInfo.Description,

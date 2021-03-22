@@ -1,43 +1,45 @@
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord;
 using Discord.WebSocket;
 
 namespace wow2.Verbose
 {
-    public enum VerboseMessageSeverity
+    public static class Messenger
     {
-        Info, Warning, Error
-    }
-
-    public static class MessageEmbedPresets
-    {
-        /// <summary>Builds and returns an embed for letting the user know the result of an action</summary>
-        public static Embed Verbose(string description, VerboseMessageSeverity severity = VerboseMessageSeverity.Info)
-        {
-            var embedBuilder = new EmbedBuilder();
-
-            switch (severity)
+        public static async Task SendSuccessAsync(ISocketMessageChannel channel, string description, string title = null)
+            => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
-                case VerboseMessageSeverity.Info:
-                    embedBuilder.Description = $"{new Emoji("<:wowinfo:804732580423008297>")} {description}";
-                    embedBuilder.Color = Color.Blue;
-                    break;
-
-                case VerboseMessageSeverity.Warning:
-                    embedBuilder.Description = $"{new Emoji("<:wowwarning:804732632751407174>")} {description}";
-                    embedBuilder.Color = Color.LightOrange;
-                    break;
-
-                case VerboseMessageSeverity.Error:
-                    embedBuilder.Title = $"{new Emoji("<:wowerror:804732656721199144>")} Something bad happened...";
-                    embedBuilder.Description = description;
-                    embedBuilder.Color = Color.Red;
-                    break;
+                Description = $"{new Emoji("<:wowsuccess:823595458978512997>")} {description}",
+                Color = Color.Green
             }
+            .Build());
 
-            return embedBuilder.Build();
-        }
+        public static async Task SendInfoAsync(ISocketMessageChannel channel, string description, string title = null)
+            => await channel.SendMessageAsync(embed: new EmbedBuilder()
+            {
+                Description = $"{new Emoji("<:wowinfo:804732580423008297>")} {description}",
+                Color = Color.Green
+            }
+            .Build());
+
+        public static async Task SendWarningAsync(ISocketMessageChannel channel, string description, string title = null)
+             => await channel.SendMessageAsync(embed: new EmbedBuilder()
+            {
+                Description = $"{new Emoji("<:wowwarning:804732632751407174>")} {description}",
+                Color = Color.LightOrange
+            }
+            .Build());
+
+        public static async Task SendErrorAsync(ISocketMessageChannel channel, string description, string title = null)
+            => await channel.SendMessageAsync(embed: new EmbedBuilder()
+            {
+                Title = $"{new Emoji("<:wowerror:804732656721199144>")} Something bad happened...",
+                Description = description,
+                Color = Color.Red
+            }
+            .Build());
 
         /// <summary>Builds and returns an embed for responding to some user action.</summary>
         public static Embed GenericResponse(string description, string title = "", string imageUrl = "")

@@ -48,9 +48,7 @@ namespace wow2
 
                 Logger.LogException(commandException, $"Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
 
-                await commandException.Context.Channel.SendMessageAsync(
-                    embed: MessageEmbedPresets.Verbose(verboseErrorMessage, VerboseMessageSeverity.Error)
-                );
+                await Messenger.SendErrorAsync((ISocketMessageChannel)commandException.Context.Channel, verboseErrorMessage);
             }
             else if (logMessage.Exception != null)
             {
@@ -122,31 +120,29 @@ namespace wow2
                 await SendErrorMessageToChannel(result.Error, socketMessage.Channel);
         }
 
-        public static async Task SendErrorMessageToChannel(CommandError? commandError, IMessageChannel channel)
+        public static async Task SendErrorMessageToChannel(CommandError? commandError, ISocketMessageChannel channel)
         {
-            Embed embedToSend;
             switch (commandError)
             {
                 case CommandError.BadArgCount:
-                    embedToSend = MessageEmbedPresets.Verbose("**Invalid usage of command.**\nYou either typed the wrong number of parameters, or forgot to put a parameter in \"quotes\"", VerboseMessageSeverity.Warning);
+                    await Messenger.SendWarningAsync(channel, "**Invalid usage of command.**\nYou either typed the wrong number of parameters, or forgot to put a parameter in \"quotes\"");
                     break;
 
                 case CommandError.ParseFailed:
-                    embedToSend = MessageEmbedPresets.Verbose("**Parsing arguments failed.**\nYou might have typed an invalid parameter.", VerboseMessageSeverity.Warning);
+                    await Messenger.SendWarningAsync(channel, "**Parsing arguments failed.**\nYou might have typed an invalid parameter.");
                     break;
 
                 case CommandError.UnknownCommand:
-                    embedToSend = MessageEmbedPresets.Verbose("**That command doesn't exist.\n**Did you make a typo?", VerboseMessageSeverity.Warning);
+                    await Messenger.SendWarningAsync(channel, "**That command doesn't exist.\n**Did you make a typo?");
                     break;
 
                 case CommandError.UnmetPrecondition:
-                    embedToSend = MessageEmbedPresets.Verbose("**Unmet precondition.**\nYou most likely don't have the correct permissions to use this command.", VerboseMessageSeverity.Warning);
+                    await Messenger.SendWarningAsync(channel, "**Unmet precondition.**\nYou most likely don't have the correct permissions to use this command.");
                     break;
 
                 default:
                     return;
             }
-            await channel.SendMessageAsync(embed: embedToSend);
         }
     }
 }
