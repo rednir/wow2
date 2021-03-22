@@ -13,6 +13,9 @@ namespace wow2.Modules.Voice
         public Queue<UserSongRequest> SongRequests { get; set; } = new Queue<UserSongRequest>();
 
         [JsonIgnore]
+        public UserSongRequest CurrentlyPlayingSongRequest { get; set; }
+
+        [JsonIgnore]
         public IAudioClient AudioClient { get; set; }
 
         [JsonIgnore]

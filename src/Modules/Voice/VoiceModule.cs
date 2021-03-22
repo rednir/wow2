@@ -152,14 +152,18 @@ namespace wow2.Modules.Voice
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
-            if (config.SongRequests.Count == 0 || CheckIfAudioClientDisconnected(config.AudioClient))
+            if (config.CurrentlyPlayingSongRequest == null || CheckIfAudioClientDisconnected(config.AudioClient))
                 throw new CommandReturnException(Context, "Nothing is playing right now.");
 
-            await DisplayNowPlayingRequestAsync(config.SongRequests.Peek());
+            await DisplayCurrentlyPlayingRequestAsync();
         }
 
-        private async Task DisplayNowPlayingRequestAsync(UserSongRequest request)
+        private async Task DisplayCurrentlyPlayingRequestAsync()
         {
+            UserSongRequest request = DataManager.GetVoiceConfigForGuild(Context.Guild).CurrentlyPlayingSongRequest;
+
+            if (request == null) return;
+
             await ReplyAsync(
                 embed: Messenger.NowPlaying(
                     title: request.VideoMetadata.title,
@@ -179,7 +183,7 @@ namespace wow2.Modules.Voice
         private async Task PlayRequestAsync(UserSongRequest request, CancellationToken cancellationToken)
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
-            await DisplayNowPlayingRequestAsync(request);
+            await DisplayCurrentlyPlayingRequestAsync();
 
             using (var ffmpeg = CreateStreamFromYoutubeUrl(request.VideoMetadata.webpage_url))
             using (var output = ffmpeg.StandardOutput.BaseStream)
@@ -209,11 +213,13 @@ namespace wow2.Modules.Voice
             config.CtsForAudioStreaming = new CancellationTokenSource();
 
             if (config.SongRequests.TryDequeue(out nextRequest))
-            {
+            {   
+                config.CurrentlyPlayingSongRequest = nextRequest;
                 await PlayRequestAsync(nextRequest, config.CtsForAudioStreaming.Token);
             }
             else
             {
+                config.CurrentlyPlayingSongRequest = null;
                 await Messenger.SendInfoAsync(Context.Channel, "**The queue is empty.**\nI'll stay in the voice channel... in silence...");
             }
         }
