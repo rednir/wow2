@@ -12,8 +12,7 @@ namespace wow2
 {
     public class Program
     {
-        public const string Version = "v1.0";
-
+        private const string ReleaseVersion = "1.0";
         private const string DiscordTokenFilePath = "discord.token";
         private const string DiscordTokenEnvironmentVariable = "DISCORD_BOT_TOKEN";
 
@@ -29,6 +28,10 @@ namespace wow2
         {
             get { return IsDebugField; }
         }
+        public static string Version
+        {
+            get { return IsDebug ? "DEBUG BUILD" : ReleaseVersion ; }
+        }
 
         public static async Task<IGuildUser> GetClientGuildUserAsync(SocketCommandContext context)
             => (IGuildUser)(await context.Channel.GetUserAsync(context.Client.CurrentUser.Id));
@@ -38,9 +41,9 @@ namespace wow2
 
         private async Task MainAsync()
         {
+            SetIsDebugField();
             Logger.LogProgramDetails();
 
-            SetIsDebugField();
             await DataManager.InitializeAsync();
             await EventHandlers.InstallCommandsAsync();
 
