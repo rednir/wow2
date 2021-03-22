@@ -96,10 +96,10 @@ namespace wow2.Modules.Voice
         [Command("skip")]
         [Alias("next")]
         [Summary("Stops the currently playing request and starts the next request if it exists.")]
-        public async Task Skip()
+        public Task Skip()
         {
-            await Messenger.SendInfoAsync(Context.Channel, "Skipping to the next request.");
             _ = ContinueAsync();
+            return Task.CompletedTask;
         }
 
         [Command("join", RunMode = RunMode.Async)]
