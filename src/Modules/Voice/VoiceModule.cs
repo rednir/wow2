@@ -42,7 +42,7 @@ namespace wow2.Modules.Voice
             }
 
             if (listOfFieldBuilders.Count == 0)
-                throw new CommandReturnException("There's nothing in the queue... how sad.", Context);
+                throw new CommandReturnException(Context, "There's nothing in the queue... how sad.");
 
             await ReplyAsync(
                 embed: Messenger.Fields(listOfFieldBuilders, "Up Next")
@@ -67,7 +67,7 @@ namespace wow2.Modules.Voice
             string songRequest = string.Join(" ", splitSongRequest);
 
             if (((SocketGuildUser)Context.User).VoiceChannel == null)
-                throw new CommandReturnException("Join a voice channel first before adding song requests.", Context);
+                throw new CommandReturnException(Context, "Join a voice channel first before adding song requests.");
 
             YoutubeVideoMetadata metadata;
             try
@@ -76,7 +76,7 @@ namespace wow2.Modules.Voice
             }
             catch (ArgumentException ex)
             {
-                throw new CommandReturnException($"The following error was thrown when trying to downloading video metadata:\n```{ex.Message}```", Context);
+                throw new CommandReturnException(Context, $"The following error was thrown when trying to downloading video metadata:\n```{ex.Message}```");
             }
 
             config.SongRequests.Enqueue(new UserSongRequest()
@@ -113,7 +113,7 @@ namespace wow2.Modules.Voice
             {
                 IGuildUser guildUser = await Program.GetClientGuildUserAsync(Context);
                 if (guildUser.VoiceChannel == voiceChannelToJoin)
-                    throw new CommandReturnException("I'm already in this voice channel.", Context);
+                    throw new CommandReturnException(Context, "I'm already in this voice channel.");
             }
 
             try
@@ -123,7 +123,7 @@ namespace wow2.Modules.Voice
             }
             catch (NullReferenceException)
             {
-                throw new CommandReturnException("Join a voice channel first.", Context);
+                throw new CommandReturnException(Context, "Join a voice channel first.");
             }
             catch (Exception ex) when (ex is WebSocketClosedException || ex is TaskCanceledException)
             {
@@ -140,7 +140,7 @@ namespace wow2.Modules.Voice
             config.IsCurrentlyPlayingAudio = false;
 
             if (config.AudioClient == null || config.AudioClient?.ConnectionState == ConnectionState.Disconnected)
-                throw new CommandReturnException("I'm not currently in a voice channel.", Context);
+                throw new CommandReturnException(Context, "I'm not currently in a voice channel.");
 
             await config.AudioClient.StopAsync();
         }
@@ -153,7 +153,7 @@ namespace wow2.Modules.Voice
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
             if (config.SongRequests.Count == 0 || CheckIfAudioClientDisconnected(config.AudioClient))
-                throw new CommandReturnException("Nothing is playing right now.", Context);
+                throw new CommandReturnException(Context, "Nothing is playing right now.");
 
             await DisplayNowPlayingRequestAsync(config.SongRequests.Peek());
         }

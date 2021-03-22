@@ -103,7 +103,7 @@ namespace wow2.Modules.Keywords
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
 
             if (valueSplit.Length == 0)
-                throw new CommandReturnException("No value to add to the keyword was specified.", Context);
+                throw new CommandReturnException(Context, "No value to add to the keyword was specified.");
 
             string value = string.Join(" ", valueSplit);
 
@@ -112,7 +112,7 @@ namespace wow2.Modules.Keywords
                 keywordsDictionary.Add(keyword, new List<KeywordValue>());
 
             if (keywordsDictionary[keyword].FindIndex(x => x.Content == value) != -1)
-                throw new CommandReturnException("The value already exists in the keyword.", Context);
+                throw new CommandReturnException(Context, "The value already exists in the keyword.");
 
             keywordsDictionary[keyword].Add(new KeywordValue() { Content = value });
 
@@ -128,7 +128,7 @@ namespace wow2.Modules.Keywords
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
 
             if (!keywordsDictionary.ContainsKey(keyword))
-                throw new CommandReturnException($"No such keyword `{keyword}` exists. Did you make a typo?", Context);
+                throw new CommandReturnException(Context, $"No such keyword `{keyword}` exists. Did you make a typo?");
 
             if (valueSplit.Length == 0)
             {
@@ -141,7 +141,7 @@ namespace wow2.Modules.Keywords
                 string value = string.Join(" ", valueSplit);
 
                 if (keywordsDictionary[keyword].RemoveAll(x => x.Content == value) == 0)
-                    throw new CommandReturnException($"No such value `{value}` exists. Did you make a typo?", Context);
+                    throw new CommandReturnException(Context, $"No such value `{value}` exists. Did you make a typo?");
 
                 // Discard keyword if it has no values.
                 if (keywordsDictionary[keyword].Count == 0)

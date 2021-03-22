@@ -51,7 +51,7 @@ namespace wow2.Modules.Main
             if (!config.AliasesDictionary.TryAdd(name, definition))
             {
                 if (definition != "")
-                    throw new CommandReturnException($"The alias `{name}` already exists.\nTo remove the alias, type `{EventHandlers.CommandPrefix} alias \"{name}\" \"\"`", Context);
+                    throw new CommandReturnException(Context, $"The alias `{name}` already exists.\nTo remove the alias, type `{EventHandlers.CommandPrefix} alias \"{name}\" \"\"`");
 
                 config.AliasesDictionary.Remove(name);
                 await Messenger.SendSuccessAsync(Context.Channel, $"The alias `{name}` was removed.");
@@ -61,7 +61,7 @@ namespace wow2.Modules.Main
             if (definition == "")
             {
                 config.AliasesDictionary.Remove(name);
-                throw new CommandReturnException($"An alias should have a definition that isn't blank.", Context);
+                throw new CommandReturnException(Context, $"An alias should have a definition that isn't blank.");
             }
 
             await Messenger.SendSuccessAsync(Context.Channel, $"Typing `{name}` will now execute `{EventHandlers.CommandPrefix} {definition}`");
