@@ -5,7 +5,9 @@ using System.Linq;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
-using ExtentionMethods;
+using wow2.Verbose;
+using wow2.Data;
+using wow2.Extentions;
 
 namespace wow2.Modules.Main
 {

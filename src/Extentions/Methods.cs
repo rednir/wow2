@@ -4,7 +4,7 @@ using System.Text;
 using Discord;
 using Discord.WebSocket;
 
-namespace ExtentionMethods
+namespace wow2.Extentions
 {
     public static class Methods
     {

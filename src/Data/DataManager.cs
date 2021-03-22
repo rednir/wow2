@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Discord;
 using Discord.WebSocket;
+using wow2.Verbose;
 using wow2.Modules.Main;
 using wow2.Modules.Keywords;
 using wow2.Modules.Games;
 using wow2.Modules.Voice;
 
-namespace wow2
+namespace wow2.Data
 {
     public static class DataManager
     {

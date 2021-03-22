@@ -9,6 +9,8 @@ using Discord.Net;
 using Discord.WebSocket;
 using Discord.Commands;
 using Discord.Audio;
+using wow2.Data;
+using wow2.Verbose;
 
 namespace wow2.Modules.Voice
 {

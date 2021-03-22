@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Discord.Commands;
+using wow2.Verbose;
+using wow2.Data;
 
 namespace wow2.Modules.Dev
 {

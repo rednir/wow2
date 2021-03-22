@@ -3,7 +3,7 @@ using wow2.Modules.Keywords;
 using wow2.Modules.Games;
 using wow2.Modules.Voice;
 
-namespace wow2
+namespace wow2.Data
 {
     public class GuildData
     {

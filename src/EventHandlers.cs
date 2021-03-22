@@ -1,15 +1,16 @@
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Reflection;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
+using wow2.Verbose;
 using wow2.Modules;
 using wow2.Modules.Main;
 using wow2.Modules.Keywords;
 using wow2.Modules.Games;
-using ExtentionMethods;
+using wow2.Extentions;
+using wow2.Data;
 
 namespace wow2
 {

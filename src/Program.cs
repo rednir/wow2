@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using wow2.Verbose;
+using wow2.Data;
 
 namespace wow2
 {

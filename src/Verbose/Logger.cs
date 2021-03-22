@@ -2,8 +2,9 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Discord;
+using wow2.Data;
 
-namespace wow2
+namespace wow2.Verbose
 {
     public static class Logger
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Discord;
 using Discord.WebSocket;
 
-namespace wow2
+namespace wow2.Verbose
 {
     public enum VerboseMessageSeverity
     {
