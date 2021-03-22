@@ -39,7 +39,7 @@ namespace wow2
         {
             if (logMessage.Exception is CommandException commandException)
             {
-                string verboseErrorMessage = "An unhandled exception was thrown and was automatically reported.";
+                string verboseErrorMessage = $"An unhandled exception was thrown and was automatically reported.\n`{commandException.InnerException.Message}`";
 
                 if (commandException.InnerException is CommandReturnException)
                     return;
