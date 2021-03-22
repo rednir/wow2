@@ -103,42 +103,5 @@ namespace wow2.Verbose
 
             return embedBuilder.Build();
         }
-
-        /// <summary>Builds and returns an embed for displaying media metadata.</summary>
-        public static Embed NowPlaying
-        (
-            string title,
-            string url = "",
-            DateTime timeRequested = new DateTime(),
-            SocketUser requestedBy = null,
-            string thumbnailUrl = "",
-            int? viewCount = null,
-            int? likeCount = null,
-            int? dislikeCount = null
-        )
-        {
-            var authorBuilder = new EmbedAuthorBuilder()
-            {
-                Name = "Now Playing",
-                IconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png",
-                Url = url
-            };
-            var footerBuilder = new EmbedFooterBuilder()
-            {
-                Text = $"👁️  {viewCount ?? 0}      |      👍  {likeCount ?? 0}      |      👎  {dislikeCount ?? 0}"
-            };
-
-            var embedBuilder = new EmbedBuilder()
-            {
-                Author = authorBuilder,
-                Title = title,
-                ThumbnailUrl = thumbnailUrl,
-                Description = $"Requested at {timeRequested.ToString("HH:mm")} by {requestedBy.Mention}",
-                Footer = footerBuilder,
-                Color = Color.LightGrey
-            };
-
-            return embedBuilder.Build();
-        }
     }
 }

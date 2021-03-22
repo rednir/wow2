@@ -166,20 +166,7 @@ namespace wow2.Modules.Voice
 
             try
             {
-                await ReplyAsync(
-                    embed: Messenger.NowPlaying(
-                        title: request.VideoMetadata.title,
-                        url: request.VideoMetadata.webpage_url,
-                        thumbnailUrl: request.VideoMetadata.thumbnails.LastOrDefault().url,
-
-                        timeRequested: request.TimeRequested,
-                        requestedBy: request.RequestedBy,
-
-                        viewCount: request.VideoMetadata.view_count,
-                        likeCount: request.VideoMetadata.like_count,
-                        dislikeCount: request.VideoMetadata.dislike_count
-                    )
-                );
+                await ReplyAsync(embed: BuildNowPlayingEmbed(request));
             }
             catch
             {
@@ -190,7 +177,6 @@ namespace wow2.Modules.Voice
         private async Task PlayRequestAsync(UserSongRequest request, CancellationToken cancellationToken)
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
-            await DisplayCurrentlyPlayingRequestAsync();
 
             using (var ffmpeg = CreateStreamFromYoutubeUrl(request.VideoMetadata.webpage_url))
             using (var output = ffmpeg.StandardOutput.BaseStream)
@@ -199,6 +185,7 @@ namespace wow2.Modules.Voice
                 try
                 {
                     config.CurrentlyPlayingSongRequest = request;
+                    await DisplayCurrentlyPlayingRequestAsync();
                     await output.CopyToAsync(discord, cancellationToken);
                 }
                 finally
@@ -242,6 +229,32 @@ namespace wow2.Modules.Voice
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
             });
+        }
+
+        public static Embed BuildNowPlayingEmbed(UserSongRequest request)
+        {
+            var authorBuilder = new EmbedAuthorBuilder()
+            {
+                Name = "Now Playing",
+                IconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png",
+                Url = request.VideoMetadata.webpage_url
+            };
+            var footerBuilder = new EmbedFooterBuilder()
+            {
+                Text = $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}"
+            };
+
+            var embedBuilder = new EmbedBuilder()
+            {
+                Author = authorBuilder,
+                Title = request.VideoMetadata.title,
+                ThumbnailUrl = request.VideoMetadata.thumbnails.LastOrDefault().url,
+                Description = $"Requested at {request.TimeRequested.ToString("HH:mm")} by {request.RequestedBy.Mention}",
+                Footer = footerBuilder,
+                Color = Color.LightGrey
+            };
+
+            return embedBuilder.Build();
         }
 
         private bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
