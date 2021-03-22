@@ -20,11 +20,12 @@ namespace wow2.Modules.Keywords
     [Summary("For automatically responding to keywords in user messages.")]
     public class KeywordsModule : ModuleBase<SocketCommandContext>
     {
-        public static IEmote ReactToDeleteEmote { get; } = new Emoji("🗑");
+        public static readonly IEmote DeleteReactionEmote = new Emoji("🗑");
+        public static readonly IEmote LikeReactionEmote = new Emoji("👍");
         private const int MaxCountOfRememberedKeywordResponses = 100;
 
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
-        public static async Task<bool> CheckMessageForKeywordAsync(SocketMessage message)
+        public static bool CheckMessageForKeyword(SocketMessage message)
         {
             var config = DataManager.GetKeywordsConfigForGuild(message.GetGuild());
             string content = message.Content.ToLower();
@@ -47,6 +48,16 @@ namespace wow2.Modules.Keywords
             // Prioritize the longest keyword if multiple keywords have been found.
             string foundKeyword = listOfFoundKeywords.OrderByDescending(s => s.Length).First();
 
+            // Don't await this, as it can block the gateway task.
+            _ = SendKeywordResponse(foundKeyword, message);
+
+            return true;
+        }
+
+        private static async Task SendKeywordResponse(string foundKeyword, SocketMessage message)
+        {
+            var config = DataManager.GetKeywordsConfigForGuild(message.GetGuild());
+
             // If the keyword has multiple values, the value will be chosen randomly.
             int chosenValueIndex = new Random().Next(config.KeywordsDictionary[foundKeyword].Count);
             KeywordValue chosenValue = config.KeywordsDictionary[foundKeyword][chosenValueIndex];
@@ -62,8 +73,10 @@ namespace wow2.Modules.Keywords
                 sentKeywordResponseMessage = await message.Channel.SendMessageAsync(embed: Messenger.GenericResponse(chosenValue.Content));
             }
 
-            if (DataManager.GetKeywordsConfigForGuild(message.GetGuild()).KeywordsReactToDelete)
-                await sentKeywordResponseMessage.AddReactionAsync(ReactToDeleteEmote);
+            if (config.IsLikeReactionOn)
+                await sentKeywordResponseMessage.AddReactionAsync(LikeReactionEmote);
+            if (config.IsDeleteReactionOn)
+                await sentKeywordResponseMessage.AddReactionAsync(DeleteReactionEmote);
 
             // Remember the messages that are actually keyword responses by adding them to a list.
             config.ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
@@ -72,8 +85,6 @@ namespace wow2.Modules.Keywords
             // Remove the oldest message if ListOfResponsesId has reached its max.
             if (config.ListOfResponsesId.Count > MaxCountOfRememberedKeywordResponses)
                 config.ListOfResponsesId.RemoveAt(0);
-
-            return true;
         }
 
         /// <summary>Checks if a message was a keyword response sent by the bot, deleting the message if so.</summary>
@@ -186,13 +197,22 @@ namespace wow2.Modules.Keywords
             );
         }
 
-        [Command("toggle-react-to-delete")]
-        [Summary("Toggles whether my responses to keywords should have a reaction, allowing a user to delete the message.")]
-        public async Task ToggleReactToDeleteAsync()
+        [Command("toggle-delete-reaction")]
+        [Summary("Toggles whether bot responses to keywords should have a wastebasket reaction, allowing a user to delete the message.")]
+        public async Task ToggleDeleteReactionAsync()
         {
-            DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete = !DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete;
+            DataManager.GetKeywordsConfigForGuild(Context.Guild).IsDeleteReactionOn = !DataManager.GetKeywordsConfigForGuild(Context.Guild).IsDeleteReactionOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await Messenger.SendSuccessAsync(Context.Channel, $"React to delete is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsReactToDelete ? "on" : "off")}` for keyword responses.");
+            await Messenger.SendSuccessAsync(Context.Channel, $"Delete reaction is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).IsDeleteReactionOn ? "on" : "off")}` for keyword responses.");
+        }
+
+        [Command("toggle-like-reaction")]
+        [Summary("Toggles whether bot responses to keywords should have a thumbs up reaction.")]
+        public async Task ToggleLikeReactionAsync()
+        {
+            DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn = !DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn;
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await Messenger.SendSuccessAsync(Context.Channel, $"Like reaction is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn ? "on" : "off")}` for keyword responses.");
         }
 
         /// <summary>Alternative to list command, where only keywords are shown</summary>

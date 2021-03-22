@@ -64,7 +64,7 @@ namespace wow2
         {
             IUserMessage message = await cachedMessage.GetOrDownloadAsync();
 
-            if (reaction.UserId != Program.Client.CurrentUser.Id && reaction.Emote.Name == KeywordsModule.ReactToDeleteEmote.Name)
+            if (reaction.UserId != Program.Client.CurrentUser.Id && reaction.Emote.Name == KeywordsModule.DeleteReactionEmote.Name)
             {
                 if (await KeywordsModule.DeleteMessageIfKeywordResponse(message))
                 {
@@ -90,7 +90,7 @@ namespace wow2
             if (!await MainModule.CheckForAliasAsync(recievedMessage))
             {
                 // Only check for keyword when the message is not an alias/command.
-                await KeywordsModule.CheckMessageForKeywordAsync(recievedMessage);
+                KeywordsModule.CheckMessageForKeyword(recievedMessage);
                 return;
             }
         }
