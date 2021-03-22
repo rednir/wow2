@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -164,20 +165,27 @@ namespace wow2.Modules.Voice
 
             if (request == null) return;
 
-            await ReplyAsync(
-                embed: Messenger.NowPlaying(
-                    title: request.VideoMetadata.title,
-                    url: request.VideoMetadata.webpage_url,
-                    thumbnailUrl: request.VideoMetadata.thumbnails[1]?.url,
+            try
+            {
+                await ReplyAsync(
+                    embed: Messenger.NowPlaying(
+                        title: request.VideoMetadata.title,
+                        url: request.VideoMetadata.webpage_url,
+                        thumbnailUrl: request.VideoMetadata.thumbnails.LastOrDefault().url,
 
-                    timeRequested: request.TimeRequested,
-                    requestedBy: request.RequestedBy,
+                        timeRequested: request.TimeRequested,
+                        requestedBy: request.RequestedBy,
 
-                    viewCount: request.VideoMetadata.view_count,
-                    likeCount: request.VideoMetadata.like_count,
-                    dislikeCount: request.VideoMetadata.dislike_count
-                )
-            );
+                        viewCount: request.VideoMetadata.view_count,
+                        likeCount: request.VideoMetadata.like_count,
+                        dislikeCount: request.VideoMetadata.dislike_count
+                    )
+                );
+            }
+            catch
+            {
+                await Messenger.SendWarningAsync(Context.Channel, $"Displaying metadata failed for the following video:\n{request?.VideoMetadata?.webpage_url}");
+            }
         }
 
         private async Task PlayRequestAsync(UserSongRequest request, CancellationToken cancellationToken)
@@ -213,7 +221,7 @@ namespace wow2.Modules.Voice
             config.CtsForAudioStreaming = new CancellationTokenSource();
 
             if (config.SongRequests.TryDequeue(out nextRequest))
-            {   
+            {
                 config.CurrentlyPlayingSongRequest = nextRequest;
                 await PlayRequestAsync(nextRequest, config.CtsForAudioStreaming.Token);
             }
