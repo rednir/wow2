@@ -99,7 +99,7 @@ namespace wow2.Modules.Main
         {
             await Context.Channel.SendFileAsync(
                 filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json"
-                //embed: Messenger.SendSuccess("Successfully uploaded a `.json` file containing all the saved data for this server.")
+            //embed: Messenger.SendSuccess("Successfully uploaded a `.json` file containing all the saved data for this server.")
             );
         }
 

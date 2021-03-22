@@ -30,7 +30,7 @@ namespace wow2
         }
         public static string Version
         {
-            get { return IsDebug ? "DEBUG BUILD" : ReleaseVersion ; }
+            get { return IsDebug ? "DEBUG BUILD" : ReleaseVersion; }
         }
 
         public static async Task<IGuildUser> GetClientGuildUserAsync(SocketCommandContext context)

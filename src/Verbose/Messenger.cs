@@ -20,16 +20,16 @@ namespace wow2.Verbose
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
                 Description = $"{new Emoji("<:wowinfo:804732580423008297>")} {description}",
-                Color = Color.Green
+                Color = Color.Blue
             }
             .Build());
 
         public static async Task SendWarningAsync(ISocketMessageChannel channel, string description, string title = null)
              => await channel.SendMessageAsync(embed: new EmbedBuilder()
-            {
-                Description = $"{new Emoji("<:wowwarning:804732632751407174>")} {description}",
-                Color = Color.LightOrange
-            }
+             {
+                 Description = $"{new Emoji("<:wowwarning:804732632751407174>")} {description}",
+                 Color = Color.LightOrange
+             }
             .Build());
 
         public static async Task SendErrorAsync(ISocketMessageChannel channel, string description, string title = null)
