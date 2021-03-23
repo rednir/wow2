@@ -70,7 +70,7 @@ namespace wow2.Modules.Keywords
             }
             else
             {
-                sentKeywordResponseMessage = await message.Channel.SendMessageAsync(embed: Messenger.GenericResponse(chosenValue.Content));
+                sentKeywordResponseMessage = await Messenger.SendGenericResponseAsync(message.Channel, chosenValue.Content);
             }
 
             if (config.IsLikeReactionOn)
@@ -228,9 +228,7 @@ namespace wow2.Modules.Keywords
                 descriptionBuilder.Append($"{(keywordPair.Value.Count > 1 ? $"`{keywordPair.Key}` ({keywordPair.Value.Count} values)" : $"`{keywordPair.Key}`")}\n");
             }
 
-            await ReplyAsync(
-                embed: Messenger.GenericResponse(descriptionBuilder.ToString(), "Keywords")
-            );
+            await Messenger.SendGenericResponseAsync(Context.Channel, descriptionBuilder.ToString(), "Keywords");
         }
     }
 }
