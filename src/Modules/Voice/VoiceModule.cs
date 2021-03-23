@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text.Json;
 using System.Collections.Generic;
 using Discord;
 using Discord.Net;
@@ -78,9 +79,9 @@ namespace wow2.Modules.Voice
             {
                 metadata = await YoutubeDl.GetMetadata(songRequest);
             }
-            catch (ArgumentException ex)
+            catch (Exception)
             {
-                throw new CommandReturnException(Context, $"The following error was thrown when trying to downloading video metadata:\n```{ex.Message}```");
+                throw new CommandReturnException(Context, $"**Could not fetch video metadata.**\nThe host may be missing some required dependencies.");
             }
 
             config.SongRequests.Enqueue(new UserSongRequest()
