@@ -105,7 +105,7 @@ namespace wow2
 
             if (socketMessage.Content == CommandPrefix)
             {
-                await MainModule.ShowAboutAsync(context);
+                await MainModule.SendAboutMessageToChannelAsync(context);
                 return;
             }
 

@@ -19,7 +19,7 @@ namespace wow2.Modules.Main
         [Summary("Shows infomation about the bot.")]
         public async Task AboutAsync()
         {
-            await ShowAboutAsync(Context);
+            await SendAboutMessageToChannelAsync(Context);
         }
 
         [Command("help")]
@@ -35,7 +35,7 @@ namespace wow2.Modules.Main
             else
             {
                 await ReplyAsync(
-                    embed: Messenger.Fields(await CommandInfoToEmbedFields(group), $"Command Help")
+                    embed: Messenger.Fields(await CommandInfoToEmbedFieldsAsync(group), $"Command Help")
                 );
             }
         }
@@ -95,25 +95,34 @@ namespace wow2.Modules.Main
 
         [Command("savedata")]
         [Summary("Uploads the raw data stored about this server by the bot.")]
-        public async Task UploadRawGuildData()
+        public async Task UploadRawGuildDataAsync()
         {
             await Context.Channel.SendFileAsync(
                 filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json"
             );
         }
 
-        public static async Task ShowAboutAsync(SocketCommandContext context)
+        public static async Task SendAboutMessageToChannelAsync(SocketCommandContext context)
         {
             var appInfo = await Program.Client.GetApplicationInfoAsync();
 
-            await context.Channel.SendMessageAsync(
-                embed: Messenger.About(
-                    name: appInfo.Name,
-                    author: appInfo.Owner,
-                    description: string.IsNullOrWhiteSpace(appInfo.Description) ? "" : appInfo.Description,
-                    footer: $" - To view a list of commands, type `{EventHandlers.CommandPrefix} help`"
-                )
-            );
+            var embedBuilder = new EmbedBuilder()
+            {
+                Title = appInfo.Name,
+                Description = string.IsNullOrWhiteSpace(appInfo.Description) ? "" : appInfo.Description,
+                Color = Color.LightGrey,
+                Author = new EmbedAuthorBuilder()
+                {
+                    Name = $"Hosted by {appInfo.Owner}",
+                    IconUrl = appInfo.Owner.GetAvatarUrl(),
+                },
+                Footer = new EmbedFooterBuilder()
+                {
+                    Text = $" - To view a list of commands, type `{EventHandlers.CommandPrefix} help`"
+                }
+            };
+
+            await context.Channel.SendMessageAsync(embed: embedBuilder.Build());
         }
 
         public static async Task<bool> CheckForAliasAsync(SocketMessage message)
@@ -178,7 +187,7 @@ namespace wow2.Modules.Main
         }
 
         /// <summary>Builds embed fields for commands in a single module</summary>
-        private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFields(string specifiedModuleName)
+        private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFieldsAsync(string specifiedModuleName)
         {
             // Find commands in module.
             var listOfCommandInfo = (await EventHandlers.BotCommandService.GetExecutableCommandsAsync(
