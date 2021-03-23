@@ -117,6 +117,7 @@ namespace wow2.Modules.Keywords
                 throw new CommandReturnException(Context, "No value to add to the keyword was specified.");
 
             string value = string.Join(" ", valueSplit);
+            keyword = keyword.ToLower();
 
             // Create new dictionary key if necessary.
             if (!keywordsDictionary.ContainsKey(keyword))
@@ -137,6 +138,7 @@ namespace wow2.Modules.Keywords
         public async Task RemoveAsync(string keyword, [Name("value")] params string[] valueSplit)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
+            keyword = keyword.ToLower();
 
             if (!keywordsDictionary.ContainsKey(keyword))
                 throw new CommandReturnException(Context, $"No such keyword `{keyword}` exists. Did you make a typo?");
@@ -151,7 +153,7 @@ namespace wow2.Modules.Keywords
             {
                 string value = string.Join(" ", valueSplit);
 
-                if (keywordsDictionary[keyword].RemoveAll(x => x.Content == value) == 0)
+                if (keywordsDictionary[keyword].RemoveAll(x => x.Content.Equals(value, StringComparison.CurrentCultureIgnoreCase)) == 0)
                     throw new CommandReturnException(Context, $"No such value `{value}` exists. Did you make a typo?");
 
                 // Discard keyword if it has no values.
