@@ -65,10 +65,13 @@ namespace wow2.Modules.Voice
         public async Task AddAsync([Name("REQUEST")] params string[] splitSongRequest)
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
-            string songRequest = string.Join(" ", splitSongRequest);
 
+            if (splitSongRequest.Length == 0)
+                throw new CommandReturnException(Context, "You must type a URL or a search term.");
             if (((SocketGuildUser)Context.User).VoiceChannel == null)
                 throw new CommandReturnException(Context, "Join a voice channel first before adding song requests.");
+
+            string songRequest = string.Join(" ", splitSongRequest);
 
             YoutubeVideoMetadata metadata;
             try
