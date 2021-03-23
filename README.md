@@ -20,7 +20,7 @@ To host the bot, you must have a bot token. Make sure you have created an applic
 
 ### Dependencies
 - .NET 5.0
-- `libsodium`, `opus` `ffmpeg` and `youtube-dl`:
-	- Only used for voice commands.
-	- For Windows users, the necessary binaries are already included in the release `.zip` file, so no further action is needed.
+- For voice commands: `libsodium`, `opus`, `ffmpeg`, `youtube-dl`
+	- For Windows users, the necessary binaries are already included in the release `.zip` file.
+		- However, `youtube-dl` on Windows requires [Microsoft Visual C++ 2010](https://www.microsoft.com/en-US/download/details.aspx?id=5555)
 	- If you want to, you can set custom executable paths with the `FFMPEG_PATH` and `YOUTUBE_DL_PATH` environment variables.
