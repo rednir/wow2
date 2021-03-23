@@ -48,13 +48,14 @@ namespace wow2
             await EventHandlers.InstallCommandsAsync();
 
             Client = new DiscordSocketClient();
-            await GetTokenAndLoginAsync(Client);
-            await Client.StartAsync();
 
             Client.Ready += EventHandlers.ReadyAsync;
             Client.Log += EventHandlers.DiscordLogRecievedAsync;
             Client.ReactionAdded += EventHandlers.ReactionAddedAsync;
             Client.MessageReceived += EventHandlers.MessageRecievedAsync;
+
+            await GetTokenAndLoginAsync(Client);
+            await Client.StartAsync();
 
             await Task.Delay(-1);
         }
