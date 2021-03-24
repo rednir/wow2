@@ -46,7 +46,7 @@ namespace wow2.Modules.Voice
             if (listOfFieldBuilders.Count == 0)
                 throw new CommandReturnException(Context, "There's nothing in the queue... how sad.");
 
-            await Messenger.SendGenericResponseAsync(Context.Channel, title: "Up Next", fieldBuilders: listOfFieldBuilders);
+            await GenericMessenger.SendResponseAsync(Context.Channel, title: "Up Next", fieldBuilders: listOfFieldBuilders);
         }
 
         [Command("clear")]
@@ -55,7 +55,7 @@ namespace wow2.Modules.Voice
         public async Task ClearAsync()
         {
             DataManager.GetVoiceConfigForGuild(Context.Guild).SongRequests.Clear();
-            await Messenger.SendSuccessAsync(Context.Channel, $"The song request queue has been cleared.");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"The song request queue has been cleared.");
         }
 
         [Command("add", RunMode = RunMode.Async)]
@@ -89,7 +89,7 @@ namespace wow2.Modules.Voice
                 RequestedBy = Context.User
             });
 
-            await Messenger.SendSuccessAsync(Context.Channel, $"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}");
 
             // Play song if it is the first in queue.
             if (!CheckIfAudioClientDisconnected(config.AudioClient) && config.CurrentlyPlayingSongRequest == null)
@@ -172,7 +172,7 @@ namespace wow2.Modules.Voice
             }
             catch
             {
-                await Messenger.SendWarningAsync(Context.Channel, $"Displaying metadata failed for the following video:\n{request?.VideoMetadata?.webpage_url}");
+                await GenericMessenger.SendWarningAsync(Context.Channel, $"Displaying metadata failed for the following video:\n{request?.VideoMetadata?.webpage_url}");
             }
         }
 
@@ -215,7 +215,7 @@ namespace wow2.Modules.Voice
             else
             {
                 config.CurrentlyPlayingSongRequest = null;
-                await Messenger.SendInfoAsync(Context.Channel, "**The queue is empty.**\nI'll stay in the voice channel... in silence...");
+                await GenericMessenger.SendInfoAsync(Context.Channel, "**The queue is empty.**\nI'll stay in the voice channel... in silence...");
             }
         }
 

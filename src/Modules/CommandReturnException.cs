@@ -9,7 +9,7 @@ namespace wow2.Modules
     {
         public CommandReturnException(SocketCommandContext context, string message) : base(message)
         {
-            _ = Messenger.SendWarningAsync(context.Channel, message);
+            _ = GenericMessenger.SendWarningAsync(context.Channel, message);
         }
     }
 }

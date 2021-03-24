@@ -70,7 +70,7 @@ namespace wow2.Modules.Keywords
             }
             else
             {
-                sentKeywordResponseMessage = await Messenger.SendGenericResponseAsync(message.Channel, chosenValue.Content);
+                sentKeywordResponseMessage = await GenericMessenger.SendResponseAsync(message.Channel, chosenValue.Content);
             }
 
             if (config.IsLikeReactionOn)
@@ -128,7 +128,7 @@ namespace wow2.Modules.Keywords
 
             keywordsDictionary[keyword].Add(new KeywordValue() { Content = value });
 
-            await Messenger.SendSuccessAsync(Context.Channel, $"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.");
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
@@ -147,7 +147,7 @@ namespace wow2.Modules.Keywords
             {
                 // No values have been specified, so assume the user wants to remove the keyword.
                 keywordsDictionary.Remove(keyword);
-                await Messenger.SendSuccessAsync(Context.Channel, $"Sucessfully removed keyword `{keyword}`.");
+                await GenericMessenger.SendSuccessAsync(Context.Channel, $"Sucessfully removed keyword `{keyword}`.");
             }
             else
             {
@@ -160,7 +160,7 @@ namespace wow2.Modules.Keywords
                 if (keywordsDictionary[keyword].Count == 0)
                     keywordsDictionary.Remove(keyword);
 
-                await Messenger.SendSuccessAsync(Context.Channel, $"Sucessfully removed `{value}` from `{keyword}`.");
+                await GenericMessenger.SendSuccessAsync(Context.Channel, $"Sucessfully removed `{value}` from `{keyword}`.");
             }
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -194,7 +194,7 @@ namespace wow2.Modules.Keywords
                 listOfFieldBuilders.Add(fieldBuilderForKeyword);
             }
 
-            await Messenger.SendGenericResponseAsync(
+            await GenericMessenger.SendResponseAsync(
                 channel: Context.Channel,
                 fieldBuilders: listOfFieldBuilders,
                 title: "Keywords",
@@ -207,7 +207,7 @@ namespace wow2.Modules.Keywords
         {
             DataManager.GetKeywordsConfigForGuild(Context.Guild).IsDeleteReactionOn = !DataManager.GetKeywordsConfigForGuild(Context.Guild).IsDeleteReactionOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await Messenger.SendSuccessAsync(Context.Channel, $"Delete reaction is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).IsDeleteReactionOn ? "on" : "off")}` for keyword responses.");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Delete reaction is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).IsDeleteReactionOn ? "on" : "off")}` for keyword responses.");
         }
 
         [Command("toggle-like-reaction")]
@@ -216,7 +216,7 @@ namespace wow2.Modules.Keywords
         {
             DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn = !DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await Messenger.SendSuccessAsync(Context.Channel, $"Like reaction is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn ? "on" : "off")}` for keyword responses.");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Like reaction is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn ? "on" : "off")}` for keyword responses.");
         }
 
         /// <summary>Alternative to list command, where only keywords are shown</summary>
@@ -230,7 +230,7 @@ namespace wow2.Modules.Keywords
                 descriptionBuilder.Append($"{(keywordPair.Value.Count > 1 ? $"`{keywordPair.Key}` ({keywordPair.Value.Count} values)" : $"`{keywordPair.Key}`")}\n");
             }
 
-            await Messenger.SendGenericResponseAsync(Context.Channel, descriptionBuilder.ToString(), "Keywords");
+            await GenericMessenger.SendResponseAsync(Context.Channel, descriptionBuilder.ToString(), "Keywords");
         }
     }
 }

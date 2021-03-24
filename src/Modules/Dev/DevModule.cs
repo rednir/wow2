@@ -16,14 +16,14 @@ namespace wow2.Modules.Dev
         public async Task LoadGuildDataAsync()
         {
             await DataManager.LoadGuildDataFromFileAsync();
-            await Messenger.SendSuccessAsync(Context.Channel, $"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data loaded.");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data loaded.");
         }
 
         [Command("save-guild-data")]
         public async Task SaveGuildDataAsync(bool alsoExit = false)
         {
             await DataManager.SaveGuildDataToFileAsync();
-            await Messenger.SendSuccessAsync(Context.Channel, $"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data saved.");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data saved.");
             if (alsoExit) Environment.Exit(0);
         }
     }

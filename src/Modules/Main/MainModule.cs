@@ -28,11 +28,11 @@ namespace wow2.Modules.Main
         {
             if (string.IsNullOrWhiteSpace(group))
             {
-                await Messenger.SendGenericResponseAsync(Context.Channel, fieldBuilders: await ModuleInfoToEmbedFieldsAsync(), title: "Help");
+                await GenericMessenger.SendResponseAsync(Context.Channel, fieldBuilders: await ModuleInfoToEmbedFieldsAsync(), title: "Help");
             }
             else
             {
-                await Messenger.SendGenericResponseAsync(Context.Channel, fieldBuilders: await CommandInfoToEmbedFieldsAsync(group), title: $"Command Help");
+                await GenericMessenger.SendResponseAsync(Context.Channel, fieldBuilders: await CommandInfoToEmbedFieldsAsync(group), title: $"Command Help");
             }
         }
 
@@ -50,7 +50,7 @@ namespace wow2.Modules.Main
                     throw new CommandReturnException(Context, $"The alias `{name}` already exists.\nTo remove the alias, type `{EventHandlers.CommandPrefix} alias \"{name}\" \"\"`");
 
                 config.AliasesDictionary.Remove(name);
-                await Messenger.SendSuccessAsync(Context.Channel, $"The alias `{name}` was removed.");
+                await GenericMessenger.SendSuccessAsync(Context.Channel, $"The alias `{name}` was removed.");
                 return;
             }
 
@@ -60,7 +60,7 @@ namespace wow2.Modules.Main
                 throw new CommandReturnException(Context, $"An alias should have a definition that isn't blank.");
             }
 
-            await Messenger.SendSuccessAsync(Context.Channel, $"Typing `{name}` will now execute `{EventHandlers.CommandPrefix} {definition}`");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Typing `{name}` will now execute `{EventHandlers.CommandPrefix} {definition}`");
 
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -84,7 +84,7 @@ namespace wow2.Modules.Main
                 listOfFieldBuilders.Add(fieldBuilderForAlias);
             }
 
-            await Messenger.SendGenericResponseAsync(
+            await GenericMessenger.SendResponseAsync(
                 channel: Context.Channel,
                 fieldBuilders: listOfFieldBuilders,
                 title: "List of Aliases",

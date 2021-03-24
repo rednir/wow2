@@ -32,7 +32,7 @@ namespace wow2.Modules.Games
             {
                 if (recievedMessage.Author == config.ListOfMessages.Last().Author)
                 {
-                    await Messenger.SendWarningAsync(recievedMessage.Channel, "Counting twice in a row is no fun.");
+                    await GenericMessenger.SendWarningAsync(recievedMessage.Channel, "Counting twice in a row is no fun.");
                     return;
                 }
             }
@@ -47,7 +47,7 @@ namespace wow2.Modules.Games
             else
             {
                 await recievedMessage.AddReactionAsync(new Emoji("❎"));
-                await Messenger.SendInfoAsync(recievedMessage.Channel, $"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`");
+                await GenericMessenger.SendInfoAsync(recievedMessage.Channel, $"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`");
                 await EndCountingAsync(recievedMessage);
             }
         }
@@ -67,7 +67,7 @@ namespace wow2.Modules.Games
             if (await EndCountingIfNumberIsInvalidAsync(Context.Message, increment))
                 return;
 
-            await Messenger.SendInfoAsync(Context.Channel, $"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.");
+            await GenericMessenger.SendInfoAsync(Context.Channel, $"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.");
         }
 
         private static async Task EndCountingAsync(SocketMessage finalMessage)
@@ -102,7 +102,7 @@ namespace wow2.Modules.Games
             else if (config.NextNumber >= 75 * config.Increment) commentOnFinalNumber = "Amazing!";
             else commentOnFinalNumber = "";
 
-            await Messenger.SendGenericResponseAsync(
+            await GenericMessenger.SendResponseAsync(
                 channel: finalMessage.Channel,
                 fieldBuilders: listOfFieldBuilders,
                 title: "Final Stats",
@@ -116,7 +116,7 @@ namespace wow2.Modules.Games
         {
             if (number >= float.MaxValue || number <= float.MinValue)
             {
-                await Messenger.SendWarningAsync(message.Channel, "Woah, that's a big number.\nHate to be a killjoy, but even a computer has its limits.");
+                await GenericMessenger.SendWarningAsync(message.Channel, "Woah, that's a big number.\nHate to be a killjoy, but even a computer has its limits.");
                 await EndCountingAsync(message);
                 return true;
             }

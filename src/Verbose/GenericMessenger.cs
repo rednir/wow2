@@ -6,7 +6,8 @@ using Discord.Rest;
 
 namespace wow2.Verbose
 {
-    public static class Messenger
+    /// <summary>Class containing methods used to send embeds that are not specific to one command module.</summary>
+    public static class GenericMessenger
     {
         /// <summary>Notify a channel about a successful action.</summary>
         public static async Task<RestUserMessage> SendSuccessAsync(ISocketMessageChannel channel, string description, string title = null)
@@ -46,7 +47,7 @@ namespace wow2.Verbose
             .Build());
 
         /// <summary>Send a generic response to a command in a channel.</summary>
-        public static async Task<RestUserMessage> SendGenericResponseAsync(ISocketMessageChannel channel, string description = "", string title = "", List<EmbedFieldBuilder> fieldBuilders = null)
+        public static async Task<RestUserMessage> SendResponseAsync(ISocketMessageChannel channel, string description = "", string title = "", List<EmbedFieldBuilder> fieldBuilders = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
                 Title = title,
