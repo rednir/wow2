@@ -60,7 +60,7 @@ namespace wow2.Modules.Voice
 
         [Command("add", RunMode = RunMode.Async)]
         [Alias("play")]
-        [Summary("Adds REQUEST to the song request queue. REQUEST can be a video URL or a search term.")]
+        [Summary("Adds REQUEST to the song request queue. REQUEST can be a video URL or a youtube search term.")]
         public async Task AddAsync([Name("REQUEST")] params string[] splitSongRequest)
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
@@ -180,7 +180,7 @@ namespace wow2.Modules.Voice
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
-            using (var ffmpeg = CreateStreamFromYoutubeUrl(request.VideoMetadata.webpage_url))
+            using (var ffmpeg = CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
             using (var output = ffmpeg.StandardOutput.BaseStream)
             using (var discord = config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
             {
@@ -219,7 +219,7 @@ namespace wow2.Modules.Voice
             }
         }
 
-        private Process CreateStreamFromYoutubeUrl(string url)
+        private Process CreateStreamFromVideoUrl(string url)
         {
             string shellCommand = $"{YoutubeDl.YoutubeDlPath} {url} -q -o - | {YoutubeDl.FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
