@@ -160,6 +160,15 @@ namespace wow2.Modules.Voice
             await DisplayCurrentlyPlayingRequestAsync();
         }
 
+        [Command("toggle-auto-np")]
+        [Summary("Toggles whether the np command will be executed everytime a new song is playing.")]
+        public async Task ToggleLikeReactionAsync()
+        {
+            DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn = !DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn;
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Auto np is now `{(DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}` for keyword responses.");
+        }
+
         private async Task DisplayCurrentlyPlayingRequestAsync()
         {
             UserSongRequest request = DataManager.GetVoiceConfigForGuild(Context.Guild).CurrentlyPlayingSongRequest;
@@ -187,7 +196,9 @@ namespace wow2.Modules.Voice
                 try
                 {
                     config.CurrentlyPlayingSongRequest = request;
-                    await DisplayCurrentlyPlayingRequestAsync();
+                    if (config.IsAutoNpOn)
+                        await DisplayCurrentlyPlayingRequestAsync();
+
                     await output.CopyToAsync(discord, cancellationToken);
                 }
                 finally
