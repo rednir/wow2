@@ -55,25 +55,5 @@ namespace wow2.Verbose
                 Fields = fieldBuilders
             }
             .Build());
-
-        /// <summary>Builds and returns an embed for showing a list of fields, for example, showing command help.</summary>
-        public static Embed Felds(List<EmbedFieldBuilder> fieldBuilders, string title = "", string description = "")
-        {
-            const int maxFields = 24;
-
-            // Truncate list to comply with the embed fields limit. 
-            if (fieldBuilders.Count >= maxFields)
-                fieldBuilders.RemoveRange(maxFields, fieldBuilders.Count - maxFields);
-
-            var embedBuilder = new EmbedBuilder()
-            {
-                Title = title,
-                Description = description,
-                Fields = fieldBuilders,
-                Color = Color.LightGrey
-            };
-
-            return embedBuilder.Build();
-        }
     }
 }
