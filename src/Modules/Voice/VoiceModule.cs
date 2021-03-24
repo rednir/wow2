@@ -103,6 +103,8 @@ namespace wow2.Modules.Voice
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
+            if (config.SongRequests.Count == 0)
+                throw new CommandReturnException(Context, "The queue is empty, so there's nothing to skip to.");
             if (config.ListOfUserIdsThatVoteSkipped.Contains(Context.User.Id))
                 throw new CommandReturnException(Context, "You've already sent a skip request.");
 
@@ -114,6 +116,7 @@ namespace wow2.Modules.Voice
             }
             else
             {
+                // Required number of vote skips has been met. 
                 _ = ContinueAsync();
             }
         }
@@ -143,6 +146,7 @@ namespace wow2.Modules.Voice
             }
             catch (Exception ex) when (ex is WebSocketClosedException || ex is TaskCanceledException)
             {
+                // No need to notify the user of these errors.
             }
         }
 
