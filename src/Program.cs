@@ -81,7 +81,8 @@ namespace wow2
                 {
                     Logger.Log($"A valid bot token was not found.", LogSeverity.Error);
                     Console.WriteLine($"\nIt is recommended to put your bot token in an environment variable called {DiscordTokenEnvironmentVariable}. Alternatively, you can put your bot token in a file named {DiscordTokenFilePath}, and place it in the working directory of this executable.\n");
-                    Console.ReadKey();
+                    await Task.Delay(1000);
+                    Environment.Exit(-1);
                 }
             }
         }
