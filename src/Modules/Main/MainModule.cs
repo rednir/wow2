@@ -28,15 +28,11 @@ namespace wow2.Modules.Main
         {
             if (string.IsNullOrWhiteSpace(group))
             {
-                await ReplyAsync(
-                    embed: Messenger.Fields(await ModuleInfoToEmbedFields(), "Help")
-                );
+                await Messenger.SendGenericResponseAsync(Context.Channel, fieldBuilders: await ModuleInfoToEmbedFieldsAsync(), title: "Help");
             }
             else
             {
-                await ReplyAsync(
-                    embed: Messenger.Fields(await CommandInfoToEmbedFieldsAsync(group), $"Command Help")
-                );
+                await Messenger.SendGenericResponseAsync(Context.Channel, fieldBuilders: await CommandInfoToEmbedFieldsAsync(group), title: $"Command Help");
             }
         }
 
@@ -88,9 +84,11 @@ namespace wow2.Modules.Main
                 listOfFieldBuilders.Add(fieldBuilderForAlias);
             }
 
-            await ReplyAsync(
-                embed: Messenger.Fields(listOfFieldBuilders, "List of Aliases", "To remove any of these aliases, just set the alias definition to \"\"")
-            );
+            await Messenger.SendGenericResponseAsync(
+                channel: Context.Channel,
+                fieldBuilders: listOfFieldBuilders,
+                title: "List of Aliases",
+                description: "To remove any of these aliases, just set the alias definition to \"\"");
         }
 
         [Command("savedata")]
@@ -152,7 +150,7 @@ namespace wow2.Modules.Main
         }
 
         /// <summary>Builds embed fields for all command modules.</summary>
-        private async Task<List<EmbedFieldBuilder>> ModuleInfoToEmbedFields()
+        private async Task<List<EmbedFieldBuilder>> ModuleInfoToEmbedFieldsAsync()
         {
             var listOfModules = EventHandlers.BotCommandService.Modules;
 

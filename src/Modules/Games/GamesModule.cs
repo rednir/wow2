@@ -102,9 +102,11 @@ namespace wow2.Modules.Games
             else if (config.NextNumber >= 75 * config.Increment) commentOnFinalNumber = "Amazing!";
             else commentOnFinalNumber = "";
 
-            await finalMessage.Channel.SendMessageAsync(
-                embed: Messenger.Fields(listOfFieldBuilders, "Final Stats", $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*")
-            );
+            await Messenger.SendGenericResponseAsync(
+                channel: finalMessage.Channel,
+                fieldBuilders: listOfFieldBuilders,
+                title: "Final Stats",
+                description: $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*");
 
             config.NextNumber = null;
         }

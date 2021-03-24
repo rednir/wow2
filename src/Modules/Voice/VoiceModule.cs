@@ -46,9 +46,7 @@ namespace wow2.Modules.Voice
             if (listOfFieldBuilders.Count == 0)
                 throw new CommandReturnException(Context, "There's nothing in the queue... how sad.");
 
-            await ReplyAsync(
-                embed: Messenger.Fields(listOfFieldBuilders, "Up Next")
-            );
+            await Messenger.SendGenericResponseAsync(Context.Channel, title: "Up Next", fieldBuilders: listOfFieldBuilders);
         }
 
         [Command("clear")]

@@ -46,17 +46,18 @@ namespace wow2.Verbose
             .Build());
 
         /// <summary>Send a generic response to a command in a channel.</summary>
-        public static async Task<RestUserMessage> SendGenericResponseAsync(ISocketMessageChannel channel, string description, string title = "")
+        public static async Task<RestUserMessage> SendGenericResponseAsync(ISocketMessageChannel channel, string description = "", string title = "", List<EmbedFieldBuilder> fieldBuilders = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
                 Title = title,
                 Description = description,
                 Color = Color.LightGrey,
+                Fields = fieldBuilders
             }
             .Build());
 
         /// <summary>Builds and returns an embed for showing a list of fields, for example, showing command help.</summary>
-        public static Embed Fields(List<EmbedFieldBuilder> fieldBuilders, string title = "", string description = "")
+        public static Embed Felds(List<EmbedFieldBuilder> fieldBuilders, string title = "", string description = "")
         {
             const int maxFields = 24;
 

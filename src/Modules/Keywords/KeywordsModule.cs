@@ -194,9 +194,11 @@ namespace wow2.Modules.Keywords
                 listOfFieldBuilders.Add(fieldBuilderForKeyword);
             }
 
-            await ReplyAsync(
-                embed: Messenger.Fields(listOfFieldBuilders, "Keywords", $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*")
-            );
+            await Messenger.SendGenericResponseAsync(
+                channel: Context.Channel,
+                fieldBuilders: listOfFieldBuilders,
+                title: "Keywords",
+                description: $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*");
         }
 
         [Command("toggle-delete-reaction")]
