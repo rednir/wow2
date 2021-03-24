@@ -10,6 +10,10 @@ namespace wow2.Modules.Voice
     public class VoiceModuleConfig
     {
         public bool IsAutoNpOn { get; set; } = true;
+        public int VoteSkipsNeeded { get; set; } = 1;
+        
+        [JsonIgnore]
+        public List<ulong> ListOfUserIdsThatVoteSkipped { get; set; } = new List<ulong>();
 
         [JsonIgnore]
         public Queue<UserSongRequest> SongRequests { get; set; } = new Queue<UserSongRequest>();

@@ -99,10 +99,23 @@ namespace wow2.Modules.Voice
         [Command("skip")]
         [Alias("next")]
         [Summary("Stops the currently playing request and starts the next request if it exists.")]
-        public Task Skip()
+        public async Task Skip()
         {
-            _ = ContinueAsync();
-            return Task.CompletedTask;
+            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+
+            if (config.ListOfUserIdsThatVoteSkipped.Contains(Context.User.Id))
+                throw new CommandReturnException(Context, "You've already sent a skip request.");
+
+            config.ListOfUserIdsThatVoteSkipped.Add(Context.User.Id);
+            if (config.ListOfUserIdsThatVoteSkipped.Count() < config.VoteSkipsNeeded)
+            {
+                await GenericMessenger.SendInfoAsync(Context.Channel, $"**Sent skip request**\nWaiting for `{config.VoteSkipsNeeded - config.ListOfUserIdsThatVoteSkipped.Count()}` more vote(s) before skipping.\n");
+                return;
+            }
+            else
+            {
+                _ = ContinueAsync();
+            }
         }
 
         [Command("join", RunMode = RunMode.Async)]
@@ -166,7 +179,21 @@ namespace wow2.Modules.Voice
         {
             DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn = !DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Auto execution of `np` is turned `{(DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}`");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Auto execution of `{EventHandlers.CommandPrefix} vc np` is turned `{(DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}`");
+        }
+
+        [Command("set-vote-skips-needed")]
+        [Summary("Sets the number of votes needed to skip a song request to NUMBER.")]
+        public async Task SetVoteSkipsNeeded([Name("NUMBER")] int newNumberOfSkips)
+        {
+            if (newNumberOfSkips <= 0)
+                throw new CommandReturnException(Context, "**Number too small**\nThe number of votes required is less than the amount of people in the server.");
+            if (newNumberOfSkips >= Context.Guild.MemberCount)
+                throw new CommandReturnException(Context, "**Number too large.**\nThe number of votes required is greater than the amount of people in the server.");
+
+            DataManager.GetVoiceConfigForGuild(Context.Guild).VoteSkipsNeeded = newNumberOfSkips;
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"`{newNumberOfSkips}` votes are now required to skip a song request.");
         }
 
         private async Task DisplayCurrentlyPlayingRequestAsync()
@@ -216,6 +243,7 @@ namespace wow2.Modules.Voice
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
             UserSongRequest nextRequest;
 
+            config.ListOfUserIdsThatVoteSkipped.Clear();
             config.CtsForAudioStreaming.Cancel();
             config.CtsForAudioStreaming = new CancellationTokenSource();
 
