@@ -42,25 +42,27 @@ namespace wow2.Modules.Main
         public async Task AliasAsync(string name, [Name("DEFINITION")] params string[] definitionSplit)
         {
             var config = DataManager.GetMainConfigForGuild(Context.Guild);
-            string definition = string.Join(" ", definitionSplit);
+            string removeAliasText = $"To remove the alias, type `{EventHandlers.CommandPrefix} alias \"{name}\"`";
+
+            string definition = string.Join(" ", definitionSplit.Where(w => !w.Equals(EventHandlers.CommandPrefix, StringComparison.CurrentCultureIgnoreCase)));
 
             if (!config.AliasesDictionary.TryAdd(name, definition))
             {
-                if (definition != "")
-                    throw new CommandReturnException(Context, $"The alias `{name}` already exists.\nTo remove the alias, type `{EventHandlers.CommandPrefix} alias \"{name}\" \"\"`");
+                if (!string.IsNullOrWhiteSpace(definition))
+                    throw new CommandReturnException(Context, $"The alias `{name}` already exists.\n{removeAliasText}");
 
                 config.AliasesDictionary.Remove(name);
                 await GenericMessenger.SendSuccessAsync(Context.Channel, $"The alias `{name}` was removed.");
                 return;
             }
 
-            if (definition == "")
+            if (string.IsNullOrWhiteSpace(definition))
             {
                 config.AliasesDictionary.Remove(name);
                 throw new CommandReturnException(Context, $"An alias should have a definition that isn't blank.");
             }
 
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Typing `{name}` will now execute `{EventHandlers.CommandPrefix} {definition}`");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Typing `{name}` will now execute `{EventHandlers.CommandPrefix} {definition}`\n{removeAliasText}");
 
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -88,7 +90,7 @@ namespace wow2.Modules.Main
                 channel: Context.Channel,
                 fieldBuilders: listOfFieldBuilders,
                 title: "List of Aliases",
-                description: "To remove any of these aliases, just set the alias definition to \"\"");
+                description: "To remove any of these aliases, set the alias definition to a blank value.");
         }
 
         [Command("savedata")]
