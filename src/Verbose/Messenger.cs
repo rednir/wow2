@@ -52,7 +52,7 @@ namespace wow2.Verbose
                 Title = title,
                 Description = description,
                 Color = Color.LightGrey,
-                Fields = fieldBuilders
+                Fields = fieldBuilders ?? new List<EmbedFieldBuilder>()
             }
             .Build());
     }
