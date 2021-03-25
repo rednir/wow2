@@ -77,6 +77,10 @@ namespace wow2.Modules.Voice
             {
                 metadata = await YoutubeDl.GetMetadata(songRequest);
             }
+            catch (ArgumentException)
+            {
+                throw new CommandReturnException(Context, $"**Could not fetch video metadata.**\nOne or more errors were returned.");
+            }
             catch
             {
                 throw new CommandReturnException(Context, $"**Could not fetch video metadata.**\nThe host may be missing some required dependencies.");
