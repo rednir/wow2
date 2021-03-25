@@ -1,10 +1,7 @@
 using System;
 using System.Linq;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Text.Json;
 using System.Collections.Generic;
 using Discord;
 using Discord.Net;
@@ -224,7 +221,7 @@ namespace wow2.Modules.Voice
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
-            using (var ffmpeg = CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
+            using (var ffmpeg = YoutubeDl.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
             using (var output = ffmpeg.StandardOutput.BaseStream)
             using (var discord = config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
             {
@@ -264,20 +261,6 @@ namespace wow2.Modules.Voice
                 config.CurrentlyPlayingSongRequest = null;
                 await GenericMessenger.SendInfoAsync(Context.Channel, "**The queue is empty.**\nI'll stay in the voice channel... in silence...");
             }
-        }
-
-        private Process CreateStreamFromVideoUrl(string url)
-        {
-            string shellCommand = $"{YoutubeDl.YoutubeDlPath} {url} -q -o - | {YoutubeDl.FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
-            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
-            return Process.Start(new ProcessStartInfo
-            {
-                FileName = isWindows ? "cmd" : "bash",
-                Arguments = $"{(isWindows ? "/c" : "-c")} \"{shellCommand}\"",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-            });
         }
 
         public static Embed BuildNowPlayingEmbed(UserSongRequest request)

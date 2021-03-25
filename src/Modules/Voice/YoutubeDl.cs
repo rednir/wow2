@@ -1,6 +1,8 @@
 using System;
 using System.Text.Json;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+
 using System.Threading.Tasks;
 
 namespace wow2.Modules.Voice
@@ -45,6 +47,21 @@ namespace wow2.Modules.Voice
 
             var metadata = JsonSerializer.Deserialize<YoutubeVideoMetadata>(standardOutput);
             return metadata;
+        }
+
+        /// <returns>The FFmpeg process.</returns>
+        public static Process CreateStreamFromVideoUrl(string url)
+        {
+            string shellCommand = $"{YoutubeDl.YoutubeDlPath} {url} -q -o - | {YoutubeDl.FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+            return Process.Start(new ProcessStartInfo
+            {
+                FileName = isWindows ? "cmd" : "bash",
+                Arguments = $"{(isWindows ? "/c" : "-c")} \"{shellCommand}\"",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+            });
         }
     }
 }
