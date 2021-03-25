@@ -30,7 +30,7 @@ namespace wow2.Modules.Voice
 
     public class UserSongRequest
     {
-        public YoutubeVideoMetadata VideoMetadata { get; set; }
+        public VideoMetadata VideoMetadata { get; set; }
         public DateTime TimeRequested { get; set; }
         public SocketUser RequestedBy { get; set; }
     }

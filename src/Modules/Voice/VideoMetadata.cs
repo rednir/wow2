@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace wow2.Modules.Voice
 {
-    public class YoutubeVideoMetadata
+    public class VideoMetadata
     {
         public string title { get; set; }
         public string author { get; set; }
@@ -13,10 +13,10 @@ namespace wow2.Modules.Voice
         public int? like_count { get; set; }
         public int? dislike_count { get; set; }
 
-        public List<YoutubeVideoMetadataThumbnails> thumbnails { get; set; }
+        public List<VideoMetadataThumbnails> thumbnails { get; set; }
     }
 
-    public class YoutubeVideoMetadataThumbnails
+    public class VideoMetadataThumbnails
     {
         public string url { get; set; }
         public int width { get; set; }

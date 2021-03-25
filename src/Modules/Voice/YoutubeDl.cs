@@ -14,7 +14,7 @@ namespace wow2.Modules.Voice
 
         /// <summary>Looks up a URL or search term and gets the video metadata.</summary>
         /// <returns>Video metadata deserialized into <c>YoutubeVideoMetadata</c>.</returns>
-        public static async Task<YoutubeVideoMetadata> GetMetadata(string searchOrUrl)
+        public static async Task<VideoMetadata> GetMetadata(string searchOrUrl)
         {
             const string arguments = "-j -q";
             bool isUrl = searchOrUrl.StartsWith("http://") || searchOrUrl.StartsWith("https://");
@@ -45,7 +45,7 @@ namespace wow2.Modules.Voice
             if (!string.IsNullOrWhiteSpace(standardError))
                 throw new ArgumentException(standardError);
 
-            var metadata = JsonSerializer.Deserialize<YoutubeVideoMetadata>(standardOutput);
+            var metadata = JsonSerializer.Deserialize<VideoMetadata>(standardOutput);
             return metadata;
         }
 

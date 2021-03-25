@@ -69,7 +69,7 @@ namespace wow2.Modules.Voice
 
             string songRequest = string.Join(" ", splitSongRequest);
 
-            YoutubeVideoMetadata metadata;
+            VideoMetadata metadata;
             try
             {
                 metadata = await YoutubeDl.GetMetadata(songRequest);
