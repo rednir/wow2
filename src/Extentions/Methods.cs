@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Text;
 using Discord;
@@ -62,5 +63,12 @@ namespace wow2.Extentions
             (stringToCheck.StartsWith(word, true, null) && stringToCheck.IndexOf(" ") == word.Length)
             // Or the stringToCheck is a direct match with the word.
             || stringToCheck.Equals(word, StringComparison.CurrentCultureIgnoreCase);
+
+        public static void RenameKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey oldKey, TKey newKey)
+        {
+            var valuesToMove = dictionary[oldKey];
+            dictionary.Remove(oldKey);
+            dictionary.Add(newKey, valuesToMove);
+        }
     }
 }
