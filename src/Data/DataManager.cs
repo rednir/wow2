@@ -114,6 +114,7 @@ namespace wow2.Data
         /// <summary>If the data file for the specified guild does not exist, one will be created and loaded. Otherwise this does nothing.</summary>
         public static async Task EnsureGuildDataFileExistsAsync(ulong guildId)
         {
+            DictionaryOfGuildData.TryAdd(guildId, new GuildData());
             if (!File.Exists($"{GuildDataDirPath}/{guildId}.json"))
             {
                 await SaveGuildDataToFileAsync(guildId);
