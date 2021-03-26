@@ -24,6 +24,7 @@ namespace wow2.Modules.Keywords
         public static readonly IEmote LikeReactionEmote = new Emoji("👍");
         private const int MaxCountOfRememberedKeywordResponses = 100;
         private const int MaxNumberOfKeywords = 50;
+        private const int MaxNumberOfValues = 20;
 
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
         public static bool CheckMessageForKeyword(SocketMessage message)
@@ -120,17 +121,19 @@ namespace wow2.Modules.Keywords
             string value = string.Join(" ", valueSplit);
             keyword = keyword.ToLower();
 
-            // Create new dictionary key if necessary.
             if (!keywordsDictionary.ContainsKey(keyword))
             {
                 if (keywordsDictionary.Count() >= MaxNumberOfKeywords)
                     throw new CommandReturnException(Context, "**Keywords limit reached**\nYou've got too many keywords. Try remove some first.");
 
+                // Create new dictionary key if necessary.
                 keywordsDictionary.Add(keyword, new List<KeywordValue>());
             }
 
             if (keywordsDictionary[keyword].FindIndex(x => x.Content == value) != -1)
                 throw new CommandReturnException(Context, "The value already exists in the keyword.");
+            if (keywordsDictionary[keyword].Count() >= MaxNumberOfValues)
+                throw new CommandReturnException(Context, "**Value limit reached**\nYou've got too many values in this keyword. Try remove some first.");
 
             keywordsDictionary[keyword].Add(new KeywordValue() { Content = value });
 
