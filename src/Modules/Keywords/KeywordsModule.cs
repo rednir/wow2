@@ -189,10 +189,17 @@ namespace wow2.Modules.Keywords
 
         [Command("list")]
         [Alias("show", "all")]
-        [Summary("Shows a list of all keywords, and a preview of their values. Previews will not be shown if the list of keywords is too large.")]
-        public async Task ListAsync()
+        [Summary("Shows a list of all keywords, and a preview of their values. You can optionally set KEYWORD to see a list of values for a specific keyword.")]
+        public async Task ListAsync(string keyword = null)
         {
             const int maxFields = 16;
+
+            if (keyword != null)
+            {
+                // Assume the user wants to see all values for a specific keyword.
+                await ListKeywordValuesAsync(keyword);
+                return;
+            }
 
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
@@ -241,7 +248,7 @@ namespace wow2.Modules.Keywords
             await GenericMessenger.SendSuccessAsync(Context.Channel, $"Like reaction is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn ? "on" : "off")}` for keyword responses.");
         }
 
-        /// <summary>Alternative to list command, where only keywords are shown</summary>
+        /// <summary>Alternative to list command, where only keywords are shown.</summary>
         private async Task ListMinimalAsync()
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
@@ -253,6 +260,24 @@ namespace wow2.Modules.Keywords
             }
 
             await GenericMessenger.SendResponseAsync(Context.Channel, descriptionBuilder.ToString(), "Keywords");
+        }
+
+        /// <summary>Alternative to list command, where all the values of only one keyword is shown.</summary>
+        private async Task ListKeywordValuesAsync(string keyword)
+        {
+            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
+            List<KeywordValue> values;
+
+            if (!keywordsDictionary.TryGetValue(keyword, out values))
+                throw new CommandReturnException(Context, $"**No such keyword**If you want to list all keywords available, don't specify a keyword in the command.");
+
+            StringBuilder stringBuilderForValueList = new StringBuilder();
+            foreach (KeywordValue value in values)
+            {
+                stringBuilderForValueList.Append($"```{value.Content}```");
+            }
+
+            await GenericMessenger.SendResponseAsync(Context.Channel, $"*There are {values.Count()} values in total, as listed below.*\n{stringBuilderForValueList.ToString()}", $"Values for '{keyword}'");
         }
     }
 }
