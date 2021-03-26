@@ -32,10 +32,18 @@ namespace wow2.Data
         /// <summary>Creates required directories if necessary and loads all guild data.</summary>
         public static async Task InitializeAsync()
         {
-            Directory.CreateDirectory(AppDataDirPath);
-
-            AppDataDirInfo = Directory.CreateDirectory(GuildDataDirPath);
-            Directory.CreateDirectory(LogsDirPath);
+            try
+            {
+                Directory.CreateDirectory(AppDataDirPath);
+                AppDataDirInfo = Directory.CreateDirectory(GuildDataDirPath);
+                Directory.CreateDirectory(LogsDirPath);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex);
+                Logger.Log($"Could not initialize folders in {AppDataDirPath}, the program may lack sufficient privileges.", LogSeverity.Critical);
+                Environment.Exit(-1);
+            }
 
             await LoadGuildDataFromFileAsync();
         }
