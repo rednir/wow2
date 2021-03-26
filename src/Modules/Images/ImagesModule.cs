@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
-using Discord;
 using Discord.Commands;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
@@ -24,7 +22,9 @@ namespace wow2.Modules.Images
         [Summary("Creates a fake quote of a famous person. If you want to use a specific person, set AUTHOR to their name.")]
         public async Task QuoteAsync(string quote, string author = null)
         {
-            const string templatesFolderPath = "res/quotetemplates";
+            // Search for folder `quotetemplates` in runtime directory and in working directory.
+            string templatesFolderPath = Directory.Exists($"{Program.RuntimeDirectory}/res/quotetemplates") ? $"{Program.RuntimeDirectory}/res/quotetemplates" : "res/quotetemplates";
+
             var listOfTemplatePaths = Directory.EnumerateFiles(templatesFolderPath);
 
             string templateToUsePath;

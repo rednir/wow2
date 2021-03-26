@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.IO;
 using System.Threading.Tasks;
 using Discord;
@@ -31,6 +32,10 @@ namespace wow2
         public static string Version
         {
             get { return IsDebug ? "DEBUG BUILD" : ReleaseVersion; }
+        }
+        public static string RuntimeDirectory
+        {
+            get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); }
         }
 
         public static async Task<IGuildUser> GetClientGuildUserAsync(SocketCommandContext context)
