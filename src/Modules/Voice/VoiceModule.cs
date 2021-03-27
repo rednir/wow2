@@ -92,7 +92,7 @@ namespace wow2.Modules.Voice
 
             await GenericMessenger.SendSuccessAsync(Context.Channel, $"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}");
 
-            // Play song if it is the first in queue.
+            // Play song if nothing else is playing.
             if (!CheckIfAudioClientDisconnected(config.AudioClient) && config.CurrentlyPlayingSongRequest == null)
                 _ = ContinueAsync();
         }
@@ -252,6 +252,7 @@ namespace wow2.Modules.Voice
             config.ListOfUserIdsThatVoteSkipped.Clear();
             config.CtsForAudioStreaming.Cancel();
             config.CtsForAudioStreaming = new CancellationTokenSource();
+            config.CurrentlyPlayingSongRequest = null;
 
             if (CheckIfAudioClientDisconnected(config.AudioClient))
                 return;
@@ -262,7 +263,6 @@ namespace wow2.Modules.Voice
             }
             else
             {
-                config.CurrentlyPlayingSongRequest = null;
                 await GenericMessenger.SendInfoAsync(Context.Channel, "**The queue is empty.**\nI'll stay in the voice channel... in silence...");
             }
         }
