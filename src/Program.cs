@@ -13,7 +13,7 @@ namespace wow2
 {
     public class Program
     {
-        private const string ReleaseVersion = "1.0";
+        private const string ReleaseVersion = "v1.0";
         private const string DiscordTokenFilePath = "discord.token";
         private const string DiscordTokenEnvironmentVariable = "DISCORD_BOT_TOKEN";
 
@@ -47,8 +47,8 @@ namespace wow2
         private async Task MainAsync()
         {
             SetIsDebugField();
-            Logger.LogProgramDetails();
 
+            await Logger.LogInitialize();
             await DataManager.InitializeAsync();
             await EventHandlers.InstallCommandsAsync();
 
