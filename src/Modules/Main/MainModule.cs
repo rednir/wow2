@@ -198,6 +198,9 @@ namespace wow2.Modules.Main
                 || c.Module.Aliases.Contains(specifiedModuleName.ToLower())
             );
 
+            if (listOfCommandInfo.Count() == 0)
+                throw new CommandReturnException(Context, "**No such module.**\nDid you make a typo?");
+
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             foreach (CommandInfo command in listOfCommandInfo)
             {
