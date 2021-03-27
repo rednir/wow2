@@ -206,7 +206,11 @@ namespace wow2.Modules.Keywords
 
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-
+            
+            if (keywordsDictionary.Count == 0)
+            {
+                throw new CommandReturnException(Context, "No keywords have been added yet, so there's nothing to show.");
+            }
             if (keywordsDictionary.Count > maxFields)
             {
                 await ListMinimalAsync();
@@ -272,7 +276,7 @@ namespace wow2.Modules.Keywords
             List<KeywordValue> values;
 
             if (!keywordsDictionary.TryGetValue(keyword, out values))
-                throw new CommandReturnException(Context, $"**No such keyword**If you want to list all keywords available, don't specify a keyword in the command.");
+                throw new CommandReturnException(Context, $"**No such keyword**\nIf you want to list all keywords available, don't specify a keyword in the command.");
 
             StringBuilder stringBuilderForValueList = new StringBuilder();
             foreach (KeywordValue value in values)
