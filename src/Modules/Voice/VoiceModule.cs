@@ -242,7 +242,8 @@ namespace wow2.Modules.Voice
 
             _ = ContinueAsync();
         }
-
+        
+        /// <summary>Continue to the next song request, if it exists. Otherwise notify the user that the queue is empty.</summary>
         private async Task ContinueAsync()
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
