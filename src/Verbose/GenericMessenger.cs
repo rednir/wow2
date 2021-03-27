@@ -35,7 +35,7 @@ namespace wow2.Verbose
                  Color = Color.LightOrange
              }
             .Build());
-        
+
         /// <summary>Notify a channel about an unhandled error.</summary>
         public static async Task<RestUserMessage> SendErrorAsync(ISocketMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()

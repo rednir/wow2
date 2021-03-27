@@ -173,14 +173,14 @@ namespace wow2.Modules.Keywords
             }
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
-        
+
         [Command("rename")]
         [Alias("edit", "change")]
         [Summary("Renames a keyword, leaving its values unchanged.")]
         public async Task RenameAsync(string oldKeyword, string newKeyword)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
-            
+
             if (!keywordsDictionary.ContainsKey(oldKeyword))
                 throw new CommandReturnException(Context, "**No such keyword**\nCan't rename a keyword that doesn't exist. Did you make a typo?");
 
@@ -206,7 +206,7 @@ namespace wow2.Modules.Keywords
 
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-            
+
             if (keywordsDictionary.Count == 0)
             {
                 throw new CommandReturnException(Context, "No keywords have been added yet, so there's nothing to show.");

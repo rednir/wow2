@@ -11,7 +11,7 @@ namespace wow2.Modules.Voice
     {
         public bool IsAutoNpOn { get; set; } = true;
         public int VoteSkipsNeeded { get; set; } = 1;
-        
+
         [JsonIgnore]
         public List<ulong> ListOfUserIdsThatVoteSkipped { get; set; } = new List<ulong>();
 
