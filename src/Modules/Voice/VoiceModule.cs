@@ -235,7 +235,6 @@ namespace wow2.Modules.Voice
                 }
                 finally
                 {
-                    config.CurrentlyPlayingSongRequest = null;
                     await discord.FlushAsync();
                 }
             }
