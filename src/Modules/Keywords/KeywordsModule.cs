@@ -182,7 +182,7 @@ namespace wow2.Modules.Keywords
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
             
             if (!keywordsDictionary.ContainsKey(oldKeyword))
-                throw new CommandReturnException(Context, "**No such keyword**Can't rename a keyword that doesn't exist. Did you make a typo?");
+                throw new CommandReturnException(Context, "**No such keyword**\nCan't rename a keyword that doesn't exist. Did you make a typo?");
 
             keywordsDictionary.RenameKey(oldKeyword, newKeyword);
 
