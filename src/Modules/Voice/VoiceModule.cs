@@ -104,8 +104,8 @@ namespace wow2.Modules.Voice
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
-            if (config.SongRequests.Count == 0)
-                throw new CommandReturnException(Context, "The queue is empty, so there's nothing to skip to.");
+            if (config.CurrentlyPlayingSongRequest == null)
+                throw new CommandReturnException(Context, "There's nothing playing right now.");
             if (config.ListOfUserIdsThatVoteSkipped.Contains(Context.User.Id))
                 throw new CommandReturnException(Context, "You've already sent a skip request.");
 
@@ -251,6 +251,9 @@ namespace wow2.Modules.Voice
             config.ListOfUserIdsThatVoteSkipped.Clear();
             config.CtsForAudioStreaming.Cancel();
             config.CtsForAudioStreaming = new CancellationTokenSource();
+
+            if (CheckIfAudioClientDisconnected(config.AudioClient))
+                return;
 
             if (config.SongRequests.TryDequeue(out nextRequest))
             {
