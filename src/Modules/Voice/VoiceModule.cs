@@ -252,7 +252,6 @@ namespace wow2.Modules.Voice
             config.ListOfUserIdsThatVoteSkipped.Clear();
             config.CtsForAudioStreaming.Cancel();
             config.CtsForAudioStreaming = new CancellationTokenSource();
-            config.CurrentlyPlayingSongRequest = null;
 
             if (CheckIfAudioClientDisconnected(config.AudioClient))
                 return;
@@ -263,6 +262,7 @@ namespace wow2.Modules.Voice
             }
             else
             {
+                config.CurrentlyPlayingSongRequest = null;
                 await GenericMessenger.SendInfoAsync(Context.Channel, "**The queue is empty.**\nI'll stay in the voice channel... in silence...");
             }
         }
