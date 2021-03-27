@@ -7,6 +7,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using wow2.Data;
 using wow2.Extentions;
 
 namespace wow2.Modules.Images
@@ -23,7 +24,7 @@ namespace wow2.Modules.Images
         public async Task QuoteAsync(string quote, string author = null)
         {
             // Search for folder `quotetemplates` in runtime directory and in working directory.
-            string templatesFolderPath = Directory.Exists($"{Program.RuntimeDirectory}/res/quotetemplates") ? $"{Program.RuntimeDirectory}/res/quotetemplates" : "res/quotetemplates";
+            string templatesFolderPath = $"{DataManager.ResDirPath}/quotetemplates";
 
             var listOfTemplatePaths = Directory.EnumerateFiles(templatesFolderPath);
 
