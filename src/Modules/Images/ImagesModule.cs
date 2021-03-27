@@ -35,7 +35,7 @@ namespace wow2.Modules.Images
                 templateToUsePath = listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
                 author = Path.GetFileNameWithoutExtension(templateToUsePath);
             }
-            else if (author.Length > 4)
+            else if (author.Length > 3)
             {
                 // Check if author parameter matches the name of a quote template, and use it if so.
                 templateToUsePath = Directory.EnumerateFiles
