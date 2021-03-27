@@ -55,7 +55,7 @@ namespace wow2.Modules.Voice
             await GenericMessenger.SendSuccessAsync(Context.Channel, $"The song request queue has been cleared.");
         }
 
-        [Command("add", RunMode = RunMode.Async)]
+        [Command("add")]
         [Alias("play")]
         [Summary("Adds REQUEST to the song request queue. REQUEST can be a video URL or a youtube search term.")]
         public async Task AddAsync([Name("REQUEST")] params string[] splitSongRequest)
@@ -122,7 +122,7 @@ namespace wow2.Modules.Voice
             }
         }
 
-        [Command("join", RunMode = RunMode.Async)]
+        [Command("join")]
         [Summary("Joins the voice channel of the person that executed the command.")]
         public async Task JoinAsync()
         {

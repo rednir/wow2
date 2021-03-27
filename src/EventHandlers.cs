@@ -23,7 +23,8 @@ namespace wow2
         {
             var config = new CommandServiceConfig()
             {
-                LogLevel = LogSeverity.Verbose
+                LogLevel = LogSeverity.Verbose,
+                DefaultRunMode = RunMode.Async
             };
             BotCommandService = new CommandService(config);
             BotCommandService.Log += DiscordLogRecievedAsync;
