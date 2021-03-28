@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord;
@@ -47,29 +48,56 @@ namespace wow2.Verbose
             .Build());
 
         /// <summary>Send a generic response to a command in a channel.</summary>
-        public static async Task<RestUserMessage> SendResponseAsync(ISocketMessageChannel channel, string description = "", string title = "", List<EmbedFieldBuilder> fieldBuilders = null)
+        public static async Task<RestUserMessage> SendResponseAsync(
+            ISocketMessageChannel channel,
+            string description = "",
+            string title = "",
+            List<EmbedFieldBuilder> fieldBuilders = null,
+            int fieldBuildersPage = 0)
         {
-            const int maxFields = 20;
+            const int maxFieldsPerPage = 10;
 
             var embedBuilder = new EmbedBuilder()
             {
                 Title = title,
                 Description = description,
                 Color = Color.LightGrey,
-                Fields = fieldBuilders ?? new List<EmbedFieldBuilder>()
             };
 
-            if (fieldBuilders?.Count > maxFields)
+            // Check if the fields don't fit on one page.
+            if (fieldBuilders?.Count > maxFieldsPerPage)
             {
-                embedBuilder.Footer = new EmbedFooterBuilder()
-                {
-                    IconUrl = $"https://cdn.discordapp.com/emojis/804732632751407174.png",
-                    Text = $"{fieldBuilders.Count - maxFields} items were excluded"
-                };
+                int totalFieldBuilderPages = (int)Math.Ceiling((float)fieldBuilders.Count / (float)maxFieldsPerPage);
 
-                // Truncate list to comply with the embed fields limit. 
-                fieldBuilders.RemoveRange(maxFields, fieldBuilders.Count - maxFields);
+                if (fieldBuildersPage > totalFieldBuilderPages)
+                    throw new ArgumentOutOfRangeException("Page number was out of range.");
+
+                if (fieldBuildersPage == 0)
+                {
+                    // The page number has not been specifed by the method caller.
+                    embedBuilder.Footer = new EmbedFooterBuilder()
+                    {
+                        IconUrl = $"https://cdn.discordapp.com/emojis/804732632751407174.png",
+                        Text = $"{fieldBuilders.Count - maxFieldsPerPage} items were excluded"
+                    };
+                }
+                else
+                {
+                    embedBuilder.Footer = new EmbedFooterBuilder()
+                    {
+                        Text = $"Page {fieldBuildersPage}/{totalFieldBuilderPages}"
+                    };
+                }
+
+                int startIndex = maxFieldsPerPage * (fieldBuildersPage - 1);
+                bool isFinalPage = fieldBuildersPage == totalFieldBuilderPages;
+
+                // Get the fields that are within the page and set fieldBuilders to that.
+                fieldBuilders = fieldBuilders.GetRange(startIndex,
+                    isFinalPage ? (fieldBuilders.Count - startIndex) : maxFieldsPerPage);
             }
+            embedBuilder.Fields = fieldBuilders ?? new List<EmbedFieldBuilder>();
+
             return await channel.SendMessageAsync(embed: embedBuilder.Build());
         }
     }
