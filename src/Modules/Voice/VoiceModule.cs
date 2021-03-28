@@ -184,7 +184,7 @@ namespace wow2.Modules.Voice
         {
             DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn = !DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Auto execution of `{EventHandlers.CommandPrefix} vc np` is turned `{(DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}`");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Auto execution of `{EventHandlers.DefaultCommandPrefix} vc np` is turned `{(DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}`");
         }
 
         [Command("set-vote-skips-needed")]

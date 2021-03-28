@@ -16,7 +16,7 @@ namespace wow2
 {
     public static class EventHandlers
     {
-        public static string CommandPrefix { get; } = "!wow";
+        public static readonly string DefaultCommandPrefix = "!wow";
         public static CommandService BotCommandService;
 
         public static async Task InstallCommandsAsync()
@@ -33,7 +33,7 @@ namespace wow2
 
         public static async Task ReadyAsync()
         {
-            await Program.Client.SetGameAsync("!wow help");
+            await Program.Client.SetGameAsync($"{DefaultCommandPrefix} help");
         }
 
         public static async Task DiscordLogRecievedAsync(LogMessage logMessage)
@@ -82,7 +82,7 @@ namespace wow2
             await DataManager.EnsureGuildDataFileExistsAsync(recievedMessage.GetGuild().Id);
 
             await GamesModule.CheckMessageIsCountingAsync(recievedMessage);
-            if (recievedMessage.Content.StartsWithWord(CommandPrefix))
+            if (recievedMessage.Content.StartsWithWord(DefaultCommandPrefix, true))
             {
                 // The message starts with the command prefix and the prefix is not part of another word.
                 await CommandRecievedAsync(recievedMessage);
@@ -105,7 +105,7 @@ namespace wow2
 
             var context = new SocketCommandContext(Program.Client, socketUserMessage);
 
-            if (socketMessage.Content == CommandPrefix)
+            if (socketMessage.Content == DefaultCommandPrefix)
             {
                 await MainModule.SendAboutMessageToChannelAsync(context);
                 return;
@@ -119,7 +119,7 @@ namespace wow2
                     context: context,
                     input: socketMessage.Content
                         .RemoveUnnecessaryWhiteSpace()
-                        .Substring(CommandPrefix.Length + 1),
+                        .Substring(DefaultCommandPrefix.Length + 1),
                     services: null
                 );
 

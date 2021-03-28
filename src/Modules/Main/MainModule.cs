@@ -42,9 +42,9 @@ namespace wow2.Modules.Main
         public async Task AliasAsync(string name, [Name("DEFINITION")] params string[] definitionSplit)
         {
             var config = DataManager.GetMainConfigForGuild(Context.Guild);
-            string removeAliasText = $"To remove the alias, type `{EventHandlers.CommandPrefix} alias \"{name}\"`";
+            string removeAliasText = $"To remove the alias, type `{EventHandlers.DefaultCommandPrefix} alias \"{name}\"`";
 
-            string definition = string.Join(" ", definitionSplit.Where(w => !w.Equals(EventHandlers.CommandPrefix, StringComparison.CurrentCultureIgnoreCase)));
+            string definition = string.Join(" ", definitionSplit.Where(w => !w.Equals(EventHandlers.DefaultCommandPrefix, StringComparison.CurrentCultureIgnoreCase)));
 
             if (!config.AliasesDictionary.TryAdd(name, definition))
             {
@@ -62,7 +62,7 @@ namespace wow2.Modules.Main
                 throw new CommandReturnException(Context, $"An alias should have a definition that isn't blank.");
             }
 
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Typing `{name}` will now execute `{EventHandlers.CommandPrefix} {definition}`\n{removeAliasText}");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Typing `{name}` will now execute `{EventHandlers.DefaultCommandPrefix} {definition}`\n{removeAliasText}");
 
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -80,7 +80,7 @@ namespace wow2.Modules.Main
                 var fieldBuilderForAlias = new EmbedFieldBuilder()
                 {
                     Name = aliasPair.Key,
-                    Value = $"`{EventHandlers.CommandPrefix} {aliasPair.Value}`",
+                    Value = $"`{EventHandlers.DefaultCommandPrefix} {aliasPair.Value}`",
                     IsInline = true
                 };
                 listOfFieldBuilders.Add(fieldBuilderForAlias);
@@ -128,7 +128,7 @@ namespace wow2.Modules.Main
                 },
                 Footer = new EmbedFooterBuilder()
                 {
-                    Text = $" - To view a list of commands, type `{EventHandlers.CommandPrefix} help`"
+                    Text = $" - To view a list of commands, type `{EventHandlers.DefaultCommandPrefix} help`"
                 }
             };
 
@@ -190,7 +190,7 @@ namespace wow2.Modules.Main
                     if (!String.IsNullOrWhiteSpace(module.Summary))
                         fieldBuilderForModule.Value += $"*{module.Summary}*\n";
 
-                    fieldBuilderForModule.Value += $"`{EventHandlers.CommandPrefix} help {module.Name.ToLower()}`";
+                    fieldBuilderForModule.Value += $"`{EventHandlers.DefaultCommandPrefix} help {module.Name.ToLower()}`";
 
                     // TODO: find a way to get name attribute of this class instead of hardcoding module name.
                     if (module.Name == "Main")
@@ -226,7 +226,7 @@ namespace wow2.Modules.Main
             {
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"`{EventHandlers.CommandPrefix} {(string.IsNullOrWhiteSpace(command.Module.Group) ? "" : $"{command.Module.Group} ")}{command.Name}{ParametersToString(command.Parameters)}`",
+                    Name = $"`{EventHandlers.DefaultCommandPrefix} {(string.IsNullOrWhiteSpace(command.Module.Group) ? "" : $"{command.Module.Group} ")}{command.Name}{ParametersToString(command.Parameters)}`",
                     Value = $"*{(string.IsNullOrWhiteSpace(command.Summary) ? "No description provided." : command.Summary)}*"
                 });
             }

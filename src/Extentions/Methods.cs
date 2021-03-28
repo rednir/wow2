@@ -58,11 +58,11 @@ namespace wow2.Extentions
         }
 
         /// <summary>Check if a string starts with a given value, and also is not part of another word.</summary>
-        public static bool StartsWithWord(this string stringToCheck, string word) =>
+        public static bool StartsWithWord(this string stringToCheck, string word, bool ignoreCase = false) =>
             // The stringToCheck starts with word, and has a space directly after the word.
-            (stringToCheck.StartsWith(word, true, null) && stringToCheck.IndexOf(" ") == word.Length)
+            (stringToCheck.StartsWith(word, ignoreCase, null) && stringToCheck.IndexOf(" ") == word.Length)
             // Or the stringToCheck is a direct match with the word.
-            || stringToCheck.Equals(word, StringComparison.CurrentCultureIgnoreCase);
+            || stringToCheck.Equals(word, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture);
 
         public static void RenameKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey oldKey, TKey newKey)
         {
