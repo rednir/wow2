@@ -96,10 +96,13 @@ namespace wow2.Modules.Games
             }
 
             string commentOnFinalNumber;
-            if (config.NextNumber < 3 * config.Increment) commentOnFinalNumber = "Pathetic.";
-            else if (config.NextNumber < 25 * config.Increment) commentOnFinalNumber = "There's plenty room for improvement.";
-            else if (config.NextNumber < 75 * config.Increment) commentOnFinalNumber = "Not bad!";
-            else if (config.NextNumber >= 75 * config.Increment) commentOnFinalNumber = "Amazing!";
+            float absNextNumber = Math.Abs((float)config.NextNumber);
+            float absIncrement = Math.Abs((float)config.Increment);
+
+            if (absNextNumber < 3 * absIncrement) commentOnFinalNumber = "Pathetic.";
+            else if (absNextNumber < 25 * absIncrement) commentOnFinalNumber = "There's plenty room for improvement.";
+            else if (config.NextNumber < 75 * absIncrement) commentOnFinalNumber = "Not bad!";
+            else if (absNextNumber >= 75 * absIncrement) commentOnFinalNumber = "Amazing!";
             else commentOnFinalNumber = "";
 
             await GenericMessenger.SendResponseAsync(
