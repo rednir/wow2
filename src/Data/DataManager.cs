@@ -65,7 +65,7 @@ namespace wow2.Data
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log($"Failed to load from file {fileInfo.Name} due to: {ex.Message} (mass load)", LogSeverity.Warning);
+                    Logger.Log($"Failed to load from file {fileInfo.Name} due to: {ex.Message} (mass load)", LogSeverity.Error);
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace wow2.Data
             }
             catch (Exception ex)
             {
-                Logger.Log($"Failed to load for guild {specifiedGuildId} due to: {ex.Message} (specific load)", LogSeverity.Warning);
+                Logger.Log($"Failed to load for guild {specifiedGuildId} due to: {ex.Message} (specific load)", LogSeverity.Error);
             }
         }
 
@@ -102,7 +102,7 @@ namespace wow2.Data
             GuildData guildData;
             if (!DictionaryOfGuildData.TryGetValue(guildId, out guildData))
             {
-                Logger.Log($"Failed to load for guild {guildId} as the guild ID was not found in the dictionary (specific load)", LogSeverity.Warning);
+                Logger.Log($"Failed to load for guild {guildId} as the guild ID was not found in the dictionary (specific load)", LogSeverity.Error);
                 return;
             }
             await File.WriteAllTextAsync($"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(guildData));
