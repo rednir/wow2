@@ -10,11 +10,16 @@ namespace wow2.Verbose
     /// <summary>Class containing methods used to send embeds that are not specific to one command module.</summary>
     public static class GenericMessenger
     {
+        public static readonly ulong SuccessEmoteId = 823595458978512997;
+        public static readonly ulong InfoEmoteId = 804732580423008297;
+        public static readonly ulong WarningEmoteId = 804732632751407174;
+        public static readonly ulong ErrorEmoteId = 804732656721199144;
+
         /// <summary>Notify a channel about a successful action.</summary>
         public static async Task<RestUserMessage> SendSuccessAsync(ISocketMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
-                Description = $"{new Emoji("<:wowsuccess:823595458978512997>")} {description}",
+                Description = $"{new Emoji($"<:wowsuccess:{SuccessEmoteId}>")} {description}",
                 Color = Color.Green
             }
             .Build());
@@ -23,7 +28,7 @@ namespace wow2.Verbose
         public static async Task<RestUserMessage> SendInfoAsync(ISocketMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
-                Description = $"{new Emoji("<:wowinfo:804732580423008297>")} {description}",
+                Description = $"{new Emoji($"<:wowinfo:{InfoEmoteId}>")} {description}",
                 Color = Color.Blue
             }
             .Build());
@@ -32,7 +37,7 @@ namespace wow2.Verbose
         public static async Task<RestUserMessage> SendWarningAsync(ISocketMessageChannel channel, string description, string title = null)
              => await channel.SendMessageAsync(embed: new EmbedBuilder()
              {
-                 Description = $"{new Emoji("<:wowwarning:804732632751407174>")} {description}",
+                 Description = $"{new Emoji($"<:wowwarning:{WarningEmoteId}>")} {description}",
                  Color = Color.LightOrange
              }
             .Build());
@@ -41,7 +46,7 @@ namespace wow2.Verbose
         public static async Task<RestUserMessage> SendErrorAsync(ISocketMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
-                Title = $"{new Emoji("<:wowerror:804732656721199144>")} Something bad happened...",
+                Title = $"{new Emoji($"<:wowerror:{ErrorEmoteId}>")} Something bad happened...",
                 Description = description,
                 Color = Color.Red
             }
@@ -77,7 +82,7 @@ namespace wow2.Verbose
                     // The page number has not been specifed by the method caller.
                     embedBuilder.Footer = new EmbedFooterBuilder()
                     {
-                        IconUrl = $"https://cdn.discordapp.com/emojis/804732632751407174.png",
+                        IconUrl = $"https://cdn.discordapp.com/emojis/{WarningEmoteId}.png",
                         Text = $"{fieldBuilders.Count - maxFieldsPerPage} items were excluded"
                     };
                 }
@@ -85,6 +90,7 @@ namespace wow2.Verbose
                 {
                     embedBuilder.Footer = new EmbedFooterBuilder()
                     {
+                        IconUrl = $"https://cdn.discordapp.com/emojis/{InfoEmoteId}.png",
                         Text = $"Page {fieldBuildersPage}/{totalFieldBuilderPages}"
                     };
                 }
