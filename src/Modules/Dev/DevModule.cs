@@ -26,5 +26,13 @@ namespace wow2.Modules.Dev
             await GenericMessenger.SendSuccessAsync(Context.Channel, $"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data saved.");
             if (alsoExit) Environment.Exit(0);
         }
+
+        [Command("raw-savedata")]
+        public async Task UploadRawGuildDataAsync()
+        {
+            await Context.Channel.SendFileAsync(
+                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json"
+            );
+        }
     }
 }

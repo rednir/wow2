@@ -102,16 +102,6 @@ namespace wow2.Modules.Main
             await GenericMessenger.SendInfoAsync(Context.Channel, $"That was about `{pingTimeSpan.Milliseconds}ms`");
         }
 
-        // TODO: probably want to move this into the dev module.
-        [Command("savedata")]
-        [Summary("Uploads the raw data stored about this server by the bot.")]
-        public async Task UploadRawGuildDataAsync()
-        {
-            await Context.Channel.SendFileAsync(
-                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json"
-            );
-        }
-
         public static async Task SendAboutMessageToChannelAsync(SocketCommandContext context)
         {
             var appInfo = await Program.Client.GetApplicationInfoAsync();
