@@ -192,29 +192,15 @@ namespace wow2.Modules.Keywords
 
         [Command("list")]
         [Alias("show", "all")]
-        [Summary("Shows a list of all keywords, and a preview of their values. You can optionally set KEYWORD to see a list of values for a specific keyword.")]
-        public async Task ListAsync(string keyword = null)
+        [Summary("Shows a list of all keywords, and a preview of their values.")]
+        public async Task ListAsync()
         {
-            const int maxFields = 16;
-
-            if (keyword != null)
-            {
-                // Assume the user wants to see all values for a specific keyword.
-                await ListKeywordValuesAsync(keyword);
-                return;
-            }
-
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
 
             if (keywordsDictionary.Count == 0)
             {
                 throw new CommandReturnException(Context, "No keywords have been added yet, so there's nothing to show.");
-            }
-            if (keywordsDictionary.Count > maxFields)
-            {
-                await ListMinimalAsync();
-                return;
             }
 
             foreach (var keywordPair in keywordsDictionary)
@@ -237,6 +223,26 @@ namespace wow2.Modules.Keywords
                 description: $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*");
         }
 
+        [Command("list-values")]
+        [Alias("listvalues", "values", "list-value", "listvalue", "value")]
+        [Summary("Shows a list of values for a keyword.")]
+        public async Task ListKeywordValuesAsync(string keyword)
+        {
+            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
+            List<KeywordValue> values;
+
+            if (!keywordsDictionary.TryGetValue(keyword, out values))
+                throw new CommandReturnException(Context, $"**No such keyword**\nIf you want to list all keywords available, don't specify a keyword in the command.");
+
+            StringBuilder stringBuilderForValueList = new StringBuilder();
+            foreach (KeywordValue value in values)
+            {
+                stringBuilderForValueList.Append($"```{value.Content}```");
+            }
+
+            await GenericMessenger.SendResponseAsync(Context.Channel, $"*There are {values.Count()} values in total, as listed below.*\n{stringBuilderForValueList.ToString()}", $"Values for '{keyword}'");
+        }
+
         [Command("toggle-delete-reaction")]
         [Summary("Toggles whether bot responses to keywords should have a wastebasket reaction, allowing a user to delete the message.")]
         public async Task ToggleDeleteReactionAsync()
@@ -253,38 +259,6 @@ namespace wow2.Modules.Keywords
             DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn = !DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
             await GenericMessenger.SendSuccessAsync(Context.Channel, $"Like reaction is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn ? "on" : "off")}` for keyword responses.");
-        }
-
-        /// <summary>Alternative to list command, where only keywords are shown.</summary>
-        private async Task ListMinimalAsync()
-        {
-            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
-            var descriptionBuilder = new StringBuilder($"*There are {keywordsDictionary.Count} keywords in total, as listed below.*\n\n");
-
-            foreach (var keywordPair in keywordsDictionary)
-            {
-                descriptionBuilder.Append($"{(keywordPair.Value.Count > 1 ? $"`{keywordPair.Key}` ({keywordPair.Value.Count} values)" : $"`{keywordPair.Key}`")}\n");
-            }
-
-            await GenericMessenger.SendResponseAsync(Context.Channel, descriptionBuilder.ToString(), "Keywords");
-        }
-
-        /// <summary>Alternative to list command, where all the values of only one keyword is shown.</summary>
-        private async Task ListKeywordValuesAsync(string keyword)
-        {
-            var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
-            List<KeywordValue> values;
-
-            if (!keywordsDictionary.TryGetValue(keyword, out values))
-                throw new CommandReturnException(Context, $"**No such keyword**\nIf you want to list all keywords available, don't specify a keyword in the command.");
-
-            StringBuilder stringBuilderForValueList = new StringBuilder();
-            foreach (KeywordValue value in values)
-            {
-                stringBuilderForValueList.Append($"```{value.Content}```");
-            }
-
-            await GenericMessenger.SendResponseAsync(Context.Channel, $"*There are {values.Count()} values in total, as listed below.*\n{stringBuilderForValueList.ToString()}", $"Values for '{keyword}'");
         }
     }
 }
