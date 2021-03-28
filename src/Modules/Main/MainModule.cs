@@ -98,8 +98,7 @@ namespace wow2.Modules.Main
         public async Task PingAsync()
         {
             // TODO: maybe find some way to edit the pong message instead of sending a new one.
-            var pongMessage = await ReplyAsync("**Pong!**");
-            TimeSpan pingTimeSpan = pongMessage.Timestamp.Subtract(Context.Message.Timestamp);
+            TimeSpan pingTimeSpan = (await ReplyAsync("**Pong!**")).Timestamp.Subtract(Context.Message.Timestamp);
             await GenericMessenger.SendInfoAsync(Context.Channel, $"That was about `{pingTimeSpan.Milliseconds}ms`");
         }
 
