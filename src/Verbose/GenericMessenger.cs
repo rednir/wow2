@@ -95,7 +95,8 @@ namespace wow2.Verbose
                     };
                 }
 
-                int startIndex = maxFieldsPerPage * (fieldBuildersPage - 1);
+                // Page 0 and 1 should have the same starting index (never negative).
+                int startIndex = maxFieldsPerPage * (fieldBuildersPage - (fieldBuildersPage == 0 ? 0 : 1));
                 bool isFinalPage = fieldBuildersPage == totalFieldBuilderPages;
 
                 // Get the fields that are within the page and set fieldBuilders to that.
