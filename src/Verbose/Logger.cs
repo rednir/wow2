@@ -22,7 +22,7 @@ namespace wow2.Verbose
 
             // TODO: parse the tag name in a smarter way.
             GithubRelease latestRelease = await GetLatestReleaseAsync();
-            if ((await GetLatestReleaseAsync()).tag_name != Program.Version)
+            if ((await GetLatestReleaseAsync()).tag_name != Program.Version && Program.Version.StartsWith("v"))
             {
                 Log($"You are not running the latest release! Click here to download: {latestRelease.html_url}", LogSeverity.Warning);
             }
