@@ -48,13 +48,29 @@ namespace wow2.Verbose
 
         /// <summary>Send a generic response to a command in a channel.</summary>
         public static async Task<RestUserMessage> SendResponseAsync(ISocketMessageChannel channel, string description = "", string title = "", List<EmbedFieldBuilder> fieldBuilders = null)
-            => await channel.SendMessageAsync(embed: new EmbedBuilder()
+        {
+            const int maxFields = 20;
+
+            var embedBuilder = new EmbedBuilder()
             {
                 Title = title,
                 Description = description,
                 Color = Color.LightGrey,
                 Fields = fieldBuilders ?? new List<EmbedFieldBuilder>()
+            };
+
+            if (fieldBuilders?.Count > maxFields)
+            {
+                embedBuilder.Footer = new EmbedFooterBuilder()
+                {
+                    IconUrl = $"https://cdn.discordapp.com/emojis/804732632751407174.png",
+                    Text = $"{fieldBuilders.Count - maxFields} items were excluded"
+                };
+
+                // Truncate list to comply with the embed fields limit. 
+                fieldBuilders.RemoveRange(maxFields, fieldBuilders.Count - maxFields);
             }
-            .Build());
+            return await channel.SendMessageAsync(embed: embedBuilder.Build());
+        }
     }
 }
