@@ -271,6 +271,9 @@ namespace wow2.Modules.Voice
 
         public static Embed BuildNowPlayingEmbed(UserSongRequest request)
         {
+            const string youtubeIconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png";
+            const string twitchIconUrl = "https://www.net-aware.org.uk/siteassets/images-and-icons/application-icons/app-icons-twitch.png?w=585&scale=down";
+
             // Don't display hours if less than 1 hour.
             string formattedDuration = TimeSpan.FromSeconds(request.VideoMetadata.duration ?? 0)
                 .ToString((request.VideoMetadata.duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
@@ -278,7 +281,7 @@ namespace wow2.Modules.Voice
             var authorBuilder = new EmbedAuthorBuilder()
             {
                 Name = "Now Playing",
-                IconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png",
+                IconUrl = request.VideoMetadata.extractor.StartsWith("twitch") ? twitchIconUrl : youtubeIconUrl,
                 Url = request.VideoMetadata.webpage_url
             };
             var footerBuilder = new EmbedFooterBuilder()
