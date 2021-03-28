@@ -93,6 +93,17 @@ namespace wow2.Modules.Main
                 description: "To remove any of these aliases, set the alias definition to a blank value.");
         }
 
+        [Command("ping")]
+        [Summary("Displays a list of aliases.")]
+        public async Task PingAsync()
+        {
+            // TODO: maybe find some way to edit the pong message instead of sending a new one.
+            var pongMessage = await ReplyAsync("**Pong!**");
+            TimeSpan pingTimeSpan = pongMessage.Timestamp.Subtract(Context.Message.Timestamp);
+            await GenericMessenger.SendInfoAsync(Context.Channel, $"That was about `{pingTimeSpan.Milliseconds}ms`");
+        }
+
+        // TODO: probably want to move this into the dev module.
         [Command("savedata")]
         [Summary("Uploads the raw data stored about this server by the bot.")]
         public async Task UploadRawGuildDataAsync()
