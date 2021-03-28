@@ -70,5 +70,19 @@ namespace wow2.Extentions
             dictionary.Remove(oldKey);
             dictionary.Add(newKey, valuesToMove);
         }
+
+        /// <returns>The string with no more than one adjacent whitespace.</returns>
+        public static string RemoveUnnecessaryWhiteSpace(this string stringToChange)
+        {
+            var stringBuilder = new StringBuilder();
+            bool lastCharWasWhiteSpace = false;
+            foreach (char character in stringToChange)
+            {
+                if (char.IsWhiteSpace(character) && lastCharWasWhiteSpace) continue;
+                lastCharWasWhiteSpace = char.IsWhiteSpace(character);
+                stringBuilder.Append(character);
+            }
+            return stringBuilder.ToString();
+        }
     }
 }

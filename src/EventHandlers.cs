@@ -99,10 +99,11 @@ namespace wow2
         public static async Task CommandRecievedAsync(SocketMessage socketMessage)
         {
             var socketUserMessage = (SocketUserMessage)socketMessage;
-            var context = new SocketCommandContext(Program.Client, (SocketUserMessage)socketMessage);
 
             // Return if the message is not a user message.
             if (socketMessage == null) return;
+            
+            var context = new SocketCommandContext(Program.Client, socketUserMessage);
 
             if (socketMessage.Content == CommandPrefix)
             {
@@ -113,7 +114,7 @@ namespace wow2
             IResult result = await BotCommandService.ExecuteAsync
             (
                 context: context,
-                argPos: CommandPrefix.Length + 1,
+                input: socketMessage.Content.RemoveUnnecessaryWhiteSpace().Substring(CommandPrefix.Length + 1),
                 services: null
             );
 
