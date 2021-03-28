@@ -22,7 +22,7 @@ namespace wow2.Modules.Voice
         [Command("list")]
         [Alias("queue", "upnext")]
         [Summary("Show the song request queue.")]
-        public async Task ListAsync()
+        public async Task ListAsync(int page = 1)
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
@@ -43,7 +43,10 @@ namespace wow2.Modules.Voice
             if (listOfFieldBuilders.Count == 0)
                 throw new CommandReturnException(Context, "There's nothing in the queue... how sad.");
 
-            await GenericMessenger.SendResponseAsync(Context.Channel, title: "Up Next", fieldBuilders: listOfFieldBuilders);
+            await GenericMessenger.SendResponseAsync(
+                Context.Channel, title: "Up Next",
+                fieldBuilders: listOfFieldBuilders,
+                fieldBuildersPage: page);
         }
 
         [Command("clear")]
