@@ -36,6 +36,17 @@ namespace wow2
             await Program.Client.SetGameAsync($"{DefaultCommandPrefix} help");
         }
 
+        public static async Task JoinedGuildAsync(SocketGuild guild)
+        {
+            var embedBuilder = new EmbedBuilder()
+            {
+                Title = "👋 Hi there!",
+                Description = $"Thanks for adding me to your server!\nTo get started, type `{EventHandlers.DefaultCommandPrefix} help` to see the wide range of commands available.\n",
+                Color = Color.Gold
+            };
+            await guild.DefaultChannel.SendMessageAsync(embed: embedBuilder.Build());
+        }
+
         public static async Task DiscordLogRecievedAsync(LogMessage logMessage)
         {
             if (logMessage.Exception is CommandException commandException)

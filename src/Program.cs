@@ -58,6 +58,7 @@ namespace wow2
             Client.Log += EventHandlers.DiscordLogRecievedAsync;
             Client.ReactionAdded += EventHandlers.ReactionAddedAsync;
             Client.MessageReceived += EventHandlers.MessageRecievedAsync;
+            Client.JoinedGuild += EventHandlers.JoinedGuildAsync;
 
             await GetTokenAndLoginAsync(Client);
             await Client.StartAsync();
