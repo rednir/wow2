@@ -271,6 +271,10 @@ namespace wow2.Modules.Voice
 
         public static Embed BuildNowPlayingEmbed(UserSongRequest request)
         {
+            // Don't display hours if less than 1 hour.
+            string formattedDuration = TimeSpan.FromSeconds((float)request.VideoMetadata.duration)
+                .ToString((float)request.VideoMetadata.duration >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
+
             var authorBuilder = new EmbedAuthorBuilder()
             {
                 Name = "Now Playing",
@@ -279,7 +283,7 @@ namespace wow2.Modules.Voice
             };
             var footerBuilder = new EmbedFooterBuilder()
             {
-                Text = $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}"
+                Text = $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {formattedDuration}"
             };
 
             var embedBuilder = new EmbedBuilder()

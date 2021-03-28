@@ -9,6 +9,7 @@ namespace wow2.Modules.Voice
         public string webpage_url { get; set; }
         public string description { get; set; }
 
+        public float? duration { get; set; }
         public int? view_count { get; set; }
         public int? like_count { get; set; }
         public int? dislike_count { get; set; }
