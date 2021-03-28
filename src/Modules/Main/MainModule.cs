@@ -94,7 +94,7 @@ namespace wow2.Modules.Main
         }
 
         [Command("ping")]
-        [Summary("Displays a list of aliases.")]
+        [Summary("Checks the latency between the message that executes a command, and the response that the bot sends.")]
         public async Task PingAsync()
         {
             // TODO: maybe find some way to edit the pong message instead of sending a new one.
