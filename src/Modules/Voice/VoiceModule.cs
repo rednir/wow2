@@ -35,7 +35,7 @@ namespace wow2.Modules.Voice
                 var fieldBuilderForSongRequest = new EmbedFieldBuilder()
                 {
                     Name = $"{i}) {songRequest.VideoMetadata.title}",
-                    Value = $"Requested by `{songRequest.RequestedBy.Username}` at `{songRequest.TimeRequested.ToString("HH:mm")}`"
+                    Value = $"{songRequest.VideoMetadata.webpage_url}\nRequested at {songRequest.TimeRequested.ToString("HH:mm")} by {songRequest.RequestedBy.Mention}"
                 };
                 listOfFieldBuilders.Add(fieldBuilderForSongRequest);
             }
