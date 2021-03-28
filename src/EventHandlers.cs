@@ -111,17 +111,26 @@ namespace wow2
                 return;
             }
 
-            IResult result = await BotCommandService.ExecuteAsync
-            (
-                context: context,
-                input: socketMessage.Content
-                    .RemoveUnnecessaryWhiteSpace()
-                    .Substring(CommandPrefix.Length + 1),
-                services: null
-            );
+            var typingState = socketMessage.Channel.EnterTypingState();
+            try
+            {
+                IResult result = await BotCommandService.ExecuteAsync
+                (
+                    context: context,
+                    input: socketMessage.Content
+                        .RemoveUnnecessaryWhiteSpace()
+                        .Substring(CommandPrefix.Length + 1),
+                    services: null
+                );
 
-            if (result.Error.HasValue)
-                await SendErrorMessageToChannel(result.Error, socketMessage.Channel);
+                if (result.Error.HasValue)
+                    await SendErrorMessageToChannel(result.Error, socketMessage.Channel);
+            }
+            finally
+            {
+                // Always dispose this, otherwise the bot will forever be typing after an exception.
+                typingState.Dispose();
+            }
         }
 
         public static async Task SendErrorMessageToChannel(CommandError? commandError, ISocketMessageChannel channel)

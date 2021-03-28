@@ -136,15 +136,25 @@ namespace wow2.Modules.Main
                 var context = new SocketCommandContext(Program.Client, (SocketUserMessage)message);
                 var aliasToExecute = aliasesFound.First();
 
-                IResult result = await EventHandlers.BotCommandService.ExecuteAsync
-                (
-                    context: context,
-                    input: aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, "", true, null),
-                    services: null
-                );
+                // TODO: maybe make this its own method, as it is essentially this same thing as EventHandlers.CommandRecievedAsync()
+                var typingState = message.Channel.EnterTypingState();
+                try
+                {
+                    IResult result = await EventHandlers.BotCommandService.ExecuteAsync
+                    (
+                        context: context,
+                        input: aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, "", true, null),
+                        services: null
+                    );
 
-                if (result.Error.HasValue)
-                    await EventHandlers.SendErrorMessageToChannel(result.Error, context.Message.Channel);
+                    if (result.Error.HasValue)
+                        await EventHandlers.SendErrorMessageToChannel(result.Error, context.Message.Channel);
+                }
+                finally
+                {
+                    // Always dispose this, otherwise the bot will forever be typing after an exception.
+                    typingState.Dispose();
+                }  
 
                 return true;
             }
