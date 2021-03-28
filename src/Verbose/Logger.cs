@@ -19,7 +19,7 @@ namespace wow2.Verbose
         public static async Task LogInitialize()
         {
             Output($"wow2 {Program.Version}\nhttps://github.com/rednir/wow2\n-----------------\nRuntime version: {Environment.Version}\n{RuntimeInformation.OSDescription}\n-----------------\n");
-            
+
             // TODO: parse the tag name in a smarter way.
             GithubRelease latestRelease = await GetLatestReleaseAsync();
             if ((await GetLatestReleaseAsync()).tag_name != Program.Version)
@@ -49,7 +49,7 @@ namespace wow2.Verbose
                 Console.WriteLine(message);
             }
         }
-        
+
         private static async Task<GithubRelease> GetLatestReleaseAsync()
         {
             GithubHttpClient.DefaultRequestHeaders.Add("User-Agent", "wow2");
@@ -59,7 +59,7 @@ namespace wow2.Verbose
             return latestRelease;
         }
     }
-    
+
     /// <summary>What the Github GET request content for checking for a new release will be deserialized into.</summary>
     public class GithubRelease
     {
