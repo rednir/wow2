@@ -8,6 +8,7 @@ namespace wow2.Modules.Voice
         public string author { get; set; }
         public string webpage_url { get; set; }
         public string description { get; set; }
+        public string extractor { get; set; }
 
         public float? duration { get; set; }
         public int? view_count { get; set; }

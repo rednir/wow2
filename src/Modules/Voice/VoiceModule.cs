@@ -272,8 +272,8 @@ namespace wow2.Modules.Voice
         public static Embed BuildNowPlayingEmbed(UserSongRequest request)
         {
             // Don't display hours if less than 1 hour.
-            string formattedDuration = TimeSpan.FromSeconds((float)request.VideoMetadata.duration)
-                .ToString((float)request.VideoMetadata.duration >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
+            string formattedDuration = TimeSpan.FromSeconds(request.VideoMetadata.duration ?? 0)
+                .ToString((request.VideoMetadata.duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
 
             var authorBuilder = new EmbedAuthorBuilder()
             {
@@ -289,7 +289,7 @@ namespace wow2.Modules.Voice
             var embedBuilder = new EmbedBuilder()
             {
                 Author = authorBuilder,
-                Title = request.VideoMetadata.title,
+                Title = request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title,
                 ThumbnailUrl = request.VideoMetadata.thumbnails.LastOrDefault().url,
                 Description = $"Requested at {request.TimeRequested.ToString("HH:mm")} by {request.RequestedBy.Mention}",
                 Footer = footerBuilder,
