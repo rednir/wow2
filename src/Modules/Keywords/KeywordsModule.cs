@@ -193,7 +193,7 @@ namespace wow2.Modules.Keywords
         [Command("list")]
         [Alias("show", "all")]
         [Summary("Shows a list of all keywords, and a preview of their values.")]
-        public async Task ListAsync()
+        public async Task ListAsync(int page = 1)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
@@ -219,6 +219,7 @@ namespace wow2.Modules.Keywords
             await GenericMessenger.SendResponseAsync(
                 channel: Context.Channel,
                 fieldBuilders: listOfFieldBuilders,
+                fieldBuildersPage: page,
                 title: "Keywords",
                 description: $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*");
         }
