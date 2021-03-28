@@ -54,7 +54,7 @@ namespace wow2.Verbose
             string title = "",
             List<EmbedFieldBuilder> fieldBuilders = null,
             int fieldBuildersPage = 0)
-        {
+        { 
             const int maxFieldsPerPage = 10;
 
             var embedBuilder = new EmbedBuilder()
