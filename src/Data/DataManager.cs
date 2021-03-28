@@ -99,14 +99,11 @@ namespace wow2.Data
         /// <summary>Write guild data to file for a specific guild.</summary>
         public static async Task SaveGuildDataToFileAsync(ulong guildId)
         {
-            GuildData guildData = new GuildData();
-            foreach (ulong id in DictionaryOfGuildData.Keys)
+            GuildData guildData;
+            if (!DictionaryOfGuildData.TryGetValue(guildId, out guildData))
             {
-                if (id == guildId)
-                {
-                    guildData = DictionaryOfGuildData[id];
-                    break;
-                }
+                Logger.Log($"Failed to load for guild {guildId} as the guild ID was not found in the dictionary (specific load)", LogSeverity.Warning);
+                return;
             }
             await File.WriteAllTextAsync($"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(guildData));
             Logger.Log($"Saved guild data for {guildId} (specific save)", LogSeverity.Verbose);
