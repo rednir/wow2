@@ -103,7 +103,7 @@ namespace wow2.Modules.Voice
         [Command("skip")]
         [Alias("next")]
         [Summary("Stops the currently playing request and starts the next request if it exists.")]
-        public async Task Skip()
+        public async Task SkipAsync()
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 

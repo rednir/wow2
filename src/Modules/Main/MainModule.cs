@@ -136,7 +136,7 @@ namespace wow2.Modules.Main
                 var context = new SocketCommandContext(Program.Client, (SocketUserMessage)message);
                 var aliasToExecute = aliasesFound.First();
 
-                await EventHandlers.ExecuteCommand(
+                await EventHandlers.ExecuteCommandAsync(
                     context,
                     aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, "", true, null));
 

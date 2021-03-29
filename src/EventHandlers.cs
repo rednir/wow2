@@ -127,12 +127,12 @@ namespace wow2
                 return;
             }
 
-            await ExecuteCommand(
+            await ExecuteCommandAsync(
                 context,
                 socketMessage.Content.RemoveUnnecessaryWhiteSpace().Substring(DefaultCommandPrefix.Length + 1));
         }
 
-        public static async Task ExecuteCommand(ICommandContext context, string input)
+        public static async Task ExecuteCommandAsync(ICommandContext context, string input)
         {
             var typingState = context.Channel.EnterTypingState();
             try
