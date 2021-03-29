@@ -201,9 +201,7 @@ namespace wow2.Modules.Keywords
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
 
             if (keywordsDictionary.Count == 0)
-            {
                 throw new CommandReturnException(Context, "No keywords have been added yet, so there's nothing to show.");
-            }
 
             foreach (var keywordPair in keywordsDictionary)
             {
