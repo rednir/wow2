@@ -30,16 +30,20 @@ namespace wow2.Modules.Keywords
         public static bool CheckMessageForKeyword(SocketMessage message)
         {
             var config = DataManager.GetKeywordsConfigForGuild(message.GetGuild());
-            string content = message.Content.ToLower();
+            string messageContent = message.Content.ToLower();
             List<string> listOfFoundKeywords = new List<string>();
-
-            // Replace unnecessary symbols with a whitespace.
-            content = new Regex("[;!.\"?\'#,:*-_\t\r ]|[\n]{2}").Replace(content, " ");
 
             foreach (string keyword in config.KeywordsDictionary.Keys)
             {
+                // No need to check with symbols removed.
+                if (!messageContent.Contains(keyword)) continue;
+
+                // Replace unnecessary symbols with a whitespace.
+                var symbolsToReplace = "!.?;.'#\"_-\\".Where(c => !keyword.Contains(c)).ToArray();
+                string messageContentWithoutSymbols = messageContent.ReplaceAll(symbolsToReplace, ' ');
+
                 // Search for keyword with word boundaries, making sure that the keyword is not part of another word.
-                if (Regex.IsMatch(content, @"\b" + Regex.Escape(keyword.ToLower()) + @"\b"))
+                if (messageContentWithoutSymbols.ContainsWord(keyword))
                 {
                     listOfFoundKeywords.Add(keyword);
                 }

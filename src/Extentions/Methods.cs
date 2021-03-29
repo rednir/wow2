@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -83,6 +84,27 @@ namespace wow2.Extentions
                 stringBuilder.Append(character);
             }
             return stringBuilder.ToString();
+        }
+
+        /// <returns>The string with the list of characters removed.</returns>
+        public static string ReplaceAll(this string stringToChange, char[] charsToReplace, char? replacementChar)
+        {
+            var stringBuilder = new StringBuilder();
+            foreach (char character in stringToChange)
+            {
+                stringBuilder.Append(
+                    charsToReplace.Contains(character) ? replacementChar : character);
+            }
+            return stringBuilder.ToString();
+        }
+
+        /// <returns>True if the string contains the parameter, and the parameter is adjacent to two whitespaces.</returns>
+        public static bool ContainsWord(this string stringToSearch, string word)
+        {
+            var stringBuilder = new StringBuilder(stringToSearch);
+            string stringToSearchWithBoundaries = stringBuilder
+                .Insert(0, ' ').Append(' ').ToString();
+            return stringToSearchWithBoundaries.Contains($" {word} ");
         }
     }
 }
