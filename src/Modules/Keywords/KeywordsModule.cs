@@ -226,8 +226,8 @@ namespace wow2.Modules.Keywords
                 description: $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*");
         }
 
-        [Command("list-values")]
-        [Alias("listvalues", "values", "list-value", "listvalue", "value")]
+        [Command("values")]
+        [Alias("listvalues", "values", "list-value", "listvalue", "value", "list")]
         [Summary("Shows a list of values for a keyword.")]
         public async Task ListKeywordValuesAsync(string keyword)
         {
