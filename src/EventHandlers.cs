@@ -132,7 +132,7 @@ namespace wow2
                 socketMessage.Content.RemoveUnnecessaryWhiteSpace().Substring(DefaultCommandPrefix.Length + 1));
         }
 
-        public static async Task ExecuteCommandAsync(ICommandContext context, string input)
+        public static async Task<IResult> ExecuteCommandAsync(ICommandContext context, string input)
         {
             var typingState = context.Channel.EnterTypingState();
             try
@@ -145,6 +145,7 @@ namespace wow2
                 );
                 if (result.Error.HasValue)
                     await SendErrorMessageToChannel(result.Error, (ISocketMessageChannel)context.Channel);
+                return result;
             }
             finally
             {
