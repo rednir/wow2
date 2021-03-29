@@ -76,9 +76,12 @@ namespace wow2
 
         public static async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
         {
+            if (reaction.UserId == Program.Client.CurrentUser.Id)
+                return;
+
             IUserMessage message = await cachedMessage.GetOrDownloadAsync();
 
-            if (reaction.UserId != Program.Client.CurrentUser.Id && reaction.Emote.Name == KeywordsModule.DeleteReactionEmote.Name)
+            if (reaction.Emote.Name == KeywordsModule.DeleteReactionEmote.Name)
             {
                 if (await KeywordsModule.DeleteMessageIfKeywordResponse(message))
                 {
