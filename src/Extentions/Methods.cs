@@ -46,7 +46,6 @@ namespace wow2.Extentions
             int charactersOfNextSeparatorFound = 0;
             foreach (char character in stringToSearch.Substring(startIndex))
             {
-                Console.WriteLine(stringBuilder.ToString());
                 stringBuilder.Append(character);
                 if (separator.Contains(character))
                 {
