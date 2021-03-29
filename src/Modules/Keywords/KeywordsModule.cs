@@ -44,9 +44,7 @@ namespace wow2.Modules.Keywords
 
                 // Search for keyword with word boundaries, making sure that the keyword is not part of another word.
                 if (messageContentWithoutSymbols.ContainsWord(keyword))
-                {
                     listOfFoundKeywords.Add(keyword);
-                }
             }
 
             if (listOfFoundKeywords.Count == 0) return false;

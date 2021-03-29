@@ -286,7 +286,7 @@ namespace wow2.Modules.Voice
             };
             var footerBuilder = new EmbedFooterBuilder()
             {
-                Text = request.VideoMetadata.extractor.StartsWith("youtube") ? 
+                Text = request.VideoMetadata.extractor.StartsWith("youtube") ?
                     $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {formattedDuration}" : ""
             };
 

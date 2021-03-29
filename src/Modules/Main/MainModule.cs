@@ -154,7 +154,7 @@ namespace wow2.Modules.Main
                 {
                     // Always dispose this, otherwise the bot will forever be typing after an exception.
                     typingState.Dispose();
-                }  
+                }
 
                 return true;
             }
