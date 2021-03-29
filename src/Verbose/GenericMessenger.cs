@@ -74,8 +74,8 @@ namespace wow2.Verbose
             {
                 int totalFieldBuilderPages = (int)Math.Ceiling((float)fieldBuilders.Count / (float)maxFieldsPerPage);
 
-                if (fieldBuildersPage > totalFieldBuilderPages)
-                    throw new ArgumentOutOfRangeException("page number");
+                // Page number should always be within bounds.
+                fieldBuildersPage = Math.Min(totalFieldBuilderPages, Math.Max(1, fieldBuildersPage));
 
                 if (fieldBuildersPage == 0)
                 {
