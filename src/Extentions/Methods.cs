@@ -31,6 +31,40 @@ namespace wow2.Extentions
             }
         }
 
+        public static string TextBetween(this string stringToSearch, string separator)
+        {
+            var stringBuilder = new StringBuilder();
+
+            // No separators exist or only one separator exist.
+            if (stringToSearch.IndexOf(separator) == -1 ||
+                (stringToSearch.IndexOf(separator) == stringToSearch.LastIndexOf(separator)))
+                return null;
+
+            // The index of the next character after the first instance of the seperator.
+            int startIndex = stringToSearch.IndexOf(separator) + separator.Length;
+
+            int charactersOfNextSeparatorFound = 0;
+            foreach (char character in stringToSearch.Substring(startIndex))
+            {
+                Console.WriteLine(stringBuilder.ToString());
+                stringBuilder.Append(character);
+                if (separator.Contains(character))
+                {
+                    charactersOfNextSeparatorFound += 1;
+                    if (charactersOfNextSeparatorFound == separator.Length)
+                    {
+                        stringBuilder.Replace(separator, null);
+                        break;
+                    }
+                }
+                else
+                {
+                    charactersOfNextSeparatorFound = 0;
+                }
+            }
+            return stringBuilder.ToString();
+        }
+
         /// <returns>The string with newlines placed.</returns>
         public static string Wrap(this string originalString, int maxCharsPerLine)
         {

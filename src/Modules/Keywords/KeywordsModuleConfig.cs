@@ -15,9 +15,10 @@ namespace wow2.Modules.Keywords
     public class KeywordValue
     {
         public string Content { get; set; }
+        public string Title { get; set; }
 
         // TODO: find some way to make these properties useful
         /*public string ImageUrl { get; set; }
-        public string Title { get; set; }*/
+        */
     }
 }

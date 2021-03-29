@@ -74,7 +74,7 @@ namespace wow2.Modules.Keywords
             }
             else
             {
-                sentKeywordResponseMessage = await GenericMessenger.SendResponseAsync(message.Channel, chosenValue.Content);
+                sentKeywordResponseMessage = await GenericMessenger.SendResponseAsync(message.Channel, chosenValue.Content, chosenValue.Title);
             }
 
             if (config.IsLikeReactionOn)
@@ -120,8 +120,13 @@ namespace wow2.Modules.Keywords
             if (valueSplit.Length == 0)
                 throw new CommandReturnException(Context, "No value to add to the keyword was specified.");
 
-            string value = string.Join(" ", valueSplit);
+            string valueContent = string.Join(" ", valueSplit);
             keyword = keyword.ToLower();
+
+            // Check whether the user has specified a title.
+            string valueTitle = valueContent.TextBetween("**");
+            if (valueTitle != null)
+                valueContent = valueContent.Replace($"**{valueTitle}**", null);
 
             if (!keywordsDictionary.ContainsKey(keyword))
             {
@@ -132,14 +137,18 @@ namespace wow2.Modules.Keywords
                 keywordsDictionary.Add(keyword, new List<KeywordValue>());
             }
 
-            if (keywordsDictionary[keyword].FindIndex(x => x.Content == value) != -1)
-                throw new CommandReturnException(Context, "The value already exists in the keyword.");
+            if (keywordsDictionary[keyword].FindIndex(x => x.Content == valueContent) != -1)
+                throw new CommandReturnException(Context, "The value already exists in this keyword.");
             if (keywordsDictionary[keyword].Count() >= MaxNumberOfValues)
                 throw new CommandReturnException(Context, "**Value limit reached**\nYou've got too many values in this keyword. Try remove some first.");
 
-            keywordsDictionary[keyword].Add(new KeywordValue() { Content = value });
+            keywordsDictionary[keyword].Add(new KeywordValue()
+            {
+                Content = valueContent,
+                Title = valueTitle
+            });
 
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Successfully added values to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Added a value to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.");
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
