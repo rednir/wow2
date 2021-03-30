@@ -7,6 +7,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
+using wow2.Verbose;
 using wow2.Data;
 using wow2.Extentions;
 
@@ -69,6 +70,20 @@ namespace wow2.Modules.Text
                 fileStreamForImage.Position = 0;
                 await Context.Channel.SendFileAsync(fileStreamForImage, "wow2quoteresult.jpg");
             }
+        }
+
+        [Command("replace")]
+        [Summary("Replaces all instances of OLDVALUE with NEWVALUE within TEXT")]
+        public async Task ReplaceAsync(string oldValue, string newValue, [Name("text")] params string[] textSplit)
+        {
+            if (textSplit.Count() == 0)
+                throw new CommandReturnException(Context, "No text was given.");
+            if (!textSplit.Contains(oldValue))
+                throw new CommandReturnException(Context, $"There are no instances of `{oldValue}` in the given text, so there's nothing to replace.");
+
+            var text = Context.Message.GetParams(textSplit);
+
+            await GenericMessenger.SendResponseAsync(Context.Channel, text.Replace(oldValue, $"**{newValue}**"));
         }
     }
 }
