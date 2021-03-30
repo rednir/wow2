@@ -33,11 +33,10 @@ namespace wow2.Modules.Dev
                 "vc", new string[]
                 {
                     "join",
-                    "np",
-                    "list",
                     "add https://www.youtube.com/watch?v=jNQXAC9IVRw",
                     "add 'me at the zoo'",
                     "list",
+                    "np",
                     "clear",
                     "add https://www.google.com",
                     "leave"
