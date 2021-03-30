@@ -158,20 +158,32 @@ namespace wow2
             switch (commandError)
             {
                 case CommandError.BadArgCount:
-                    await GenericMessenger.SendWarningAsync(channel, "**Invalid usage of command.**\nYou either typed the wrong number of parameters, or forgot to put a parameter in \"quotes\"");
-                    break;
+                    await GenericMessenger.SendWarningAsync(
+                        channel: channel,
+                        description: "You either typed the wrong number of parameters, or forgot to put a parameter in \"quotes\"",
+                        title: "Invalid usage of command");
+                    return;
 
                 case CommandError.ParseFailed:
-                    await GenericMessenger.SendWarningAsync(channel, "**Parsing arguments failed.**\nYou might have typed an invalid parameter.");
-                    break;
+                    await GenericMessenger.SendWarningAsync(
+                        channel: channel,
+                        description: "You might have typed an invalid parameter.",
+                        title: "Parsing arguments failed");
+                    return;
 
                 case CommandError.UnknownCommand:
-                    await GenericMessenger.SendWarningAsync(channel, "**That command doesn't exist.\n**Did you make a typo?");
-                    break;
+                    await GenericMessenger.SendWarningAsync(
+                        channel: channel,
+                        description: "Did you make a typo?",
+                        title: "That command doesn't exist");
+                    return;
 
                 case CommandError.UnmetPrecondition:
-                    await GenericMessenger.SendWarningAsync(channel, "**Unmet precondition.**\nYou most likely don't have the correct permissions to use this command.");
-                    break;
+                    await GenericMessenger.SendWarningAsync(
+                        channel: channel,
+                        description: "You most likely don't have the correct permissions to use this command.",
+                        title: "Unmet precondition");
+                    return;
 
                 default:
                     return;

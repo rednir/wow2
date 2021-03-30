@@ -193,7 +193,7 @@ namespace wow2.Modules.Main
             );
 
             if (listOfCommandInfo.Count() == 0)
-                throw new CommandReturnException(Context, "**No such module.**\nDid you make a typo?");
+                throw new CommandReturnException(Context, "Did you make a typo?", "No such module");
 
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             foreach (CommandInfo command in listOfCommandInfo)

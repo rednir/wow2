@@ -131,7 +131,7 @@ namespace wow2.Modules.Keywords
             if (!keywordsDictionary.ContainsKey(keyword))
             {
                 if (keywordsDictionary.Count() >= MaxNumberOfKeywords)
-                    throw new CommandReturnException(Context, "**Keywords limit reached**\nYou've got too many keywords. Try remove some first.");
+                    throw new CommandReturnException(Context, "You've got too many keywords. Try remove some first.", "Keywords limit reached");
 
                 // Create new dictionary key if necessary.
                 keywordsDictionary.Add(keyword, new List<KeywordValue>());
@@ -140,7 +140,7 @@ namespace wow2.Modules.Keywords
             if (keywordsDictionary[keyword].FindIndex(x => x.Content == valueContent) != -1)
                 throw new CommandReturnException(Context, "The value already exists in this keyword.");
             if (keywordsDictionary[keyword].Count() >= MaxNumberOfValues)
-                throw new CommandReturnException(Context, "**Value limit reached**\nYou've got too many values in this keyword. Try remove some first.");
+                throw new CommandReturnException(Context, "You've got too many values in this keyword. Try remove some first.", "Value limit reached");
 
             keywordsDictionary[keyword].Add(new KeywordValue()
             {
@@ -193,7 +193,7 @@ namespace wow2.Modules.Keywords
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
 
             if (!keywordsDictionary.ContainsKey(oldKeyword))
-                throw new CommandReturnException(Context, "**No such keyword**\nCan't rename a keyword that doesn't exist. Did you make a typo?");
+                throw new CommandReturnException(Context, "Can't rename a keyword that doesn't exist. Did you make a typo?", "No such keyword");
 
             keywordsDictionary.RenameKey(oldKeyword, newKeyword);
 
@@ -242,7 +242,7 @@ namespace wow2.Modules.Keywords
             List<KeywordValue> values;
 
             if (!keywordsDictionary.TryGetValue(keyword, out values))
-                throw new CommandReturnException(Context, $"**No such keyword**\nIf you want to list all keywords available, don't specify a keyword in the command.");
+                throw new CommandReturnException(Context, $"If you want to list all keywords available, don't specify a keyword in the command.", "No such keyword");
 
             StringBuilder stringBuilderForValueList = new StringBuilder();
             foreach (KeywordValue value in values)

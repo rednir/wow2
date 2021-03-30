@@ -79,11 +79,11 @@ namespace wow2.Modules.Voice
             }
             catch (ArgumentException)
             {
-                throw new CommandReturnException(Context, $"**Could not fetch video metadata.**\nOne or more errors were returned.");
+                throw new CommandReturnException(Context, $"One or more errors were returned.", "Could not fetch video metadata");
             }
             catch
             {
-                throw new CommandReturnException(Context, $"**Could not fetch video metadata.**\nThe host may be missing some required dependencies.");
+                throw new CommandReturnException(Context, $"The host may be missing some required dependencies.", "Could not fetch video metadata");
             }
 
             config.SongRequests.Enqueue(new UserSongRequest()
@@ -115,7 +115,7 @@ namespace wow2.Modules.Voice
             config.ListOfUserIdsThatVoteSkipped.Add(Context.User.Id);
             if (config.ListOfUserIdsThatVoteSkipped.Count() < config.VoteSkipsNeeded)
             {
-                await GenericMessenger.SendInfoAsync(Context.Channel, $"**Sent skip request**\nWaiting for `{config.VoteSkipsNeeded - config.ListOfUserIdsThatVoteSkipped.Count()}` more vote(s) before skipping.\n");
+                await GenericMessenger.SendInfoAsync(Context.Channel, $"Waiting for `{config.VoteSkipsNeeded - config.ListOfUserIdsThatVoteSkipped.Count()}` more vote(s) before skipping.\n", "Sent skip request");
                 return;
             }
             else
@@ -195,9 +195,9 @@ namespace wow2.Modules.Voice
         public async Task SetVoteSkipsNeeded([Name("NUMBER")] int newNumberOfSkips)
         {
             if (newNumberOfSkips <= 0)
-                throw new CommandReturnException(Context, "**Number too small**\nThe number of votes required is less than the amount of people in the server.");
+                throw new CommandReturnException(Context, "The number of votes required is less than the amount of people in the server.", "Number too small");
             if (newNumberOfSkips >= Context.Guild.MemberCount)
-                throw new CommandReturnException(Context, "**Number too large.**\nThe number of votes required is greater than the amount of people in the server.");
+                throw new CommandReturnException(Context, "The number of votes required is greater than the amount of people in the server.", "Number too large");
 
             DataManager.GetVoiceConfigForGuild(Context.Guild).VoteSkipsNeeded = newNumberOfSkips;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
@@ -265,7 +265,7 @@ namespace wow2.Modules.Voice
             else
             {
                 config.CurrentlyPlayingSongRequest = null;
-                await GenericMessenger.SendInfoAsync(Context.Channel, "**The queue is empty.**\nI'll stay in the voice channel... in silence...");
+                await GenericMessenger.SendInfoAsync(Context.Channel, "I'll stay in the voice channel... in silence...", "The queue is empty");
             }
         }
 
