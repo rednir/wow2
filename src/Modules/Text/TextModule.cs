@@ -96,9 +96,12 @@ namespace wow2.Modules.Text
             if (textSplit.Count() == 0)
                 throw new CommandReturnException(Context, "No text was given to emojify.");
 
-            var text = Context.Message.GetParams(textSplit);
-            var stringBuilder = new StringBuilder();
+            var text = Context.Message
+                .GetParams(textSplit)
+                .RemoveUnnecessaryWhiteSpace()
+                .Replace('\n', ' ');
 
+            var stringBuilder = new StringBuilder();
             foreach (string word in text.Split(' '))
             {
                 string wordWithoutSymbols = word.ReplaceAll("!.?;.'#\"_-\\".ToArray(), null);
