@@ -1,4 +1,6 @@
 using System;
+using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord;
@@ -61,6 +63,15 @@ namespace wow2.Verbose
             int fieldBuildersPage = 0)
         {
             const int maxFieldsPerPage = 10;
+            const int maxDescriptionLength = 2048;
+
+            if (description.Length >= maxDescriptionLength)
+            {
+                MemoryStream descriptionStream = new MemoryStream(Encoding.ASCII.GetBytes(description));
+                await GenericMessenger.SendWarningAsync(channel, $"A message was too long, so it was uploaded as a file.");
+                await channel.SendFileAsync(descriptionStream, $"{title}_text.txt");
+                return null;
+            }
 
             var embedBuilder = new EmbedBuilder()
             {
@@ -70,6 +81,7 @@ namespace wow2.Verbose
             };
 
             // Check if the fields don't fit on one page.
+            // If fields is null, this if statement is ignored.
             if (fieldBuilders?.Count > maxFieldsPerPage)
             {
                 int totalFieldBuilderPages = (int)Math.Ceiling((float)fieldBuilders.Count / (float)maxFieldsPerPage);
@@ -77,9 +89,9 @@ namespace wow2.Verbose
                 // Page number should always be within bounds.
                 fieldBuildersPage = Math.Min(totalFieldBuilderPages, Math.Max(1, fieldBuildersPage));
 
+                // Check if the page number has not been specifed by the method caller.
                 if (fieldBuildersPage == 0)
                 {
-                    // The page number has not been specifed by the method caller.
                     embedBuilder.Footer = new EmbedFooterBuilder()
                     {
                         IconUrl = $"https://cdn.discordapp.com/emojis/{WarningEmoteId}.png",
