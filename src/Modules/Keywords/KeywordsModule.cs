@@ -120,7 +120,11 @@ namespace wow2.Modules.Keywords
             if (valueSplit.Length == 0)
                 throw new CommandReturnException(Context, "No value to add to the keyword was specified.");
 
-            string valueContent = string.Join(" ", valueSplit);
+            // valueSplit does not store newlines, so instead get a substring of the message.
+            string valueContent = Context.Message.Content.Substring(
+                Context.Message.Content.IndexOf(valueSplit.First()))
+                .TrimEnd('\"');
+
             keyword = keyword.ToLower();
 
             // Check whether the user has specified a title.
