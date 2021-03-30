@@ -66,7 +66,6 @@ namespace wow2
             }
             else if (logMessage.Exception != null)
             {
-                await (await Program.Client.GetApplicationInfoAsync()).Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
                 Logger.LogException(logMessage.Exception);
                 await (await Program.Client.GetApplicationInfoAsync()).Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
             }
