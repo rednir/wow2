@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
 using SixLabors.ImageSharp;
@@ -92,8 +93,32 @@ namespace wow2.Modules.Text
         [Summary("Replaces all instances of OLDVALUE with NEWVALUE within TEXT")]
         public async Task EmojifyAsync([Name("text")] params string[] textSplit)
         {
+            if (textSplit.Count() == 0)
+                throw new CommandReturnException(Context, "No text was given to emojify.");
+
             var text = Context.Message.GetParams(textSplit);
-            throw new NotImplementedException();
+            var stringBuilder = new StringBuilder();
+
+            foreach (string word in text.Split(' '))
+            {
+                stringBuilder.Append(word + ' ');
+                var matchingEmojis = Emoijs.Array.Where(emoij => emoij.Contains(word));
+                if (matchingEmojis.Count() == 0)
+                {
+                    // No matching emoji was found, so choose at complete random.
+                    stringBuilder.Append(
+                        Emoijs.Array[new Random().Next(Emoijs.Array.Count())]);
+                }
+                else
+                {
+                    // Otherwise choose at random from the matching emojis.
+                    stringBuilder.Append(
+                        matchingEmojis.ElementAt(new Random().Next(matchingEmojis.Count())));
+                }
+                stringBuilder.Append(' ');
+            }
+
+            await GenericMessenger.SendResponseAsync(Context.Channel, stringBuilder.ToString());
         }
     }
 }
