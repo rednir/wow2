@@ -101,8 +101,12 @@ namespace wow2.Modules.Text
 
             foreach (string word in text.Split(' '))
             {
+                string wordWithoutSymbols = word.ReplaceAll("!.?;.'#\"_-\\".ToArray(), null);
                 stringBuilder.Append(word + ' ');
-                var matchingEmojis = Emoijs.Array.Where(emoij => emoij.Contains(word));
+
+                var matchingEmojis = Emoijs.Array.Where(emoij
+                    => emoij.Contains(wordWithoutSymbols, StringComparison.CurrentCultureIgnoreCase));
+
                 if (matchingEmojis.Count() == 0)
                 {
                     // No matching emoji was found, so choose at complete random.
@@ -115,6 +119,7 @@ namespace wow2.Modules.Text
                     stringBuilder.Append(
                         matchingEmojis.ElementAt(new Random().Next(matchingEmojis.Count())));
                 }
+
                 stringBuilder.Append(' ');
             }
 
