@@ -8,7 +8,7 @@ namespace wow2.Modules.Keywords
         public List<ulong> ListOfResponsesId { get; set; } = new List<ulong>();
 
         public Dictionary<string, List<KeywordValue>> KeywordsDictionary { get; set; } = new Dictionary<string, List<KeywordValue>>();
-        public bool IsDeleteReactionOn { get; set; } = true;
+        public bool IsDeleteReactionOn { get; set; } = false;
         public bool IsLikeReactionOn { get; set; } = true;
     }
 
