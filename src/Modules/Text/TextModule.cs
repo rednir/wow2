@@ -73,6 +73,7 @@ namespace wow2.Modules.Text
         }
 
         [Command("replace")]
+        [Alias("change")]
         [Summary("Replaces all instances of OLDVALUE with NEWVALUE within TEXT")]
         public async Task ReplaceAsync(string oldValue, string newValue, [Name("text")] params string[] textSplit)
         {
@@ -84,6 +85,15 @@ namespace wow2.Modules.Text
             var text = Context.Message.GetParams(textSplit);
 
             await GenericMessenger.SendResponseAsync(Context.Channel, text.Replace(oldValue, $"**{newValue}**"));
+        }
+
+        [Command("emojify")]
+        [Alias("emoji")]
+        [Summary("Replaces all instances of OLDVALUE with NEWVALUE within TEXT")]
+        public async Task EmojifyAsync([Name("text")] params string[] textSplit)
+        {
+            var text = Context.Message.GetParams(textSplit);
+            throw new NotImplementedException();
         }
     }
 }
