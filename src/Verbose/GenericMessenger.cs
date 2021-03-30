@@ -21,7 +21,7 @@ namespace wow2.Verbose
         public static async Task<RestUserMessage> SendSuccessAsync(ISocketMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
-                Description = $"{new Emoji($"<:wowsuccess:{SuccessEmoteId}>")} {description}",
+                Description = $"{new Emoji($"<:wowsuccess:{SuccessEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
                 Color = Color.Green
             }
             .Build());
@@ -30,7 +30,7 @@ namespace wow2.Verbose
         public static async Task<RestUserMessage> SendInfoAsync(ISocketMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
-                Description = $"{new Emoji($"<:wowinfo:{InfoEmoteId}>")} {description}",
+                Description = $"{new Emoji($"<:wowinfo:{InfoEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
                 Color = Color.Blue
             }
             .Build());
@@ -39,7 +39,7 @@ namespace wow2.Verbose
         public static async Task<RestUserMessage> SendWarningAsync(ISocketMessageChannel channel, string description, string title = null)
              => await channel.SendMessageAsync(embed: new EmbedBuilder()
              {
-                 Description = $"{new Emoji($"<:wowwarning:{WarningEmoteId}>")} {description}",
+                 Description = $"{new Emoji($"<:wowwarning:{WarningEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
                  Color = Color.LightOrange
              }
             .Build());
@@ -49,7 +49,7 @@ namespace wow2.Verbose
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
                 Title = $"{new Emoji($"<:wowerror:{ErrorEmoteId}>")} Something bad happened...",
-                Description = description,
+                Description = GetStatusMessageFormattedDescription(description, title),
                 Color = Color.Red
             }
             .Build());
@@ -119,5 +119,8 @@ namespace wow2.Verbose
 
             return await channel.SendMessageAsync(embed: embedBuilder.Build());
         }
+
+        private static string GetStatusMessageFormattedDescription(string description, string title)
+            => $"{(title == null ? null : $"**{title}**\n")}{description}";
     }
 }

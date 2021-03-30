@@ -78,12 +78,12 @@ namespace wow2.Modules.Dev
         [Command("generic-messenger")]
         public async Task GenericMessengerAsync()
         {
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"This is a success message.");
-            await GenericMessenger.SendInfoAsync(Context.Channel, $"This is an info message.");
-            await GenericMessenger.SendWarningAsync(Context.Channel, $"This is a warning message.");
-            await GenericMessenger.SendErrorAsync(Context.Channel, $"This is an error message.");
-            await GenericMessenger.SendResponseAsync(Context.Channel, $"This is a response message.", "Title");
-            await GenericMessenger.SendResponseAsync(Context.Channel, $"This is a response message with fields.", "Title", CreateSampleFields(50), 2);
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"This is a success message.", "Success");
+            await GenericMessenger.SendInfoAsync(Context.Channel, $"This is an info message.", "Info");
+            await GenericMessenger.SendWarningAsync(Context.Channel, $"This is a warning message.", "Warning");
+            await GenericMessenger.SendErrorAsync(Context.Channel, $"This is an error message.", "Error");
+            await GenericMessenger.SendResponseAsync(Context.Channel, $"This is a response message.", "Response");
+            await GenericMessenger.SendResponseAsync(Context.Channel, $"This is a response message with fields.", "Fields", CreateSampleFields(50), 2);
         }
 
         [Command("run-test")]
