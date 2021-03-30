@@ -1,10 +1,10 @@
 using SixLabors.Fonts;
 using wow2.Data;
 
-namespace wow2.Modules.Images
+namespace wow2.Modules.Text
 {
     // Rethink this
-    public static class ImagesModuleFonts
+    public static class TextModuleFonts
     {
         private static FontCollection FontCollection = new FontCollection();
         private static FontFamily RegularFontFamily = FontCollection.Install($"{DataManager.ResDirPath}/ClearSans-Medium.ttf");

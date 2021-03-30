@@ -10,13 +10,12 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using wow2.Data;
 using wow2.Extentions;
 
-namespace wow2.Modules.Images
+namespace wow2.Modules.Text
 {
-    [Name("Images")]
-    [Group("images")]
-    [Alias("image")]
-    [Summary("For creating and editing images.")]
-    public class ImagesModule : ModuleBase<SocketCommandContext>
+    [Name("Text")]
+    [Group("text")]
+    [Summary("For changing and manipulating text.")]
+    public class TextModule : ModuleBase<SocketCommandContext>
     {
         [Command("quote")]
         [Alias("quotes")]
@@ -64,7 +63,7 @@ namespace wow2.Modules.Images
                 int quoteXPos = imageSize.Width / 2;
                 int quoteYPos = (imageSize.Height / 2) - (imageSize.Height / 6) - (quote.Length / 4);
 
-                image.Mutate(x => x.DrawText($"\"{quote.Wrap(40)}\"\n\n - {author}", ImagesModuleFonts.QuoteTextFont, SixLabors.ImageSharp.Color.LightGrey, new PointF(quoteXPos, quoteYPos)));
+                image.Mutate(x => x.DrawText($"\"{quote.Wrap(40)}\"\n\n - {author}", TextModuleFonts.QuoteTextFont, SixLabors.ImageSharp.Color.LightGrey, new PointF(quoteXPos, quoteYPos)));
 
                 await image.SaveAsync(fileStreamForImage, new JpegEncoder());
                 fileStreamForImage.Position = 0;
