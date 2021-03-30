@@ -105,6 +105,10 @@ namespace wow2.Modules.Dev
             }
         }
 
+        [Command("throw")]
+        public Task Throw()
+            => throw new Exception("This is a test exception.");
+
         private async Task RunListOfCommandsAsync(string group, string[] commandList, int delay)
         {
             await GenericMessenger.SendInfoAsync(Context.Channel, $"About to run {commandList.Length} commands with a delay of {delay}ms");
