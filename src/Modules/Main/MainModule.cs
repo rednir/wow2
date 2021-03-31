@@ -70,7 +70,7 @@ namespace wow2.Modules.Main
         [Command("alias-list")]
         [Alias("alias", "aliases", "list-alias", "list-aliases")]
         [Summary("Displays a list of aliases.")]
-        public async Task AliasAsync()
+        public async Task AliasListAsync()
         {
             var config = DataManager.GetMainConfigForGuild(Context.Guild);
 
