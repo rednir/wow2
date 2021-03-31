@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using Discord.Commands;
@@ -95,7 +96,10 @@ namespace wow2.Modules.Games
                 title: "Final Stats",
                 description: $"You got `{config.Turns}` points, and saw a total of `{config.SeenWords.Count}` different words.");
 
+            config.Turns = 0;
             config.CurrentWordMessage = null;
+            config.SeenWords = new VerbalMemoryGameConfig().SeenWords;
+            config.UnseenWords = new List<string>();
         }
     }
 }
