@@ -54,8 +54,11 @@ namespace wow2.Modules.Voice
         [Summary("Clears the song request queue.")]
         public async Task ClearAsync()
         {
-            DataManager.GetVoiceConfigForGuild(Context.Guild).SongRequests.Clear();
-            await ContinueAsync();
+            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+
+            config.SongRequests.Clear();
+            StopPlaying(config);
+            await GenericMessenger.SendSuccessAsync(Context.Channel, "The song request queue was cleared.");
         }
 
         [Command("add")]
