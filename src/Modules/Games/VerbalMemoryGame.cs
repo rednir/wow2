@@ -63,6 +63,7 @@ namespace wow2.Modules.Games
                     return;
             }
 
+            config.Turns++;
             await config.CurrentWordMessage.DeleteAsync();
             await NextWordAsync(config);
         }
@@ -80,7 +81,6 @@ namespace wow2.Modules.Games
         {
             var random = new Random();
 
-            config.Turns++;
             bool pickSeenWord = (random.NextDouble() >= 0.5) && (config.SeenWords.Count() > 3);
             string currentWord = pickSeenWord ? 
                 config.SeenWords[random.Next(config.SeenWords.Count())] :
