@@ -188,9 +188,10 @@ namespace wow2.Modules.Keywords
         [Command("rename")]
         [Alias("edit", "change")]
         [Summary("Renames a keyword, leaving its values unchanged.")]
-        public async Task RenameAsync(string oldKeyword, string newKeyword)
+        public async Task RenameAsync(string oldKeyword, [Name("NEWKEYWORD")] params string[] newKeywordSplit)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
+            string newKeyword = string.Join(" ", newKeywordSplit);
 
             if (!keywordsDictionary.ContainsKey(oldKeyword))
                 throw new CommandReturnException(Context, "Can't rename a keyword that doesn't exist. Did you make a typo?", "No such keyword");
