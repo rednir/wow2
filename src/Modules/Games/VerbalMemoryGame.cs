@@ -29,6 +29,10 @@ namespace wow2.Modules.Games
                 case NewKeyword:
                     if (config.SeenWords.Contains(currentWord))
                     {
+                        await GenericMessenger.SendInfoAsync(
+                            channel: (ISocketMessageChannel)config.InitalContext.Channel, 
+                            description: "You've seen that word before.",
+                            title: "Wrong!");
                         await EndGameAsync(config);
                         return;
                     }
@@ -46,6 +50,10 @@ namespace wow2.Modules.Games
                     }
                     else
                     {
+                        await GenericMessenger.SendInfoAsync(
+                            channel: (ISocketMessageChannel)config.InitalContext.Channel, 
+                            description: "You haven't seen that word before.",
+                            title: "Wrong!");
                         await EndGameAsync(config);
                         return;
                     }
@@ -71,6 +79,7 @@ namespace wow2.Modules.Games
         {
             var random = new Random();
 
+            config.Turns++;
             bool pickSeenWord = (random.NextDouble() >= 0.5) && (config.SeenWords.Count() > 3);
             string currentWord = pickSeenWord ? 
                 config.SeenWords[random.Next(config.SeenWords.Count())] :
@@ -81,10 +90,10 @@ namespace wow2.Modules.Games
 
         private static async Task EndGameAsync(VerbalMemoryGameConfig config)
         {
-            await GenericMessenger.SendInfoAsync(
-                channel: (ISocketMessageChannel)config.InitalContext.Channel, 
-                description: "Verbal memory has been ended.",
-                title: "Wrong!");
+            await GenericMessenger.SendResponseAsync(
+                channel: (ISocketMessageChannel)config.InitalContext.Channel,
+                title: "Final Stats",
+                description: $"You got `{config.Turns}` points, and saw a total of `{config.SeenWords.Count}` different words.");
 
             config.CurrentWordMessage = null;
         }

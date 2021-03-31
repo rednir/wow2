@@ -59,13 +59,12 @@ namespace wow2.Modules.Games
             {
                 await recievedMessage.AddReactionAsync(new Emoji("❎"));
                 await GenericMessenger.SendInfoAsync(recievedMessage.Channel, $"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`");
-                await EndGameAsync(recievedMessage);
+                await EndGameAsync(config);
             }
         }
 
-        private static async Task EndGameAsync(SocketMessage finalMessage)
+        private static async Task EndGameAsync(CountingGameConfig config)
         {
-            var config = DataManager.GetGamesConfigForGuild(finalMessage.GetGuild()).Counting;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             var dictionaryOfParticipants = new Dictionary<SocketUser, int>();
 
@@ -99,7 +98,7 @@ namespace wow2.Modules.Games
             else commentOnFinalNumber = "";
 
             await GenericMessenger.SendResponseAsync(
-                channel: finalMessage.Channel,
+                channel: (ISocketMessageChannel)config.InitalContext.Channel,
                 fieldBuilders: listOfFieldBuilders,
                 title: "Final Stats",
                 description: $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*");
@@ -113,7 +112,7 @@ namespace wow2.Modules.Games
             if (number >= float.MaxValue || number <= float.MinValue)
             {
                 await GenericMessenger.SendWarningAsync(message.Channel, "Woah, that's a big number.\nHate to be a killjoy, but even a computer has its limits.");
-                await EndGameAsync(message);
+                await EndGameAsync(DataManager.GetGamesConfigForGuild(message.GetGuild()).Counting);
                 return true;
             }
             return false;
