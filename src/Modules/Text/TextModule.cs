@@ -98,9 +98,9 @@ namespace wow2.Modules.Text
 
             var text = Context.Message
                 .GetParams(textSplit)
-                .RemoveUnnecessaryWhiteSpace()
-                .Replace('\n', ' ');
+                .RemoveUnnecessaryWhiteSpace();
 
+            var random = new Random();
             var stringBuilder = new StringBuilder();
             foreach (string word in text.Split(' '))
             {
@@ -112,15 +112,18 @@ namespace wow2.Modules.Text
 
                 if (matchingEmojis.Count() == 0)
                 {
-                    // No matching emoji was found, so choose at complete random.
-                    stringBuilder.Append(
-                        Emoijs.Array[new Random().Next(Emoijs.Array.Count())]);
+                    if (random.Next(3) == 1)
+                    {
+                        // Sometimes use a completely random emoji if no matching emoji is found.
+                        stringBuilder.Append(
+                            Emoijs.Array[random.Next(Emoijs.Array.Count())]);
+                    }
                 }
                 else
                 {
-                    // Otherwise choose at random from the matching emojis.
+                    // Choose at random from the matching emojis.
                     stringBuilder.Append(
-                        matchingEmojis.ElementAt(new Random().Next(matchingEmojis.Count())));
+                        matchingEmojis.ElementAt(random.Next(matchingEmojis.Count())));
                 }
 
                 stringBuilder.Append(' ');
