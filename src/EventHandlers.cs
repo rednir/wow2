@@ -146,6 +146,7 @@ namespace wow2
                     input: input,
                     services: null
                 );
+
                 if (result.Error.HasValue)
                     await SendErrorMessageToChannel(result.Error, (ISocketMessageChannel)context.Channel);
                 return result;
@@ -186,6 +187,13 @@ namespace wow2
                         channel: channel,
                         description: "You most likely don't have the correct permissions to use this command.",
                         title: "Unmet precondition");
+                    return;
+
+                case CommandError.ObjectNotFound:
+                    await GenericMessenger.SendWarningAsync(
+                        channel: channel,
+                        description: "Object not found.",
+                        title: "Invalid usage of command");
                     return;
 
                 default:
