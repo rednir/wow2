@@ -139,7 +139,7 @@ namespace wow2.Extentions
                 .Insert(0, ' ').Append(' ').ToString();
             return stringToSearchWithBoundaries.Contains($" {word} ");
         }
-        
+
         /// <summary>Gets an array of string from a message's content if it exists.</summary>
         /// <returns>The string from the message's content, otherwise the string joined from the string array.</returns>
         public static string GetParams(this IUserMessage message, string[] valueSplit)

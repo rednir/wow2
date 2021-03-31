@@ -44,7 +44,8 @@ namespace wow2.Modules.Main
             var config = DataManager.GetMainConfigForGuild(Context.Guild);
             string removeAliasText = $"To remove the alias, type `{EventHandlers.DefaultCommandPrefix} alias \"{name}\"`";
 
-            string definition = string.Join(" ", definitionSplit.Where(w => !w.Equals(EventHandlers.DefaultCommandPrefix, StringComparison.CurrentCultureIgnoreCase)));
+            string definition = string.Join(" ", definitionSplit.Where(w
+                => !w.Equals(EventHandlers.DefaultCommandPrefix, StringComparison.CurrentCultureIgnoreCase)));
 
             if (config.AliasesDictionary.ContainsKey(name))
             {

@@ -119,7 +119,7 @@ namespace wow2.Modules.Keywords
 
             if (valueSplit.Length == 0)
                 throw new CommandReturnException(Context, "No value to add to the keyword was specified.");
-            
+
             keyword = keyword.ToLower();
             string valueContent = Context.Message.GetParams(valueSplit);
 
