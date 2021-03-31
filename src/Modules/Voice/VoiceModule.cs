@@ -152,7 +152,7 @@ namespace wow2.Modules.Voice
             }
             catch (Exception ex) when (ex is WebSocketClosedException || ex is TaskCanceledException)
             {
-                // No need to notify the user of these errors.
+                // No need to notify the user of these exceptions.
             }
         }
 
@@ -253,9 +253,7 @@ namespace wow2.Modules.Voice
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
             UserSongRequest nextRequest;
 
-            config.ListOfUserIdsThatVoteSkipped.Clear();
-            config.CtsForAudioStreaming.Cancel();
-            config.CtsForAudioStreaming = new CancellationTokenSource();
+            StopPlaying(config);
 
             if (CheckIfAudioClientDisconnected(config.AudioClient))
                 return;
@@ -271,7 +269,14 @@ namespace wow2.Modules.Voice
             }
         }
 
-        public static Embed BuildNowPlayingEmbed(UserSongRequest request)
+        private void StopPlaying(VoiceModuleConfig config)
+        {
+            config.ListOfUserIdsThatVoteSkipped.Clear();
+            config.CtsForAudioStreaming.Cancel();
+            config.CtsForAudioStreaming = new CancellationTokenSource();
+        }
+
+        private static Embed BuildNowPlayingEmbed(UserSongRequest request)
         {
             const string youtubeIconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png";
             const string twitchIconUrl = "https://www.net-aware.org.uk/siteassets/images-and-icons/application-icons/app-icons-twitch.png?w=585&scale=down";
