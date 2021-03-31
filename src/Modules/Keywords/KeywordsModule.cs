@@ -66,7 +66,7 @@ namespace wow2.Modules.Keywords
             int chosenValueIndex = new Random().Next(config.KeywordsDictionary[foundKeyword].Count);
             KeywordValue chosenValue = config.KeywordsDictionary[foundKeyword][chosenValueIndex];
 
-            RestUserMessage sentKeywordResponseMessage;
+            IUserMessage sentKeywordResponseMessage;
             if (chosenValue.Content.Contains("http://") || chosenValue.Content.Contains("https://"))
             {
                 // Don't use embed message if the value to send contains a link.

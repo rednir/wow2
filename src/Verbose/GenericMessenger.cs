@@ -18,7 +18,7 @@ namespace wow2.Verbose
         public static readonly ulong ErrorEmoteId = 804732656721199144;
 
         /// <summary>Notify a channel about a successful action.</summary>
-        public static async Task<RestUserMessage> SendSuccessAsync(ISocketMessageChannel channel, string description, string title = null)
+        public static async Task<IUserMessage> SendSuccessAsync(IMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
                 Description = $"{new Emoji($"<:wowsuccess:{SuccessEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
@@ -27,7 +27,7 @@ namespace wow2.Verbose
             .Build());
 
         /// <summary>Notify a channel about some infomation.</summary>
-        public static async Task<RestUserMessage> SendInfoAsync(ISocketMessageChannel channel, string description, string title = null)
+        public static async Task<IUserMessage> SendInfoAsync(IMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
                 Description = $"{new Emoji($"<:wowinfo:{InfoEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
@@ -36,7 +36,7 @@ namespace wow2.Verbose
             .Build());
 
         /// <summary>Notify a channel about a handled unsuccessful action.</summary>
-        public static async Task<RestUserMessage> SendWarningAsync(ISocketMessageChannel channel, string description, string title = null)
+        public static async Task<IUserMessage> SendWarningAsync(IMessageChannel channel, string description, string title = null)
              => await channel.SendMessageAsync(embed: new EmbedBuilder()
              {
                  Description = $"{new Emoji($"<:wowwarning:{WarningEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
@@ -45,7 +45,7 @@ namespace wow2.Verbose
             .Build());
 
         /// <summary>Notify a channel about an unhandled error.</summary>
-        public static async Task<RestUserMessage> SendErrorAsync(ISocketMessageChannel channel, string description, string title = null)
+        public static async Task<IUserMessage> SendErrorAsync(IMessageChannel channel, string description, string title = null)
             => await channel.SendMessageAsync(embed: new EmbedBuilder()
             {
                 Title = $"{new Emoji($"<:wowerror:{ErrorEmoteId}>")} Something bad happened...",
@@ -55,8 +55,8 @@ namespace wow2.Verbose
             .Build());
 
         /// <summary>Send a generic response to a command in a channel.</summary>
-        public static async Task<RestUserMessage> SendResponseAsync(
-            ISocketMessageChannel channel,
+        public static async Task<IUserMessage> SendResponseAsync(
+            IMessageChannel channel,
             string description = "",
             string title = "",
             List<EmbedFieldBuilder> fieldBuilders = null,
