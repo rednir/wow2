@@ -99,8 +99,8 @@ namespace wow2
 
             await DataManager.EnsureGuildDataFileExistsAsync(recievedMessage.GetGuild().Id);
 
-            await Counting.CheckMessageAsync(recievedMessage);
-            await VerbalMemory.CheckMessageAsync(recievedMessage);
+            await CountingGame.CheckMessageAsync(recievedMessage);
+            await VerbalMemoryGame.CheckMessageAsync(recievedMessage);
             if (recievedMessage.Content.StartsWithWord(DefaultCommandPrefix, true))
             {
                 // The message starts with the command prefix and the prefix is not part of another word.

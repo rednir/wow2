@@ -14,7 +14,7 @@ namespace wow2.Modules.Games
         [Summary("Start counting in a text channel. INCREMENT is the number that will be added each time.")]
         public async Task CountingAsync(float increment = 1)
         {
-            await Counting.StartGame(Context, increment);
+            await CountingGame.StartGame(Context, increment);
         }
 
         [Command("verbal-memory")]
@@ -22,7 +22,7 @@ namespace wow2.Modules.Games
         [Summary("Try remember as many words as you can, discerning words you have seen before from new words")]
         public async Task VerbalMemoryAsync()
         {
-            await VerbalMemory.StartGame(Context);
+            await VerbalMemoryGame.StartGame(Context);
         }
     }
 }

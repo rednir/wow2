@@ -11,7 +11,7 @@ using wow2.Data;
 
 namespace wow2.Modules.Games
 {
-    public class Counting
+    public class CountingGame
     {
         public static async Task StartGame(SocketCommandContext context, float increment)
         {

@@ -9,7 +9,7 @@ using wow2.Data;
 
 namespace wow2.Modules.Games
 {
-    public class VerbalMemory
+    public class VerbalMemoryGame
     {
         public const string SeenKeyword = "s";
         public const string NewKeyword = "n";
@@ -67,7 +67,7 @@ namespace wow2.Modules.Games
             await NextWordAsync(config);
         }
 
-        private static async Task NextWordAsync(VerbalMemoryConfig config)
+        private static async Task NextWordAsync(VerbalMemoryGameConfig config)
         {
             var random = new Random();
 
@@ -79,7 +79,7 @@ namespace wow2.Modules.Games
             config.CurrentWordMessage = await config.InitalContext.Channel.SendMessageAsync(currentWord);
         }
 
-        private static async Task EndGameAsync(VerbalMemoryConfig config)
+        private static async Task EndGameAsync(VerbalMemoryGameConfig config)
         {
             await GenericMessenger.SendInfoAsync(
                 channel: (ISocketMessageChannel)config.InitalContext.Channel, 
