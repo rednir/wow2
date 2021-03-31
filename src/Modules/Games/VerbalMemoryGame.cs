@@ -102,8 +102,6 @@ namespace wow2.Modules.Games
             config.SeenWords = defaultConfig.SeenWords;
             config.UnseenWords = defaultConfig.UnseenWords;
             config.Turns = defaultConfig.Turns;
-
-            Logger.Log(config.SeenWords.Count());
         }
     }
 }
