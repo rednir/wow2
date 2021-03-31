@@ -94,12 +94,16 @@ namespace wow2.Modules.Games
             await GenericMessenger.SendResponseAsync(
                 channel: (ISocketMessageChannel)config.InitalContext.Channel,
                 title: "Final Stats",
-                description: $"You got `{config.Turns}` points, and saw a total of `{config.SeenWords.Count}` different words.");
+                description: $"You got `{config.Turns}` points, with `{config.SeenWords.Count}` different words.");
 
-            config.Turns = 0;
-            config.CurrentWordMessage = null;
-            config.SeenWords = new List<string>();
-            config.UnseenWords = new VerbalMemoryGameConfig().UnseenWords;
+            // TODO: need to find a better way of doing this
+            var defaultConfig = new VerbalMemoryGameConfig();
+            config.CurrentWordMessage = defaultConfig.CurrentWordMessage;
+            config.SeenWords = defaultConfig.SeenWords;
+            config.UnseenWords = defaultConfig.UnseenWords;
+            config.Turns = defaultConfig.Turns;
+
+            Logger.Log(config.SeenWords.Count());
         }
     }
 }
