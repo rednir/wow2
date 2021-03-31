@@ -236,9 +236,10 @@ namespace wow2.Modules.Keywords
         [Command("values")]
         [Alias("listvalues", "values", "list-value", "listvalue", "value", "list")]
         [Summary("Shows a list of values for a keyword.")]
-        public async Task ListKeywordValuesAsync(string keyword)
+        public async Task ListKeywordValuesAsync([Name("value")] params string[] keywordSplit)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
+            string keyword = string.Join(' ', keywordSplit);
             List<KeywordValue> values;
 
             if (!keywordsDictionary.TryGetValue(keyword, out values))
