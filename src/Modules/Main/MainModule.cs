@@ -46,7 +46,7 @@ namespace wow2.Modules.Main
 
             string definition = string.Join(" ", definitionSplit.Where(w => !w.Equals(EventHandlers.DefaultCommandPrefix, StringComparison.CurrentCultureIgnoreCase)));
 
-            if (!config.AliasesDictionary.TryAdd(name, definition))
+            if (config.AliasesDictionary.ContainsKey(name))
             {
                 if (!string.IsNullOrWhiteSpace(definition))
                 {
@@ -55,20 +55,21 @@ namespace wow2.Modules.Main
                 }
                 else
                 {
+                    // Assume the user wants to remove the existing alias.
                     config.AliasesDictionary.Remove(name);
                     await GenericMessenger.SendSuccessAsync(Context.Channel, $"The alias `{name}` was removed.");
                     return;
                 }
             }
-
-            if (string.IsNullOrWhiteSpace(definition))
+            else
             {
-                config.AliasesDictionary.Remove(name);
-                throw new CommandReturnException(Context, $"An alias should have a definition that isn't blank.");
+                if (string.IsNullOrWhiteSpace(definition))
+                    throw new CommandReturnException(Context, $"An alias should have a definition that isn't blank.");
+
+                config.AliasesDictionary.Add(name, definition);
             }
 
             await GenericMessenger.SendSuccessAsync(Context.Channel, $"Typing `{name}` will now execute `{EventHandlers.DefaultCommandPrefix} {definition}`\n{removeAliasText}");
-
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
