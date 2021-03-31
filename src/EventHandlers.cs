@@ -95,6 +95,7 @@ namespace wow2
         public static async Task MessageRecievedAsync(SocketMessage recievedMessage)
         {
             if (recievedMessage.Author.Id == Program.Client.CurrentUser.Id) return;
+            if (recievedMessage.Channel is SocketDMChannel) return;
 
             await DataManager.EnsureGuildDataFileExistsAsync(recievedMessage.GetGuild().Id);
 
