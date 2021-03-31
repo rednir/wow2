@@ -49,11 +49,16 @@ namespace wow2.Modules.Main
             if (!config.AliasesDictionary.TryAdd(name, definition))
             {
                 if (!string.IsNullOrWhiteSpace(definition))
-                    throw new CommandReturnException(Context, $"The alias `{name}` already exists.\n{removeAliasText}");
-
-                config.AliasesDictionary.Remove(name);
-                await GenericMessenger.SendSuccessAsync(Context.Channel, $"The alias `{name}` was removed.");
-                return;
+                {
+                    // Assume the user wants to change the existing alias' definition.
+                    config.AliasesDictionary[name] = definition;
+                }
+                else
+                {
+                    config.AliasesDictionary.Remove(name);
+                    await GenericMessenger.SendSuccessAsync(Context.Channel, $"The alias `{name}` was removed.");
+                    return;
+                }
             }
 
             if (string.IsNullOrWhiteSpace(definition))
