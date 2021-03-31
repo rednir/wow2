@@ -17,8 +17,8 @@ namespace wow2.Modules.Games
     [Summary("For having a bit of fun.")]
     public class GamesModule : ModuleBase<SocketCommandContext>
     {
-        public const string VerbalMemorySeenMessage = "s";
-        public const string VerbalMemoryNewMessage = "n";
+        public const string VerbalMemoryKeywordSeen = "s";
+        public const string VerbalMemoryKeywordNew = "n";
 
         public static async Task CheckMessageIsCountingAsync(SocketMessage recievedMessage)
         {
@@ -55,19 +55,48 @@ namespace wow2.Modules.Games
             }
         }
 
-        public static async Task CheckMessageIsVerbalMemoryAsync(SocketMessage message)
+        public static async Task CheckMessageIsVerbalMemoryAsync(SocketMessage receivedMessage)
         {
-            switch (message.Content)
-            {
-                case VerbalMemoryNewMessage:
-                    break;
+            var config = DataManager.GetGamesConfigForGuild(receivedMessage.GetGuild()).VerbalMemory;
+            
+            if (config.CurrentWordMessage == null) return;
 
-                case VerbalMemorySeenMessage:
-                    break;
+            if (receivedMessage.Channel != config.InitalContext.Channel
+                || receivedMessage.Author != config.InitalContext.User) return;
+
+            string currentWord = config.CurrentWordMessage.Content;
+            switch (receivedMessage.Content)
+            {
+                case VerbalMemoryKeywordNew:
+                    if (config.SeenWords.Contains(currentWord))
+                    {
+                        await EndVerbalMemoryAsync(config);
+                        return;
+                    }
+                    else
+                    {
+                        config.SeenWords.Add(currentWord);
+                        config.UnseenWords.Remove(currentWord);
+                        break;
+                    }
+
+                case VerbalMemoryKeywordSeen:
+                    if (config.SeenWords.Contains(currentWord))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        await EndVerbalMemoryAsync(config);
+                        return;
+                    }
 
                 default:
                     return;
             }
+
+            await config.CurrentWordMessage.DeleteAsync();
+            await VerbalMemoryNextWordAsync(config);
         }
 
         [Command("counting")]
@@ -93,9 +122,11 @@ namespace wow2.Modules.Games
         [Summary("Try remember as many words as you can, discerning words you have seen before from new words")]
         public async Task VerbalMemoryAsync()
         {
-            var config = DataManager.GetGamesConfigForGuild(Context.Guild).Counting;
+            var config = DataManager.GetGamesConfigForGuild(Context.Guild).VerbalMemory;
 
-            await GenericMessenger.SendInfoAsync(Context.Channel, $"Every time I send a word, you must respond with:\n • `s` if you have seen the word previously\n • `n` if the word is new", $"Verbal memory has started for {Context.User.Mention}");
+            config.InitalContext = Context;
+            await GenericMessenger.SendInfoAsync(Context.Channel, $"Every time I send a word, you must respond with:\n • `{VerbalMemoryKeywordSeen}` if you have seen the word previously\n • `{VerbalMemoryKeywordNew}` if the word is new", $"Verbal memory has started for {Context.User.Mention}");
+            await VerbalMemoryNextWordAsync(config);
         }
 
         private static async Task EndCountingAsync(SocketMessage finalMessage)
@@ -152,6 +183,28 @@ namespace wow2.Modules.Games
                 return true;
             }
             return false;
+        }
+
+        private static async Task VerbalMemoryNextWordAsync(VerbalMemoryConfig config)
+        {
+            var random = new Random();
+
+            bool pickSeenWord = (random.NextDouble() >= 0.5) && (config.SeenWords.Count() > 3);
+            string currentWord = pickSeenWord ? 
+                config.SeenWords[random.Next(config.SeenWords.Count())] :
+                config.UnseenWords[random.Next(config.UnseenWords.Count())];
+
+            config.CurrentWordMessage = await config.InitalContext.Channel.SendMessageAsync(currentWord);
+        }
+
+        private static async Task EndVerbalMemoryAsync(VerbalMemoryConfig config)
+        {
+            await GenericMessenger.SendInfoAsync(
+                channel: (ISocketMessageChannel)config.InitalContext.Channel, 
+                description: "Verbal memory has been ended.",
+                title: "Wrong!");
+
+            config.CurrentWordMessage = null;
         }
     }
 }
