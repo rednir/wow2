@@ -67,8 +67,10 @@ namespace wow2.Modules.Voice
 
             if (splitSongRequest.Length == 0)
                 throw new CommandReturnException(Context, "You must type a URL or a search term.");
-            if (((SocketGuildUser)Context.User).VoiceChannel == null)
-                throw new CommandReturnException(Context, "Join a voice channel first before adding song requests.");
+
+            // Might want to consider using this.
+            /*if (((SocketGuildUser)Context.User).VoiceChannel == null)
+                throw new CommandReturnException(Context, "Join a voice channel first before adding song requests.");*/
 
             string songRequest = string.Join(" ", splitSongRequest);
 
