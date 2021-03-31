@@ -17,6 +17,9 @@ namespace wow2.Modules.Games
     [Summary("For having a bit of fun.")]
     public class GamesModule : ModuleBase<SocketCommandContext>
     {
+        public const string VerbalMemorySeenMessage = "s";
+        public const string VerbalMemoryNewMessage = "n";
+
         public static async Task CheckMessageIsCountingAsync(SocketMessage recievedMessage)
         {
             var config = DataManager.GetGamesConfigForGuild(recievedMessage.GetGuild()).Counting;
@@ -52,6 +55,21 @@ namespace wow2.Modules.Games
             }
         }
 
+        public static async Task CheckMessageIsVerbalMemoryAsync(SocketMessage message)
+        {
+            switch (message.Content)
+            {
+                case VerbalMemoryNewMessage:
+                    break;
+
+                case VerbalMemorySeenMessage:
+                    break;
+
+                default:
+                    return;
+            }
+        }
+
         [Command("counting")]
         [Alias("count")]
         [Summary("Start counting in a text channel. INCREMENT is the number that will be added each time.")]
@@ -68,6 +86,16 @@ namespace wow2.Modules.Games
                 return;
 
             await GenericMessenger.SendInfoAsync(Context.Channel, $"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.");
+        }
+
+        [Command("verbal-memory")]
+        [Alias("verbal")]
+        [Summary("Try remember as many words as you can, discerning words you have seen before from new words")]
+        public async Task VerbalMemoryAsync()
+        {
+            var config = DataManager.GetGamesConfigForGuild(Context.Guild).Counting;
+
+            await GenericMessenger.SendInfoAsync(Context.Channel, $"Every time I send a word, you must respond with:\n • `s` if you have seen the word previously\n • `n` if the word is new", $"Verbal memory has started for {Context.User.Mention}");
         }
 
         private static async Task EndCountingAsync(SocketMessage finalMessage)

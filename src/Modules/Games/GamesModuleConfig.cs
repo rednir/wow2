@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Discord.WebSocket;
+using Discord.Commands;
 
 namespace wow2.Modules.Games
 {
@@ -8,6 +9,9 @@ namespace wow2.Modules.Games
     {
         [JsonIgnore]
         public CountingConfig Counting { get; set; } = new CountingConfig();
+
+        [JsonIgnore]
+        public VerbalMemoryConfig VerbalMemory { get; set; } = new VerbalMemoryConfig();
     }
 
     public class CountingConfig
@@ -17,5 +21,13 @@ namespace wow2.Modules.Games
         public float Increment { get; set; }
         public List<SocketMessage> ListOfMessages { get; set; } = new List<SocketMessage>();
         public ISocketMessageChannel Channel { get; set; }
+    }
+
+    public class VerbalMemoryConfig
+    {
+        public string[] UnseenWords { get; set; } = { };
+        public string[] SeenWords { get; set; } = { };
+
+        public ICommandContext InitalContext { get; set; }
     }
 }
