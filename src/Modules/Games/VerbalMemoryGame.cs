@@ -73,7 +73,7 @@ namespace wow2.Modules.Games
             var config = DataManager.GetGamesConfigForGuild(context.Guild).VerbalMemory;
 
             config.InitalContext = context;
-            await GenericMessenger.SendInfoAsync(context.Channel, $"Every time I send a word, you must respond with:\n • `{SeenKeyword}` if you have seen the word previously\n • `{NewKeyword}` if the word is new", $"Verbal memory has started for {context.User.Mention}");
+            await GenericMessenger.SendInfoAsync(context.Channel, $"After every word:\n • respond with `{SeenKeyword}` if you have seen the word previously\n • or `{NewKeyword}` if the word is new", $"Verbal memory has started for {context.User.Mention}");
             await NextWordAsync(config);
         }
 
