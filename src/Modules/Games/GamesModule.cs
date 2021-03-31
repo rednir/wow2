@@ -1,13 +1,5 @@
-using System;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using Discord;
-using Discord.WebSocket;
 using Discord.Commands;
-using wow2.Verbose;
-using wow2.Extentions;
-using wow2.Data;
 
 namespace wow2.Modules.Games
 {
@@ -17,104 +9,12 @@ namespace wow2.Modules.Games
     [Summary("For having a bit of fun.")]
     public class GamesModule : ModuleBase<SocketCommandContext>
     {
-        public const string VerbalMemoryKeywordSeen = "s";
-        public const string VerbalMemoryKeywordNew = "n";
-
-        public static async Task CheckMessageIsCountingAsync(SocketMessage recievedMessage)
-        {
-            var config = DataManager.GetGamesConfigForGuild(recievedMessage.GetGuild()).Counting;
-            float userNumber;
-
-            if (recievedMessage.Author.IsBot || config.NextNumber == null || config.Channel != recievedMessage.Channel) return;
-
-            try { userNumber = Convert.ToSingle(recievedMessage.Content); }
-            catch { return; }
-
-            // If this is the first counting message, there is no need to check if a user counts twice in a row.
-            if (config.ListOfMessages.Count != 0)
-            {
-                if (recievedMessage.Author == config.ListOfMessages.Last().Author)
-                {
-                    await GenericMessenger.SendWarningAsync(recievedMessage.Channel, "Counting twice in a row is no fun.");
-                    return;
-                }
-            }
-
-            config.ListOfMessages.Add(recievedMessage);
-            if (userNumber == config.NextNumber)
-            {
-                config.NextNumber += config.Increment;
-                await recievedMessage.AddReactionAsync(new Emoji("✅"));
-                await EndCountingIfNumberIsInvalidAsync(recievedMessage, config.NextNumber);
-            }
-            else
-            {
-                await recievedMessage.AddReactionAsync(new Emoji("❎"));
-                await GenericMessenger.SendInfoAsync(recievedMessage.Channel, $"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`");
-                await EndCountingAsync(recievedMessage);
-            }
-        }
-
-        public static async Task CheckMessageIsVerbalMemoryAsync(SocketMessage receivedMessage)
-        {
-            var config = DataManager.GetGamesConfigForGuild(receivedMessage.GetGuild()).VerbalMemory;
-            
-            if (config.CurrentWordMessage == null) return;
-
-            if (receivedMessage.Channel != config.InitalContext.Channel
-                || receivedMessage.Author != config.InitalContext.User) return;
-
-            string currentWord = config.CurrentWordMessage.Content;
-            switch (receivedMessage.Content)
-            {
-                case VerbalMemoryKeywordNew:
-                    if (config.SeenWords.Contains(currentWord))
-                    {
-                        await EndVerbalMemoryAsync(config);
-                        return;
-                    }
-                    else
-                    {
-                        config.SeenWords.Add(currentWord);
-                        config.UnseenWords.Remove(currentWord);
-                        break;
-                    }
-
-                case VerbalMemoryKeywordSeen:
-                    if (config.SeenWords.Contains(currentWord))
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        await EndVerbalMemoryAsync(config);
-                        return;
-                    }
-
-                default:
-                    return;
-            }
-
-            await config.CurrentWordMessage.DeleteAsync();
-            await VerbalMemoryNextWordAsync(config);
-        }
-
         [Command("counting")]
         [Alias("count")]
         [Summary("Start counting in a text channel. INCREMENT is the number that will be added each time.")]
         public async Task CountingAsync(float increment = 1)
         {
-            var config = DataManager.GetGamesConfigForGuild(Context.Guild).Counting;
-
-            config.Channel = Context.Channel;
-            config.Increment = increment;
-            config.NextNumber = increment;
-            config.ListOfMessages = new List<SocketMessage>();
-
-            if (await EndCountingIfNumberIsInvalidAsync(Context.Message, increment))
-                return;
-
-            await GenericMessenger.SendInfoAsync(Context.Channel, $"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.");
+            await Counting.StartGame(Context, increment);
         }
 
         [Command("verbal-memory")]
@@ -122,89 +22,7 @@ namespace wow2.Modules.Games
         [Summary("Try remember as many words as you can, discerning words you have seen before from new words")]
         public async Task VerbalMemoryAsync()
         {
-            var config = DataManager.GetGamesConfigForGuild(Context.Guild).VerbalMemory;
-
-            config.InitalContext = Context;
-            await GenericMessenger.SendInfoAsync(Context.Channel, $"Every time I send a word, you must respond with:\n • `{VerbalMemoryKeywordSeen}` if you have seen the word previously\n • `{VerbalMemoryKeywordNew}` if the word is new", $"Verbal memory has started for {Context.User.Mention}");
-            await VerbalMemoryNextWordAsync(config);
-        }
-
-        private static async Task EndCountingAsync(SocketMessage finalMessage)
-        {
-            var config = DataManager.GetGamesConfigForGuild(finalMessage.GetGuild()).Counting;
-            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-            var dictionaryOfParticipants = new Dictionary<SocketUser, int>();
-
-            // Get the participants and how many messages they sent
-            foreach (SocketMessage message in config.ListOfMessages)
-            {
-                dictionaryOfParticipants.TryAdd(message.Author, 0);
-                dictionaryOfParticipants[message.Author]++;
-            }
-
-            // Build fields for each participant.
-            foreach (KeyValuePair<SocketUser, int> participant in dictionaryOfParticipants)
-            {
-                var fieldBuilderForParticipant = new EmbedFieldBuilder()
-                {
-                    Name = participant.Key.Username,
-                    Value = $"{participant.Value} messages ({Math.Round((float)participant.Value / (float)dictionaryOfParticipants.Values.Sum() * 100f)}% helpful)",
-                    IsInline = true
-                };
-                listOfFieldBuilders.Add(fieldBuilderForParticipant);
-            }
-
-            string commentOnFinalNumber;
-            float absNextNumber = Math.Abs((float)config.NextNumber);
-            float absIncrement = Math.Abs((float)config.Increment);
-
-            if (absNextNumber < 3 * absIncrement) commentOnFinalNumber = "Pathetic.";
-            else if (absNextNumber < 25 * absIncrement) commentOnFinalNumber = "There's plenty room for improvement.";
-            else if (config.NextNumber < 75 * absIncrement) commentOnFinalNumber = "Not bad!";
-            else if (absNextNumber >= 75 * absIncrement) commentOnFinalNumber = "Amazing!";
-            else commentOnFinalNumber = "";
-
-            await GenericMessenger.SendResponseAsync(
-                channel: finalMessage.Channel,
-                fieldBuilders: listOfFieldBuilders,
-                title: "Final Stats",
-                description: $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*");
-
-            config.NextNumber = null;
-        }
-
-        /// <returns>True if counting was ended, otherwise false</returns>
-        private static async Task<bool> EndCountingIfNumberIsInvalidAsync(SocketMessage message, float? number)
-        {
-            if (number >= float.MaxValue || number <= float.MinValue)
-            {
-                await GenericMessenger.SendWarningAsync(message.Channel, "Woah, that's a big number.\nHate to be a killjoy, but even a computer has its limits.");
-                await EndCountingAsync(message);
-                return true;
-            }
-            return false;
-        }
-
-        private static async Task VerbalMemoryNextWordAsync(VerbalMemoryConfig config)
-        {
-            var random = new Random();
-
-            bool pickSeenWord = (random.NextDouble() >= 0.5) && (config.SeenWords.Count() > 3);
-            string currentWord = pickSeenWord ? 
-                config.SeenWords[random.Next(config.SeenWords.Count())] :
-                config.UnseenWords[random.Next(config.UnseenWords.Count())];
-
-            config.CurrentWordMessage = await config.InitalContext.Channel.SendMessageAsync(currentWord);
-        }
-
-        private static async Task EndVerbalMemoryAsync(VerbalMemoryConfig config)
-        {
-            await GenericMessenger.SendInfoAsync(
-                channel: (ISocketMessageChannel)config.InitalContext.Channel, 
-                description: "Verbal memory has been ended.",
-                title: "Wrong!");
-
-            config.CurrentWordMessage = null;
+            await VerbalMemory.StartGame(Context);
         }
     }
 }
