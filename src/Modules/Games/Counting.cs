@@ -17,7 +17,7 @@ namespace wow2.Modules.Games
         {
             var config = DataManager.GetGamesConfigForGuild(context.Guild).Counting;
 
-            config.Channel = context.Channel;
+            config.InitalContext = context;
             config.Increment = increment;
             config.NextNumber = increment;
             config.ListOfMessages = new List<SocketMessage>();
@@ -33,7 +33,7 @@ namespace wow2.Modules.Games
             var config = DataManager.GetGamesConfigForGuild(recievedMessage.GetGuild()).Counting;
             float userNumber;
 
-            if (recievedMessage.Author.IsBot || config.NextNumber == null || config.Channel != recievedMessage.Channel) return;
+            if (recievedMessage.Author.IsBot || config.NextNumber == null || config.InitalContext.Channel != recievedMessage.Channel) return;
 
             try { userNumber = Convert.ToSingle(recievedMessage.Content); }
             catch { return; }
