@@ -10,6 +10,7 @@ using wow2.Modules.Main;
 using wow2.Modules.Keywords;
 using wow2.Modules.Games;
 using wow2.Modules.Voice;
+using wow2.Modules.Moderator;
 
 namespace wow2.Data
 {
@@ -131,5 +132,8 @@ namespace wow2.Data
 
         public static VoiceModuleConfig GetVoiceConfigForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Voice;
+
+        public static ModeratorModuleConfig GetModeratorConfigForGuild(SocketGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Moderator;
     }
 }
