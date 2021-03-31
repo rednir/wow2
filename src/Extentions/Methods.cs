@@ -100,6 +100,9 @@ namespace wow2.Extentions
 
         public static void RenameKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey oldKey, TKey newKey)
         {
+            if (dictionary.ContainsKey(newKey))
+                throw new ArgumentException($"The key {newKey} exists in the dictionary.");
+
             var valuesToMove = dictionary[oldKey];
             dictionary.Remove(oldKey);
             dictionary.Add(newKey, valuesToMove);

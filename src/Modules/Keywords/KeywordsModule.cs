@@ -194,6 +194,8 @@ namespace wow2.Modules.Keywords
 
             if (!keywordsDictionary.ContainsKey(oldKeyword))
                 throw new CommandReturnException(Context, "Can't rename a keyword that doesn't exist. Did you make a typo?", "No such keyword");
+            if (keywordsDictionary.ContainsKey(newKeyword))
+                throw new CommandReturnException(Context, $"The keyword `{newKeyword}` already exists.");
 
             keywordsDictionary.RenameKey(oldKeyword, newKeyword);
 
