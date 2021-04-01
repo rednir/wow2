@@ -66,6 +66,18 @@ namespace wow2.Modules.Moderator
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
+        [Command("toggle-auto-mod")]
+        [Summary("Toggles whether the bot will mute or give warnings to users, for example if spam is detected.")]
+        [RequireUserPermission(GuildPermission.BanMembers)]
+        public async Task ToggleAutoMod()
+        {
+            var config = DataManager.GetModeratorConfigForGuild(Context.Guild);
+
+            config.IsAutoModOn = !config.IsAutoModOn;
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Auto mod is now `{(config.IsAutoModOn ? "on" : "off")}`");
+        }
+
         private UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
         {
             UserRecord matchingRecord = config.UserRecords
