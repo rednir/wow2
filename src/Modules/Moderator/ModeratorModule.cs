@@ -18,7 +18,7 @@ namespace wow2.Modules.Moderator
         [Command("warn")]
         [Summary("Sends a warning to a user with an optional message. Requires the 'Ban Members' permission.")]
         [RequireUserPermission(GuildPermission.BanMembers)]
-        public async Task WarnAsync(SocketGuildUser user, [Name("MESSAGE")] params string[] messageSplit)
+        public async Task WarnAsync([Name("MENTION")] SocketGuildUser user, [Name("MESSAGE")] params string[] messageSplit)
         {
             var config = DataManager.GetModeratorConfigForGuild(Context.Guild);
 
@@ -48,9 +48,20 @@ namespace wow2.Modules.Moderator
         [Alias("silence", "timeout")]
         [Summary("Temporarily disables a user's permission to speak. Requires the 'Ban Members' permission.")]
         [RequireUserPermission(GuildPermission.BanMembers)]
-        public async Task MuteAsync(SocketUser user, string time = "30m", string message = "No reason given.")
+        public async Task MuteAsync([Name("MENTION")] SocketGuildUser user, string time = "30m", string message = "No reason given.")
         {
             throw new NotImplementedException(); 
+        }
+        
+        [Command("user-record")]
+        [Alias("user", "record")]
+        [Summary("Gets a user record.")]
+        public async Task UserAsync([Name("MENTION")] SocketGuildUser user)
+        {
+            var config = DataManager.GetModeratorConfigForGuild(Context.Guild);
+            UserRecord record = GetUserRecord(config, user.Id);
+
+            await GenericMessenger.SendInfoAsync(Context.Channel, $"`{record.Warnings.Count()}` warnings, {record.Mutes.Count()} mutes.");
         }
 
         [Command("set-warnings-until-ban")]
