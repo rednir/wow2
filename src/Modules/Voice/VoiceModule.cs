@@ -114,12 +114,13 @@ namespace wow2.Modules.Voice
 
             if (config.CurrentlyPlayingSongRequest == null)
                 throw new CommandReturnException(Context, "There's nothing playing right now.");
-            if (config.ListOfUserIdsThatVoteSkipped.Contains(Context.User.Id))
-                throw new CommandReturnException(Context, "You've already sent a skip request.");
 
-            config.ListOfUserIdsThatVoteSkipped.Add(Context.User.Id);
-            if (config.ListOfUserIdsThatVoteSkipped.Count() < config.VoteSkipsNeeded)
+            if (config.ListOfUserIdsThatVoteSkipped.Count() + 1 < config.VoteSkipsNeeded)
             {
+                if (config.ListOfUserIdsThatVoteSkipped.Contains(Context.User.Id))
+                    throw new CommandReturnException(Context, "You've already sent a skip request.");
+
+                config.ListOfUserIdsThatVoteSkipped.Add(Context.User.Id);
                 await GenericMessenger.SendInfoAsync(Context.Channel, $"Waiting for `{config.VoteSkipsNeeded - config.ListOfUserIdsThatVoteSkipped.Count()}` more vote(s) before skipping.\n", "Sent skip request");
                 return;
             }
