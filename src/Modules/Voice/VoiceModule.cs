@@ -200,11 +200,10 @@ namespace wow2.Modules.Voice
         [Summary("Sets the number of votes needed to skip a song request to NUMBER.")]
         public async Task SetVoteSkipsNeeded([Name("NUMBER")] int newNumberOfSkips)
         {
-            if (newNumberOfSkips <= 0)
-                throw new CommandReturnException(Context, "The number of votes required is less than the amount of people in the server.", "Number too small");
-            if (newNumberOfSkips >= Context.Guild.MemberCount)
+            if (newNumberOfSkips > Context.Guild.MemberCount)
                 throw new CommandReturnException(Context, "The number of votes required is greater than the amount of people in the server.", "Number too large");
 
+            newNumberOfSkips = Math.Max(newNumberOfSkips, 1);
             DataManager.GetVoiceConfigForGuild(Context.Guild).VoteSkipsNeeded = newNumberOfSkips;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
             await GenericMessenger.SendSuccessAsync(Context.Channel, $"`{newNumberOfSkips}` votes are now required to skip a song request.");
