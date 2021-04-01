@@ -142,23 +142,5 @@ namespace wow2.Extentions
                 .Insert(0, ' ').Append(' ').ToString();
             return stringToSearchWithBoundaries.Contains($" {word} ");
         }
-
-        /// <summary>Gets an array of string from a message's content if it exists.</summary>
-        /// <returns>The string from the message's content, otherwise the string joined from the string array.</returns>
-        public static string GetParams(this IUserMessage message, string[] valueSplit)
-        {
-            try
-            {
-                // Discord.Net does not store newlines in `params string[]`, so get a substring of the message..
-                return message.Content.Substring(
-                    message.Content.IndexOf(valueSplit.First()))
-                    .TrimEnd('\"');
-            }
-            catch
-            {
-                // Fallback in case the message differs from the command input. 
-                return string.Join(" ", valueSplit);
-            }
-        }
     }
 }

@@ -121,7 +121,7 @@ namespace wow2.Modules.Keywords
                 throw new CommandReturnException(Context, "No value to add to the keyword was specified.");
 
             keyword = keyword.ToLower();
-            string valueContent = Context.Message.GetParams(valueSplit);
+            string valueContent = string.Join(' ', valueSplit);
 
             // Check whether the user has specified a title.
             string valueTitle = valueContent.TextBetween("**");

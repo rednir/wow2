@@ -83,7 +83,7 @@ namespace wow2.Modules.Text
             if (!textSplit.Contains(oldValue))
                 throw new CommandReturnException(Context, $"There are no instances of `{oldValue}` in the given text, so there's nothing to replace.");
 
-            var text = Context.Message.GetParams(textSplit);
+            var text = string.Join(' ', textSplit);
 
             await GenericMessenger.SendResponseAsync(Context.Channel, text.Replace(oldValue, $"**{newValue}**"));
         }
@@ -96,9 +96,7 @@ namespace wow2.Modules.Text
             if (textSplit.Count() == 0)
                 throw new CommandReturnException(Context, "No text was given to emojify.");
 
-            var text = Context.Message
-                .GetParams(textSplit)
-                .RemoveUnnecessaryWhiteSpace();
+            var text = string.Join(' ', textSplit).RemoveUnnecessaryWhiteSpace();
 
             var random = new Random();
             var stringBuilder = new StringBuilder();
