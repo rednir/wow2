@@ -30,13 +30,18 @@ namespace wow2.Modules.Moderator
                 RequestedBy = Context.User.Id,
                 DateTimeBinary = DateTime.Now.ToBinary()
             });
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
 
             IDMChannel dmChannel = await user.GetOrCreateDMChannelAsync();
             await GenericMessenger.SendWarningAsync(
                 channel: dmChannel,
                 description: $"You have recieved a warning from {Context.User.Mention} in the server '{Context.Guild.Name}'\nFurther warnings may result in a ban.\n```\n{message}\n```",
                 title: "You have been warned!");
+
+            await GenericMessenger.SendSuccessAsync(
+                channel: Context.Channel,
+                description: $"The user {user.Mention} has been warned by {Context.User.Mention}.");
+
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("mute")]
