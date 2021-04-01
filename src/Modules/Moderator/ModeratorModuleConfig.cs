@@ -4,7 +4,7 @@ namespace wow2.Modules.Moderator
 {
     public class ModeratorModuleConfig
     {
-        public List<UserRecord> UserRecords = new List<UserRecord>();
+        public List<UserRecord> UserRecords { get; set; } = new List<UserRecord>();
     }
 
     public class UserRecord

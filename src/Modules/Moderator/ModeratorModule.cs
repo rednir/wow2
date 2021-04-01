@@ -33,7 +33,10 @@ namespace wow2.Modules.Moderator
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
 
             IDMChannel dmChannel = await user.GetOrCreateDMChannelAsync();
-            await GenericMessenger.SendWarningAsync(dmChannel, $"You have recieved a warning from {Context.User.Mention} in the server '{Context.Guild.Name}'\nFurther warnings may result in a ban.\n```\n{message}\n```", "You have been warned!");
+            await GenericMessenger.SendWarningAsync(
+                channel: dmChannel,
+                description: $"You have recieved a warning from {Context.User.Mention} in the server '{Context.Guild.Name}'\nFurther warnings may result in a ban.\n```\n{message}\n```",
+                title: "You have been warned!");
         }
 
         [Command("mute")]
@@ -50,7 +53,8 @@ namespace wow2.Modules.Moderator
             UserRecord matchingRecord = config.UserRecords
                 .Where(record => record.UserId == id)
                 .FirstOrDefault();
-
+            
+            // Ensure the user record exists
             if (matchingRecord == null)
             {
                 config.UserRecords.Add(new UserRecord()
@@ -61,6 +65,7 @@ namespace wow2.Modules.Moderator
                 // Could potentially be unsafe?
                 matchingRecord = config.UserRecords.Last();
             }
+
             return matchingRecord;
         }
         
