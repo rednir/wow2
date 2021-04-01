@@ -5,6 +5,7 @@ namespace wow2.Modules.Moderator
     public class ModeratorModuleConfig
     {
         public List<UserRecord> UserRecords { get; set; } = new List<UserRecord>();
+        public int WarningsUntilBan { get; set; } = 3;
     }
 
     public class UserRecord

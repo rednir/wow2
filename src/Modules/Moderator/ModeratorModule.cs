@@ -16,8 +16,8 @@ namespace wow2.Modules.Moderator
     public class ModeratorModule : ModuleBase<SocketCommandContext>
     {
         [Command("warn")]
-        [Summary("Sends a warning to a user with an optional message. Requires the 'Kick Members' permission.")]
-        [RequireUserPermission(GuildPermission.KickMembers)]
+        [Summary("Sends a warning to a user with an optional message. Requires the 'Ban Members' permission.")]
+        [RequireUserPermission(GuildPermission.BanMembers)]
         public async Task WarnAsync(SocketGuildUser user, [Name("MESSAGE")] params string[] messageSplit)
         {
             var config = DataManager.GetModeratorConfigForGuild(Context.Guild);
@@ -41,11 +41,24 @@ namespace wow2.Modules.Moderator
 
         [Command("mute")]
         [Alias("silence", "timeout")]
-        [Summary("Temporarily disables a user's permission to speak. Requires the 'Kick Members' permission.")]
-        [RequireUserPermission(GuildPermission.KickMembers)]
+        [Summary("Temporarily disables a user's permission to speak. Requires the 'Ban Members' permission.")]
+        [RequireUserPermission(GuildPermission.BanMembers)]
         public async Task MuteAsync(SocketUser user, string time = "30m", string message = "No reason given.")
         {
             throw new NotImplementedException(); 
+        }
+
+        [Command("set-warnings-until-ban")]
+        [Summary("Sets the number of warnings required before a user is automatically banned. Requires the 'Ban Members' permission.")]
+        [RequireUserPermission(GuildPermission.BanMembers)]
+        public async Task SetWarningsUntilBan(int number)
+        {
+            if (number < 2)
+                throw new CommandReturnException(Context, "Number is too small.");
+            
+            DataManager.GetModeratorConfigForGuild(Context.Guild).WarningsUntilBan = number;
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"{number} warnings will result in a ban.");
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         private UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
@@ -68,6 +81,5 @@ namespace wow2.Modules.Moderator
 
             return matchingRecord;
         }
-        
     }
 }
