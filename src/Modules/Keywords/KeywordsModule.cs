@@ -261,18 +261,22 @@ namespace wow2.Modules.Keywords
         [Summary("Toggles whether bot responses to keywords should have a wastebasket reaction, allowing a user to delete the message.")]
         public async Task ToggleDeleteReactionAsync()
         {
-            DataManager.GetKeywordsConfigForGuild(Context.Guild).IsDeleteReactionOn = !DataManager.GetKeywordsConfigForGuild(Context.Guild).IsDeleteReactionOn;
+            var config = DataManager.GetKeywordsConfigForGuild(Context.Guild);
+
+            config.IsDeleteReactionOn = !config.IsDeleteReactionOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Delete reaction is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).IsDeleteReactionOn ? "on" : "off")}` for keyword responses.");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Delete reaction is now `{(config.IsDeleteReactionOn ? "on" : "off")}` for keyword responses.");
         }
 
         [Command("toggle-like-reaction")]
         [Summary("Toggles whether bot responses to keywords should have a thumbs up reaction.")]
         public async Task ToggleLikeReactionAsync()
         {
-            DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn = !DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn;
+            var config = DataManager.GetKeywordsConfigForGuild(Context.Guild);
+
+            config.IsLikeReactionOn = !DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Like reaction is now `{(DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn ? "on" : "off")}` for keyword responses.");
+            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Like reaction is now `{(config.IsLikeReactionOn ? "on" : "off")}` for keyword responses.");
         }
     }
 }
