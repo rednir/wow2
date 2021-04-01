@@ -80,10 +80,11 @@ namespace wow2.Modules.Text
         {
             if (textSplit.Count() == 0)
                 throw new CommandReturnException(Context, "No text was given.");
-            if (!textSplit.Contains(oldValue))
-                throw new CommandReturnException(Context, $"There are no instances of `{oldValue}` in the given text, so there's nothing to replace.");
 
             var text = string.Join(' ', textSplit);
+
+            if (!text.Contains(oldValue))
+                throw new CommandReturnException(Context, $"There are no instances of `{oldValue}` in the given text, so there's nothing to replace.");
 
             await GenericMessenger.SendResponseAsync(Context.Channel, text.Replace(oldValue, $"**{newValue}**"));
         }
