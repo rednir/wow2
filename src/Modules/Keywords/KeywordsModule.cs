@@ -232,7 +232,7 @@ namespace wow2.Modules.Keywords
                 channel: Context.Channel,
                 fieldBuilders: listOfFieldBuilders,
                 fieldBuildersPage: page,
-                title: "Keywords",
+                title: "📒 Keywords",
                 description: $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*");
         }
 
@@ -254,7 +254,10 @@ namespace wow2.Modules.Keywords
                 stringBuilderForValueList.Append($"```{value.Content}```");
             }
 
-            await GenericMessenger.SendResponseAsync(Context.Channel, $"*There are {values.Count()} values in total, as listed below.*\n{stringBuilderForValueList.ToString()}", $"Values for '{keyword}'");
+            await GenericMessenger.SendResponseAsync(
+                channel: Context.Channel,
+                description: $"*There are {values.Count()} values in total, as listed below.*\n{stringBuilderForValueList.ToString()}",
+                title: $"📒 Values for '{keyword}'");
         }
 
         [Command("toggle-delete-reaction")]

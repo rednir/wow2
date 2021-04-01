@@ -28,11 +28,17 @@ namespace wow2.Modules.Main
         {
             if (string.IsNullOrWhiteSpace(group))
             {
-                await GenericMessenger.SendResponseAsync(Context.Channel, fieldBuilders: await ModuleInfoToEmbedFieldsAsync(), title: "Help");
+                await GenericMessenger.SendResponseAsync(
+                    channel: Context.Channel,
+                    fieldBuilders: await ModuleInfoToEmbedFieldsAsync(),
+                    title: "📃 Help");
             }
             else
             {
-                await GenericMessenger.SendResponseAsync(Context.Channel, fieldBuilders: await CommandInfoToEmbedFieldsAsync(group), title: $"Command Help");
+                await GenericMessenger.SendResponseAsync(
+                    channel: Context.Channel,
+                    fieldBuilders: await CommandInfoToEmbedFieldsAsync(group),
+                    title: $"📃 Command Help");
             }
         }
 
@@ -96,7 +102,7 @@ namespace wow2.Modules.Main
             await GenericMessenger.SendResponseAsync(
                 channel: Context.Channel,
                 fieldBuilders: listOfFieldBuilders,
-                title: "List of Aliases",
+                title: "📎 List of Aliases",
                 description: "To remove any of these aliases, set the alias definition to a blank value.");
         }
 

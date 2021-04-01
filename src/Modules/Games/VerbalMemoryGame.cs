@@ -93,7 +93,7 @@ namespace wow2.Modules.Games
         {
             await GenericMessenger.SendResponseAsync(
                 channel: (ISocketMessageChannel)config.InitalContext.Channel,
-                title: "Final Stats",
+                title: "📈 Final Stats",
                 description: $"You got `{config.Turns}` points, with `{config.SeenWords.Count}` different words.");
 
             // TODO: need to find a better way of doing this

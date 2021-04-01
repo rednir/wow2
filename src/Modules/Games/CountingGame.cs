@@ -100,7 +100,7 @@ namespace wow2.Modules.Games
             await GenericMessenger.SendResponseAsync(
                 channel: (ISocketMessageChannel)config.InitalContext.Channel,
                 fieldBuilders: listOfFieldBuilders,
-                title: "Final Stats",
+                title: "📈 Final Stats",
                 description: $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*");
 
             config.NextNumber = null;
