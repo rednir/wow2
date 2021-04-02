@@ -1,8 +1,6 @@
-using System;
 using System.Threading;
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
-using Discord.WebSocket;
 using Discord.Audio;
 
 namespace wow2.Modules.Voice
@@ -26,12 +24,5 @@ namespace wow2.Modules.Voice
 
         [JsonIgnore]
         public CancellationTokenSource CtsForAudioStreaming { get; set; } = new CancellationTokenSource();
-    }
-
-    public class UserSongRequest
-    {
-        public VideoMetadata VideoMetadata { get; set; }
-        public DateTime TimeRequested { get; set; }
-        public SocketUser RequestedBy { get; set; }
     }
 }
