@@ -64,7 +64,7 @@ namespace wow2.Modules.Games
             }
 
             config.Turns++;
-            await config.CurrentWordMessage.DeleteAsync();
+            await receivedMessage.DeleteAsync();
             await NextWordAsync(config);
         }
 
@@ -89,7 +89,14 @@ namespace wow2.Modules.Games
                 config.SeenWords[random.Next(config.SeenWords.Count())] :
                 config.UnseenWords[random.Next(config.UnseenWords.Count())];
 
-            config.CurrentWordMessage = await config.InitalContext.Channel.SendMessageAsync(currentWord);
+            if (config.CurrentWordMessage == null)
+            {
+                config.CurrentWordMessage = await config.InitalContext.Channel.SendMessageAsync(currentWord);
+            }
+            else
+            {
+                await config.CurrentWordMessage.ModifyAsync(message => message.Content = currentWord);
+            }
         }
 
         private static async Task EndGameAsync(VerbalMemoryGameConfig config)
