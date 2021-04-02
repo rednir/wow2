@@ -9,7 +9,8 @@ using wow2.Verbose.Messages;
 using wow2.Modules;
 using wow2.Modules.Main;
 using wow2.Modules.Keywords;
-using wow2.Modules.Games;
+using wow2.Modules.Games.Counting;
+using wow2.Modules.Games.VerbalMemory;
 using wow2.Extentions;
 using wow2.Data;
 

@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 using Discord.Commands;
+using wow2.Modules.Games.VerbalMemory;
+using wow2.Modules.Games.Counting;
 
 namespace wow2.Modules.Games
 {
