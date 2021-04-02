@@ -113,15 +113,11 @@ namespace wow2.Modules.Keywords
 
         [Command("add")]
         [Summary("Adds value(s) to a keyword, creating a new keyword if it doesn't exist.")]
-        public async Task AddAsync(string keyword, [Name("value")] params string[] valueSplit)
+        public async Task AddAsync(string keyword, [Name("value")] [Remainder] string valueContent)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
 
-            if (valueSplit.Length == 0)
-                throw new CommandReturnException(Context, "No value to add to the keyword was specified.");
-
             keyword = keyword.ToLower();
-            string valueContent = string.Join(' ', valueSplit);
 
             // Check whether the user has specified a title.
             string valueTitle = valueContent.TextBetween("**");
@@ -155,7 +151,7 @@ namespace wow2.Modules.Keywords
         [Command("remove")]
         [Alias("delete")]
         [Summary("Removes value(s) from a keyword, or if none are specified, removes all values and the keyword.")]
-        public async Task RemoveAsync(string keyword, [Name("value")] params string[] valueSplit)
+        public async Task RemoveAsync(string keyword, [Name("value")] [Remainder] string valueContent = null)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
             keyword = keyword.ToLower();
@@ -163,7 +159,7 @@ namespace wow2.Modules.Keywords
             if (!keywordsDictionary.ContainsKey(keyword))
                 throw new CommandReturnException(Context, $"No such keyword `{keyword}` exists. Did you make a typo?");
 
-            if (valueSplit.Length == 0)
+            if (string.IsNullOrEmpty(valueContent))
             {
                 // No values have been specified, so assume the user wants to remove the keyword.
                 keywordsDictionary.Remove(keyword);
@@ -171,16 +167,14 @@ namespace wow2.Modules.Keywords
             }
             else
             {
-                string value = string.Join(" ", valueSplit);
-
-                if (keywordsDictionary[keyword].RemoveAll(x => x.Content.Equals(value, StringComparison.CurrentCultureIgnoreCase)) == 0)
-                    throw new CommandReturnException(Context, $"No such value `{value}` exists. Did you make a typo?");
+                if (keywordsDictionary[keyword].RemoveAll(x => x.Content.Equals(valueContent, StringComparison.CurrentCultureIgnoreCase)) == 0)
+                    throw new CommandReturnException(Context, $"No such value `{valueContent}` exists. Did you make a typo?");
 
                 // Discard keyword if it has no values.
                 if (keywordsDictionary[keyword].Count == 0)
                     keywordsDictionary.Remove(keyword);
 
-                await GenericMessenger.SendSuccessAsync(Context.Channel, $"Sucessfully removed `{value}` from `{keyword}`.");
+                await GenericMessenger.SendSuccessAsync(Context.Channel, $"Sucessfully removed `{valueContent}` from `{keyword}`.");
             }
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -188,10 +182,9 @@ namespace wow2.Modules.Keywords
         [Command("rename")]
         [Alias("edit", "change")]
         [Summary("Renames a keyword, leaving its values unchanged.")]
-        public async Task RenameAsync(string oldKeyword, [Name("NEWKEYWORD")] params string[] newKeywordSplit)
+        public async Task RenameAsync(string oldKeyword, [Remainder] string newKeyword)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
-            string newKeyword = string.Join(" ", newKeywordSplit);
 
             if (!keywordsDictionary.ContainsKey(oldKeyword))
                 throw new CommandReturnException(Context, "Can't rename a keyword that doesn't exist. Did you make a typo?", "No such keyword");
@@ -239,10 +232,9 @@ namespace wow2.Modules.Keywords
         [Command("values")]
         [Alias("listvalues", "values", "list-value", "listvalue", "value", "list")]
         [Summary("Shows a list of values for a keyword.")]
-        public async Task ListKeywordValuesAsync([Name("value")] params string[] keywordSplit)
+        public async Task ListKeywordValuesAsync([Name("keyword")] [Remainder] string keyword)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
-            string keyword = string.Join(' ', keywordSplit);
             List<KeywordValue> values;
 
             if (!keywordsDictionary.TryGetValue(keyword, out values))

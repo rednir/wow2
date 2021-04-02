@@ -64,18 +64,13 @@ namespace wow2.Modules.Voice
         [Command("add")]
         [Alias("play")]
         [Summary("Adds REQUEST to the song request queue. REQUEST can be a video URL or a youtube search term.")]
-        public async Task AddAsync([Name("REQUEST")] params string[] splitSongRequest)
+        public async Task AddAsync([Name("REQUEST")] [Remainder] string songRequest)
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
-
-            if (splitSongRequest.Length == 0)
-                throw new CommandReturnException(Context, "You must type a URL or a search term.");
 
             // Might want to consider using this.
             /*if (((SocketGuildUser)Context.User).VoiceChannel == null)
                 throw new CommandReturnException(Context, "Join a voice channel first before adding song requests.");*/
-
-            string songRequest = string.Join(" ", splitSongRequest);
 
             VideoMetadata metadata;
             try

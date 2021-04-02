@@ -18,12 +18,12 @@ namespace wow2.Modules.Moderator
         [Command("warn")]
         [Summary("Sends a warning to a user with an optional message. Requires the 'Ban Members' permission.")]
         [RequireUserPermission(GuildPermission.BanMembers)]
-        public async Task WarnAsync([Name("MENTION")] SocketGuildUser user, [Name("MESSAGE")] params string[] messageSplit)
+        public async Task WarnAsync([Name("MENTION")] SocketGuildUser user, [Name("MESSAGE")] [Remainder] string message)
         {
             var config = DataManager.GetModeratorConfigForGuild(Context.Guild);
 
-            string message = messageSplit.Length == 0 ? 
-                "No reason was provided by the moderator." : $"Reason: {string.Join(' ', messageSplit)}";
+            message = string.IsNullOrWhiteSpace(message) ? 
+                "No reason was provided by the moderator." : $"Reason: {message}";
 
             GetUserRecord(config, user.Id).Warnings.Add(new Warning()
             {

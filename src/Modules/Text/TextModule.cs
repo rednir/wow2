@@ -76,13 +76,8 @@ namespace wow2.Modules.Text
         [Command("replace")]
         [Alias("change")]
         [Summary("Replaces all instances of OLDVALUE with NEWVALUE within TEXT")]
-        public async Task ReplaceAsync(string oldValue, string newValue, [Name("text")] params string[] textSplit)
+        public async Task ReplaceAsync(string oldValue, string newValue, [Name("text")] [Remainder] string text)
         {
-            if (textSplit.Count() == 0)
-                throw new CommandReturnException(Context, "No text was given.");
-
-            var text = string.Join(' ', textSplit);
-
             if (!text.Contains(oldValue))
                 throw new CommandReturnException(Context, $"There are no instances of `{oldValue}` in the given text, so there's nothing to replace.");
 
@@ -92,12 +87,9 @@ namespace wow2.Modules.Text
         [Command("emojify")]
         [Alias("emoji")]
         [Summary("Replaces all instances of OLDVALUE with NEWVALUE within TEXT")]
-        public async Task EmojifyAsync([Name("text")] params string[] textSplit)
+        public async Task EmojifyAsync([Name("text")] [Remainder] string text)
         {
-            if (textSplit.Count() == 0)
-                throw new CommandReturnException(Context, "No text was given to emojify.");
-
-            var text = string.Join(' ', textSplit).RemoveUnnecessaryWhiteSpace();
+            text = text.RemoveUnnecessaryWhiteSpace();
 
             var random = new Random();
             var stringBuilder = new StringBuilder();
