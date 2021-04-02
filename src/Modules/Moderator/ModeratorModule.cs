@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
-using wow2.Verbose;
+using wow2.Verbose.Messages;
 using wow2.Data;
 
 namespace wow2.Modules.Moderator

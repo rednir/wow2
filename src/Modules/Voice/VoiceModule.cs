@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord;
 using Discord.Net;
-using Discord.WebSocket;
 using Discord.Commands;
 using Discord.Audio;
 using wow2.Data;
-using wow2.Verbose;
+using wow2.Verbose.Messages;
 
 namespace wow2.Modules.Voice
 {

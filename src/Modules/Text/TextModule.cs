@@ -8,7 +8,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
-using wow2.Verbose;
+using wow2.Verbose.Messages;
 using wow2.Data;
 using wow2.Extentions;
 

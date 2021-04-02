@@ -5,6 +5,7 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using wow2.Verbose;
+using wow2.Verbose.Messages;
 using wow2.Modules;
 using wow2.Modules.Main;
 using wow2.Modules.Keywords;
