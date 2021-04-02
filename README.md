@@ -1,4 +1,4 @@
-<p align="center"><img src="res/about/wow2.png"></p>
+<p align="center"><img src="res/about/examples.png"></p>
 
 # wow2
 A Discord bot written in C# using the [Discord.NET](https://github.com/discord-net/Discord.Net) library.
@@ -9,9 +9,7 @@ If you have the "Manage Server" permission in a server, you can invite the bot t
 Once the bot has joined, you can type `!wow help` in any text channel to view a list of commands.
 
 ### What can it do?
-Here are a few examples:
-
-<img src="res/about/examples.png">
+Stuff
 
 ## Hosting the bot yourself
 Download the executable from the [releases page](https://github.com/rednir/wow2/releases/)
@@ -22,5 +20,5 @@ To host the bot, you must have a bot token. Make sure you have created an applic
 - .NET 5.0
 - For voice commands: `libsodium`, `opus`, `ffmpeg`, `youtube-dl`
 	- For Windows users, the necessary binaries are already included in the release `.zip` file.
-		- However, `youtube-dl` on Windows requires [Microsoft Visual C++ 2010](https://www.microsoft.com/en-US/download/details.aspx?id=5555)
-	- If you want to, you can set custom executable paths with the `FFMPEG_PATH` and `YOUTUBE_DL_PATH` environment variables.
+	- Windows users should install [Microsoft Visual C++ 2010 Redistributable Package](https://www.microsoft.com/en-US/download/details.aspx?id=5555)
+	- You may set custom executable paths with the `FFMPEG_PATH` and `YOUTUBE_DL_PATH` environment variables.
