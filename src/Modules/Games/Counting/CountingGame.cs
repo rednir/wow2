@@ -9,7 +9,7 @@ using wow2.Verbose.Messages;
 using wow2.Extentions;
 using wow2.Data;
 
-namespace wow2.Modules.Games
+namespace wow2.Modules.Games.Counting
 {
     public class CountingGame
     {
