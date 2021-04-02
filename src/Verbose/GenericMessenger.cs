@@ -36,9 +36,8 @@ namespace wow2.Verbose
             }
             else
             {
-                return await channel.SendMessageAsync(embed: EmbedBuilder.Build()); 
+                return await channel.SendMessageAsync(embed: EmbedBuilder.Build());
             }
-            
         }
 
         protected string GetStatusMessageFormattedDescription(string description, string title)

@@ -11,7 +11,7 @@ namespace wow2.Modules
             : base(title + description)
         {
             _ = new WarningMessage(description, title)
-                    .SendAsync(context.Channel);
+                .SendAsync(context.Channel);
         }
     }
 }
