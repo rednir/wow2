@@ -74,7 +74,10 @@ namespace wow2.Modules.Keywords
             }
             else
             {
-                sentKeywordResponseMessage = await GenericMessenger.SendResponseAsync(message.Channel, chosenValue.Content, chosenValue.Title);
+                sentKeywordResponseMessage = await new GenericMessage(
+                    description: chosenValue.Content,
+                    title: chosenValue.Title)
+                        .SendAsync(message.Channel);
             }
 
             if (config.IsLikeReactionOn)
@@ -113,7 +116,7 @@ namespace wow2.Modules.Keywords
 
         [Command("add")]
         [Summary("Adds value(s) to a keyword, creating a new keyword if it doesn't exist.")]
-        public async Task AddAsync(string keyword, [Name("value")] [Remainder] string valueContent)
+        public async Task AddAsync(string keyword, [Name("value")][Remainder] string valueContent)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
 
@@ -144,14 +147,15 @@ namespace wow2.Modules.Keywords
                 Title = valueTitle
             });
 
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Added a value to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.");
+            await new SuccessMessage($"Added a value to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.")
+                .SendAsync(Context.Channel);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("remove")]
         [Alias("delete")]
         [Summary("Removes value(s) from a keyword, or if none are specified, removes all values and the keyword.")]
-        public async Task RemoveAsync(string keyword, [Name("value")] [Remainder] string valueContent = null)
+        public async Task RemoveAsync(string keyword, [Name("value")][Remainder] string valueContent = null)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
             keyword = keyword.ToLower();
@@ -163,7 +167,8 @@ namespace wow2.Modules.Keywords
             {
                 // No values have been specified, so assume the user wants to remove the keyword.
                 keywordsDictionary.Remove(keyword);
-                await GenericMessenger.SendSuccessAsync(Context.Channel, $"Sucessfully removed keyword `{keyword}`.");
+                await new SuccessMessage($"Sucessfully removed keyword `{keyword}`.")
+                    .SendAsync(Context.Channel);
             }
             else
             {
@@ -174,7 +179,8 @@ namespace wow2.Modules.Keywords
                 if (keywordsDictionary[keyword].Count == 0)
                     keywordsDictionary.Remove(keyword);
 
-                await GenericMessenger.SendSuccessAsync(Context.Channel, $"Sucessfully removed `{valueContent}` from `{keyword}`.");
+                await new SuccessMessage($"Sucessfully removed `{valueContent}` from `{keyword}`.")
+                    .SendAsync(Context.Channel);
             }
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -193,7 +199,8 @@ namespace wow2.Modules.Keywords
 
             keywordsDictionary.RenameKey(oldKeyword, newKeyword);
 
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Renamed `{oldKeyword}` to `{newKeyword}`.");
+            await new SuccessMessage($"Renamed `{oldKeyword}` to `{newKeyword}`.")
+                .SendAsync(Context.Channel);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
@@ -221,18 +228,18 @@ namespace wow2.Modules.Keywords
                 listOfFieldBuilders.Add(fieldBuilderForKeyword);
             }
 
-            await GenericMessenger.SendResponseAsync(
-                channel: Context.Channel,
+            await new GenericMessage(
                 fieldBuilders: listOfFieldBuilders,
                 fieldBuildersPage: page,
                 title: "📒 Keywords",
-                description: $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*");
+                description: $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*")
+                    .SendAsync(Context.Channel);
         }
 
         [Command("values")]
         [Alias("listvalues", "values", "list-value", "listvalue", "value", "list")]
         [Summary("Shows a list of values for a keyword.")]
-        public async Task ListKeywordValuesAsync([Name("keyword")] [Remainder] string keyword)
+        public async Task ListKeywordValuesAsync([Name("keyword")][Remainder] string keyword)
         {
             var keywordsDictionary = DataManager.GetKeywordsConfigForGuild(Context.Guild).KeywordsDictionary;
             List<KeywordValue> values;
@@ -246,10 +253,10 @@ namespace wow2.Modules.Keywords
                 stringBuilderForValueList.Append($"```{value.Content}```");
             }
 
-            await GenericMessenger.SendResponseAsync(
-                channel: Context.Channel,
+            await new GenericMessage(
                 description: $"*There are {values.Count()} values in total, as listed below.*\n{stringBuilderForValueList.ToString()}",
-                title: $"📒 Values for '{keyword}'");
+                title: $"📒 Values for '{keyword}'")
+                    .SendAsync(Context.Channel);
         }
 
         [Command("toggle-delete-reaction")]
@@ -260,7 +267,8 @@ namespace wow2.Modules.Keywords
 
             config.IsDeleteReactionOn = !config.IsDeleteReactionOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Delete reaction is now `{(config.IsDeleteReactionOn ? "on" : "off")}` for keyword responses.");
+            await new SuccessMessage($"Delete reaction is now `{(config.IsDeleteReactionOn ? "on" : "off")}` for keyword responses.")
+                .SendAsync(Context.Channel);
         }
 
         [Command("toggle-like-reaction")]
@@ -271,7 +279,8 @@ namespace wow2.Modules.Keywords
 
             config.IsLikeReactionOn = !DataManager.GetKeywordsConfigForGuild(Context.Guild).IsLikeReactionOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Like reaction is now `{(config.IsLikeReactionOn ? "on" : "off")}` for keyword responses.");
+            await new SuccessMessage($"Like reaction is now `{(config.IsLikeReactionOn ? "on" : "off")}` for keyword responses.")
+                .SendAsync(Context.Channel);
         }
     }
 }

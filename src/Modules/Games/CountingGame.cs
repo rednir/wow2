@@ -25,7 +25,8 @@ namespace wow2.Modules.Games
             if (await EndGameIfNumberIsInvalidAsync(context.Message, increment))
                 return;
 
-            await GenericMessenger.SendInfoAsync(context.Channel, $"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.");
+            await new InfoMessage($"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.")
+                .SendAsync(context.Channel);
         }
 
         public static async Task CheckMessageAsync(SocketMessage recievedMessage)
@@ -43,7 +44,8 @@ namespace wow2.Modules.Games
             {
                 if (recievedMessage.Author == config.ListOfMessages.Last().Author)
                 {
-                    await GenericMessenger.SendWarningAsync(recievedMessage.Channel, "Counting twice in a row is no fun.");
+                    await new WarningMessage("Counting twice in a row is no fun.")
+                        .SendAsync(recievedMessage.Channel);
                     return;
                 }
             }
@@ -58,7 +60,8 @@ namespace wow2.Modules.Games
             else
             {
                 await recievedMessage.AddReactionAsync(new Emoji("❎"));
-                await GenericMessenger.SendInfoAsync(recievedMessage.Channel, $"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`");
+                await new InfoMessage($"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`")
+                    .SendAsync(recievedMessage.Channel);
                 await EndGameAsync(config);
             }
         }
@@ -97,11 +100,11 @@ namespace wow2.Modules.Games
             else if (absNextNumber >= 75 * absIncrement) commentOnFinalNumber = "Amazing!";
             else commentOnFinalNumber = "";
 
-            await GenericMessenger.SendResponseAsync(
-                channel: (ISocketMessageChannel)config.InitalContext.Channel,
+            await new GenericMessage(
                 fieldBuilders: listOfFieldBuilders,
                 title: "📈 Final Stats",
-                description: $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*");
+                description: $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*")
+                    .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
 
             config.NextNumber = null;
         }
@@ -111,7 +114,8 @@ namespace wow2.Modules.Games
         {
             if (number >= float.MaxValue || number <= float.MinValue)
             {
-                await GenericMessenger.SendWarningAsync(message.Channel, "Woah, that's a big number.\nHate to be a killjoy, but even a computer has its limits.");
+                await new WarningMessage("Woah, that's a big number.\nHate to be a killjoy, but even a computer has its limits.")
+                    .SendAsync(message.Channel);
                 await EndGameAsync(DataManager.GetGamesConfigForGuild(message.GetGuild()).Counting);
                 return true;
             }

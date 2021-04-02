@@ -18,11 +18,11 @@ namespace wow2.Modules.Moderator
         [Command("warn")]
         [Summary("Sends a warning to a user with an optional message. Requires the 'Ban Members' permission.")]
         [RequireUserPermission(GuildPermission.BanMembers)]
-        public async Task WarnAsync([Name("MENTION")] SocketGuildUser user, [Name("MESSAGE")] [Remainder] string message)
+        public async Task WarnAsync([Name("MENTION")] SocketGuildUser user, [Name("MESSAGE")][Remainder] string message)
         {
             var config = DataManager.GetModeratorConfigForGuild(Context.Guild);
 
-            message = string.IsNullOrWhiteSpace(message) ? 
+            message = string.IsNullOrWhiteSpace(message) ?
                 "No reason was provided by the moderator." : $"Reason: {message}";
 
             GetUserRecord(config, user.Id).Warnings.Add(new Warning()
@@ -32,14 +32,13 @@ namespace wow2.Modules.Moderator
             });
 
             IDMChannel dmChannel = await user.GetOrCreateDMChannelAsync();
-            await GenericMessenger.SendWarningAsync(
-                channel: dmChannel,
+            await new WarningMessage(
                 description: $"You have recieved a warning from {Context.User.Mention} in the server '{Context.Guild.Name}'\nFurther warnings may result in a ban.\n```\n{message}\n```",
-                title: "You have been warned!");
+                title: "You have been warned!")
+                    .SendAsync(dmChannel);
 
-            await GenericMessenger.SendSuccessAsync(
-                channel: Context.Channel,
-                description: $"The user {user.Mention} has been warned by {Context.User.Mention}.");
+            await new SuccessMessage($"The user {user.Mention} has been warned by {Context.User.Mention}.")
+                .SendAsync(dmChannel);
 
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -50,9 +49,9 @@ namespace wow2.Modules.Moderator
         [RequireUserPermission(GuildPermission.BanMembers)]
         public async Task MuteAsync([Name("MENTION")] SocketGuildUser user, string time = "30m", string message = "No reason given.")
         {
-            throw new NotImplementedException(); 
+            throw new NotImplementedException();
         }
-        
+
         [Command("user-record")]
         [Alias("user", "record")]
         [Summary("Gets a user record.")]
@@ -61,7 +60,8 @@ namespace wow2.Modules.Moderator
             var config = DataManager.GetModeratorConfigForGuild(Context.Guild);
             UserRecord record = GetUserRecord(config, user.Id);
 
-            await GenericMessenger.SendInfoAsync(Context.Channel, $"`{record.Warnings.Count()}` warnings, {record.Mutes.Count()} mutes.");
+            await new InfoMessage($"`{record.Warnings.Count()}` warnings, {record.Mutes.Count()} mutes.")
+                .SendAsync(Context.Channel);
         }
 
         [Command("set-warnings-until-ban")]
@@ -71,9 +71,10 @@ namespace wow2.Modules.Moderator
         {
             if (number < 2)
                 throw new CommandReturnException(Context, "Number is too small.");
-            
+
             DataManager.GetModeratorConfigForGuild(Context.Guild).WarningsUntilBan = number;
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"{number} warnings will result in a ban.");
+            await new SuccessMessage($"{number} warnings will result in a ban.")
+                .SendAsync(Context.Channel);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
@@ -86,7 +87,8 @@ namespace wow2.Modules.Moderator
 
             config.IsAutoModOn = !config.IsAutoModOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Auto mod is now `{(config.IsAutoModOn ? "on" : "off")}`");
+            await new SuccessMessage($"Auto mod is now `{(config.IsAutoModOn ? "on" : "off")}`")
+                .SendAsync(Context.Channel);
         }
 
         private UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
@@ -94,7 +96,7 @@ namespace wow2.Modules.Moderator
             UserRecord matchingRecord = config.UserRecords
                 .Where(record => record.UserId == id)
                 .FirstOrDefault();
-            
+
             // Ensure the user record exists
             if (matchingRecord == null)
             {

@@ -43,10 +43,11 @@ namespace wow2.Modules.Voice
             if (listOfFieldBuilders.Count == 0)
                 throw new CommandReturnException(Context, "There's nothing in the queue... how sad.");
 
-            await GenericMessenger.SendResponseAsync(
-                Context.Channel, title: "Up Next",
+            await new GenericMessage(
+                title: "Up Next",
                 fieldBuilders: listOfFieldBuilders,
-                fieldBuildersPage: page);
+                fieldBuildersPage: page)
+                    .SendAsync(Context.Channel);
         }
 
         [Command("clear")]
@@ -58,13 +59,14 @@ namespace wow2.Modules.Voice
 
             config.SongRequests.Clear();
             StopPlaying(config);
-            await GenericMessenger.SendSuccessAsync(Context.Channel, "The song request queue was cleared.");
+            await new SuccessMessage("The song request queue was cleared.")
+                .SendAsync(Context.Channel);
         }
 
         [Command("add")]
         [Alias("play")]
         [Summary("Adds REQUEST to the song request queue. REQUEST can be a video URL or a youtube search term.")]
-        public async Task AddAsync([Name("REQUEST")] [Remainder] string songRequest)
+        public async Task AddAsync([Name("REQUEST")][Remainder] string songRequest)
         {
             var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
 
@@ -93,7 +95,8 @@ namespace wow2.Modules.Voice
                 RequestedBy = Context.User
             });
 
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}");
+            await new SuccessMessage($"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
+                .SendAsync(Context.Channel);
 
             // Play song if nothing else is playing.
             if (!CheckIfAudioClientDisconnected(config.AudioClient) && config.CurrentlyPlayingSongRequest == null)
@@ -116,7 +119,10 @@ namespace wow2.Modules.Voice
                     throw new CommandReturnException(Context, "You've already sent a skip request.");
 
                 config.ListOfUserIdsThatVoteSkipped.Add(Context.User.Id);
-                await GenericMessenger.SendInfoAsync(Context.Channel, $"Waiting for `{config.VoteSkipsNeeded - config.ListOfUserIdsThatVoteSkipped.Count()}` more vote(s) before skipping.\n", "Sent skip request");
+                await new InfoMessage(
+                    description: $"Waiting for `{config.VoteSkipsNeeded - config.ListOfUserIdsThatVoteSkipped.Count()}` more vote(s) before skipping.\n",
+                    title: "Sent skip request")
+                        .SendAsync(Context.Channel);
                 return;
             }
             else
@@ -188,7 +194,8 @@ namespace wow2.Modules.Voice
         {
             DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn = !DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Auto execution of `{EventHandlers.DefaultCommandPrefix} vc np` is turned `{(DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}`");
+            await new SuccessMessage($"Auto execution of `{EventHandlers.DefaultCommandPrefix} vc np` is turned `{(DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}`")
+                .SendAsync(Context.Channel);
         }
 
         [Command("set-vote-skips-needed")]
@@ -201,7 +208,8 @@ namespace wow2.Modules.Voice
             newNumberOfSkips = Math.Max(newNumberOfSkips, 1);
             DataManager.GetVoiceConfigForGuild(Context.Guild).VoteSkipsNeeded = newNumberOfSkips;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"`{newNumberOfSkips}` votes are now required to skip a song request.");
+            await new SuccessMessage($"`{newNumberOfSkips}` votes are now required to skip a song request.")
+                .SendAsync(Context.Channel);
         }
 
         private async Task DisplayCurrentlyPlayingRequestAsync()
@@ -216,7 +224,8 @@ namespace wow2.Modules.Voice
             }
             catch
             {
-                await GenericMessenger.SendWarningAsync(Context.Channel, $"Displaying metadata failed for the following video:\n{request?.VideoMetadata?.webpage_url}");
+                await new WarningMessage($"Displaying metadata failed for the following video:\n{request?.VideoMetadata?.webpage_url}")
+                    .SendAsync(Context.Channel);
             }
         }
 
@@ -263,7 +272,10 @@ namespace wow2.Modules.Voice
             else
             {
                 config.CurrentlyPlayingSongRequest = null;
-                await GenericMessenger.SendInfoAsync(Context.Channel, "I'll stay in the voice channel... in silence...", "The queue is empty");
+                await new InfoMessage(
+                    description: "I'll stay in the voice channel... in silence...",
+                    title: "The queue is empty")
+                        .SendAsync(Context.Channel);
             }
         }
 

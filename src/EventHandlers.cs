@@ -59,7 +59,8 @@ namespace wow2
                     verboseErrorMessage = "The host of the bot is missing required assets.";
 
                 Logger.LogException(commandException, $"Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
-                await GenericMessenger.SendErrorAsync((ISocketMessageChannel)commandException.Context.Channel, verboseErrorMessage);
+                await new ErrorMessage(verboseErrorMessage)
+                    .SendAsync(commandException.Context.Channel);
 
                 // TODO: consider making this a toggle.
                 await (await Program.Client.GetApplicationInfoAsync()).Owner.SendMessageAsync($"```\n{commandException}\n```");
@@ -162,38 +163,38 @@ namespace wow2
             switch (commandError)
             {
                 case CommandError.BadArgCount:
-                    await GenericMessenger.SendWarningAsync(
-                        channel: channel,
+                    await new WarningMessage(
                         description: "You either typed the wrong number of parameters, or forgot to put a parameter in \"quotes\"",
-                        title: "Invalid usage of command");
+                        title: "Invalid usage of command")
+                            .SendAsync(channel);
                     return;
 
                 case CommandError.ParseFailed:
-                    await GenericMessenger.SendWarningAsync(
-                        channel: channel,
+                    await new WarningMessage(
                         description: "You might have typed an invalid parameter.",
-                        title: "Parsing arguments failed");
+                        title: "Parsing arguments failed")
+                            .SendAsync(channel);
                     return;
 
                 case CommandError.UnknownCommand:
-                    await GenericMessenger.SendWarningAsync(
-                        channel: channel,
+                    await new WarningMessage(
                         description: "Did you make a typo?",
-                        title: "That command doesn't exist");
+                        title: "That command doesn't exist")
+                            .SendAsync(channel);
                     return;
 
                 case CommandError.UnmetPrecondition:
-                    await GenericMessenger.SendWarningAsync(
-                        channel: channel,
+                    await new WarningMessage(
                         description: "You most likely don't have the correct permissions to use this command.",
-                        title: "Unmet precondition");
+                        title: "Unmet precondition")
+                            .SendAsync(channel);
                     return;
 
                 case CommandError.ObjectNotFound:
-                    await GenericMessenger.SendWarningAsync(
-                        channel: channel,
+                    await new WarningMessage(
                         description: "Object not found.",
-                        title: "Invalid usage of command");
+                        title: "Invalid usage of command")
+                            .SendAsync(channel);
                     return;
 
                 default:

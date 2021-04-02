@@ -28,17 +28,17 @@ namespace wow2.Modules.Main
         {
             if (string.IsNullOrWhiteSpace(group))
             {
-                await GenericMessenger.SendResponseAsync(
-                    channel: Context.Channel,
+                await new GenericMessage(
                     fieldBuilders: await ModuleInfoToEmbedFieldsAsync(),
-                    title: "📃 Help");
+                    title: "📃 Help")
+                        .SendAsync(Context.Channel);
             }
             else
             {
-                await GenericMessenger.SendResponseAsync(
-                    channel: Context.Channel,
+                await new GenericMessage(
                     fieldBuilders: await CommandInfoToEmbedFieldsAsync(group),
-                    title: $"📃 Command Help");
+                    title: $"📃 Command Help")
+                        .SendAsync(Context.Channel);
             }
         }
 
@@ -64,7 +64,8 @@ namespace wow2.Modules.Main
                 {
                     // Assume the user wants to remove the existing alias.
                     config.AliasesDictionary.Remove(name);
-                    await GenericMessenger.SendSuccessAsync(Context.Channel, $"The alias `{name}` was removed.");
+                    await new SuccessMessage($"The alias `{name}` was removed.")
+                        .SendAsync(Context.Channel);
                     return;
                 }
             }
@@ -76,7 +77,8 @@ namespace wow2.Modules.Main
                 config.AliasesDictionary.Add(name, definition);
             }
 
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Typing `{name}` will now execute `{EventHandlers.DefaultCommandPrefix} {definition}`\n{removeAliasText}");
+            await new SuccessMessage($"Typing `{name}` will now execute `{EventHandlers.DefaultCommandPrefix} {definition}`\n{removeAliasText}")
+                .SendAsync(Context.Channel);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
@@ -99,11 +101,11 @@ namespace wow2.Modules.Main
                 listOfFieldBuilders.Add(fieldBuilderForAlias);
             }
 
-            await GenericMessenger.SendResponseAsync(
-                channel: Context.Channel,
+            await new GenericMessage(
                 fieldBuilders: listOfFieldBuilders,
                 title: "📎 List of Aliases",
-                description: "To remove any of these aliases, set the alias definition to a blank value.");
+                description: "To remove any of these aliases, set the alias definition to a blank value.")
+                    .SendAsync(Context.Channel);
         }
 
         [Command("ping")]
@@ -112,7 +114,8 @@ namespace wow2.Modules.Main
         {
             // TODO: maybe find some way to edit the pong message instead of sending a new one.
             TimeSpan pingTimeSpan = (await ReplyAsync("**Pong!**")).Timestamp.Subtract(Context.Message.Timestamp);
-            await GenericMessenger.SendInfoAsync(Context.Channel, $"That was about `{pingTimeSpan.Milliseconds}ms`");
+            await new InfoMessage($"That was about `{pingTimeSpan.Milliseconds}ms`")
+                .SendAsync(Context.Channel);
         }
 
         public static async Task SendAboutMessageToChannelAsync(SocketCommandContext context)

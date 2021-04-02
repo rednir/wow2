@@ -55,14 +55,16 @@ namespace wow2.Modules.Dev
         public async Task LoadGuildDataAsync()
         {
             await DataManager.LoadGuildDataFromFileAsync();
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data loaded.");
+            await new SuccessMessage($"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data loaded.")
+                .SendAsync(Context.Channel);
         }
 
         [Command("save-guild-data")]
         public async Task SaveGuildDataAsync(bool alsoExit = false)
         {
             await DataManager.SaveGuildDataToFileAsync();
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data saved.");
+            await new SuccessMessage($"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data saved.")
+                .SendAsync(Context.Channel);
             if (alsoExit) Environment.Exit(0);
         }
 
@@ -77,12 +79,12 @@ namespace wow2.Modules.Dev
         [Command("generic-messenger")]
         public async Task GenericMessengerAsync()
         {
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"This is a success message.", "Success");
-            await GenericMessenger.SendInfoAsync(Context.Channel, $"This is an info message.", "Info");
-            await GenericMessenger.SendWarningAsync(Context.Channel, $"This is a warning message.", "Warning");
-            await GenericMessenger.SendErrorAsync(Context.Channel, $"This is an error message.", "Error");
-            await GenericMessenger.SendResponseAsync(Context.Channel, $"This is a response message.", "Response");
-            await GenericMessenger.SendResponseAsync(Context.Channel, $"This is a response message with fields.", "Fields", CreateSampleFields(50), 2);
+            await new SuccessMessage($"This is a success message.", "Success").SendAsync(Context.Channel);
+            await new InfoMessage($"This is an info message.", "Info").SendAsync(Context.Channel);
+            await new WarningMessage($"This is a warning message.", "Warning").SendAsync(Context.Channel);
+            await new ErrorMessage($"This is an error message.", "Error").SendAsync(Context.Channel);
+            await new GenericMessage($"This is a response message.", "Response").SendAsync(Context.Channel);
+            await new GenericMessage($"This is a response message with fields.", "Fields", CreateSampleFields(50), 2).SendAsync(Context.Channel);
         }
 
         [Command("run-test")]
@@ -111,7 +113,8 @@ namespace wow2.Modules.Dev
 
         private async Task RunListOfCommandsAsync(string group, string[] commandList, int delay)
         {
-            await GenericMessenger.SendInfoAsync(Context.Channel, $"About to run {commandList.Length} commands with a delay of {delay}ms");
+            await new InfoMessage($"About to run {commandList.Length} commands with a delay of {delay}ms")
+                .SendAsync(Context.Channel);
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
@@ -124,7 +127,8 @@ namespace wow2.Modules.Dev
             }
 
             stopwatch.Stop();
-            await GenericMessenger.SendSuccessAsync(Context.Channel, $"Finished executing commands in `{stopwatch.Elapsed}`");
+            await new SuccessMessage($"Finished executing commands in `{stopwatch.Elapsed}`")
+                .SendAsync(Context.Channel);
         }
 
         private List<EmbedFieldBuilder> CreateSampleFields(int amount)

@@ -9,54 +9,94 @@ using Discord.Rest;
 
 namespace wow2.Verbose
 {
-    /// <summary>Class containing methods used to send embeds that are not specific to one command module.</summary>
-    public static class GenericMessenger
+    /// <summary>Base class for sending and building embed messages.</summary>
+    public abstract class Message
     {
-        public static readonly ulong SuccessEmoteId = 823595458978512997;
-        public static readonly ulong InfoEmoteId = 804732580423008297;
-        public static readonly ulong WarningEmoteId = 804732632751407174;
-        public static readonly ulong ErrorEmoteId = 804732656721199144;
+        public const ulong SuccessEmoteId = 823595458978512997;
+        public const ulong InfoEmoteId = 804732580423008297;
+        public const ulong WarningEmoteId = 804732632751407174;
+        public const ulong ErrorEmoteId = 804732656721199144;
 
-        /// <summary>Notify a channel about a successful action.</summary>
-        public static async Task<IUserMessage> SendSuccessAsync(IMessageChannel channel, string description, string title = null)
-            => await channel.SendMessageAsync(embed: new EmbedBuilder()
+        public Embed Embed
+        {
+            get { return EmbedBuilder.Build(); }
+        }
+
+        protected EmbedBuilder EmbedBuilder;
+        protected MemoryStream DescriptionAsStream;
+
+        public async Task<IUserMessage> SendAsync(IMessageChannel channel)
+        {
+            if (DescriptionAsStream != null)
+            {
+                return await channel.SendFileAsync(
+                    stream: DescriptionAsStream,
+                    filename: $"{Embed?.Title}_desc.txt",
+                    embed: new WarningMessage("A message was too long, so it was uploaded as a file.").Embed);
+            }
+            else
+            {
+                return await channel.SendMessageAsync(embed: EmbedBuilder.Build()); 
+            }
+            
+        }
+
+        protected string GetStatusMessageFormattedDescription(string description, string title)
+            => $"{(title == null ? null : $"**{title}**\n")}{description}";
+    }
+
+    public class SuccessMessage : Message
+    {
+        public SuccessMessage(string description, string title = null)
+        {
+            EmbedBuilder = new EmbedBuilder()
             {
                 Description = $"{new Emoji($"<:wowsuccess:{SuccessEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
                 Color = Color.Green
-            }
-            .Build());
+            };
+        }
+    }
 
-        /// <summary>Notify a channel about some infomation.</summary>
-        public static async Task<IUserMessage> SendInfoAsync(IMessageChannel channel, string description, string title = null)
-            => await channel.SendMessageAsync(embed: new EmbedBuilder()
+    public class InfoMessage : Message
+    {
+        public InfoMessage(string description, string title = null)
+        {
+            EmbedBuilder = new EmbedBuilder()
             {
                 Description = $"{new Emoji($"<:wowinfo:{InfoEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
                 Color = Color.Blue
-            }
-            .Build());
+            };
+        }
+    }
 
-        /// <summary>Notify a channel about a handled unsuccessful action.</summary>
-        public static async Task<IUserMessage> SendWarningAsync(IMessageChannel channel, string description, string title = null)
-             => await channel.SendMessageAsync(embed: new EmbedBuilder()
-             {
-                 Description = $"{new Emoji($"<:wowwarning:{WarningEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
-                 Color = Color.LightOrange
-             }
-            .Build());
+    public class WarningMessage : Message
+    {
+        public WarningMessage(string description, string title = null)
+        {
+            EmbedBuilder = new EmbedBuilder()
+            {
+                Description = $"{new Emoji($"<:wowwarning:{WarningEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
+                Color = Color.LightOrange
+            };
+        }
+    }
 
-        /// <summary>Notify a channel about an unhandled error.</summary>
-        public static async Task<IUserMessage> SendErrorAsync(IMessageChannel channel, string description, string title = null)
-            => await channel.SendMessageAsync(embed: new EmbedBuilder()
+    public class ErrorMessage : Message
+    {
+        public ErrorMessage(string description, string title = null)
+        {
+            EmbedBuilder = new EmbedBuilder()
             {
                 Title = $"{new Emoji($"<:wowerror:{ErrorEmoteId}>")} Something bad happened...",
                 Description = GetStatusMessageFormattedDescription(description, title),
                 Color = Color.Red
-            }
-            .Build());
+            };
+        }
+    }
 
-        /// <summary>Send a generic response to a command in a channel.</summary>
-        public static async Task<IUserMessage> SendResponseAsync(
-            IMessageChannel channel,
+    public class GenericMessage : Message
+    {
+        public GenericMessage(
             string description = "",
             string title = "",
             List<EmbedFieldBuilder> fieldBuilders = null,
@@ -67,13 +107,12 @@ namespace wow2.Verbose
 
             if (description.Length >= maxDescriptionLength)
             {
-                MemoryStream descriptionStream = new MemoryStream(Encoding.ASCII.GetBytes(description));
-                await GenericMessenger.SendWarningAsync(channel, $"A message was too long, so it was uploaded as a file.");
-                await channel.SendFileAsync(descriptionStream, $"{title}_text.txt");
-                return null;
+                // The description will be uploaded as a file.
+                DescriptionAsStream = new MemoryStream(Encoding.ASCII.GetBytes(description));
+                description = "[DELETED]";
             }
 
-            var embedBuilder = new EmbedBuilder()
+            EmbedBuilder = new EmbedBuilder()
             {
                 Title = title,
                 Description = description,
@@ -92,7 +131,7 @@ namespace wow2.Verbose
                 // Check if the page number has not been specifed by the method caller.
                 if (fieldBuildersPage == 0)
                 {
-                    embedBuilder.Footer = new EmbedFooterBuilder()
+                    EmbedBuilder.Footer = new EmbedFooterBuilder()
                     {
                         IconUrl = $"https://cdn.discordapp.com/emojis/{WarningEmoteId}.png",
                         Text = $"{fieldBuilders.Count - maxFieldsPerPage} items were excluded"
@@ -100,7 +139,7 @@ namespace wow2.Verbose
                 }
                 else
                 {
-                    embedBuilder.Footer = new EmbedFooterBuilder()
+                    EmbedBuilder.Footer = new EmbedFooterBuilder()
                     {
                         IconUrl = $"https://cdn.discordapp.com/emojis/{InfoEmoteId}.png",
                         Text = $"Page {fieldBuildersPage}/{totalFieldBuilderPages}"
@@ -115,12 +154,7 @@ namespace wow2.Verbose
                 fieldBuilders = fieldBuilders.GetRange(startIndex,
                     isFinalPage ? (fieldBuilders.Count - startIndex) : maxFieldsPerPage);
             }
-            embedBuilder.Fields = fieldBuilders ?? new List<EmbedFieldBuilder>();
-
-            return await channel.SendMessageAsync(embed: embedBuilder.Build());
+            EmbedBuilder.Fields = fieldBuilders ?? new List<EmbedFieldBuilder>();
         }
-
-        private static string GetStatusMessageFormattedDescription(string description, string title)
-            => $"{(title == null ? null : $"**{title}**\n")}{description}";
     }
 }

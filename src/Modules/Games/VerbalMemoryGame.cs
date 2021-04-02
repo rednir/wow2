@@ -18,7 +18,7 @@ namespace wow2.Modules.Games
         public static async Task CheckMessageAsync(SocketMessage receivedMessage)
         {
             var config = DataManager.GetGamesConfigForGuild(receivedMessage.GetGuild()).VerbalMemory;
-            
+
             if (config.CurrentWordMessage == null) return;
 
             if (receivedMessage.Channel != config.InitalContext.Channel
@@ -30,10 +30,10 @@ namespace wow2.Modules.Games
                 case NewKeyword:
                     if (config.SeenWords.Contains(currentWord))
                     {
-                        await GenericMessenger.SendInfoAsync(
-                            channel: (ISocketMessageChannel)config.InitalContext.Channel, 
+                        await new InfoMessage(
                             description: "You've seen that word before.",
-                            title: "Wrong!");
+                            title: "Wrong!")
+                                .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
                         await EndGameAsync(config);
                         return;
                     }
@@ -51,10 +51,10 @@ namespace wow2.Modules.Games
                     }
                     else
                     {
-                        await GenericMessenger.SendInfoAsync(
-                            channel: (ISocketMessageChannel)config.InitalContext.Channel, 
+                        await new InfoMessage(
                             description: "You haven't seen that word before.",
-                            title: "Wrong!");
+                            title: "Wrong!")
+                                .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
                         await EndGameAsync(config);
                         return;
                     }
@@ -73,7 +73,10 @@ namespace wow2.Modules.Games
             var config = DataManager.GetGamesConfigForGuild(context.Guild).VerbalMemory;
 
             config.InitalContext = context;
-            await GenericMessenger.SendInfoAsync(context.Channel, $"After every word:\n • respond with `{SeenKeyword}` if you have seen the word previously\n • or `{NewKeyword}` if the word is new", $"Verbal memory has started for {context.User.Mention}");
+            await new InfoMessage(
+                description: $"After every word, respond with:\n • `{SeenKeyword}` if you have seen the word previously\n • `{NewKeyword}` if the word is new",
+                title: $"Verbal memory has started for {context.User.Mention}")
+                    .SendAsync(context.Channel);
             await NextWordAsync(config);
         }
 
@@ -82,7 +85,7 @@ namespace wow2.Modules.Games
             var random = new Random();
 
             bool pickSeenWord = (random.NextDouble() >= 0.5) && (config.SeenWords.Count() > 3);
-            string currentWord = pickSeenWord ? 
+            string currentWord = pickSeenWord ?
                 config.SeenWords[random.Next(config.SeenWords.Count())] :
                 config.UnseenWords[random.Next(config.UnseenWords.Count())];
 
@@ -91,10 +94,10 @@ namespace wow2.Modules.Games
 
         private static async Task EndGameAsync(VerbalMemoryGameConfig config)
         {
-            await GenericMessenger.SendResponseAsync(
-                channel: (ISocketMessageChannel)config.InitalContext.Channel,
+            await new GenericMessage(
                 title: "📈 Final Stats",
-                description: $"You got `{config.Turns}` points, with `{config.SeenWords.Count}` different words.");
+                description: $"You got `{config.Turns}` points, with `{config.SeenWords.Count}` different words.")
+                    .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
 
             // TODO: need to find a better way of doing this
             var defaultConfig = new VerbalMemoryGameConfig();

@@ -76,18 +76,19 @@ namespace wow2.Modules.Text
         [Command("replace")]
         [Alias("change")]
         [Summary("Replaces all instances of OLDVALUE with NEWVALUE within TEXT")]
-        public async Task ReplaceAsync(string oldValue, string newValue, [Name("text")] [Remainder] string text)
+        public async Task ReplaceAsync(string oldValue, string newValue, [Name("text")][Remainder] string text)
         {
             if (!text.Contains(oldValue))
                 throw new CommandReturnException(Context, $"There are no instances of `{oldValue}` in the given text, so there's nothing to replace.");
 
-            await GenericMessenger.SendResponseAsync(Context.Channel, text.Replace(oldValue, $"**{newValue}**"));
+            await new GenericMessage(text.Replace(oldValue, $"**{newValue}**"))
+                .SendAsync(Context.Channel);
         }
 
         [Command("emojify")]
         [Alias("emoji")]
         [Summary("Replaces all instances of OLDVALUE with NEWVALUE within TEXT")]
-        public async Task EmojifyAsync([Name("text")] [Remainder] string text)
+        public async Task EmojifyAsync([Name("text")][Remainder] string text)
         {
             text = text.RemoveUnnecessaryWhiteSpace();
 
@@ -120,7 +121,8 @@ namespace wow2.Modules.Text
                 stringBuilder.Append(' ');
             }
 
-            await GenericMessenger.SendResponseAsync(Context.Channel, stringBuilder.ToString());
+            await new GenericMessage(stringBuilder.ToString())
+                .SendAsync(Context.Channel);
         }
     }
 }
