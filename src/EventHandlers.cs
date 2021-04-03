@@ -11,6 +11,7 @@ using wow2.Modules.Main;
 using wow2.Modules.Keywords;
 using wow2.Modules.Games.Counting;
 using wow2.Modules.Games.VerbalMemory;
+using wow2.Modules.Moderator;
 using wow2.Extentions;
 using wow2.Data;
 
@@ -104,6 +105,9 @@ namespace wow2
 
             await CountingGame.CheckMessageAsync(recievedMessage);
             await VerbalMemoryGame.CheckMessageAsync(recievedMessage);
+
+            await ModeratorModule.CheckMessageWithAutoMod(recievedMessage);
+
             if (recievedMessage.Content.StartsWithWord(DefaultCommandPrefix, true))
             {
                 // The message starts with the command prefix and the prefix is not part of another word.

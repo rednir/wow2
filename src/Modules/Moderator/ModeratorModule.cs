@@ -4,17 +4,32 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
+using System.Collections.Generic;
+using System.Collections;
 using wow2.Verbose.Messages;
 using wow2.Data;
+using wow2.Extentions;
 
 namespace wow2.Modules.Moderator
 {
     [Name("Moderator")]
     [Group("mod")]
     [Alias("moderator")]
-    [Summary("For using tools to manage the server.")]
+    [Summary("For using tools to manage the server. (UNFINISHED)")]
     public class ModeratorModule : ModuleBase<SocketCommandContext>
     {
+        public static async Task CheckMessageWithAutoMod(SocketMessage message)
+        {
+            var config = GetConfigForGuild(message.GetGuild());
+
+            if (!config.IsAutoModOn) return;
+
+            UserRecord record = GetUserRecord(config, message.Author.Id);
+            record.Messages.Add(message);
+
+            Console.WriteLine(CheckMessagesForSpam(record.Messages).ToString());
+        }
+
         [Command("warn")]
         [Summary("Sends a warning to a user with an optional message. Requires the 'Ban Members' permission.")]
         [RequireUserPermission(GuildPermission.BanMembers)]
@@ -91,7 +106,7 @@ namespace wow2.Modules.Moderator
                 .SendAsync(Context.Channel);
         }
 
-        private UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
+        private static UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
         {
             UserRecord matchingRecord = config.UserRecords
                 .Where(record => record.UserId == id)
@@ -110,6 +125,38 @@ namespace wow2.Modules.Moderator
             }
 
             return matchingRecord;
+        }
+
+        private static bool CheckMessagesForSpam(IEnumerable<SocketMessage> messages)
+        {
+            const int numberOfMessagesToCheckForSpam = 7;
+
+            // Order the list with newest messages first.
+            messages = messages.OrderByDescending(message => message.Timestamp);
+            
+            // No need to check small number of messages.
+            if (messages.Count() <= numberOfMessagesToCheckForSpam)
+                return false;
+
+            // Check if there is large number of messages in a small period of time.
+            var timeSpan = messages.First().Timestamp - messages.ElementAt(numberOfMessagesToCheckForSpam).Timestamp;
+            if (timeSpan < TimeSpan.FromSeconds(12))
+                return true;
+
+            return false;
+
+            /*int totalMessagesChecked = 0;
+            int totalRepeatedMessages = 0;
+
+            
+            foreach (SocketMessage messageToCheck in )
+            {
+                if (totalMessagesChecked >= numberOfMessagesToCheckForSpam) break;
+
+
+
+                totalMessagesChecked++;
+            }*/
         }
 
         private static ModeratorModuleConfig GetConfigForGuild(SocketGuild guild)
