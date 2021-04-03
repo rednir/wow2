@@ -74,8 +74,6 @@ namespace wow2.Modules.Moderator
 
             await new SuccessMessage($"The user {user.Mention} has been warned by {Context.User.Mention}.")
                 .SendAsync(Context.Channel);
-
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("mute")]
@@ -87,15 +85,26 @@ namespace wow2.Modules.Moderator
         }
 
         [Command("user-record")]
-        [Alias("user", "record")]
+        [Alias("user", "record", "overview")]
         [Summary("Gets a user record. Requires the 'Ban Members' permission.")]
         public async Task UserAsync([Name("MENTION")] SocketGuildUser user)
         {
             var config = GetConfigForGuild(Context.Guild);
             UserRecord record = GetUserRecord(config, user.Id);
+            
+            var embedBuilder = new EmbedBuilder()
+            {
+                Author = new EmbedAuthorBuilder()
+                {
+                    Name = user.ToString(),
+                    IconUrl = user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl(),
+                },
+                Title = "User record overview",
+                Description = $"{record.Warnings.Count()} warnings, {record.Mutes.Count()} mutes.",
+                Color = Color.LightGrey
+            };
 
-            await new InfoMessage($"`{record.Warnings.Count()}` warnings, {record.Mutes.Count()} mutes.")
-                .SendAsync(Context.Channel);
+            await ReplyAsync(embed: embedBuilder.Build());
         }
 
         [Command("set-warnings-until-ban")]
@@ -133,6 +142,8 @@ namespace wow2.Modules.Moderator
                 RequestedBy = requestedBy.Id,
                 DateTimeBinary = DateTime.Now.ToBinary()
             });
+
+            await DataManager.SaveGuildDataToFileAsync(requestedBy.Guild.Id);
 
             IDMChannel dmChannel = await victim.GetOrCreateDMChannelAsync();
             await new WarningMessage(
