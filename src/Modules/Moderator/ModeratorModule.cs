@@ -15,7 +15,8 @@ namespace wow2.Modules.Moderator
     [Name("Moderator")]
     [Group("mod")]
     [Alias("moderator")]
-    [Summary("For using tools to manage the server. (UNFINISHED)")]
+    [Summary("For using tools to manage the server. Requires the 'Ban Members' permission. (UNFINISHED)")]
+    [RequireUserPermission(GuildPermission.BanMembers)]
     public class ModeratorModule : ModuleBase<SocketCommandContext>
     {
         public static async Task CheckMessageWithAutoMod(SocketMessage message)
@@ -64,8 +65,7 @@ namespace wow2.Modules.Moderator
         }
 
         [Command("warn")]
-        [Summary("Sends a warning to a user with an optional message. Requires the 'Ban Members' permission.")]
-        [RequireUserPermission(GuildPermission.BanMembers)]
+        [Summary("Sends a warning to a user with an optional message.")]
         public async Task WarnAsync([Name("MENTION")] SocketGuildUser user, [Name("MESSAGE")][Remainder] string message = null)
         {
             var config = GetConfigForGuild(Context.Guild);
@@ -80,8 +80,7 @@ namespace wow2.Modules.Moderator
 
         [Command("mute")]
         [Alias("silence", "timeout")]
-        [Summary("Temporarily disables a user's permission to speak. Requires the 'Ban Members' permission.")]
-        [RequireUserPermission(GuildPermission.BanMembers)]
+        [Summary("Temporarily disables a user's permission to speak.")]
         public async Task MuteAsync([Name("MENTION")] SocketGuildUser user, string time = "30m", string message = "No reason given.")
         {
             throw new NotImplementedException();
@@ -89,7 +88,7 @@ namespace wow2.Modules.Moderator
 
         [Command("user-record")]
         [Alias("user", "record")]
-        [Summary("Gets a user record.")]
+        [Summary("Gets a user record. Requires the 'Ban Members' permission.")]
         public async Task UserAsync([Name("MENTION")] SocketGuildUser user)
         {
             var config = GetConfigForGuild(Context.Guild);
@@ -100,8 +99,7 @@ namespace wow2.Modules.Moderator
         }
 
         [Command("set-warnings-until-ban")]
-        [Summary("Sets the number of warnings required before a user is automatically banned. Requires the 'Ban Members' permission.")]
-        [RequireUserPermission(GuildPermission.BanMembers)]
+        [Summary("Sets the number of warnings required before a user is automatically banned.")]
         public async Task SetWarningsUntilBan(int number)
         {
             if (number < 2)
@@ -115,7 +113,6 @@ namespace wow2.Modules.Moderator
 
         [Command("toggle-auto-mod")]
         [Summary("Toggles whether the bot will mute or give warnings to users, for example if spam is detected.")]
-        [RequireUserPermission(GuildPermission.BanMembers)]
         public async Task ToggleAutoMod()
         {
             var config = GetConfigForGuild(Context.Guild);
@@ -185,6 +182,9 @@ namespace wow2.Modules.Moderator
         private static bool CheckMessagesForRepeatedContent(IEnumerable<SocketMessage> messages)
         {
             const int numberOfMessagesToCheck = 4;
+
+            if (messages.Count() < numberOfMessagesToCheck)
+                return false;
 
             // Order the list with newest messages first, and get subsection of list.
             messages = messages.OrderByDescending(message => message.Timestamp)
