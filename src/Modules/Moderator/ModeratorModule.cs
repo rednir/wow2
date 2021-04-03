@@ -29,13 +29,18 @@ namespace wow2.Modules.Moderator
 
             if (CheckMessagesForSpam(record.Messages))
             {
+                // Don't auto warn the user too many times in a short time period.
+                var lastWarningTime = DateTime.FromBinary(record.Warnings.LastOrDefault().DateTimeBinary);
+                if (DateTime.Now - lastWarningTime < TimeSpan.FromSeconds(20))
+                    return;
+
                 await WarnUserAsync(
                     config: config,
                     victim: (SocketGuildUser)message.Author,
                     requestedBy: await Program.GetClientGuildUserAsync(message.Channel),
                     message: "Your messages were automatically deemed to be spam.");
 
-                await new InfoMessage($"A user has been warned for spam.")
+                await new InfoMessage($"{message.Author.Mention} has been warned due to spam.")
                     .SendAsync(message.Channel);
             }
         }
