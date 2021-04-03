@@ -49,7 +49,6 @@ namespace wow2
         private async Task MainAsync()
         {
             SetIsDebugField();
-            ApplicationInfo = await Program.Client.GetApplicationInfoAsync();
 
             await Logger.LogInitialize();
             await DataManager.InitializeAsync();
@@ -65,6 +64,8 @@ namespace wow2
 
             await GetTokenAndLoginAsync(Client);
             await Client.StartAsync();
+
+            ApplicationInfo = await Program.Client.GetApplicationInfoAsync();
 
             await Task.Delay(-1);
         }
