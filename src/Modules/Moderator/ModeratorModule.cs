@@ -27,7 +27,7 @@ namespace wow2.Modules.Moderator
             UserRecord record = GetUserRecord(config, message.Author.Id);
             record.Messages.Add(message);
 
-            if (CheckMessagesForSpam(record.Messages))
+            if (CheckMessagesForSpam(record.Messages) || CheckMessagesForRepeatedContent(record.Messages))
             {
                 // Don't auto warn the user too many times in a short time period.
                 var lastWarningTime = DateTime.FromBinary(record.Warnings.LastOrDefault().DateTimeBinary);
@@ -154,20 +154,29 @@ namespace wow2.Modules.Moderator
             // Order the list with newest messages first.
             messages = messages.OrderByDescending(message => message.Timestamp);
             
-            // Check if there is large number of messages in a small period of time.
             if (messages.Count() > numberOfMessagesToCheckForSpam)
             {
                 var timeSpan = messages.First().Timestamp - messages.ElementAt(numberOfMessagesToCheckForSpam).Timestamp;
                 if (timeSpan < TimeSpan.FromSeconds(12))
                     return true;
-            }            
+            }
 
-            // Check if there are repeated messages.
+            return false;
+        }
+
+        private static bool CheckMessagesForRepeatedContent(IEnumerable<SocketMessage> messages)
+        {
+            const int numberOfMessagesToCheck = 4;
+
+            // Order the list with newest messages first.
+            messages = messages.OrderByDescending(message => message.Timestamp);
+
             int totalMessagesChecked = 0;
             int totalRepeatedMessages = 0;
+
             foreach (SocketMessage messageToCheck in messages)
             {
-                if (totalMessagesChecked >= numberOfMessagesToCheckForSpam) break;
+                if (totalMessagesChecked >= numberOfMessagesToCheck) break;
 
                 var messagesWithoutCurrentMessage = messages.Where(m
                     => (m != messageToCheck) && (m.Content == messageToCheck.Content));
