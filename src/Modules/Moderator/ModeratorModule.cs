@@ -48,7 +48,7 @@ namespace wow2.Modules.Moderator
             // Don't auto warn the user too many times in a short time period.
             if (record.Warnings.Count() > 0)
             {
-                var lastWarningTime = DateTime.FromBinary(record.Warnings.LastOrDefault().DateTimeBinary);
+                var lastWarningTime = DateTime.FromBinary(record.Warnings.Last().DateTimeBinary);
                 if (DateTime.Now - lastWarningTime < TimeSpan.FromSeconds(20))
                     return;
             }
