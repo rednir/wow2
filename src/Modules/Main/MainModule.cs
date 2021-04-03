@@ -121,7 +121,7 @@ namespace wow2.Modules.Main
 
         public static async Task SendAboutMessageToChannelAsync(SocketCommandContext context)
         {
-            var appInfo = await Program.Client.GetApplicationInfoAsync();
+            var appInfo = Program.ApplicationInfo;
 
             var embedBuilder = new EmbedBuilder()
             {

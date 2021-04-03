@@ -52,6 +52,9 @@ namespace wow2
 
         public static async Task DiscordLogRecievedAsync(LogMessage logMessage)
         {
+            if (logMessage.Exception is GatewayReconnectException)
+                return;
+
             if (logMessage.Exception is CommandException commandException)
             {
                 string verboseErrorMessage = $"An unhandled exception was thrown and was automatically reported.\n`{commandException.InnerException.Message}`";
@@ -66,12 +69,12 @@ namespace wow2
                     .SendAsync(commandException.Context.Channel);
 
                 // TODO: consider making this a toggle.
-                await (await Program.Client.GetApplicationInfoAsync()).Owner.SendMessageAsync($"```\n{commandException}\n```");
+                await Program.ApplicationInfo.Owner.SendMessageAsync($"```\n{commandException}\n```");
             }
-            else if (logMessage.Exception != null && logMessage.Exception !is GatewayReconnectException)
+            else if (logMessage.Exception != null)
             {
                 Logger.LogException(logMessage.Exception);
-                await (await Program.Client.GetApplicationInfoAsync()).Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
+                await Program.ApplicationInfo.Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
             }
             else
             {

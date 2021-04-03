@@ -4,7 +4,7 @@ using System.Reflection;
 using System.IO;
 using System.Threading.Tasks;
 using Discord;
-using Discord.Commands;
+using Discord.Rest;
 using Discord.WebSocket;
 using wow2.Verbose;
 using wow2.Data;
@@ -25,6 +25,8 @@ namespace wow2
 
         public static readonly DateTime TimeStarted = DateTime.Now;
         public static DiscordSocketClient Client { get; set; }
+        public static RestApplication ApplicationInfo { get; set; }
+
         public static bool IsDebug
         {
             get { return IsDebugField; }
@@ -47,6 +49,7 @@ namespace wow2
         private async Task MainAsync()
         {
             SetIsDebugField();
+            ApplicationInfo = await Program.Client.GetApplicationInfoAsync();
 
             await Logger.LogInitialize();
             await DataManager.InitializeAsync();
