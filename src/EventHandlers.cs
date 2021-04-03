@@ -68,7 +68,7 @@ namespace wow2
                 // TODO: consider making this a toggle.
                 await (await Program.Client.GetApplicationInfoAsync()).Owner.SendMessageAsync($"```\n{commandException}\n```");
             }
-            else if (logMessage.Exception != null)
+            else if (logMessage.Exception != null && logMessage.Exception !is GatewayReconnectException)
             {
                 Logger.LogException(logMessage.Exception);
                 await (await Program.Client.GetApplicationInfoAsync()).Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
