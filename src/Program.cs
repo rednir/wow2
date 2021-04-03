@@ -38,8 +38,8 @@ namespace wow2
             get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); }
         }
 
-        public static async Task<IGuildUser> GetClientGuildUserAsync(SocketCommandContext context)
-            => (IGuildUser)(await context.Channel.GetUserAsync(context.Client.CurrentUser.Id));
+        public static async Task<SocketGuildUser> GetClientGuildUserAsync(ISocketMessageChannel channel)
+            => (SocketGuildUser)(await channel.GetUserAsync(Program.Client.CurrentUser.Id));
 
         private static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();

@@ -141,7 +141,7 @@ namespace wow2.Modules.Voice
 
             if (!CheckIfAudioClientDisconnected(config.AudioClient))
             {
-                IGuildUser guildUser = await Program.GetClientGuildUserAsync(Context);
+                IGuildUser guildUser = await Program.GetClientGuildUserAsync(Context.Channel);
                 if (guildUser.VoiceChannel == voiceChannelToJoin)
                     throw new CommandReturnException(Context, "I'm already in this voice channel.");
             }

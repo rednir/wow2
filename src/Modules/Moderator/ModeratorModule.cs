@@ -27,33 +27,30 @@ namespace wow2.Modules.Moderator
             UserRecord record = GetUserRecord(config, message.Author.Id);
             record.Messages.Add(message);
 
-            Console.WriteLine(CheckMessagesForSpam(record.Messages).ToString());
+            if (CheckMessagesForSpam(record.Messages))
+            {
+                await WarnUserAsync(
+                    config: config,
+                    victim: (SocketGuildUser)message.Author,
+                    requestedBy: await Program.GetClientGuildUserAsync(message.Channel),
+                    message: "Your messages were automatically deemed to be spam.");
+
+                await new InfoMessage($"A user has been warned for spam.")
+                    .SendAsync(message.Channel);
+            }
         }
 
         [Command("warn")]
         [Summary("Sends a warning to a user with an optional message. Requires the 'Ban Members' permission.")]
         [RequireUserPermission(GuildPermission.BanMembers)]
-        public async Task WarnAsync([Name("MENTION")] SocketGuildUser user, [Name("MESSAGE")][Remainder] string message)
+        public async Task WarnAsync([Name("MENTION")] SocketGuildUser user, [Name("MESSAGE")][Remainder] string message = null)
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            message = string.IsNullOrWhiteSpace(message) ?
-                "No reason was provided by the moderator." : $"Reason: {message}";
-
-            GetUserRecord(config, user.Id).Warnings.Add(new Warning()
-            {
-                RequestedBy = Context.User.Id,
-                DateTimeBinary = DateTime.Now.ToBinary()
-            });
-
-            IDMChannel dmChannel = await user.GetOrCreateDMChannelAsync();
-            await new WarningMessage(
-                description: $"You have recieved a warning from {Context.User.Mention} in the server '{Context.Guild.Name}'\nFurther warnings may result in a ban.\n```\n{message}\n```",
-                title: "You have been warned!")
-                    .SendAsync(dmChannel);
+            await WarnUserAsync(config, user, (SocketGuildUser)Context.User, message);
 
             await new SuccessMessage($"The user {user.Mention} has been warned by {Context.User.Mention}.")
-                .SendAsync(dmChannel);
+                .SendAsync(Context.Channel);
 
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -104,6 +101,24 @@ namespace wow2.Modules.Moderator
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"Auto mod is now `{(config.IsAutoModOn ? "on" : "off")}`")
                 .SendAsync(Context.Channel);
+        }
+
+        private static async Task WarnUserAsync(ModeratorModuleConfig config, SocketGuildUser victim, SocketGuildUser requestedBy, string message)
+        {
+            message = string.IsNullOrWhiteSpace(message) ?
+                "No reason was provided by the moderator." : $"Reason: {message}";
+
+            GetUserRecord(config, victim.Id).Warnings.Add(new Warning()
+            {
+                RequestedBy = requestedBy.Id,
+                DateTimeBinary = DateTime.Now.ToBinary()
+            });
+
+            IDMChannel dmChannel = await victim.GetOrCreateDMChannelAsync();
+            await new WarningMessage(
+                description: $"You have recieved a warning from {requestedBy.Mention} in the server '{requestedBy.Guild.Name}'\nFurther warnings may result in a ban.\n```\n{message}\n```",
+                title: "You have been warned!")
+                    .SendAsync(dmChannel);
         }
 
         private static UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
