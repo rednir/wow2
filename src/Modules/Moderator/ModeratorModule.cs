@@ -171,7 +171,7 @@ namespace wow2.Modules.Moderator
 
             // Order the list with newest messages first.
             messages = messages.OrderByDescending(message => message.Timestamp);
-            
+
             if (messages.Count() > numberOfMessagesToCheckForSpam)
             {
                 var timeSpan = messages.First().Timestamp - messages.ElementAt(numberOfMessagesToCheckForSpam).Timestamp;
@@ -186,26 +186,11 @@ namespace wow2.Modules.Moderator
         {
             const int numberOfMessagesToCheck = 4;
 
-            // Order the list with newest messages first.
-            messages = messages.OrderByDescending(message => message.Timestamp);
+            // Order the list with newest messages first, and get subsection of list.
+            messages = messages.OrderByDescending(message => message.Timestamp)
+                .ToList().GetRange(0, numberOfMessagesToCheck);
 
-            int totalMessagesChecked = 0;
-            int totalRepeatedMessages = 0;
-
-            foreach (SocketMessage messageToCheck in messages)
-            {
-                if (totalMessagesChecked >= numberOfMessagesToCheck) break;
-
-                var messagesWithoutCurrentMessage = messages.Where(m
-                    => (m != messageToCheck) && (m.Content == messageToCheck.Content));
-
-                if (messagesWithoutCurrentMessage.Count() > 0)
-                    totalRepeatedMessages++;
-
-                totalMessagesChecked++;
-            }
-
-            return totalRepeatedMessages >= 3;
+            return messages.All(m => m.Content == messages.First().Content);
         }
 
         private static ModeratorModuleConfig GetConfigForGuild(SocketGuild guild)
