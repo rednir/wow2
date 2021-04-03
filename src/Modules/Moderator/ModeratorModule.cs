@@ -27,22 +27,37 @@ namespace wow2.Modules.Moderator
             UserRecord record = GetUserRecord(config, message.Author.Id);
             record.Messages.Add(message);
 
-            if (CheckMessagesForSpam(record.Messages) || CheckMessagesForRepeatedContent(record.Messages))
+            string dueTo;
+            string warningMessage;
+            if (CheckMessagesForSpam(record.Messages))
             {
-                // Don't auto warn the user too many times in a short time period.
-                var lastWarningTime = DateTime.FromBinary(record.Warnings.LastOrDefault().DateTimeBinary);
-                if (DateTime.Now - lastWarningTime < TimeSpan.FromSeconds(20))
-                    return;
-
-                await WarnUserAsync(
-                    config: config,
-                    victim: (SocketGuildUser)message.Author,
-                    requestedBy: await Program.GetClientGuildUserAsync(message.Channel),
-                    message: "Your messages were automatically deemed to be spam.");
-
-                await new InfoMessage($"{message.Author.Mention} has been warned due to spam.")
-                    .SendAsync(message.Channel);
+                warningMessage = "Your recent messages were automatically deemed to be spam.";
+                dueTo = "spam";
             }
+            else if (CheckMessagesForRepeatedContent(record.Messages))
+            {
+                warningMessage = "Your recent messages contained repeated content.";
+                dueTo = "repeated messages";
+            }
+            else
+            {
+                // No need to act on the messages.
+                return;
+            }
+
+            // Don't auto warn the user too many times in a short time period.
+            var lastWarningTime = DateTime.FromBinary(record.Warnings.LastOrDefault().DateTimeBinary);
+            if (DateTime.Now - lastWarningTime < TimeSpan.FromSeconds(20))
+                return;
+
+            await WarnUserAsync(
+                config: config,
+                victim: (SocketGuildUser)message.Author,
+                requestedBy: await Program.GetClientGuildUserAsync(message.Channel),
+                message: warningMessage);
+
+            await new InfoMessage($"{message.Author.Mention} has been warned due to {dueTo}.")
+                .SendAsync(message.Channel);
         }
 
         [Command("warn")]
