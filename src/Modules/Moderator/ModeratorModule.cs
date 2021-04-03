@@ -46,9 +46,12 @@ namespace wow2.Modules.Moderator
             }
 
             // Don't auto warn the user too many times in a short time period.
-            var lastWarningTime = DateTime.FromBinary(record.Warnings.LastOrDefault().DateTimeBinary);
-            if (DateTime.Now - lastWarningTime < TimeSpan.FromSeconds(20))
-                return;
+            if (record.Warnings.Count() > 0)
+            {
+                var lastWarningTime = DateTime.FromBinary(record.Warnings.LastOrDefault().DateTimeBinary);
+                if (DateTime.Now - lastWarningTime < TimeSpan.FromSeconds(20))
+                    return;
+            }
 
             await WarnUserAsync(
                 config: config,
