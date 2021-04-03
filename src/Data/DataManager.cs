@@ -120,20 +120,5 @@ namespace wow2.Data
                 await LoadGuildDataFromFileAsync(guildId);
             }
         }
-
-        public static MainModuleConfig GetMainConfigForGuild(SocketGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Main;
-
-        public static KeywordsModuleConfig GetKeywordsConfigForGuild(SocketGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Keywords;
-
-        public static GamesModuleConfig GetGamesConfigForGuild(SocketGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Games;
-
-        public static VoiceModuleConfig GetVoiceConfigForGuild(SocketGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Voice;
-
-        public static ModeratorModuleConfig GetModeratorConfigForGuild(SocketGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Moderator;
     }
 }

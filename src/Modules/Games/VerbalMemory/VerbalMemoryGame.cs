@@ -16,7 +16,7 @@ namespace wow2.Modules.Games.VerbalMemory
 
         public static async Task CheckMessageAsync(SocketMessage receivedMessage)
         {
-            var config = DataManager.GetGamesConfigForGuild(receivedMessage.GetGuild()).VerbalMemory;
+            var config = GetConfigForGuild(receivedMessage.GetGuild());
 
             if (config.CurrentWordMessage == null) return;
 
@@ -69,7 +69,7 @@ namespace wow2.Modules.Games.VerbalMemory
 
         public static async Task StartGame(SocketCommandContext context)
         {
-            var config = DataManager.GetGamesConfigForGuild(context.Guild).VerbalMemory;
+            var config = GetConfigForGuild(context.Guild);
 
             config.InitalContext = context;
             await new InfoMessage(
@@ -112,5 +112,8 @@ namespace wow2.Modules.Games.VerbalMemory
             config.UnseenWords = defaultConfig.UnseenWords;
             config.Turns = defaultConfig.Turns;
         }
+
+        private static VerbalMemoryGameConfig GetConfigForGuild(SocketGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Games.VerbalMemory;
     }
 }

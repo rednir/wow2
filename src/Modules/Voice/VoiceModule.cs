@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord;
+using Discord.WebSocket;
 using Discord.Net;
 using Discord.Commands;
 using Discord.Audio;
@@ -23,7 +24,7 @@ namespace wow2.Modules.Voice
         [Summary("Show the song request queue.")]
         public async Task ListAsync(int page = 1)
         {
-            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
 
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             int i = 0;
@@ -54,7 +55,7 @@ namespace wow2.Modules.Voice
         [Summary("Clears the song request queue.")]
         public async Task ClearAsync()
         {
-            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
 
             config.SongRequests.Clear();
             StopPlaying(config);
@@ -67,7 +68,7 @@ namespace wow2.Modules.Voice
         [Summary("Adds REQUEST to the song request queue. REQUEST can be a video URL or a youtube search term.")]
         public async Task AddAsync([Name("REQUEST")][Remainder] string songRequest)
         {
-            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
 
             // Might want to consider using this.
             /*if (((SocketGuildUser)Context.User).VoiceChannel == null)
@@ -107,7 +108,7 @@ namespace wow2.Modules.Voice
         [Summary("Stops the currently playing request and starts the next request if it exists.")]
         public async Task SkipAsync()
         {
-            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
 
             if (config.CurrentlyPlayingSongRequest == null)
                 throw new CommandReturnException(Context, "There's nothing playing right now.");
@@ -135,7 +136,7 @@ namespace wow2.Modules.Voice
         [Summary("Joins the voice channel of the person that executed the command.")]
         public async Task JoinAsync()
         {
-            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
             IVoiceChannel voiceChannelToJoin = ((IGuildUser)Context.User).VoiceChannel ?? null;
 
             if (!CheckIfAudioClientDisconnected(config.AudioClient))
@@ -164,7 +165,7 @@ namespace wow2.Modules.Voice
         [Summary("Leaves the voice channel.")]
         public async Task LeaveAsync()
         {
-            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
 
             config.CurrentlyPlayingSongRequest = null;
 
@@ -179,7 +180,7 @@ namespace wow2.Modules.Voice
         [Summary("Shows details about the currently playing song request.")]
         public async Task NowPlayingAsync()
         {
-            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
 
             if (config.CurrentlyPlayingSongRequest == null || CheckIfAudioClientDisconnected(config.AudioClient))
                 throw new CommandReturnException(Context, "Nothing is playing right now.");
@@ -191,9 +192,9 @@ namespace wow2.Modules.Voice
         [Summary("Toggles whether the np command will be executed everytime a new song is playing.")]
         public async Task ToggleLikeReactionAsync()
         {
-            DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn = !DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn;
+            GetConfigForGuild(Context.Guild).IsAutoNpOn = !GetConfigForGuild(Context.Guild).IsAutoNpOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Auto execution of `{EventHandlers.DefaultCommandPrefix} vc np` is turned `{(DataManager.GetVoiceConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}`")
+            await new SuccessMessage($"Auto execution of `{EventHandlers.DefaultCommandPrefix} vc np` is turned `{(GetConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}`")
                 .SendAsync(Context.Channel);
         }
 
@@ -205,7 +206,7 @@ namespace wow2.Modules.Voice
                 throw new CommandReturnException(Context, "The number of votes required is greater than the amount of people in the server.", "Number too large");
 
             newNumberOfSkips = Math.Max(newNumberOfSkips, 1);
-            DataManager.GetVoiceConfigForGuild(Context.Guild).VoteSkipsNeeded = newNumberOfSkips;
+            GetConfigForGuild(Context.Guild).VoteSkipsNeeded = newNumberOfSkips;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"`{newNumberOfSkips}` votes are now required to skip a song request.")
                 .SendAsync(Context.Channel);
@@ -213,7 +214,7 @@ namespace wow2.Modules.Voice
 
         private async Task DisplayCurrentlyPlayingRequestAsync()
         {
-            UserSongRequest request = DataManager.GetVoiceConfigForGuild(Context.Guild).CurrentlyPlayingSongRequest;
+            UserSongRequest request = GetConfigForGuild(Context.Guild).CurrentlyPlayingSongRequest;
 
             if (request == null) return;
 
@@ -230,7 +231,7 @@ namespace wow2.Modules.Voice
 
         private async Task PlayRequestAsync(UserSongRequest request, CancellationToken cancellationToken)
         {
-            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
 
             using (var ffmpeg = YoutubeDl.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
             using (var output = ffmpeg.StandardOutput.BaseStream)
@@ -256,7 +257,7 @@ namespace wow2.Modules.Voice
         /// <summary>Continue to the next song request, if it exists. Otherwise notify the user that the queue is empty.</summary>
         private async Task ContinueAsync()
         {
-            var config = DataManager.GetVoiceConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
             UserSongRequest nextRequest;
 
             StopPlaying(config);
@@ -321,5 +322,8 @@ namespace wow2.Modules.Voice
 
         private bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
             => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;
+
+        private static VoiceModuleConfig GetConfigForGuild(SocketGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Voice;
     }
 }

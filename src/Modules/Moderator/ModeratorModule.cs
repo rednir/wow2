@@ -20,7 +20,7 @@ namespace wow2.Modules.Moderator
         [RequireUserPermission(GuildPermission.BanMembers)]
         public async Task WarnAsync([Name("MENTION")] SocketGuildUser user, [Name("MESSAGE")][Remainder] string message)
         {
-            var config = DataManager.GetModeratorConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
 
             message = string.IsNullOrWhiteSpace(message) ?
                 "No reason was provided by the moderator." : $"Reason: {message}";
@@ -57,7 +57,7 @@ namespace wow2.Modules.Moderator
         [Summary("Gets a user record.")]
         public async Task UserAsync([Name("MENTION")] SocketGuildUser user)
         {
-            var config = DataManager.GetModeratorConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
             UserRecord record = GetUserRecord(config, user.Id);
 
             await new InfoMessage($"`{record.Warnings.Count()}` warnings, {record.Mutes.Count()} mutes.")
@@ -72,7 +72,7 @@ namespace wow2.Modules.Moderator
             if (number < 2)
                 throw new CommandReturnException(Context, "Number is too small.");
 
-            DataManager.GetModeratorConfigForGuild(Context.Guild).WarningsUntilBan = number;
+            GetConfigForGuild(Context.Guild).WarningsUntilBan = number;
             await new SuccessMessage($"{number} warnings will result in a ban.")
                 .SendAsync(Context.Channel);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
@@ -83,7 +83,7 @@ namespace wow2.Modules.Moderator
         [RequireUserPermission(GuildPermission.BanMembers)]
         public async Task ToggleAutoMod()
         {
-            var config = DataManager.GetModeratorConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
 
             config.IsAutoModOn = !config.IsAutoModOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
@@ -111,5 +111,8 @@ namespace wow2.Modules.Moderator
 
             return matchingRecord;
         }
+
+        private static ModeratorModuleConfig GetConfigForGuild(SocketGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Moderator;
     }
 }

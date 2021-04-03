@@ -47,7 +47,7 @@ namespace wow2.Modules.Main
         [Summary("Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to \"\" to remove it.")]
         public async Task AliasAsync(string name, [Name("DEFINITION")] params string[] definitionSplit)
         {
-            var config = DataManager.GetMainConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
             string removeAliasText = $"To remove the alias, type `{EventHandlers.DefaultCommandPrefix} alias \"{name}\"`";
 
             string definition = string.Join(" ", definitionSplit.Where(w
@@ -87,7 +87,7 @@ namespace wow2.Modules.Main
         [Summary("Displays a list of aliases.")]
         public async Task AliasListAsync()
         {
-            var config = DataManager.GetMainConfigForGuild(Context.Guild);
+            var config = GetConfigForGuild(Context.Guild);
 
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             foreach (var aliasPair in config.AliasesDictionary)
@@ -144,7 +144,7 @@ namespace wow2.Modules.Main
 
         public static async Task<bool> CheckForAliasAsync(SocketMessage message)
         {
-            var config = DataManager.GetMainConfigForGuild(message.GetGuild());
+            var config = GetConfigForGuild(message.GetGuild());
 
             var aliasesFound = config.AliasesDictionary.Where(a => message.Content.StartsWithWord(a.Key));
 
@@ -234,5 +234,8 @@ namespace wow2.Modules.Main
             }
             return parametersInfo;
         }
+
+        private static MainModuleConfig GetConfigForGuild(SocketGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Main;
     }
 }

@@ -15,7 +15,7 @@ namespace wow2.Modules.Games.Counting
     {
         public static async Task StartGame(SocketCommandContext context, float increment)
         {
-            var config = DataManager.GetGamesConfigForGuild(context.Guild).Counting;
+            var config = GetConfigForGuild(context.Guild);
 
             config.InitalContext = context;
             config.Increment = increment;
@@ -31,7 +31,7 @@ namespace wow2.Modules.Games.Counting
 
         public static async Task CheckMessageAsync(SocketMessage recievedMessage)
         {
-            var config = DataManager.GetGamesConfigForGuild(recievedMessage.GetGuild()).Counting;
+            var config = GetConfigForGuild(recievedMessage.GetGuild());
             float userNumber;
 
             if (recievedMessage.Author.IsBot || config.NextNumber == null || config.InitalContext.Channel != recievedMessage.Channel) return;
@@ -116,10 +116,13 @@ namespace wow2.Modules.Games.Counting
             {
                 await new WarningMessage("Woah, that's a big number.\nHate to be a killjoy, but even a computer has its limits.")
                     .SendAsync(message.Channel);
-                await EndGameAsync(DataManager.GetGamesConfigForGuild(message.GetGuild()).Counting);
+                await EndGameAsync(GetConfigForGuild(message.GetGuild()));
                 return true;
             }
             return false;
         }
+
+        private static CountingGameConfig GetConfigForGuild(SocketGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Games.Counting;
     }
 }
