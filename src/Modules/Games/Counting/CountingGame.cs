@@ -28,16 +28,18 @@ namespace wow2.Modules.Games.Counting
             await new InfoMessage($"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.")
                 .SendAsync(context.Channel);
         }
-
-        public static async Task CheckMessageAsync(SocketMessage recievedMessage)
+        
+        /// <returns>True if the message was related to the game.</returns>
+        public static async Task<bool> CheckMessageAsync(SocketMessage recievedMessage)
         {
             var config = GetConfigForGuild(recievedMessage.GetGuild());
             float userNumber;
 
-            if (recievedMessage.Author.IsBot || config.NextNumber == null || config.InitalContext.Channel != recievedMessage.Channel) return;
+            if (recievedMessage.Author.IsBot || config.NextNumber == null || config.InitalContext.Channel != recievedMessage.Channel)
+                return false;
 
             try { userNumber = Convert.ToSingle(recievedMessage.Content); }
-            catch { return; }
+            catch { return false; }
 
             // If this is the first counting message, there is no need to check if a user counts twice in a row.
             if (config.ListOfMessages.Count != 0)
@@ -46,7 +48,7 @@ namespace wow2.Modules.Games.Counting
                 {
                     await new WarningMessage("Counting twice in a row is no fun.")
                         .SendAsync(recievedMessage.Channel);
-                    return;
+                    return true;
                 }
             }
 
@@ -64,6 +66,8 @@ namespace wow2.Modules.Games.Counting
                     .SendAsync(recievedMessage.Channel);
                 await EndGameAsync(config);
             }
+
+            return true;
         }
 
         private static async Task EndGameAsync(CountingGameConfig config)

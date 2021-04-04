@@ -68,7 +68,6 @@ namespace wow2
                 await new ErrorMessage(verboseErrorMessage)
                     .SendAsync(commandException.Context.Channel);
 
-                // TODO: consider making this a toggle.
                 await Program.ApplicationInfo.Owner.SendMessageAsync($"```\n{commandException}\n```");
             }
             else if (logMessage.Exception != null)
@@ -106,10 +105,9 @@ namespace wow2
 
             await DataManager.EnsureGuildDataFileExistsAsync(recievedMessage.GetGuild().Id);
 
-            await CountingGame.CheckMessageAsync(recievedMessage);
-            await VerbalMemoryGame.CheckMessageAsync(recievedMessage);
-
-            await ModeratorModule.CheckMessageWithAutoMod(recievedMessage);
+            // Only auto mod message if not related to a game.
+            if (!(await CountingGame.CheckMessageAsync(recievedMessage)) && !(await VerbalMemoryGame.CheckMessageAsync(recievedMessage)))
+                await ModeratorModule.CheckMessageWithAutoMod(recievedMessage);
 
             if (recievedMessage.Content.StartsWithWord(DefaultCommandPrefix, true))
             {
@@ -117,7 +115,7 @@ namespace wow2
                 await CommandRecievedAsync(recievedMessage);
                 return;
             }
-            if (!await MainModule.CheckForAliasAsync(recievedMessage))
+            else if (!await MainModule.CheckForAliasAsync(recievedMessage))
             {
                 // Only check for keyword when the message is not an alias/command.
                 KeywordsModule.CheckMessageForKeyword(recievedMessage);

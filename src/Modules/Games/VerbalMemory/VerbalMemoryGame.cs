@@ -14,14 +14,17 @@ namespace wow2.Modules.Games.VerbalMemory
         public const string SeenKeyword = "s";
         public const string NewKeyword = "n";
 
-        public static async Task CheckMessageAsync(SocketMessage receivedMessage)
+        /// <returns>True if the message was related to the game.</returns>
+        public static async Task<bool> CheckMessageAsync(SocketMessage receivedMessage)
         {
             var config = GetConfigForGuild(receivedMessage.GetGuild());
 
-            if (config.CurrentWordMessage == null) return;
+            if (config.CurrentWordMessage == null)
+                return false;
 
             if (receivedMessage.Channel != config.InitalContext.Channel
-                || receivedMessage.Author != config.InitalContext.User) return;
+                || receivedMessage.Author != config.InitalContext.User)
+                return false;
 
             string currentWord = config.CurrentWordMessage.Content;
             switch (receivedMessage.Content)
@@ -34,7 +37,7 @@ namespace wow2.Modules.Games.VerbalMemory
                             title: "Wrong!")
                                 .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
                         await EndGameAsync(config);
-                        return;
+                        return true;
                     }
                     else
                     {
@@ -55,16 +58,17 @@ namespace wow2.Modules.Games.VerbalMemory
                             title: "Wrong!")
                                 .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
                         await EndGameAsync(config);
-                        return;
+                        return true;
                     }
 
                 default:
-                    return;
+                    return false;
             }
 
             config.Turns++;
             await receivedMessage.DeleteAsync();
             await NextWordAsync(config);
+            return true;
         }
 
         public static async Task StartGame(SocketCommandContext context)
