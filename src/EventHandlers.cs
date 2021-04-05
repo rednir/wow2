@@ -52,12 +52,13 @@ namespace wow2
 
         public static async Task DiscordLogRecievedAsync(LogMessage logMessage)
         {
+            // TODO: rewrite?
             if (logMessage.Exception is GatewayReconnectException)
                 return;
 
             if (logMessage.Exception is CommandException commandException)
             {
-                string verboseErrorMessage = $"An unhandled exception was thrown and was automatically reported.\n`{commandException.InnerException.Message}`";
+                string verboseErrorMessage = $"An unhandled exception was thrown and was automatically reported.\n```{commandException.InnerException.Message}\n```";
 
                 if (commandException.InnerException is CommandReturnException)
                     return;
