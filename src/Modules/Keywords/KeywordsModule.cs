@@ -243,6 +243,8 @@ namespace wow2.Modules.Keywords
             var keywordsDictionary = GetConfigForGuild(Context.Guild).KeywordsDictionary;
             List<KeywordValue> values;
 
+            keyword = keyword.ToLower();
+
             if (!keywordsDictionary.TryGetValue(keyword, out values))
                 throw new CommandReturnException(Context, $"If you want to list all keywords available, don't specify a keyword in the command.", "No such keyword");
 
