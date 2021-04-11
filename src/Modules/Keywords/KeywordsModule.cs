@@ -238,11 +238,11 @@ namespace wow2.Modules.Keywords
         [Command("values")]
         [Alias("listvalues", "values", "list-value", "listvalue", "value", "list")]
         [Summary("Shows a list of values for a keyword.")]
-        public async Task ListKeywordValuesAsync([Name("keyword")][Remainder] string keyword)
+        public async Task ListKeywordValuesAsync([Name("keyword")] string keyword, int page = 1)
         {
             var keywordsDictionary = GetConfigForGuild(Context.Guild).KeywordsDictionary;
-            List<KeywordValue> values;
 
+            List<KeywordValue> values;
             keyword = keyword.ToLower();
 
             if (!keywordsDictionary.TryGetValue(keyword, out values))
@@ -263,7 +263,8 @@ namespace wow2.Modules.Keywords
             await new GenericMessage(
                 description: $"*There are {values.Count()} values in total, as listed below.*",
                 title: $"📒 Values for '{keyword}'",
-                fieldBuilders: fieldBuildersForValueList)
+                fieldBuilders: fieldBuildersForValueList,
+                fieldBuildersPage: page)
                     .SendAsync(Context.Channel);
         }
 
