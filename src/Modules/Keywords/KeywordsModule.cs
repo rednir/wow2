@@ -148,7 +148,9 @@ namespace wow2.Modules.Keywords
             keywordsDictionary[keyword].Add(new KeywordValue()
             {
                 Content = valueContent,
-                Title = valueTitle
+                Title = valueTitle,
+                AddedByUserId = Context.User.Id,
+                DateTimeAddedBinary = DateTime.Now.ToBinary()
             });
 
             await new SuccessMessage($"Added a value to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.")
@@ -256,10 +258,15 @@ namespace wow2.Modules.Keywords
             var fieldBuildersForValueList = new List<EmbedFieldBuilder>();
             foreach (KeywordValue value in values)
             {
+                var user = value.AddedByUserId == 0 ? 
+                    "[UNKNOWN USER]" : Program.Client.GetUser(value.AddedByUserId).Username;
+                var date = value.DateTimeAddedBinary == 0 ?
+                    "[UNKNOWN DATE]" : DateTime.FromBinary(value.DateTimeAddedBinary).ToShortDateString();
+
                 fieldBuildersForValueList.Add(
                     new EmbedFieldBuilder()
                     {
-                        Name = "---",
+                        Name = $"Added by {user} at {date}",
                         Value = $"```{value.Content}```"
                     }
                 );
