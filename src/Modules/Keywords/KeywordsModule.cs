@@ -248,15 +248,22 @@ namespace wow2.Modules.Keywords
             if (!keywordsDictionary.TryGetValue(keyword, out values))
                 throw new CommandReturnException(Context, $"If you want to list all keywords available, don't specify a keyword in the command.", "No such keyword");
 
-            StringBuilder stringBuilderForValueList = new StringBuilder();
+            var fieldBuildersForValueList = new List<EmbedFieldBuilder>();
             foreach (KeywordValue value in values)
             {
-                stringBuilderForValueList.Append($"```{value.Content}```");
+                fieldBuildersForValueList.Add(
+                    new EmbedFieldBuilder()
+                    {
+                        Name = "---",
+                        Value = $"```{value.Content}```"
+                    }
+                );
             }
 
             await new GenericMessage(
-                description: $"*There are {values.Count()} values in total, as listed below.*\n{stringBuilderForValueList.ToString()}",
-                title: $"📒 Values for '{keyword}'")
+                description: $"*There are {values.Count()} values in total, as listed below.*",
+                title: $"📒 Values for '{keyword}'",
+                fieldBuilders: fieldBuildersForValueList)
                     .SendAsync(Context.Channel);
         }
 
