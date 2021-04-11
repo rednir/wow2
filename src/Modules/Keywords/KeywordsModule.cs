@@ -119,6 +119,11 @@ namespace wow2.Modules.Keywords
         {
             var keywordsDictionary = GetConfigForGuild(Context.Guild).KeywordsDictionary;
 
+            const int maxValueLength = 1024;
+
+            if (valueContent.Length >= maxValueLength)
+                throw new CommandReturnException(Context, $"The max length for a single value is {maxValueLength} characters.");
+
             keyword = keyword.ToLower();
 
             // Check whether the user has specified a title.
