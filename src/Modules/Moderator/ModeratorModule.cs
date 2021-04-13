@@ -14,7 +14,7 @@ namespace wow2.Modules.Moderator
     [Name("Moderator")]
     [Group("mod")]
     [Alias("moderator")]
-    [Summary("For using tools to manage the server. Requires the 'Ban Members' permission. (UNFINISHED)")]
+    [Summary("For using tools to manage the server. This is still very rudimentary and unfinished.  Requires the 'Ban Members' permission.")]
     [RequireUserPermission(GuildPermission.BanMembers)]
     public class ModeratorModule : ModuleBase<SocketCommandContext>
     {
@@ -31,12 +31,12 @@ namespace wow2.Modules.Moderator
             string warningMessage;
             if (CheckMessagesForSpam(record.Messages))
             {
-                warningMessage = "Your recent messages were automatically deemed to be spam.";
+                warningMessage = "Recent messages were automatically deemed to be spam.";
                 dueTo = "spam";
             }
             else if (CheckMessagesForRepeatedContent(record.Messages))
             {
-                warningMessage = "Your recent messages contained repeated content.";
+                warningMessage = "Recent messages contained repeated content.";
                 dueTo = "repeated messages";
             }
             else
@@ -77,7 +77,7 @@ namespace wow2.Modules.Moderator
 
         [Command("mute")]
         [Alias("silence", "timeout")]
-        [Summary("Temporarily disables a user's permission to speak.")]
+        [Summary("Temporarily disables a user's permission to speak. (WIP)")]
         public async Task MuteAsync([Name("MENTION")] SocketGuildUser user, string time = "30m", string message = "No reason given.")
         {
             await new WarningMessage("This hasn't been implemented yet. Check back later!")
@@ -86,7 +86,7 @@ namespace wow2.Modules.Moderator
 
         [Command("user-record")]
         [Alias("user", "record", "overview")]
-        [Summary("Gets a user record. Requires the 'Ban Members' permission.")]
+        [Summary("Gets a user record.")]
         public async Task UserAsync([Name("MENTION")] SocketGuildUser user)
         {
             var config = GetConfigForGuild(Context.Guild);
@@ -132,7 +132,7 @@ namespace wow2.Modules.Moderator
         }
 
         [Command("toggle-auto-mod")]
-        [Summary("Toggles whether the bot will mute or give warnings to users, for example if spam is detected.")]
+        [Summary("Toggles whether the bot give warnings to users, for example if spam is detected.")]
         public async Task ToggleAutoMod()
         {
             var config = GetConfigForGuild(Context.Guild);
