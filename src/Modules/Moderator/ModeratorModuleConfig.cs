@@ -7,7 +7,7 @@ namespace wow2.Modules.Moderator
     public class ModeratorModuleConfig
     {
         public List<UserRecord> UserRecords { get; set; } = new List<UserRecord>();
-        public int WarningsUntilBan { get; set; } = 3;
+        public int WarningsUntilBan { get; set; } = -1;
         public bool IsAutoModOn { get; set; } = false;
     }
 

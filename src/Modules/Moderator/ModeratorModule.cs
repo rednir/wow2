@@ -53,7 +53,7 @@ namespace wow2.Modules.Moderator
                     return;
             }
 
-            await WarnUserAsync(
+            await WarnOrBanUserAsync(
                 config: config,
                 victim: (SocketGuildUser)message.Author,
                 requestedBy: await Program.GetClientGuildUserAsync(message.Channel),
@@ -69,7 +69,7 @@ namespace wow2.Modules.Moderator
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            await WarnUserAsync(config, user, (SocketGuildUser)Context.User, message);
+            await WarnOrBanUserAsync(config, user, (SocketGuildUser)Context.User, message);
 
             await new SuccessMessage($"The user {user.Mention} has been warned by {Context.User.Mention}.")
                 .SendAsync(Context.Channel);
@@ -91,7 +91,7 @@ namespace wow2.Modules.Moderator
         {
             var config = GetConfigForGuild(Context.Guild);
             UserRecord record = GetUserRecord(config, user.Id);
-            
+
             var embedBuilder = new EmbedBuilder()
             {
                 Author = new EmbedAuthorBuilder()
@@ -108,15 +108,26 @@ namespace wow2.Modules.Moderator
         }
 
         [Command("set-warnings-until-ban")]
-        [Summary("Sets the number of warnings required before a user is automatically banned.")]
+        [Summary("Sets the number of warnings required before a user is automatically banned. Set NUMBER to -1 to disable this.")]
         public async Task SetWarningsUntilBan(int number)
         {
-            if (number < 2)
-                throw new CommandReturnException(Context, "Number is too small.");
+            var config = GetConfigForGuild(Context.Guild);
+            if (number == -1)
+            {
+                config.WarningsUntilBan = number;
+                await new SuccessMessage($"A user will not get automatically banned from too many warnings.")
+                    .SendAsync(Context.Channel);
+            }
+            else
+            {
+                if (number < 2)
+                    throw new CommandReturnException(Context, "Number is too small.");
 
-            GetConfigForGuild(Context.Guild).WarningsUntilBan = number;
-            await new SuccessMessage($"{number} warnings will result in a ban.")
-                .SendAsync(Context.Channel);
+                config.WarningsUntilBan = number;
+                await new SuccessMessage($"{number} warnings will result in a ban.")
+                    .SendAsync(Context.Channel);
+            }
+
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
@@ -132,12 +143,13 @@ namespace wow2.Modules.Moderator
                 .SendAsync(Context.Channel);
         }
 
-        private static async Task WarnUserAsync(ModeratorModuleConfig config, SocketGuildUser victim, SocketGuildUser requestedBy, string message)
+        private static async Task WarnOrBanUserAsync(ModeratorModuleConfig config, SocketGuildUser victim, SocketGuildUser requestedBy, string message)
         {
+            var userRecord = GetUserRecord(config, victim.Id);
             message = string.IsNullOrWhiteSpace(message) ?
                 "No reason was provided by the moderator." : $"Reason: {message}";
 
-            GetUserRecord(config, victim.Id).Warnings.Add(new Warning()
+            userRecord.Warnings.Add(new Warning()
             {
                 RequestedBy = requestedBy.Id,
                 DateTimeBinary = DateTime.Now.ToBinary()
@@ -146,10 +158,22 @@ namespace wow2.Modules.Moderator
             await DataManager.SaveGuildDataToFileAsync(requestedBy.Guild.Id);
 
             IDMChannel dmChannel = await victim.GetOrCreateDMChannelAsync();
-            await new WarningMessage(
-                description: $"You have recieved a warning from {requestedBy.Mention} in the server '{requestedBy.Guild.Name}'\nFurther warnings may result in a ban.\n```\n{message}\n```",
-                title: "You have been warned!")
-                    .SendAsync(dmChannel);
+            if (userRecord.Warnings.Count >= config.WarningsUntilBan &&
+                config.WarningsUntilBan != -1)
+            {
+                await victim.BanAsync(1, message);
+                await new WarningMessage(
+                    description: $"You have recieved a warning from {requestedBy.Mention} in the server '{requestedBy.Guild.Name}'\nDue to the number of warnings you have recieved from this server, you have been permanently banned.\n```\n{message}\n```",
+                    title: "You have been banned!")
+                        .SendAsync(dmChannel);
+            }
+            else
+            {
+                await new WarningMessage(
+                    description: $"You have recieved a warning from {requestedBy.Mention} in the server '{requestedBy.Guild.Name}'\nFurther warnings may result in a ban.\n```\n{message}\n```",
+                    title: "You have been warned!")
+                        .SendAsync(dmChannel);
+            }
         }
 
         private static UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
