@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Net.WebSockets;
 using System.Threading.Tasks;
 using System.Reflection;
 using Discord;
@@ -52,29 +54,37 @@ namespace wow2
 
         public static async Task DiscordLogRecievedAsync(LogMessage logMessage)
         {
-            // TODO: rewrite?
-            if (logMessage.Exception is GatewayReconnectException)
-                return;
-
-            if (logMessage.Exception is CommandException commandException)
+            if (logMessage.Exception is Exception exception)
             {
-                string verboseErrorMessage = $"An unhandled exception was thrown and was automatically reported.\n```{commandException.InnerException.Message}\n```";
-
-                if (commandException.InnerException is CommandReturnException)
+                // Return if command intentionally threw.
+                if (logMessage.Exception.InnerException is CommandReturnException)
                     return;
-                else if (commandException.InnerException is DirectoryNotFoundException || commandException.InnerException is FileNotFoundException)
-                    verboseErrorMessage = "The host of the bot is missing required assets.";
 
-                Logger.LogException(commandException, $"Command '{commandException.Command.Name}' threw an exception in guild '{commandException.Context.Guild.Name}' due to message '{commandException.Context.Message.Content}'");
-                await new ErrorMessage(verboseErrorMessage)
-                    .SendAsync(commandException.Context.Channel);
+                // Return as client will immediately reconnect after this exception. 
+                if (logMessage.Exception is GatewayReconnectException ||
+                    logMessage.Exception is WebSocketException &&
+                    !Program.IsDebug)
+                    return;
 
-                await Program.ApplicationInfo.Owner.SendMessageAsync($"```\n{commandException}\n```");
-            }
-            else if (logMessage.Exception != null)
-            {
-                Logger.LogException(logMessage.Exception);
-                await Program.ApplicationInfo.Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
+                Logger.LogException(exception);
+                try
+                {
+                    await Program.ApplicationInfo.Owner.SendMessageAsync($"```\n{exception}\n```");
+                }
+                catch
+                {
+                }
+
+                if (logMessage.Exception is CommandException commandException)
+                {
+                    string errorMessageText =
+                        commandException.InnerException is DirectoryNotFoundException || commandException.InnerException is FileNotFoundException ?
+                        "The host is missing required assets." :
+                        $"An unhandled exception was thrown and was automatically reported.\n```{commandException.InnerException.Message}\n```";
+
+                    await new ErrorMessage(errorMessageText)
+                        .SendAsync(commandException.Context.Channel);
+                }
             }
             else
             {
