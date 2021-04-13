@@ -258,7 +258,7 @@ namespace wow2.Modules.Keywords
             var fieldBuildersForValueList = new List<EmbedFieldBuilder>();
             foreach (KeywordValue value in values)
             {
-                var user = value.AddedByUserId == 0 ? 
+                var user = value.AddedByUserId == 0 ?
                     "[UNKNOWN USER]" : Program.Client.GetUser(value.AddedByUserId).Username;
                 var date = value.DateTimeAddedBinary == 0 ?
                     "[UNKNOWN DATE]" : DateTime.FromBinary(value.DateTimeAddedBinary).ToShortDateString();

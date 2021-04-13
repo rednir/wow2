@@ -194,7 +194,7 @@ namespace wow2.Modules.Voice
         {
             GetConfigForGuild(Context.Guild).IsAutoNpOn = !GetConfigForGuild(Context.Guild).IsAutoNpOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Auto execution of `{EventHandlers.DefaultCommandPrefix} vc np` is turned `{(GetConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}`")
+            await new SuccessMessage($"Auto execution of `vc np` is turned `{(GetConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}`")
                 .SendAsync(Context.Channel);
         }
 

@@ -28,7 +28,7 @@ namespace wow2.Modules.Games.Counting
             await new InfoMessage($"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.")
                 .SendAsync(context.Channel);
         }
-        
+
         /// <returns>True if the message was related to the game.</returns>
         public static async Task<bool> CheckMessageAsync(SocketMessage recievedMessage)
         {

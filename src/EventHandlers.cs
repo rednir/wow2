@@ -21,7 +21,6 @@ namespace wow2
 {
     public static class EventHandlers
     {
-        public static readonly string DefaultCommandPrefix = "!wow";
         public static CommandService BotCommandService;
 
         public static async Task InstallCommandsAsync()
@@ -38,15 +37,17 @@ namespace wow2
 
         public static async Task ReadyAsync()
         {
-            await Program.Client.SetGameAsync($"{DefaultCommandPrefix} help");
+            await Program.Client.SetGameAsync("!wow help");
         }
 
         public static async Task JoinedGuildAsync(SocketGuild guild)
         {
+            string commandPrefix = MainModule.GetConfigForGuild(guild).CommandPrefix;
+
             var embedBuilder = new EmbedBuilder()
             {
                 Title = "👋 Hi there!",
-                Description = $"Thanks for adding me to your server!\nTo get started, type `{EventHandlers.DefaultCommandPrefix} help` to see the wide range of commands available.\n",
+                Description = $"Thanks for adding me to your server!\nTo get started, type `{commandPrefix} help` to see the wide range of commands available.\n",
                 Color = Color.Gold
             };
             await guild.DefaultChannel.SendMessageAsync(embed: embedBuilder.Build());
@@ -120,7 +121,8 @@ namespace wow2
             if (!(await CountingGame.CheckMessageAsync(recievedMessage)) && !(await VerbalMemoryGame.CheckMessageAsync(recievedMessage)))
                 await ModeratorModule.CheckMessageWithAutoMod(recievedMessage);
 
-            if (recievedMessage.Content.StartsWithWord(DefaultCommandPrefix, true))
+            string commandPrefix = MainModule.GetConfigForGuild(recievedMessage.GetGuild()).CommandPrefix;
+            if (recievedMessage.Content.StartsWithWord(commandPrefix, true))
             {
                 // The message starts with the command prefix and the prefix is not part of another word.
                 await CommandRecievedAsync(recievedMessage);
@@ -143,7 +145,8 @@ namespace wow2
 
             var context = new SocketCommandContext(Program.Client, socketUserMessage);
 
-            if (socketMessage.Content == DefaultCommandPrefix)
+            string commandPrefix = MainModule.GetConfigForGuild(socketMessage.GetGuild()).CommandPrefix;
+            if (socketMessage.Content == commandPrefix)
             {
                 await MainModule.SendAboutMessageToChannelAsync(context);
                 return;
@@ -151,7 +154,7 @@ namespace wow2
 
             await ExecuteCommandAsync(
                 context,
-                socketMessage.Content.RemoveUnnecessaryWhiteSpace().Substring(DefaultCommandPrefix.Length + 1));
+                socketMessage.Content.RemoveUnnecessaryWhiteSpace().Substring(commandPrefix.Length + 1));
         }
 
         public static async Task<IResult> ExecuteCommandAsync(ICommandContext context, string input)

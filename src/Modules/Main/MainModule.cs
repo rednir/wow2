@@ -26,17 +26,18 @@ namespace wow2.Modules.Main
         [Summary("If MODULE is left empty, displays all commands. Otherwise displays detailed info about a specific group of commands.")]
         public async Task HelpAsync([Name("MODULE")] string group = null)
         {
+            var commandPrefix = GetConfigForGuild(Context.Guild).CommandPrefix;
             if (string.IsNullOrWhiteSpace(group))
             {
                 await new GenericMessage(
-                    fieldBuilders: await ModuleInfoToEmbedFieldsAsync(),
+                    fieldBuilders: await ModuleInfoToEmbedFieldsAsync(commandPrefix),
                     title: "📃 Help")
                         .SendAsync(Context.Channel);
             }
             else
             {
                 await new GenericMessage(
-                    fieldBuilders: await CommandInfoToEmbedFieldsAsync(group),
+                    fieldBuilders: await CommandInfoToEmbedFieldsAsync(group, commandPrefix),
                     title: $"📃 Command Help")
                         .SendAsync(Context.Channel);
             }
@@ -48,10 +49,10 @@ namespace wow2.Modules.Main
         public async Task AliasAsync(string name, [Name("DEFINITION")] params string[] definitionSplit)
         {
             var config = GetConfigForGuild(Context.Guild);
-            string removeAliasText = $"To remove the alias, type `{EventHandlers.DefaultCommandPrefix} alias \"{name}\"`";
+            string removeAliasText = $"To remove the alias, type `{config.CommandPrefix} alias \"{name}\"`";
 
             string definition = string.Join(" ", definitionSplit.Where(w
-                => !w.Equals(EventHandlers.DefaultCommandPrefix, StringComparison.CurrentCultureIgnoreCase)));
+                => !w.Equals(config.CommandPrefix, StringComparison.CurrentCultureIgnoreCase)));
 
             if (config.AliasesDictionary.ContainsKey(name))
             {
@@ -77,7 +78,7 @@ namespace wow2.Modules.Main
                 config.AliasesDictionary.Add(name, definition);
             }
 
-            await new SuccessMessage($"Typing `{name}` will now execute `{EventHandlers.DefaultCommandPrefix} {definition}`\n{removeAliasText}")
+            await new SuccessMessage($"Typing `{name}` will now execute `{config.CommandPrefix} {definition}`\n{removeAliasText}")
                 .SendAsync(Context.Channel);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -95,7 +96,7 @@ namespace wow2.Modules.Main
                 var fieldBuilderForAlias = new EmbedFieldBuilder()
                 {
                     Name = aliasPair.Key,
-                    Value = $"`{EventHandlers.DefaultCommandPrefix} {aliasPair.Value}`",
+                    Value = $"`{config.CommandPrefix} {aliasPair.Value}`",
                     IsInline = true
                 };
                 listOfFieldBuilders.Add(fieldBuilderForAlias);
@@ -120,8 +121,24 @@ namespace wow2.Modules.Main
                 => message.Embed = new SuccessMessage($"That was about `{pongTimeSpan.Milliseconds}ms`", "Pong!").Embed);
         }
 
+        [Command("set-command-prefix")]
+        [Summary("Change the prefix used to identify commands. '!wow' is the default.")]
+        public async Task SetCommandPrefixAsync(string prefix)
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            if (prefix.Contains(' ') || string.IsNullOrWhiteSpace(prefix))
+                throw new CommandReturnException(Context, "The command prefix must not contain spaces.");
+
+            config.CommandPrefix = prefix;
+            await new SuccessMessage($"Changed command prefix to `{prefix}`")
+                .SendAsync(Context.Channel);
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+        }
+
         public static async Task SendAboutMessageToChannelAsync(SocketCommandContext context)
         {
+            var commandPrefix = GetConfigForGuild(context.Guild).CommandPrefix;
             var appInfo = Program.ApplicationInfo;
 
             var embedBuilder = new EmbedBuilder()
@@ -136,7 +153,7 @@ namespace wow2.Modules.Main
                 },
                 Footer = new EmbedFooterBuilder()
                 {
-                    Text = $" - To view a list of commands, type `{EventHandlers.DefaultCommandPrefix} help`"
+                    Text = $" - To view a list of commands, type `{commandPrefix} help`"
                 }
             };
 
@@ -164,7 +181,7 @@ namespace wow2.Modules.Main
         }
 
         /// <summary>Builds embed fields for all command modules.</summary>
-        private async Task<List<EmbedFieldBuilder>> ModuleInfoToEmbedFieldsAsync()
+        private async Task<List<EmbedFieldBuilder>> ModuleInfoToEmbedFieldsAsync(string commandPrefix)
         {
             var listOfModules = EventHandlers.BotCommandService.Modules;
 
@@ -182,7 +199,7 @@ namespace wow2.Modules.Main
                     if (!String.IsNullOrWhiteSpace(module.Summary))
                         fieldBuilderForModule.Value += $"*{module.Summary}*\n";
 
-                    fieldBuilderForModule.Value += $"`{EventHandlers.DefaultCommandPrefix} help {module.Name.ToLower()}`";
+                    fieldBuilderForModule.Value += $"`{commandPrefix} help {module.Name.ToLower()}`";
 
                     // TODO: find a way to get name attribute of this class instead of hardcoding module name.
                     if (module.Name == "Main")
@@ -199,7 +216,7 @@ namespace wow2.Modules.Main
         }
 
         /// <summary>Builds embed fields for commands in a single module</summary>
-        private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFieldsAsync(string specifiedModuleName)
+        private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFieldsAsync(string specifiedModuleName, string commandPrefix)
         {
             // Find commands in module.
             var listOfCommandInfo = (await EventHandlers.BotCommandService.GetExecutableCommandsAsync(
@@ -218,7 +235,7 @@ namespace wow2.Modules.Main
             {
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"`{EventHandlers.DefaultCommandPrefix} {(string.IsNullOrWhiteSpace(command.Module.Group) ? "" : $"{command.Module.Group} ")}{command.Name}{ParametersToString(command.Parameters)}`",
+                    Name = $"`{commandPrefix} {(string.IsNullOrWhiteSpace(command.Module.Group) ? "" : $"{command.Module.Group} ")}{command.Name}{ParametersToString(command.Parameters)}`",
                     Value = $"*{(string.IsNullOrWhiteSpace(command.Summary) ? "No description provided." : command.Summary)}*"
                 });
             }
@@ -236,7 +253,7 @@ namespace wow2.Modules.Main
             return parametersInfo;
         }
 
-        private static MainModuleConfig GetConfigForGuild(SocketGuild guild)
+        public static MainModuleConfig GetConfigForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Main;
     }
 }
