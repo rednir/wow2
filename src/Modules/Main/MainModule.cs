@@ -112,11 +112,12 @@ namespace wow2.Modules.Main
         [Summary("Checks the latency between the message that executes a command, and the response that the bot sends.")]
         public async Task PingAsync()
         {
-            // TODO: maybe find some way to edit the pong message instead of sending a new one.
-            IUserMessage pongMessage = await ReplyAsync("**Pong!**");
-            TimeSpan pingTimeSpan = pongMessage.Timestamp.Subtract(Context.Message.Timestamp);
+            IUserMessage pongMessage = await new SuccessMessage("That was about `...`ms", "Pong!")
+                .SendAsync(Context.Channel);
+            TimeSpan pongTimeSpan = pongMessage.Timestamp.Subtract(Context.Message.Timestamp);
+
             await pongMessage.ModifyAsync(message
-                => message.Embed = new InfoMessage($"That was about `{pingTimeSpan.Milliseconds}ms`").Embed);
+                => message.Embed = new SuccessMessage($"That was about `{pongTimeSpan.Milliseconds}ms`", "Pong!").Embed);
         }
 
         public static async Task SendAboutMessageToChannelAsync(SocketCommandContext context)
