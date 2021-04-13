@@ -5,7 +5,6 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using System.Collections.Generic;
-using System.Collections;
 using wow2.Verbose.Messages;
 using wow2.Data;
 using wow2.Extentions;
@@ -81,7 +80,8 @@ namespace wow2.Modules.Moderator
         [Summary("Temporarily disables a user's permission to speak.")]
         public async Task MuteAsync([Name("MENTION")] SocketGuildUser user, string time = "30m", string message = "No reason given.")
         {
-            throw new NotImplementedException();
+            await new WarningMessage("This hasn't been implemented yet. Check back later!")
+                .SendAsync(Context.Channel);
         }
 
         [Command("user-record")]
