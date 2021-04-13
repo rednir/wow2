@@ -1,9 +1,9 @@
 using System;
 using System.IO;
-using System.Net.WebSockets;
 using System.Threading.Tasks;
 using System.Reflection;
 using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 using Discord.Commands;
 using wow2.Verbose;
@@ -55,7 +55,7 @@ namespace wow2
 
         public static async Task DiscordLogRecievedAsync(LogMessage logMessage)
         {
-            if (logMessage.Exception is Exception exception)
+            if (logMessage.Exception is Exception)
             {
                 // Return if command intentionally threw.
                 if (logMessage.Exception.InnerException is CommandReturnException)
@@ -63,14 +63,14 @@ namespace wow2
 
                 // Return as client will immediately reconnect after this exception. 
                 if (logMessage.Exception is GatewayReconnectException ||
-                    logMessage.Exception is WebSocketException &&
+                    logMessage.Exception is WebSocketClosedException &&
                     !Program.IsDebug)
                     return;
 
-                Logger.LogException(exception);
+                Logger.LogException(logMessage.Exception);
                 try
                 {
-                    await Program.ApplicationInfo.Owner.SendMessageAsync($"```\n{exception}\n```");
+                    await Program.ApplicationInfo.Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
                 }
                 catch
                 {
