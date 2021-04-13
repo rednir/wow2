@@ -13,7 +13,7 @@ namespace wow2
 {
     public class Program
     {
-        private const string ReleaseVersion = "v1.0";
+        private const string ReleaseVersion = "v2.0";
         private const string DiscordTokenFilePath = "discord.token";
         private const string DiscordTokenEnvironmentVariable = "DISCORD_BOT_TOKEN";
 
