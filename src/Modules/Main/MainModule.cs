@@ -183,7 +183,12 @@ namespace wow2.Modules.Main
         /// <summary>Builds embed fields for all command modules.</summary>
         private async Task<List<EmbedFieldBuilder>> ModuleInfoToEmbedFieldsAsync(string commandPrefix)
         {
-            var listOfModules = EventHandlers.BotCommandService.Modules;
+            var listOfModules = (await EventHandlers.BotCommandService.GetExecutableCommandsAsync(Context, null))
+                .Select(command => command.Module)
+                
+                // Remove duplicate modules.
+                .GroupBy(module => module)
+                .Select(group => group.First());
 
             // Create a help text string for each module
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
