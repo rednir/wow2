@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
-using System.Collections.Generic;
+using Discord.Net;
 using wow2.Verbose.Messages;
 using wow2.Data;
 using wow2.Extentions;
@@ -29,12 +29,12 @@ namespace wow2.Modules.Moderator
 
             string dueTo;
             string warningMessage;
-            if (CheckMessagesForSpam(record.Messages))
+            if (AutoModMethods.CheckMessagesForSpam(record.Messages))
             {
                 warningMessage = "Recent messages were automatically deemed to be spam.";
                 dueTo = "spam";
             }
-            else if (CheckMessagesForRepeatedContent(record.Messages))
+            else if (AutoModMethods.CheckMessagesForRepeatedContent(record.Messages))
             {
                 warningMessage = "Recent messages contained repeated content.";
                 dueTo = "repeated messages";
@@ -161,19 +161,25 @@ namespace wow2.Modules.Moderator
             if (userRecord.Warnings.Count >= config.WarningsUntilBan &&
                 config.WarningsUntilBan != -1)
             {
-                await victim.BanAsync(1, message);
-                await new WarningMessage(
+                try
+                {
+                    await victim.BanAsync(1, message);
+                    await new WarningMessage(
                     description: $"You have recieved a warning from {requestedBy.Mention} in the server '{requestedBy.Guild.Name}'\nDue to the number of warnings you have recieved from this server, you have been permanently banned.\n```\n{message}\n```",
                     title: "You have been banned!")
                         .SendAsync(dmChannel);
+
+                    return;
+                }
+                catch (HttpException)
+                {
+                    // User is most likely admin, so just give another warning.
+                }
             }
-            else
-            {
-                await new WarningMessage(
-                    description: $"You have recieved a warning from {requestedBy.Mention} in the server '{requestedBy.Guild.Name}'\nFurther warnings may result in a ban.\n```\n{message}\n```",
-                    title: "You have been warned!")
-                        .SendAsync(dmChannel);
-            }
+            await new WarningMessage(
+                description: $"You have recieved a warning from {requestedBy.Mention} in the server '{requestedBy.Guild.Name}'\nFurther warnings may result in a ban.\n```\n{message}\n```",
+                title: "You have been warned!")
+                    .SendAsync(dmChannel);
         }
 
         private static UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
@@ -195,37 +201,6 @@ namespace wow2.Modules.Moderator
             }
 
             return matchingRecord;
-        }
-
-        private static bool CheckMessagesForSpam(IEnumerable<SocketMessage> messages)
-        {
-            const int numberOfMessagesToCheckForSpam = 7;
-
-            // Order the list with newest messages first.
-            messages = messages.OrderByDescending(message => message.Timestamp);
-
-            if (messages.Count() > numberOfMessagesToCheckForSpam)
-            {
-                var timeSpan = messages.First().Timestamp - messages.ElementAt(numberOfMessagesToCheckForSpam).Timestamp;
-                if (timeSpan < TimeSpan.FromSeconds(12))
-                    return true;
-            }
-
-            return false;
-        }
-
-        private static bool CheckMessagesForRepeatedContent(IEnumerable<SocketMessage> messages)
-        {
-            const int numberOfMessagesToCheck = 4;
-
-            if (messages.Count() < numberOfMessagesToCheck)
-                return false;
-
-            // Order the list with newest messages first, and get subsection of list.
-            messages = messages.OrderByDescending(message => message.Timestamp)
-                .ToList().GetRange(0, numberOfMessagesToCheck);
-
-            return messages.All(m => m.Content == messages.First().Content);
         }
 
         private static ModeratorModuleConfig GetConfigForGuild(SocketGuild guild)
