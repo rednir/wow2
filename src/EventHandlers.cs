@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net.WebSockets;
 using System.Threading.Tasks;
 using System.Reflection;
 using Discord;
@@ -61,13 +62,15 @@ namespace wow2
                 if (logMessage.Exception.InnerException is CommandReturnException)
                     return;
 
+                Logger.LogException(logMessage.Exception);
+
                 // Return as client will immediately reconnect after this exception. 
-                if (logMessage.Exception is GatewayReconnectException ||
-                    logMessage.Exception is WebSocketClosedException &&
+                if ((logMessage.Exception is GatewayReconnectException ||
+                    logMessage.Exception is WebSocketClosedException ||
+                    logMessage.Exception is WebSocketException) &&
                     !Program.IsDebug)
                     return;
 
-                Logger.LogException(logMessage.Exception);
                 try
                 {
                     await Program.ApplicationInfo.Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
