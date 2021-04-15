@@ -100,7 +100,7 @@ namespace wow2.Modules.Games.Counting
 
             if (absNextNumber < 3 * absIncrement) commentOnFinalNumber = "Pathetic.";
             else if (absNextNumber < 25 * absIncrement) commentOnFinalNumber = "There's plenty room for improvement.";
-            else if (config.NextNumber < 75 * absIncrement) commentOnFinalNumber = "Not bad!";
+            else if (absNextNumber < 75 * absIncrement) commentOnFinalNumber = "Not bad!";
             else if (absNextNumber >= 75 * absIncrement) commentOnFinalNumber = "Amazing!";
             else commentOnFinalNumber = "";
 
