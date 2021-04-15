@@ -65,9 +65,9 @@ namespace wow2
                 Logger.LogException(logMessage.Exception);
 
                 // Return as client will immediately reconnect after this exception. 
-                if ((logMessage.Exception is GatewayReconnectException ||
-                    logMessage.Exception is WebSocketClosedException ||
-                    logMessage.Exception is WebSocketException) &&
+                if ((logMessage.Exception.InnerException is GatewayReconnectException ||
+                    logMessage.Exception.InnerException is WebSocketClosedException ||
+                    logMessage.Exception.InnerException is WebSocketException) &&
                     !Program.IsDebug)
                     return;
 
