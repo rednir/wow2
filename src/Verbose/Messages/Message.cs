@@ -23,7 +23,7 @@ namespace wow2.Verbose.Messages
 
         public async Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
-            var reference = ReplyToMessageId;
+            var reference = ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null;
 
             if (DescriptionAsStream != null)
             {
@@ -31,14 +31,14 @@ namespace wow2.Verbose.Messages
                     stream: DescriptionAsStream,
                     filename: $"{Embed?.Title}_desc.txt",
                     embed: new WarningMessage("A message was too long, so it was uploaded as a file.").Embed,
-                    messageReference: new MessageReference(ReplyToMessageId));
+                    messageReference: reference);
             }
             else
             {
                 return await channel.SendMessageAsync(
                     embed: EmbedBuilder.Build(),
                     allowedMentions: AllowedMentions.None,
-                    messageReference: new MessageReference(ReplyToMessageId));
+                    messageReference: reference);
             }
         }
 
