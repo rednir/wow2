@@ -68,14 +68,19 @@ namespace wow2.Modules.Keywords
             if (chosenValue.Content.Contains("http://") || chosenValue.Content.Contains("https://"))
             {
                 // Don't use embed message if the value to send contains a link.
-                sentKeywordResponseMessage = await message.Channel.SendMessageAsync(chosenValue.Content);
+                sentKeywordResponseMessage = await message.Channel.SendMessageAsync(
+                    text: chosenValue.Content,
+                    messageReference: new MessageReference(message.Id));
             }
             else
             {
                 sentKeywordResponseMessage = await new GenericMessage(
                     description: chosenValue.Content,
                     title: chosenValue.Title)
-                        .SendAsync(message.Channel);
+                {
+                    ReplyToMessageId = message.Id
+                }
+                .SendAsync(message.Channel);
             }
 
             if (config.IsLikeReactionOn)

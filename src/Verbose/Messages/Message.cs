@@ -12,6 +12,7 @@ namespace wow2.Verbose.Messages
         public const ulong WarningEmoteId = 804732632751407174;
         public const ulong ErrorEmoteId = 804732656721199144;
 
+        public ulong ReplyToMessageId { get; set; }
         public Embed Embed
         {
             get { return EmbedBuilder.Build(); }
@@ -22,16 +23,22 @@ namespace wow2.Verbose.Messages
 
         public async Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
+            var reference = ReplyToMessageId;
+
             if (DescriptionAsStream != null)
             {
                 return await channel.SendFileAsync(
                     stream: DescriptionAsStream,
                     filename: $"{Embed?.Title}_desc.txt",
-                    embed: new WarningMessage("A message was too long, so it was uploaded as a file.").Embed);
+                    embed: new WarningMessage("A message was too long, so it was uploaded as a file.").Embed,
+                    messageReference: new MessageReference(ReplyToMessageId));
             }
             else
             {
-                return await channel.SendMessageAsync(embed: EmbedBuilder.Build());
+                return await channel.SendMessageAsync(
+                    embed: EmbedBuilder.Build(),
+                    allowedMentions: AllowedMentions.None,
+                    messageReference: new MessageReference(ReplyToMessageId));
             }
         }
 
