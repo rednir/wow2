@@ -66,8 +66,8 @@ namespace wow2.Modules.Games.VerbalMemory
             }
 
             config.Turns++;
-            await receivedMessage.DeleteAsync();
             await NextWordAsync(config);
+            await receivedMessage.DeleteAsync();
             return true;
         }
 
