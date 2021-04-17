@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
 using System.Reflection;
@@ -43,6 +44,7 @@ namespace wow2
 
         public static async Task JoinedGuildAsync(SocketGuild guild)
         {
+            await DataManager.EnsureGuildDataFileExistsAsync(guild.Id);
             string commandPrefix = MainModule.GetConfigForGuild(guild).CommandPrefix;
 
             var embedBuilder = new EmbedBuilder()
