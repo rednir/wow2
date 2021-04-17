@@ -168,7 +168,6 @@ namespace wow2.Modules.Keywords
         {
             var keywordsDictionary = GetConfigForGuild(Context.Guild).KeywordsDictionary;
             keyword = keyword.ToLower();
-            valueContent.Trim('\"');
 
             if (!keywordsDictionary.ContainsKey(keyword))
                 throw new CommandReturnException(Context, $"No such keyword `{keyword}` exists. Did you make a typo?");
@@ -182,6 +181,8 @@ namespace wow2.Modules.Keywords
             }
             else
             {
+                valueContent.Trim('\"');
+
                 if (keywordsDictionary[keyword].RemoveAll(x => x.Content.Equals(valueContent, StringComparison.CurrentCultureIgnoreCase)) == 0)
                     throw new CommandReturnException(Context, $"No such value `{valueContent}` exists. Did you make a typo?");
 
