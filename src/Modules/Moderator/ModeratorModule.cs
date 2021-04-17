@@ -7,6 +7,7 @@ using Discord.Commands;
 using Discord.Net;
 using wow2.Verbose.Messages;
 using wow2.Data;
+using wow2.Modules;
 using wow2.Extentions;
 
 namespace wow2.Modules.Moderator
@@ -24,8 +25,17 @@ namespace wow2.Modules.Moderator
 
             if (!config.IsAutoModOn) return;
 
-            UserRecord record = GetUserRecord(config, message.Author.Id);
-            record.Messages.Add(message);
+            UserRecord record;
+            try
+            {
+                record = GetUserRecord(config, message.Author.Id);
+                record.Messages.Add(message);
+            }
+            catch (ArgumentException)
+            {
+                // Message was from bot.
+                return;
+            }
 
             string dueTo;
             string warningMessage;
@@ -69,7 +79,14 @@ namespace wow2.Modules.Moderator
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            await WarnOrBanUserAsync(config, user, (SocketGuildUser)Context.User, message);
+            try
+            {
+                await WarnOrBanUserAsync(config, user, (SocketGuildUser)Context.User, message);
+            }
+            catch (ArgumentException)
+            {
+                throw new CommandReturnException(Context, "You can't warn a bot! Bots do no wrong."); 
+            }
 
             await new SuccessMessage($"The user {user.Mention} has been warned by {Context.User.Mention}.")
                 .SendAsync(Context.Channel);
@@ -90,7 +107,16 @@ namespace wow2.Modules.Moderator
         public async Task UserAsync([Name("MENTION")] SocketGuildUser user)
         {
             var config = GetConfigForGuild(Context.Guild);
-            UserRecord record = GetUserRecord(config, user.Id);
+
+            UserRecord record;
+            try
+            {
+                record = GetUserRecord(config, user.Id);
+            }
+            catch (ArgumentException)
+            {
+                throw new CommandReturnException(Context, "Bots don't have records!");
+            }
 
             var embedBuilder = new EmbedBuilder()
             {
@@ -184,6 +210,9 @@ namespace wow2.Modules.Moderator
 
         private static UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
         {
+            if (Program.Client.GetUser(id).IsBot)
+                throw new ArgumentException("Cannot get user record for bot.");
+
             UserRecord matchingRecord = config.UserRecords
                 .Where(record => record.UserId == id)
                 .FirstOrDefault();
