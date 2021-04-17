@@ -86,6 +86,15 @@ namespace wow2.Modules.Dev
             await new GenericMessage($"This is a response message with fields.", "Fields", CreateSampleFields(50), 2).SendAsync(Context.Channel);
         }
 
+        [Command("set-status")]
+        public async Task SetStatus(string message, UserStatus status)
+        {
+            await Program.Client.SetGameAsync(message);
+            await Program.Client.SetStatusAsync(status);
+            await new SuccessMessage($"Set status.")
+                .SendAsync(Context.Channel);
+        }
+
         [Command("run-test")]
         [Alias("test")]
         public async Task TestAsync(string group = null, int delay = 2000)
