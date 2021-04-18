@@ -99,6 +99,8 @@ namespace wow2.Extentions
             // Or the stringToCheck is a direct match with the word.
             || stringToCheck.Equals(word, ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture);
 
+        /// <summary>Removes a key and adds a new key, transferring its values.</summary>
+        /// <exception cref="ArgumentException"></exception>
         public static void RenameKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey oldKey, TKey newKey)
         {
             if (dictionary.ContainsKey(newKey))
@@ -144,6 +146,7 @@ namespace wow2.Extentions
             return stringToSearchWithBoundaries.Contains($" {word} ");
         }
 
+        /// <returns>The list of commands as a readable string, with newlines placed between each command.</returns>
         public static string MakeReadableString(this IEnumerable<CommandInfo> commands, string commandPrefix)
         {
             string result = "";
@@ -157,6 +160,7 @@ namespace wow2.Extentions
             return result.TrimEnd('\n');
         }
 
+        /// <returns>The list of parameters as a readable string.</returns>
         public static string MakeReadableString(this IEnumerable<ParameterInfo> parameters)
         {
             string parametersInfo = "";
@@ -168,6 +172,7 @@ namespace wow2.Extentions
             return parametersInfo;
         }
 
+        /// <returns>The command info into a readable string.</returns>
         public static string MakeFullCommandString(this CommandInfo command, string commandPrefix)
             => $"`{commandPrefix} {(string.IsNullOrWhiteSpace(command.Module.Group) ? "" : $"{command.Module.Group} ")}{command.Name}{command.Parameters.MakeReadableString()}`";
     }

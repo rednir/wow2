@@ -6,6 +6,7 @@ using wow2.Modules.Moderator;
 
 namespace wow2.Data
 {
+    /// <summary>Contains all the data stored for a guild.</summary>
     public class GuildData
     {
         public MainModuleConfig Main { get; set; } = new MainModuleConfig();

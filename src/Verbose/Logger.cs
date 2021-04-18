@@ -9,6 +9,7 @@ using wow2.Data;
 
 namespace wow2.Verbose
 {
+    /// <summary>Contains methods used for writing to a log file and the standard output stream.</summary>
     public static class Logger
     {
         private static readonly HttpClient GithubHttpClient = new HttpClient()
