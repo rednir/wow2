@@ -5,7 +5,7 @@ namespace wow2.Modules.Voice
     public class VideoMetadata
     {
         public string title { get; set; }
-        public string author { get; set; }
+        public string uploader { get; set; }
         public string webpage_url { get; set; }
         public string description { get; set; }
         public string extractor { get; set; }

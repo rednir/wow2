@@ -333,7 +333,7 @@ namespace wow2.Modules.Voice
             var embedBuilder = new EmbedBuilder()
             {
                 Author = authorBuilder,
-                Title = request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title,
+                Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
                 ThumbnailUrl = request.VideoMetadata.thumbnails.LastOrDefault().url,
                 Description = $"Requested at {request.TimeRequested.ToString("HH:mm")} by {request.RequestedBy.Mention}",
                 Footer = footerBuilder,
