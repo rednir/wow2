@@ -152,7 +152,7 @@ namespace wow2.Extentions
             foreach (var command in commands)
             {
                 result += $"`{commandPrefix} {command.Module.Aliases.FirstOrDefault()} {command.Name}`\n";
-                if (index > 5) break;
+                if (index >= 5) break;
                 index++;
             }
             return result.TrimEnd('\n');
