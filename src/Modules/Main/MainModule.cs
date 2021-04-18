@@ -24,13 +24,14 @@ namespace wow2.Modules.Main
 
         [Command("help")]
         [Summary("If MODULE is left empty, displays all commands. Otherwise displays detailed info about a specific group of commands.")]
-        public async Task HelpAsync([Name("MODULE")] string group = null)
+        public async Task HelpAsync([Name("MODULE")] string group = null, int page = 1)
         {
             var commandPrefix = GetConfigForGuild(Context.Guild).CommandPrefix;
             if (string.IsNullOrWhiteSpace(group))
             {
                 await new GenericMessage(
                     fieldBuilders: await ModuleInfoToEmbedFieldsAsync(commandPrefix),
+                    fieldBuildersPage: page,
                     title: "📃 Help")
                         .SendAsync(Context.Channel);
             }
@@ -38,6 +39,7 @@ namespace wow2.Modules.Main
             {
                 await new GenericMessage(
                     fieldBuilders: await CommandInfoToEmbedFieldsAsync(group, commandPrefix),
+                    fieldBuildersPage: page,
                     title: $"📃 Command Help")
                         .SendAsync(Context.Channel);
             }
