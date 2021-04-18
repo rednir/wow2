@@ -44,7 +44,7 @@ namespace wow2.Modules.Voice
                 throw new CommandReturnException(Context, "There's nothing in the queue... how sad.");
 
             await new GenericMessage(
-                title: "Up Next",
+                title: "🔉 Up Next",
                 fieldBuilders: listOfFieldBuilders,
                 fieldBuildersPage: page)
                     .SendAsync(Context.Channel);
@@ -320,7 +320,7 @@ namespace wow2.Modules.Voice
 
             var authorBuilder = new EmbedAuthorBuilder()
             {
-                Name = "🔊 Now Playing",
+                Name = "Now Playing",
                 IconUrl = request.VideoMetadata.extractor.StartsWith("twitch") ? twitchIconUrl : youtubeIconUrl,
                 Url = request.VideoMetadata.webpage_url
             };
