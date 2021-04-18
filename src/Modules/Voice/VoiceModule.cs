@@ -188,13 +188,27 @@ namespace wow2.Modules.Voice
             await DisplayCurrentlyPlayingRequestAsync();
         }
 
+        [Command("toggle-loop")]
+        [Alias("loop")]
+        [Summary("Toggles whether the current song request will keep looping.")]
+        public async Task ToggleLoop()
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            config.IsLoopEnabled = !config.IsLoopEnabled;
+            await new SuccessMessage($"Looping is now turned `{(config.IsLoopEnabled ? "on" : "off")}`")
+                .SendAsync(Context.Channel);
+        }
+
         [Command("toggle-auto-np")]
         [Summary("Toggles whether the np command will be executed everytime a new song is playing.")]
-        public async Task ToggleLikeReactionAsync()
+        public async Task ToggleAutoNp()
         {
-            GetConfigForGuild(Context.Guild).IsAutoNpOn = !GetConfigForGuild(Context.Guild).IsAutoNpOn;
+            var config = GetConfigForGuild(Context.Guild);
+
+            config.IsAutoNpOn = !config.IsAutoNpOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Auto execution of `vc np` is turned `{(GetConfigForGuild(Context.Guild).IsAutoNpOn ? "on" : "off")}`")
+            await new SuccessMessage($"Auto execution of `vc np` is turned `{(config.IsAutoNpOn ? "on" : "off")}`")
                 .SendAsync(Context.Channel);
         }
 
@@ -239,9 +253,13 @@ namespace wow2.Modules.Voice
             {
                 try
                 {
-                    config.CurrentlyPlayingSongRequest = request;
-                    if (config.IsAutoNpOn)
-                        await DisplayCurrentlyPlayingRequestAsync();
+                    // No need to np if loop is enabled, and it is not the first time the song is playing.
+                    if (config.IsLoopEnabled && config.CurrentlyPlayingSongRequest != request || !config.IsLoopEnabled)
+                    {
+                        config.CurrentlyPlayingSongRequest = request;
+                        if (config.IsAutoNpOn)
+                            await DisplayCurrentlyPlayingRequestAsync();
+                    }
 
                     await output.CopyToAsync(discord, cancellationToken);
                 }
@@ -265,7 +283,11 @@ namespace wow2.Modules.Voice
             if (CheckIfAudioClientDisconnected(config.AudioClient))
                 return;
 
-            if (config.SongRequests.TryDequeue(out nextRequest))
+            if (config.IsLoopEnabled && config.CurrentlyPlayingSongRequest != null)
+            {
+                await PlayRequestAsync(config.CurrentlyPlayingSongRequest, config.CtsForAudioStreaming.Token);
+            }
+            else if (config.SongRequests.TryDequeue(out nextRequest))
             {
                 await PlayRequestAsync(nextRequest, config.CtsForAudioStreaming.Token);
             }

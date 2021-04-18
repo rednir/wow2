@@ -20,6 +20,9 @@ namespace wow2.Modules.Voice
         public UserSongRequest CurrentlyPlayingSongRequest { get; set; }
 
         [JsonIgnore]
+        public bool IsLoopEnabled { get; set; } = false;
+
+        [JsonIgnore]
         public IAudioClient AudioClient { get; set; }
 
         [JsonIgnore]
