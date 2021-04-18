@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using Discord.Commands;
@@ -18,6 +19,8 @@ namespace wow2.Modules.Games.NumberMemory
 
         public static async Task StartGame(SocketCommandContext context)
         {
+            throw new NotImplementedException();
+
             var config = GetConfigForGuild(context.Guild);
 
             config.IsGameStarted = true;

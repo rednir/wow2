@@ -95,10 +95,9 @@ namespace wow2.Modules.Moderator
         [Command("mute")]
         [Alias("silence", "timeout")]
         [Summary("Temporarily disables a user's permission to speak. (WIP)")]
-        public async Task MuteAsync([Name("MENTION")] SocketGuildUser user, string time = "30m", string message = "No reason given.")
+        public Task MuteAsync([Name("MENTION")] SocketGuildUser user, string time = "30m", string message = "No reason given.")
         {
-            await new WarningMessage("This hasn't been implemented yet. Check back later!")
-                .SendAsync(Context.Channel);
+            throw new NotImplementedException();
         }
 
         [Command("user-record")]

@@ -62,9 +62,30 @@ namespace wow2
         {
             if (logMessage.Exception is Exception)
             {
-                // Return if command intentionally threw.
+                // Return if command intentionally threw an exception.
                 if (logMessage.Exception.InnerException is CommandReturnException)
                     return;
+
+                if (logMessage.Exception is CommandException commandException)
+                {
+                    string errorMessageText = $"An unhandled exception was thrown and was automatically reported.\n```{commandException.InnerException.Message}\n```";
+                    switch (commandException.InnerException)
+                    {
+                        case NotImplementedException:
+                            // Another intentional exception.
+                            await new WarningMessage("This hasn't been implemented yet. Check back later!")
+                                .SendAsync(commandException.Context.Channel);
+                            return;
+
+                        case DirectoryNotFoundException:
+                        case FileNotFoundException:
+                            errorMessageText = "The host is missing required assets.";
+                            break;
+                    }
+
+                    await new ErrorMessage(errorMessageText)
+                        .SendAsync(commandException.Context.Channel);
+                }
 
                 Logger.LogException(logMessage.Exception);
 
@@ -83,16 +104,6 @@ namespace wow2
                 {
                 }
 
-                if (logMessage.Exception is CommandException commandException)
-                {
-                    string errorMessageText =
-                        commandException.InnerException is DirectoryNotFoundException || commandException.InnerException is FileNotFoundException ?
-                        "The host is missing required assets." :
-                        $"An unhandled exception was thrown and was automatically reported.\n```{commandException.InnerException.Message}\n```";
-
-                    await new ErrorMessage(errorMessageText)
-                        .SendAsync(commandException.Context.Channel);
-                }
             }
             else
             {
