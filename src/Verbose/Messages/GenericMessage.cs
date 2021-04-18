@@ -14,7 +14,7 @@ namespace wow2.Verbose.Messages
             List<EmbedFieldBuilder> fieldBuilders = null,
             int fieldBuildersPage = 0)
         {
-            const int maxFieldsPerPage = 10;
+            const int maxFieldsPerPage = 8;
             const int maxDescriptionLength = 2048;
 
             if (description.Length >= maxDescriptionLength)
