@@ -21,6 +21,7 @@ namespace wow2.Modules.Games.Counting
             config.Increment = increment;
             config.NextNumber = increment;
             config.ListOfMessages = new List<SocketMessage>();
+            config.IsGameStarted = true;
 
             if (await EndGameIfNumberIsInvalidAsync(context.Message, increment))
                 return;
@@ -35,7 +36,9 @@ namespace wow2.Modules.Games.Counting
             var config = GetConfigForGuild(receivedMessage.GetGuild());
             float userNumber;
 
-            if (receivedMessage.Author.IsBot || config.NextNumber == null || config.InitalContext.Channel != receivedMessage.Channel)
+            if (receivedMessage.Author.IsBot ||
+                config.IsGameStarted == false ||
+                config.InitalContext.Channel != receivedMessage.Channel)
                 return false;
 
             try { userNumber = Convert.ToSingle(receivedMessage.Content); }
@@ -110,7 +113,7 @@ namespace wow2.Modules.Games.Counting
                 description: $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*")
                     .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
 
-            config.NextNumber = null;
+            config.IsGameStarted = false;
         }
 
         /// <returns>True if counting was ended, otherwise false</returns>
