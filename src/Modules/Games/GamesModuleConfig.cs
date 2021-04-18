@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Discord.Commands;
 using wow2.Modules.Games.VerbalMemory;
 using wow2.Modules.Games.Counting;
+using wow2.Modules.Games.NumberMemory;
 
 namespace wow2.Modules.Games
 {
@@ -17,5 +18,8 @@ namespace wow2.Modules.Games
 
         [JsonIgnore]
         public VerbalMemoryGameConfig VerbalMemory { get; set; } = new VerbalMemoryGameConfig();
+
+        [JsonIgnore]
+        public NumberMemoryConfig NumberMemory { get; set; } = new NumberMemoryConfig();
     }
 }
