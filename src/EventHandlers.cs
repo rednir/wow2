@@ -116,33 +116,32 @@ namespace wow2
             }
         }
 
-        public static async Task MessageRecievedAsync(SocketMessage recievedMessage)
+        public static async Task MessageRecievedAsync(SocketMessage receivedMessage)
         {
-            if (recievedMessage.Author.Id == Program.Client.CurrentUser.Id) return;
-            if (recievedMessage.Channel is SocketDMChannel) return;
+            if (receivedMessage.Author.Id == Program.Client.CurrentUser.Id) return;
+            if (receivedMessage.Channel is SocketDMChannel) return;
 
-            await DataManager.EnsureGuildDataFileExistsAsync(recievedMessage.GetGuild().Id);
+            await DataManager.EnsureGuildDataFileExistsAsync(receivedMessage.GetGuild().Id);
 
             // Only auto mod message if not related to a game.
-            if (!(await CountingGame.CheckMessageAsync(recievedMessage)) && 
-                !(await VerbalMemoryGame.CheckMessageAsync(recievedMessage)) &&
-                !(await NumberMemoryGame.CheckMessageAsync(recievedMessage))
-                )
+            if (!(await CountingGame.CheckMessageAsync(receivedMessage)) && 
+                !(await VerbalMemoryGame.CheckMessageAsync(receivedMessage)) &&
+                !(await NumberMemoryGame.CheckMessageAsync(receivedMessage)))
             {
-                await ModeratorModule.CheckMessageWithAutoMod(recievedMessage);
+                await ModeratorModule.CheckMessageWithAutoMod(receivedMessage);
             } 
 
-            string commandPrefix = MainModule.GetConfigForGuild(recievedMessage.GetGuild()).CommandPrefix;
-            if (recievedMessage.Content.StartsWithWord(commandPrefix, true))
+            string commandPrefix = MainModule.GetConfigForGuild(receivedMessage.GetGuild()).CommandPrefix;
+            if (receivedMessage.Content.StartsWithWord(commandPrefix, true))
             {
                 // The message starts with the command prefix and the prefix is not part of another word.
-                await CommandRecievedAsync(recievedMessage);
+                await CommandRecievedAsync(receivedMessage);
                 return;
             }
-            else if (!await MainModule.CheckForAliasAsync(recievedMessage))
+            else if (!await MainModule.CheckForAliasAsync(receivedMessage))
             {
                 // Only check for keyword when the message is not an alias/command.
-                KeywordsModule.CheckMessageForKeyword(recievedMessage);
+                KeywordsModule.CheckMessageForKeyword(receivedMessage);
                 return;
             }
         }

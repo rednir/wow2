@@ -30,40 +30,40 @@ namespace wow2.Modules.Games.Counting
         }
 
         /// <returns>True if the message was related to the game.</returns>
-        public static async Task<bool> CheckMessageAsync(SocketMessage recievedMessage)
+        public static async Task<bool> CheckMessageAsync(SocketMessage receivedMessage)
         {
-            var config = GetConfigForGuild(recievedMessage.GetGuild());
+            var config = GetConfigForGuild(receivedMessage.GetGuild());
             float userNumber;
 
-            if (recievedMessage.Author.IsBot || config.NextNumber == null || config.InitalContext.Channel != recievedMessage.Channel)
+            if (receivedMessage.Author.IsBot || config.NextNumber == null || config.InitalContext.Channel != receivedMessage.Channel)
                 return false;
 
-            try { userNumber = Convert.ToSingle(recievedMessage.Content); }
+            try { userNumber = Convert.ToSingle(receivedMessage.Content); }
             catch { return false; }
 
             // If this is the first counting message, there is no need to check if a user counts twice in a row.
             if (config.ListOfMessages.Count != 0)
             {
-                if (recievedMessage.Author == config.ListOfMessages.Last().Author)
+                if (receivedMessage.Author == config.ListOfMessages.Last().Author)
                 {
                     await new WarningMessage("Counting twice in a row is no fun.")
-                        .SendAsync(recievedMessage.Channel);
+                        .SendAsync(receivedMessage.Channel);
                     return true;
                 }
             }
 
-            config.ListOfMessages.Add(recievedMessage);
+            config.ListOfMessages.Add(receivedMessage);
             if (userNumber == config.NextNumber)
             {
                 config.NextNumber += config.Increment;
-                await recievedMessage.AddReactionAsync(new Emoji("✅"));
-                await EndGameIfNumberIsInvalidAsync(recievedMessage, config.NextNumber);
+                await receivedMessage.AddReactionAsync(new Emoji("✅"));
+                await EndGameIfNumberIsInvalidAsync(receivedMessage, config.NextNumber);
             }
             else
             {
-                await recievedMessage.AddReactionAsync(new Emoji("❎"));
-                await new InfoMessage($"Counting was ruined by {recievedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`")
-                    .SendAsync(recievedMessage.Channel);
+                await receivedMessage.AddReactionAsync(new Emoji("❎"));
+                await new InfoMessage($"Counting was ruined by {receivedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`")
+                    .SendAsync(receivedMessage.Channel);
                 await EndGameAsync(config);
             }
 
