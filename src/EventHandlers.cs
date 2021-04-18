@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
@@ -124,12 +125,12 @@ namespace wow2
             await DataManager.EnsureGuildDataFileExistsAsync(receivedMessage.GetGuild().Id);
 
             // Only auto mod message if not related to a game.
-            if (!(await CountingGame.CheckMessageAsync(receivedMessage)) && 
+            if (!(await CountingGame.CheckMessageAsync(receivedMessage)) &&
                 !(await VerbalMemoryGame.CheckMessageAsync(receivedMessage)) &&
                 !(await NumberMemoryGame.CheckMessageAsync(receivedMessage)))
             {
                 await ModeratorModule.CheckMessageWithAutoMod(receivedMessage);
-            } 
+            }
 
             string commandPrefix = MainModule.GetConfigForGuild(receivedMessage.GetGuild()).CommandPrefix;
             if (receivedMessage.Content.StartsWithWord(commandPrefix, true))
@@ -180,7 +181,7 @@ namespace wow2
                 );
 
                 if (result.Error.HasValue)
-                    await SendErrorMessageToChannel(result.Error, (ISocketMessageChannel)context.Channel);
+                    await SendErrorMessageToChannel(result.Error, context);
                 return result;
             }
             finally
@@ -189,48 +190,67 @@ namespace wow2
             }
         }
 
-        public static async Task SendErrorMessageToChannel(CommandError? commandError, ISocketMessageChannel channel)
+        public static async Task SendErrorMessageToChannel(CommandError? commandError, ICommandContext context)
         {
+            string commandPrefix = MainModule.GetConfigForGuild((SocketGuild)context.Guild).CommandPrefix;
+
             switch (commandError)
             {
                 case CommandError.BadArgCount:
                     await new WarningMessage(
                         description: "You either typed the wrong number of parameters, or forgot to put a parameter in \"quotes\"",
                         title: "Invalid usage of command")
-                            .SendAsync(channel);
+                            .SendAsync(context.Channel);
                     return;
 
                 case CommandError.ParseFailed:
                     await new WarningMessage(
                         description: "You might have typed an invalid parameter.",
                         title: "Parsing arguments failed")
-                            .SendAsync(channel);
+                            .SendAsync(context.Channel);
                     return;
 
                 case CommandError.UnknownCommand:
+                    var matchingCommands = await SearchCommandsAsync(context,
+                        context.Message.Content.Substring(commandPrefix.Length + 1));
+
                     await new WarningMessage(
-                        description: "Did you make a typo?",
+                        description: matchingCommands.Count() == 0 ? 
+                            "Did you make a typo?" : $"Maybe you meant to type:\n{matchingCommands.MakeReadableList(commandPrefix)}",
                         title: "That command doesn't exist")
-                            .SendAsync(channel);
+                            .SendAsync(context.Channel);
                     return;
 
                 case CommandError.UnmetPrecondition:
                     await new WarningMessage(
                         description: "You most likely don't have the correct permissions to use this command.",
                         title: "Unmet precondition")
-                            .SendAsync(channel);
+                            .SendAsync(context.Channel);
                     return;
 
                 case CommandError.ObjectNotFound:
                     await new WarningMessage(
                         description: "Object not found.",
                         title: "Invalid usage of command")
-                            .SendAsync(channel);
+                            .SendAsync(context.Channel);
                     return;
 
                 default:
                     return;
             }
+        }
+
+        private static async Task<IEnumerable<CommandInfo>> SearchCommandsAsync(ICommandContext context, string term)
+        {
+            var listOfMatchingCommands = (await EventHandlers.BotCommandService.GetExecutableCommandsAsync(
+                new CommandContext(context.Client, context.Message), null
+            ))
+            .Where(command =>
+                command.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                command.Module.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                term.Contains(command.Name, StringComparison.OrdinalIgnoreCase) ||
+                term.Contains(command.Module.Name, StringComparison.OrdinalIgnoreCase));
+            return listOfMatchingCommands;
         }
     }
 }

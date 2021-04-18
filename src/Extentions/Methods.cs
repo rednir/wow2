@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Text;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 
 namespace wow2.Extentions
@@ -141,6 +142,20 @@ namespace wow2.Extentions
             string stringToSearchWithBoundaries = stringBuilder
                 .Insert(0, ' ').Append(' ').ToString();
             return stringToSearchWithBoundaries.Contains($" {word} ");
+        }
+
+        /// <returns>A readable string of the commands.</returns>
+        public static string MakeReadableList(this IEnumerable<CommandInfo> commands, string commandPrefix)
+        {
+            string result = "";
+            int index = 0;
+            foreach (var command in commands)
+            {
+                result += $"`{commandPrefix} {command.Module.Aliases.FirstOrDefault()} {command.Name}`\n";
+                if (index > 5) break;
+                index++;
+            }
+            return result.TrimEnd('\n');
         }
     }
 }
