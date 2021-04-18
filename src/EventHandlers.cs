@@ -216,7 +216,7 @@ namespace wow2
 
                     await new WarningMessage(
                         description: matchingCommands.Count() == 0 ? 
-                            "Did you make a typo?" : $"Maybe you meant to type:\n{matchingCommands.MakeReadableList(commandPrefix)}",
+                            "Did you make a typo?" : $"Maybe you meant to type:\n{matchingCommands.MakeReadableString(commandPrefix)}",
                         title: "That command doesn't exist")
                             .SendAsync(context.Channel);
                     return;

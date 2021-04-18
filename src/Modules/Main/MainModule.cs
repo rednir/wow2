@@ -242,22 +242,11 @@ namespace wow2.Modules.Main
             {
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"`{commandPrefix} {(string.IsNullOrWhiteSpace(command.Module.Group) ? "" : $"{command.Module.Group} ")}{command.Name}{ParametersToString(command.Parameters)}`",
+                    Name = command.MakeFullCommandString(commandPrefix),
                     Value = $"*{(string.IsNullOrWhiteSpace(command.Summary) ? "No description provided." : command.Summary)}*"
                 });
             }
             return listOfFieldBuilders;
-        }
-
-        private string ParametersToString(IReadOnlyList<ParameterInfo> parameters)
-        {
-            string parametersInfo = "";
-            foreach (ParameterInfo parameter in parameters)
-            {
-                string optionalText = parameter.IsOptional ? "optional:" : "";
-                parametersInfo += $" [{optionalText}{parameter.Name.ToUpper()}]";
-            }
-            return parametersInfo;
         }
 
         public static MainModuleConfig GetConfigForGuild(SocketGuild guild)

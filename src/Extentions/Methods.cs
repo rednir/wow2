@@ -144,18 +144,31 @@ namespace wow2.Extentions
             return stringToSearchWithBoundaries.Contains($" {word} ");
         }
 
-        /// <returns>A readable string of the commands.</returns>
-        public static string MakeReadableList(this IEnumerable<CommandInfo> commands, string commandPrefix)
+        public static string MakeReadableString(this IEnumerable<CommandInfo> commands, string commandPrefix)
         {
             string result = "";
             int index = 0;
             foreach (var command in commands)
             {
-                result += $"`{commandPrefix} {command.Module.Aliases.FirstOrDefault()} {command.Name}`\n";
+                result += command.MakeFullCommandString(commandPrefix) + "\n";
                 if (index >= 5) break;
                 index++;
             }
             return result.TrimEnd('\n');
         }
+
+        public static string MakeReadableString(this IEnumerable<ParameterInfo> parameters)
+        {
+            string parametersInfo = "";
+            foreach (ParameterInfo parameter in parameters)
+            {
+                string optionalText = parameter.IsOptional ? "optional:" : "";
+                parametersInfo += $" [{optionalText}{parameter.Name.ToUpper()}]";
+            }
+            return parametersInfo;
+        }
+
+        public static string MakeFullCommandString(this CommandInfo command, string commandPrefix)
+            => $"`{commandPrefix} {(string.IsNullOrWhiteSpace(command.Module.Group) ? "" : $"{command.Module.Group} ")}{command.Name}{command.Parameters.MakeReadableString()}`";
     }
 }
