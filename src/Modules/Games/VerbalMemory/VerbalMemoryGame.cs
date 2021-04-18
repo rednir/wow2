@@ -19,7 +19,7 @@ namespace wow2.Modules.Games.VerbalMemory
         {
             var config = GetConfigForGuild(receivedMessage.GetGuild());
 
-            if (config.CurrentWordMessage == null)
+            if (config.IsGameStarted == false)
                 return false;
 
             if (receivedMessage.Channel != config.InitalContext.Channel
@@ -75,11 +75,21 @@ namespace wow2.Modules.Games.VerbalMemory
         {
             var config = GetConfigForGuild(context.Guild);
 
+            // TODO: need to find a better way of doing this
+            var defaultConfig = new VerbalMemoryGameConfig();
+            config.CurrentWordMessage = defaultConfig.CurrentWordMessage;
+            config.SeenWords = defaultConfig.SeenWords;
+            config.UnseenWords = defaultConfig.UnseenWords;
+            config.Turns = defaultConfig.Turns;
+
             config.InitalContext = context;
+            config.IsGameStarted = true;
+
             await new InfoMessage(
                 description: $"After every word, respond with:\n • `{SeenKeyword}` if you have seen the word previously\n • `{NewKeyword}` if the word is new",
                 title: $"Verbal memory has started for {context.User.Mention}")
                     .SendAsync(context.Channel);
+
             await NextWordAsync(config);
         }
 
@@ -92,6 +102,7 @@ namespace wow2.Modules.Games.VerbalMemory
                 config.SeenWords[random.Next(config.SeenWords.Count())] :
                 config.UnseenWords[random.Next(config.UnseenWords.Count())];
 
+            // Check if it's necessary to send a new message.
             if (config.CurrentWordMessage == null)
             {
                 config.CurrentWordMessage = await config.InitalContext.Channel.SendMessageAsync(currentWord);
@@ -109,12 +120,7 @@ namespace wow2.Modules.Games.VerbalMemory
                 description: $"You got `{config.Turns}` points, with `{config.SeenWords.Count}` different words.")
                     .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
 
-            // TODO: need to find a better way of doing this
-            var defaultConfig = new VerbalMemoryGameConfig();
-            config.CurrentWordMessage = defaultConfig.CurrentWordMessage;
-            config.SeenWords = defaultConfig.SeenWords;
-            config.UnseenWords = defaultConfig.UnseenWords;
-            config.Turns = defaultConfig.Turns;
+            config.IsGameStarted = false;
         }
 
         private static VerbalMemoryGameConfig GetConfigForGuild(SocketGuild guild)
