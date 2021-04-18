@@ -320,7 +320,7 @@ namespace wow2.Modules.Voice
 
             var authorBuilder = new EmbedAuthorBuilder()
             {
-                Name = "Now Playing",
+                Name = "🔊 Now Playing",
                 IconUrl = request.VideoMetadata.extractor.StartsWith("twitch") ? twitchIconUrl : youtubeIconUrl,
                 Url = request.VideoMetadata.webpage_url
             };
