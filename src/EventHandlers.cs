@@ -15,6 +15,7 @@ using wow2.Modules.Main;
 using wow2.Modules.Keywords;
 using wow2.Modules.Games.Counting;
 using wow2.Modules.Games.VerbalMemory;
+using wow2.Modules.Games.NumberMemory;
 using wow2.Modules.Moderator;
 using wow2.Extentions;
 using wow2.Data;
@@ -123,8 +124,13 @@ namespace wow2
             await DataManager.EnsureGuildDataFileExistsAsync(recievedMessage.GetGuild().Id);
 
             // Only auto mod message if not related to a game.
-            if (!(await CountingGame.CheckMessageAsync(recievedMessage)) && !(await VerbalMemoryGame.CheckMessageAsync(recievedMessage)))
+            if (!(await CountingGame.CheckMessageAsync(recievedMessage)) && 
+                !(await VerbalMemoryGame.CheckMessageAsync(recievedMessage)) &&
+                !(await NumberMemoryGame.CheckMessageAsync(recievedMessage))
+                )
+            {
                 await ModeratorModule.CheckMessageWithAutoMod(recievedMessage);
+            } 
 
             string commandPrefix = MainModule.GetConfigForGuild(recievedMessage.GetGuild()).CommandPrefix;
             if (recievedMessage.Content.StartsWithWord(commandPrefix, true))
