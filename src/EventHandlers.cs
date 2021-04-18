@@ -103,7 +103,6 @@ namespace wow2
                 catch
                 {
                 }
-
             }
             else
             {
@@ -123,7 +122,6 @@ namespace wow2
                 if (await KeywordsModule.DeleteMessageIfKeywordResponse(message))
                 {
                     Logger.Log($"Message was deleted in channel `{channel.Name}` due to reaction added by `{reaction.User}` ({reaction.UserId})", LogSeverity.Verbose);
-                    return;
                 }
             }
         }
@@ -226,7 +224,7 @@ namespace wow2
                         context.Message.Content.Substring(commandPrefix.Length + 1));
 
                     await new WarningMessage(
-                        description: matchingCommands.Count() == 0 ? 
+                        description: matchingCommands.Count() == 0 ?
                             "Did you make a typo?" : $"Maybe you meant to type:\n{matchingCommands.MakeReadableString(commandPrefix)}",
                         title: "That command doesn't exist")
                             .SendAsync(context.Channel);

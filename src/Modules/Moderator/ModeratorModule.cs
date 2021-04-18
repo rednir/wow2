@@ -85,7 +85,7 @@ namespace wow2.Modules.Moderator
             }
             catch (ArgumentException)
             {
-                throw new CommandReturnException(Context, "You can't warn a bot! Bots do no wrong."); 
+                throw new CommandReturnException(Context, "You can't warn a bot! Bots do no wrong.");
             }
 
             await new SuccessMessage($"The user {user.Mention} has been warned by {Context.User.Mention}.")

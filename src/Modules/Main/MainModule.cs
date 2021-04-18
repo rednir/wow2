@@ -187,7 +187,7 @@ namespace wow2.Modules.Main
         {
             var listOfModules = (await EventHandlers.BotCommandService.GetExecutableCommandsAsync(Context, null))
                 .Select(command => command.Module)
-                
+
                 // Remove duplicate modules.
                 .GroupBy(module => module)
                 .Select(group => group.First());
