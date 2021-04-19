@@ -15,6 +15,7 @@ namespace wow2.Modules.Voice
         /// <returns>Video metadata deserialized into <c>YoutubeVideoMetadata</c>.</returns>
         public static async Task<VideoMetadata> GetMetadata(string searchOrUrl)
         {
+            searchOrUrl = searchOrUrl.Trim('\"');
             const string arguments = "-j -q";
             bool isUrl = searchOrUrl.StartsWith("http://") || searchOrUrl.StartsWith("https://");
             string standardOutput = "";
