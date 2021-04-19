@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord.Commands;
+using wow2.Modules.Main;
 using wow2.Modules.Keywords;
 
 namespace wow2.Modules.Dev
@@ -47,9 +48,11 @@ namespace wow2.Modules.Dev
 
         private static async Task ExecuteCommandsForTestAsync(ICommandContext context, params string[] commands)
         {
+            string commandPrefix = MainModule.GetConfigForGuild(context.Guild).CommandPrefix;
+
             foreach (string command in commands)
             {
-                await context.Channel.SendMessageAsync($"**⏩ INPUT:** {command}");
+                await context.Channel.SendMessageAsync($"`{commandPrefix} {command}`");
 
                 await Task.Delay(1000);
                 await EventHandlers.ExecuteCommandAsync(context, command);
