@@ -5,7 +5,7 @@ A Discord bot written in C# using the [Discord.NET](https://github.com/discord-n
 
 ## Using the bot
 Link to invite the bot:
- - https://discord.com/oauth2/authorize?client_id=818156344594792451&permissions=8&scope=bot
+ - https://discord.com/api/oauth2/authorize?client_id=818156344594792451&permissions=37022788&scope=bot
 
 Once the bot has joined, you can type `!wow help` in any text channel to view a list of commands.
 
