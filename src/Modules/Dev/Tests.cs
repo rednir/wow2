@@ -9,6 +9,9 @@ namespace wow2.Modules.Dev
 {
     public static class Tests
     {
+        /// <summary>The time in milliseconds between asserts/commands</summary>
+        private const int Delay = 1000;
+
         public static Dictionary<string, Func<ICommandContext, Task>> TestList = new Dictionary<string, Func<ICommandContext, Task>>()
         {
             {
@@ -74,9 +77,9 @@ namespace wow2.Modules.Dev
             {
                 await context.Channel.SendMessageAsync($"`{commandPrefix} {command}`");
 
-                await Task.Delay(1000);
+                await Task.Delay(Delay);
                 await EventHandlers.ExecuteCommandAsync(context, command);
-                await Task.Delay(1000);
+                await Task.Delay(Delay);
             }
         }
 
@@ -84,6 +87,7 @@ namespace wow2.Modules.Dev
         {
             if (!value) throw new Exception($"Assert failure ({description})");
             await context.Channel.SendMessageAsync($"**✅ ASSERT:** {description}");
+            await Task.Delay(Delay);
         }
 
         private static async Task AssertAsync(ICommandContext context, Dictionary<string, bool> asserts)
