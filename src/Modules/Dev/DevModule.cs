@@ -22,13 +22,18 @@ namespace wow2.Modules.Dev
                 "keywords", async (context) =>
                 {
                     var config = KeywordsModule.GetConfigForGuild(context.Guild);
-                    const string keyword = "testing_keyword";
+                    const string keywordName = "testing_keyword";
+                    List<KeywordValue> keywordValues;
 
                     await ExecuteCommandsForTestAsync(context,
-                        $"keywords add {keyword} value1",
-                        $"keywords add \"{keyword}\" \"value2 **Title!** with title\"");
-                    await Assert(context, $"{keyword} exists",
-                        config.KeywordsDictionary.ContainsKey(keyword));
+                        $"keywords add {keywordName} value1",
+                        $"keywords add \"{keywordName}\" \"value2 **Title!**with title\"");
+                    await Assert(context, new Dictionary<string, bool>()
+                    {
+                        {$"{keywordName} exists in dictionary", config.KeywordsDictionary.TryGetValue(keywordName, out keywordValues)},
+                        {$"check value1", keywordValues[0].Content == "value1"},
+                        {$"check value2", keywordValues[1].Content == "value2 with title" && keywordValues[1].Title == "Title!"}
+                    });
 
                     await ExecuteCommandsForTestAsync(context,
                         "keywords remove testing_keyword");
@@ -132,6 +137,15 @@ namespace wow2.Modules.Dev
         {
             string resultText = value ? "✅" : "❌";
             await context.Channel.SendMessageAsync($"**{resultText} ASSERT:** {description}");
+        }
+
+        private static async Task Assert(ICommandContext context, Dictionary<string, bool> asserts)
+        {
+            foreach (var assert in asserts)
+            {
+                string resultText = assert.Value ? "✅" : "❌";
+                await context.Channel.SendMessageAsync($"**{resultText} ASSERT:** {assert.Key}");
+            }
         }
     }
 }
