@@ -63,6 +63,17 @@ namespace wow2.Modules.Dev
         [Alias("test")]
         public async Task TestAsync(string group = null)
         {
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                string result = "";
+                foreach (string testName in Tests.TestList.Keys)
+                    result += $"`{testName}`\n";
+
+                await new InfoMessage(result, "List of tests")
+                    .SendAsync(Context.Channel);
+                return;
+            }
+
             try
             {
                 await Tests.TestList[group](Context);
