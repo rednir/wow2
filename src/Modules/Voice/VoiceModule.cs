@@ -343,7 +343,7 @@ namespace wow2.Modules.Voice
             return embedBuilder.Build();
         }
 
-        private bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
+        public static bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
             => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;
 
         public static VoiceModuleConfig GetConfigForGuild(IGuild guild)
