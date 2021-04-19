@@ -18,12 +18,12 @@ namespace wow2.Modules.Dev
                     const string keywordName = "testing_keyword";
                     List<KeywordValue> keywordValues;
 
-                    await ExecuteCommandsForTestAsync(context,
+                    await ExecuteCommandsAsync(context,
                         $"keywords remove {keywordName}");
                     await AssertAsync(context,
                         "keyword doesn't exist", !config.KeywordsDictionary.ContainsKey(keywordName));
 
-                    await ExecuteCommandsForTestAsync(context,
+                    await ExecuteCommandsAsync(context,
                         $"keywords add {keywordName} value1",
                         $"keywords add \"{keywordName}\" \"value2 **Title!**with title\"");
                     await AssertAsync(context, new Dictionary<string, bool>()
@@ -33,12 +33,12 @@ namespace wow2.Modules.Dev
                         {$"check value2", keywordValues[1].Content == "value2 with title" && keywordValues[1].Title == "Title!"}
                     });
 
-                    await ExecuteCommandsForTestAsync(context,
+                    await ExecuteCommandsAsync(context,
                         $"keywords remove {keywordName} value1");
                     await AssertAsync(context,
                         "value was removed", keywordValues.Count == 1);
 
-                    await ExecuteCommandsForTestAsync(context,
+                    await ExecuteCommandsAsync(context,
                         "keywords remove testing_keyword");
                     await AssertAsync(context,
                         "keyword was removed", !config.KeywordsDictionary.ContainsKey(keywordName));
@@ -46,7 +46,7 @@ namespace wow2.Modules.Dev
             }
         };
 
-        private static async Task ExecuteCommandsForTestAsync(ICommandContext context, params string[] commands)
+        private static async Task ExecuteCommandsAsync(ICommandContext context, params string[] commands)
         {
             string commandPrefix = MainModule.GetConfigForGuild(context.Guild).CommandPrefix;
 
