@@ -20,7 +20,7 @@ namespace wow2.Modules.Dev
                     var config = MainModule.GetConfigForGuild(context.Guild);
                     const string aliasName = "testing_alias";
 
-                    await ExecuteCommandsAsync(context,
+                    await ExecuteAsync(context,
                         $"alias {aliasName} \"{config.CommandPrefix} help\"");
                     await AssertAsync(context, new Dictionary<string, bool>()
                     {
@@ -28,7 +28,7 @@ namespace wow2.Modules.Dev
                         {"check definition", config.AliasesDictionary[aliasName] == "help"}
                     });
 
-                    await ExecuteCommandsAsync(context,
+                    await ExecuteAsync(context,
                         $"alias {aliasName}");
                     await AssertAsync(context,
                         "alias has been removed", !config.AliasesDictionary.ContainsKey(aliasName)); 
@@ -41,12 +41,12 @@ namespace wow2.Modules.Dev
                     const string keywordName = "testing_keyword";
                     List<KeywordValue> keywordValues;
 
-                    await ExecuteCommandsAsync(context,
+                    await ExecuteAsync(context,
                         $"keywords remove {keywordName}");
                     await AssertAsync(context,
                         "keyword doesn't exist", !config.KeywordsDictionary.ContainsKey(keywordName));
 
-                    await ExecuteCommandsAsync(context,
+                    await ExecuteAsync(context,
                         $"keywords add {keywordName} value1",
                         $"keywords add \"{keywordName}\" \"value2 **Title!**with title\"");
                     await AssertAsync(context, new Dictionary<string, bool>()
@@ -56,12 +56,12 @@ namespace wow2.Modules.Dev
                         {$"check value2", keywordValues[1].Content == "value2 with title" && keywordValues[1].Title == "Title!"}
                     });
 
-                    await ExecuteCommandsAsync(context,
+                    await ExecuteAsync(context,
                         $"keywords remove {keywordName} value1");
                     await AssertAsync(context,
                         "value was removed", keywordValues.Count == 1);
 
-                    await ExecuteCommandsAsync(context,
+                    await ExecuteAsync(context,
                         "keywords remove testing_keyword");
                     await AssertAsync(context,
                         "keyword was removed", !config.KeywordsDictionary.ContainsKey(keywordName));
@@ -69,7 +69,7 @@ namespace wow2.Modules.Dev
             }
         };
 
-        private static async Task ExecuteCommandsAsync(ICommandContext context, params string[] commands)
+        private static async Task ExecuteAsync(ICommandContext context, params string[] commands)
         {
             string commandPrefix = MainModule.GetConfigForGuild(context.Guild).CommandPrefix;
 
