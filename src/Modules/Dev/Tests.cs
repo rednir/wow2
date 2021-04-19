@@ -8,7 +8,7 @@ namespace wow2.Modules.Dev
 {
     public static class Tests
     {
-        public static Dictionary<string, Action<ICommandContext>> TestList = new Dictionary<string, Action<ICommandContext>>()
+        public static Dictionary<string, Func<ICommandContext, Task>> TestList = new Dictionary<string, Func<ICommandContext, Task>>()
         {
             {
                 "keywords", async (context) =>
@@ -19,13 +19,13 @@ namespace wow2.Modules.Dev
 
                     await ExecuteCommandsForTestAsync(context,
                         $"keywords remove {keywordName}");
-                    await Assert(context,
+                    await AssertAsync(context,
                         "keyword doesn't exist", !config.KeywordsDictionary.ContainsKey(keywordName));
 
                     await ExecuteCommandsForTestAsync(context,
                         $"keywords add {keywordName} value1",
                         $"keywords add \"{keywordName}\" \"value2 **Title!**with title\"");
-                    await Assert(context, new Dictionary<string, bool>()
+                    await AssertAsync(context, new Dictionary<string, bool>()
                     {
                         {$"keyword exists in dictionary", config.KeywordsDictionary.TryGetValue(keywordName, out keywordValues)},
                         {$"check value1", keywordValues[0].Content == "value1"},
@@ -34,12 +34,12 @@ namespace wow2.Modules.Dev
 
                     await ExecuteCommandsForTestAsync(context,
                         $"keywords remove {keywordName} value1");
-                    await Assert(context,
+                    await AssertAsync(context,
                         "value was removed", keywordValues.Count == 1);
 
                     await ExecuteCommandsForTestAsync(context,
                         "keywords remove testing_keyword");
-                    await Assert(context,
+                    await AssertAsync(context,
                         "keyword was removed", !config.KeywordsDictionary.ContainsKey(keywordName));
                 }
             }
@@ -57,13 +57,13 @@ namespace wow2.Modules.Dev
             }
         }
 
-        private static async Task Assert(ICommandContext context, string description, bool value)
+        private static async Task AssertAsync(ICommandContext context, string description, bool value)
         {
             string resultText = value ? "✅" : "❌";
             await context.Channel.SendMessageAsync($"**{resultText} ASSERT:** {description}");
         }
 
-        private static async Task Assert(ICommandContext context, Dictionary<string, bool> asserts)
+        private static async Task AssertAsync(ICommandContext context, Dictionary<string, bool> asserts)
         {
             foreach (var assert in asserts)
             {

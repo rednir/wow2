@@ -65,7 +65,7 @@ namespace wow2.Modules.Dev
         {
             try
             {
-                Tests.TestList[group](Context);
+                await Tests.TestList[group](Context);
                 await new SuccessMessage("Finished test.")
                     .SendAsync(Context.Channel);
             }
