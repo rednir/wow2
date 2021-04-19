@@ -12,6 +12,26 @@ namespace wow2.Modules.Dev
         public static Dictionary<string, Func<ICommandContext, Task>> TestList = new Dictionary<string, Func<ICommandContext, Task>>()
         {
             {
+                "aliases", async (context) =>
+                {
+                    var config = MainModule.GetConfigForGuild(context.Guild);
+                    const string aliasName = "testing_alias";
+
+                    await ExecuteCommandsAsync(context,
+                        $"alias {aliasName} \"{config.CommandPrefix} help\"");
+                    await AssertAsync(context, new Dictionary<string, bool>()
+                    {
+                        {"key exists in dictionary", config.AliasesDictionary.ContainsKey(aliasName)},
+                        {"check definition", config.AliasesDictionary[aliasName] == "help"}
+                    });
+
+                    await ExecuteCommandsAsync(context,
+                        $"alias {aliasName}");
+                    await AssertAsync(context,
+                        "alias has been removed", !config.AliasesDictionary.ContainsKey(aliasName)); 
+                }
+            },
+            {
                 "keywords", async (context) =>
                 {
                     var config = KeywordsModule.GetConfigForGuild(context.Guild);
