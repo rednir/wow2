@@ -21,10 +21,15 @@ namespace wow2.Modules.Dev
             {
                 "keywords", async (context) =>
                 {
+                    var config = KeywordsModule.GetConfigForGuild(context.Guild);
+                    const string keyword = "testing_keyword";
+
                     await ExecuteCommandsForTestAsync(context,
-                        "keywords add testing_keyword value1",
-                        "keywords add \"testing_keyword\" \"value2 **Title!** with title\"");
-                    
+                        $"keywords add {keyword} value1",
+                        $"keywords add \"{keyword}\" \"value2 **Title!** with title\"");
+                    await Assert(context, $"{keyword} exists",
+                        config.KeywordsDictionary.ContainsKey(keyword));
+
                     await ExecuteCommandsForTestAsync(context,
                         "keywords remove testing_keyword");
                 }
@@ -78,9 +83,19 @@ namespace wow2.Modules.Dev
 
         [Command("run-test")]
         [Alias("test")]
-        public async Task TestAsync(string group = null, int delay = 2000)
+        public async Task TestAsync(string group = null)
         {
-            Tests[group](Context);
+            try
+            {
+                Tests[group](Context);
+                await new SuccessMessage("Finished test.")
+                    .SendAsync(Context.Channel);
+            }
+            catch (Exception ex)
+            {
+                await new ErrorMessage(ex.ToString())
+                    .SendAsync(Context.Channel);
+            }
         }
 
         [Command("throw")]
@@ -105,15 +120,18 @@ namespace wow2.Modules.Dev
         {
             foreach (string command in commands)
             {
-                await context.Channel.SendMessageAsync($"**INPUT:** {command}");
+                await context.Channel.SendMessageAsync($"**⏩ INPUT:** {command}");
+
+                await Task.Delay(1000);
                 await EventHandlers.ExecuteCommandAsync(context, command);
+                await Task.Delay(1000);
             }
         }
 
-        private static void Assert(bool value)
+        private static async Task Assert(ICommandContext context, string description, bool value)
         {
-            if (!value)
-                throw new Exception("Assert failure");
+            string resultText = value ? "✅" : "❌";
+            await context.Channel.SendMessageAsync($"**{resultText} ASSERT:** {description}");
         }
     }
 }
