@@ -231,7 +231,7 @@ namespace wow2.Modules.Moderator
             return matchingRecord;
         }
 
-        private static ModeratorModuleConfig GetConfigForGuild(SocketGuild guild)
+        public static ModeratorModuleConfig GetConfigForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Moderator;
     }
 }

@@ -37,7 +37,7 @@ namespace wow2.Modules.Games.NumberMemory
             config.IsGameStarted = false;
         }
 
-        private static NumberMemoryConfig GetConfigForGuild(SocketGuild guild)
+        public static NumberMemoryConfig GetConfigForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Games.NumberMemory;
     }
 }

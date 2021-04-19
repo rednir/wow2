@@ -129,7 +129,7 @@ namespace wow2.Modules.Games.Counting
             return false;
         }
 
-        private static CountingGameConfig GetConfigForGuild(SocketGuild guild)
+        public static CountingGameConfig GetConfigForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Games.Counting;
     }
 }

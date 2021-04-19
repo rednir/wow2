@@ -309,7 +309,7 @@ namespace wow2.Modules.Keywords
                 .SendAsync(Context.Channel);
         }
 
-        private static KeywordsModuleConfig GetConfigForGuild(SocketGuild guild)
+        public static KeywordsModuleConfig GetConfigForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Keywords;
     }
 }

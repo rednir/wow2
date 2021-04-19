@@ -123,7 +123,7 @@ namespace wow2.Modules.Games.VerbalMemory
             config.IsGameStarted = false;
         }
 
-        private static VerbalMemoryGameConfig GetConfigForGuild(SocketGuild guild)
+        public static VerbalMemoryGameConfig GetConfigForGuild(SocketGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Games.VerbalMemory;
     }
 }
