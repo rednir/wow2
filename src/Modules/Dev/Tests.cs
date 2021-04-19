@@ -11,7 +11,7 @@ namespace wow2.Modules.Dev
     public static class Tests
     {
         /// <summary>The time in milliseconds between asserts/commands</summary>
-        private const int Delay = 1000;
+        private const int CommandDelay = 1000;
 
         public static Dictionary<string, Func<ICommandContext, Task>> TestList = new Dictionary<string, Func<ICommandContext, Task>>()
         {
@@ -46,6 +46,7 @@ namespace wow2.Modules.Dev
                         "vc clear",
                         "vc skip",
                         "vc join");
+                    await DelayAsync(context, 3000);
                     await AssertAsync(context, new Dictionary<string, bool>()
                     {
                         {"song request queue is empty", config.SongRequests.Count == 0},
@@ -53,13 +54,11 @@ namespace wow2.Modules.Dev
                         {"audio client has connected", !VoiceModule.CheckIfAudioClientDisconnected(config.AudioClient)}
                     });
 
-                    await Task.Delay(3000);
-
                     await ExecuteAsync(context,
                         "vc add never gonna give you up",
                         "vc add https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                         "vc add \"me at the zoo\"");
-                    await Task.Delay(15000);
+                    await DelayAsync(context, 15000);
                     await ExecuteAsync(context,
                         "vc list");
                     await AssertAsync(context, new Dictionary<string, bool>()
@@ -131,17 +130,23 @@ namespace wow2.Modules.Dev
             {
                 await context.Channel.SendMessageAsync($"`{commandPrefix} {command}`");
 
-                await Task.Delay(Delay);
+                await Task.Delay(CommandDelay);
                 await EventHandlers.ExecuteCommandAsync(context, command);
-                await Task.Delay(Delay);
+                await Task.Delay(CommandDelay);
             }
+        }
+
+        private static async Task DelayAsync(ICommandContext context, int milliseconds)
+        {
+            await context.Channel.SendMessageAsync($"**⏸️ PAUSE:** {milliseconds}ms");
+            await Task.Delay(milliseconds);
         }
 
         private static async Task AssertAsync(ICommandContext context, string description, bool value)
         {
             if (!value) throw new Exception($"Assert failure ({description})");
             await context.Channel.SendMessageAsync($"**✅ ASSERT:** {description}");
-            await Task.Delay(Delay);
+            await Task.Delay(CommandDelay);
         }
 
         private static async Task AssertAsync(ICommandContext context, Dictionary<string, bool> asserts)
