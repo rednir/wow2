@@ -48,7 +48,7 @@ namespace wow2.Modules.Dev
 
                     await ExecuteCommandsAsync(context,
                         $"keywords add {keywordName} value1",
-                        $"keywords add \"{keywordName}\" \"value **Title!**with title\"");
+                        $"keywords add \"{keywordName}\" \"value2 **Title!**with title\"");
                     await AssertAsync(context, new Dictionary<string, bool>()
                     {
                         {$"keyword exists in dictionary", config.KeywordsDictionary.TryGetValue(keywordName, out keywordValues)},
