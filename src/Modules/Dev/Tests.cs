@@ -25,7 +25,7 @@ namespace wow2.Modules.Dev
 
                     await ExecuteCommandsAsync(context,
                         $"keywords add {keywordName} value1",
-                        $"keywords add \"{keywordName}\" \"value2 **Title!**with title\"");
+                        $"keywords add \"{keywordName}\" \"value **Title!**with title\"");
                     await AssertAsync(context, new Dictionary<string, bool>()
                     {
                         {$"keyword exists in dictionary", config.KeywordsDictionary.TryGetValue(keywordName, out keywordValues)},
@@ -62,16 +62,15 @@ namespace wow2.Modules.Dev
 
         private static async Task AssertAsync(ICommandContext context, string description, bool value)
         {
-            string resultText = value ? "✅" : "❌";
-            await context.Channel.SendMessageAsync($"**{resultText} ASSERT:** {description}");
+            if (!value) throw new Exception($"Assert failure ({description})");
+            await context.Channel.SendMessageAsync($"**✅ ASSERT:** {description}");
         }
 
         private static async Task AssertAsync(ICommandContext context, Dictionary<string, bool> asserts)
         {
             foreach (var assert in asserts)
             {
-                string resultText = assert.Value ? "✅" : "❌";
-                await context.Channel.SendMessageAsync($"**{resultText} ASSERT:** {assert.Key}");
+                await AssertAsync(context, assert.Key, assert.Value);
             }
         }
     }
