@@ -18,17 +18,29 @@ namespace wow2.Modules.Dev
                     List<KeywordValue> keywordValues;
 
                     await ExecuteCommandsForTestAsync(context,
+                        $"keywords remove {keywordName}");
+                    await Assert(context,
+                        "keyword doesn't exist", !config.KeywordsDictionary.ContainsKey(keywordName));
+
+                    await ExecuteCommandsForTestAsync(context,
                         $"keywords add {keywordName} value1",
                         $"keywords add \"{keywordName}\" \"value2 **Title!**with title\"");
                     await Assert(context, new Dictionary<string, bool>()
                     {
-                        {$"{keywordName} exists in dictionary", config.KeywordsDictionary.TryGetValue(keywordName, out keywordValues)},
+                        {$"keyword exists in dictionary", config.KeywordsDictionary.TryGetValue(keywordName, out keywordValues)},
                         {$"check value1", keywordValues[0].Content == "value1"},
                         {$"check value2", keywordValues[1].Content == "value2 with title" && keywordValues[1].Title == "Title!"}
                     });
 
                     await ExecuteCommandsForTestAsync(context,
+                        $"keywords remove {keywordName} value1");
+                    await Assert(context,
+                        "value was removed", keywordValues.Count == 1);
+
+                    await ExecuteCommandsForTestAsync(context,
                         "keywords remove testing_keyword");
+                    await Assert(context,
+                        "keyword was removed", !config.KeywordsDictionary.ContainsKey(keywordName));
                 }
             }
         };

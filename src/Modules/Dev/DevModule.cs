@@ -71,7 +71,7 @@ namespace wow2.Modules.Dev
             }
             catch (Exception ex)
             {
-                await new ErrorMessage(ex.ToString())
+                await new ErrorMessage($"```{ex.ToString()}```")
                     .SendAsync(Context.Channel);
             }
         }
