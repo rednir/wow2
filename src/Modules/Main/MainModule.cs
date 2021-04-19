@@ -249,7 +249,7 @@ namespace wow2.Modules.Main
             return listOfFieldBuilders;
         }
 
-        public static MainModuleConfig GetConfigForGuild(SocketGuild guild)
+        public static MainModuleConfig GetConfigForGuild(IGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Main;
     }
 }

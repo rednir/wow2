@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using wow2.Verbose.Messages;
@@ -37,7 +38,7 @@ namespace wow2.Modules.Games.NumberMemory
             config.IsGameStarted = false;
         }
 
-        public static NumberMemoryConfig GetConfigForGuild(SocketGuild guild)
+        public static NumberMemoryConfig GetConfigForGuild(IGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Games.NumberMemory;
     }
 }

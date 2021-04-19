@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using wow2.Verbose.Messages;
@@ -123,7 +124,7 @@ namespace wow2.Modules.Games.VerbalMemory
             config.IsGameStarted = false;
         }
 
-        public static VerbalMemoryGameConfig GetConfigForGuild(SocketGuild guild)
+        public static VerbalMemoryGameConfig GetConfigForGuild(IGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Games.VerbalMemory;
     }
 }

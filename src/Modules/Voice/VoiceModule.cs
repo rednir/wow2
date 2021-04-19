@@ -346,7 +346,7 @@ namespace wow2.Modules.Voice
         private bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
             => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;
 
-        public static VoiceModuleConfig GetConfigForGuild(SocketGuild guild)
+        public static VoiceModuleConfig GetConfigForGuild(IGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Voice;
     }
 }
