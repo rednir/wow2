@@ -52,9 +52,11 @@ namespace wow2.Modules.Main
         {
             var config = GetConfigForGuild(Context.Guild);
             string removeAliasText = $"To remove the alias, type `{config.CommandPrefix} alias \"{name}\"`";
+            string definition = string.Join(" ", definitionSplit);
 
-            string definition = string.Join(" ", definitionSplit.Where(w
-                => !w.Equals(config.CommandPrefix, StringComparison.CurrentCultureIgnoreCase)));
+            // Remove command prefix from user input as it might cause confusion.
+            if (definition.StartsWithWord(config.CommandPrefix, true))
+                definition = definition.Substring(config.CommandPrefix.Length + 1);
 
             if (config.AliasesDictionary.ContainsKey(name))
             {
