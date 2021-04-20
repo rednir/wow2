@@ -46,9 +46,15 @@ namespace wow2
 
         public static async Task JoinedGuildAsync(SocketGuild guild)
         {
-            await DataManager.EnsureGuildDataFileExistsAsync(guild.Id);
+            var guildData = await DataManager.EnsureGuildDataFileExistsAsync(guild.Id);
             string commandPrefix = MainModule.GetConfigForGuild(guild).CommandPrefix;
 
+            // Only set if it's the first time the bot has joined this guild.
+            if (guildData.DateTimeJoinedBinary == 0)
+            {
+                DataManager.DictionaryOfGuildData[guild.Id]
+                    .DateTimeJoinedBinary = DateTime.Now.ToBinary();
+            }
             var embedBuilder = new EmbedBuilder()
             {
                 Title = "👋 Hi there!",
