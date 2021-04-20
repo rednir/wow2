@@ -152,9 +152,7 @@ namespace wow2.Modules.Dev
         private static async Task AssertAsync(ICommandContext context, Dictionary<string, bool> asserts)
         {
             foreach (var assert in asserts)
-            {
                 await AssertAsync(context, assert.Key, assert.Value);
-            }
         }
     }
 }
