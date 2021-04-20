@@ -122,18 +122,20 @@ namespace wow2.Modules.Dev
             }
         };
 
-        private static async Task ExecuteAsync(ICommandContext context, params string[] commands)
+        private static async Task<List<IResult>> ExecuteAsync(ICommandContext context, params string[] commands)
         {
             string commandPrefix = MainModule.GetConfigForGuild(context.Guild).CommandPrefix;
+            var results = new List<IResult>();
 
             foreach (string command in commands)
             {
                 await context.Channel.SendMessageAsync($"`{commandPrefix} {command}`");
 
                 await Task.Delay(CommandDelay);
-                await EventHandlers.ExecuteCommandAsync(context, command);
+                results.Add(await EventHandlers.ExecuteCommandAsync(context, command));
                 await Task.Delay(CommandDelay);
             }
+            return results;
         }
 
         private static async Task DelayAsync(ICommandContext context, int milliseconds)
