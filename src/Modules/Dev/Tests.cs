@@ -119,6 +119,14 @@ namespace wow2.Modules.Dev
                     await AssertAsync(context,
                         "keyword was removed", !config.KeywordsDictionary.ContainsKey(keywordName));
                 }
+            },
+            {
+                // TODO: also test specified author
+                "quotes", async (context) =>
+                {
+                    var results = await ExecuteAsync(context,
+                        $"text quote \"This is a very long quote without a author specified. This is a very long quote without a author specified. This is a very long quote without a author specified. \"");
+                }
             }
         };
 
