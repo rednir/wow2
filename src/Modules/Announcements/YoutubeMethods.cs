@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using System.IO;
 using Discord;
 using Discord.Commands;
 using wow2.Data;
@@ -13,9 +14,10 @@ namespace wow2.Modules.Announcements
     {
         public static async Task GetChannelStatistics(string id)
         {
+            // TODO: update readme, env variable, error message
             var service = new YouTubeService(new BaseClientService.Initializer()
             {
-                ApiKey = "AIzaSyDwTCDv9R0kztuOMnWrAXe6BQEuHqAyzKc",
+                ApiKey = await File.ReadAllTextAsync("google.key"),
                 ApplicationName = Program.ApplicationInfo.Name
             });
 

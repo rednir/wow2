@@ -16,7 +16,6 @@ namespace wow2.Modules.Announcements
         [Alias("yt")]
         public async Task Youtube()
         {
-            throw new NotImplementedException();
             await YoutubeMethods.GetChannelStatistics("");
         }
     }
