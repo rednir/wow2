@@ -37,27 +37,10 @@ namespace wow2.Modules.Youtube
         [Command("channel")]
         public async Task ChannelAsync([Name("CHANNEL")] string userInput)
         {
-            // Youtube channel IDs always start with UC.
-
-            string channelToFetchId = null;
-
-            if (!userInput.StartsWith("UC") && userInput.Contains("/UC"))
-            {
-                // Get channel ID from assumed-to-be channel URL.
-                channelToFetchId = userInput.Split('/')
-                    .Where(part => part.StartsWith("UC")).FirstOrDefault();
-            }
-            else if (userInput.StartsWith("UC"))
-            {
-                channelToFetchId = userInput;
-            }
-
             Channel channel;
             try
             {
-                // Only pass in userInput if a channel ID was not found.
-                channel = await GetChannelAsync(
-                    channelToFetchId, channelToFetchId == null ? userInput : null);
+                channel = await GetChannelAsync(userInput);
             }
             catch (ArgumentException)
             {
@@ -71,6 +54,8 @@ namespace wow2.Modules.Youtube
         public async Task SubscribeAsync(string channelId)
         {
             var config = GetConfigForGuild(Context.Guild);
+
+            // TODO: fetch channel data here (you shouldnt have to type only the id).
 
             config.SubscribedChannelIds.Add(channelId);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
@@ -116,11 +101,27 @@ namespace wow2.Modules.Youtube
                 .SendAsync(channel);
         }
 
-        private static async Task<Channel> GetChannelAsync(string id = null, string username = null)
+        private static async Task<Channel> GetChannelAsync(string channelIdOrUsername)
         {
             var listRequest = Service.Channels.List("snippet, statistics, contentDetails");
-            listRequest.Id = id;
-            listRequest.ForUsername = username;
+
+            if (!channelIdOrUsername.StartsWith("UC") && channelIdOrUsername.Contains("/UC"))
+            {
+                // Get channel ID from assumed-to-be channel URL.
+                listRequest.Id = channelIdOrUsername.Split('/')
+                    .Where(part => part.StartsWith("UC")).FirstOrDefault();
+            }
+            else if (channelIdOrUsername.StartsWith("UC"))
+            {
+                // Assume input is channel ID.
+                listRequest.Id = channelIdOrUsername;
+            }
+            else
+            {
+                // Default to searching for username.
+                listRequest.ForUsername = channelIdOrUsername;
+            }
+
             var listResponse = await listRequest.ExecuteAsync();
 
             if (listResponse.Items == null)
@@ -132,10 +133,11 @@ namespace wow2.Modules.Youtube
         private static async Task<IList<PlaylistItem>> GetChannelUploadsAsync(Channel channel, long maxResults = 5)
         {
             var listRequest = Service.PlaylistItems.List("snippet, contentDetails");
+            // TODO: throw some exception if channel has no uploads
             listRequest.PlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
             listRequest.MaxResults = maxResults;
             var listResponse = await listRequest.ExecuteAsync();
-
+            
             return listResponse.Items;
         }
 
