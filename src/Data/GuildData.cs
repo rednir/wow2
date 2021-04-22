@@ -3,6 +3,7 @@ using wow2.Modules.Keywords;
 using wow2.Modules.Games;
 using wow2.Modules.Voice;
 using wow2.Modules.Moderator;
+using wow2.Modules.Youtube;
 
 namespace wow2.Data
 {
@@ -17,5 +18,6 @@ namespace wow2.Data
         public GamesModuleConfig Games { get; set; } = new GamesModuleConfig();
         public VoiceModuleConfig Voice { get; set; } = new VoiceModuleConfig();
         public ModeratorModuleConfig Moderator { get; set; } = new ModeratorModuleConfig();
+        public YoutubeModuleConfig Youtube { get; set; } = new YoutubeModuleConfig();
     }
 }
