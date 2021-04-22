@@ -14,10 +14,9 @@ namespace wow2.Modules.Announcements
     {
         public static async Task GetChannelStatistics(string id)
         {
-            // TODO: update readme, env variable, error message
             var service = new YouTubeService(new BaseClientService.Initializer()
             {
-                ApiKey = await File.ReadAllTextAsync("google.key"),
+                ApiKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY") ?? await File.ReadAllTextAsync("google.key"),
                 ApplicationName = Program.ApplicationInfo.Name
             });
 
