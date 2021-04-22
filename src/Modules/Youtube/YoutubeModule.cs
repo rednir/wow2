@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
@@ -30,7 +31,7 @@ namespace wow2.Modules.Youtube
         }
 
         [Command("channel")]
-        public async Task Channel([Name("CHANNEL")] string userInput)
+        public async Task ChannelAsync([Name("CHANNEL")] string userInput)
         {
             // Youtube channel IDs always start with UC.
 
@@ -51,7 +52,7 @@ namespace wow2.Modules.Youtube
             try
             {
                 // Only pass in userInput if a channel ID was not found.
-                channel = await GetChannel(
+                channel = await GetChannelAsync(
                     channelToFetchId, channelToFetchId == null ? userInput : null);
             }
             catch (ArgumentException)
@@ -59,10 +60,10 @@ namespace wow2.Modules.Youtube
                 throw new CommandReturnException(Context, "That channel doesn't exist.");
             }
 
-            await ReplyAsync(embed: BuildChannelOverviewEmbed(channel));
+            await ReplyAsync(embed: await BuildChannelOverviewEmbedAsync(channel));
         }
 
-        private static async Task<Channel> GetChannel(string id = null, string username = null)
+        private static async Task<Channel> GetChannelAsync(string id = null, string username = null)
         {
             var listRequest = Service.Channels.List("snippet, statistics, contentDetails");
             listRequest.Id = id;
@@ -75,8 +76,28 @@ namespace wow2.Modules.Youtube
             return listResponse.Items[0];
         }
 
-        private static Embed BuildChannelOverviewEmbed(Channel channel)
+        private static async Task<IList<PlaylistItem>> GetChannelUploadsAsync(Channel channel)
         {
+            var listRequest = Service.PlaylistItems.List("snippet");
+            listRequest.PlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
+            var listResponse = await listRequest.ExecuteAsync();
+
+            return listResponse.Items;
+        }
+
+        private static async Task<Embed> BuildChannelOverviewEmbedAsync(Channel channel)
+        {
+            var fieldBuilders = new List<EmbedFieldBuilder>();
+            foreach (var upload in await GetChannelUploadsAsync(channel))
+            {
+                fieldBuilders.Add(new EmbedFieldBuilder()
+                {
+                    Name = upload.Snippet.Title,
+                    Value = $"[{upload.Snippet.PublishedAt.Value.ToString("dd MMM yyyy")}](https://www.youtube.com/watch?v={upload.Id})",
+                    IsInline = true 
+                });
+            }
+
             return new EmbedBuilder()
             {
                 Author = new EmbedAuthorBuilder()
@@ -87,7 +108,8 @@ namespace wow2.Modules.Youtube
                 },
                 Title = "Channel Overview",
                 // TODO: truncate sub count
-                Description = $"{channel.Statistics.SubscriberCount} subscribers   |   {channel.Statistics.VideoCount} uploads",
+                Description = $"{channel.Statistics.SubscriberCount} subscribers • {channel.Statistics.VideoCount} uploads\n",
+                Fields = fieldBuilders,
                 Color = Color.LightGrey
             }
             .Build();
