@@ -18,6 +18,17 @@ namespace wow2.Modules.Youtube
     [Summary("Get notified on new slkd;fjsa;lkdfsj")]
     public class Youtube : ModuleBase<SocketCommandContext>
     {
+        private static YouTubeService Service;
+
+        public Youtube()
+        {
+            Service = new YouTubeService(new BaseClientService.Initializer()
+            {
+                ApiKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY") ?? File.ReadAllText("google.key"),
+                ApplicationName = "wow2"
+            });
+        }
+
         [Command("channel")]
         public async Task Channel([Name("CHANNEL")] string userInput)
         {
@@ -53,13 +64,7 @@ namespace wow2.Modules.Youtube
 
         private static async Task<Channel> GetChannel(string id = null, string username = null)
         {
-            var service = new YouTubeService(new BaseClientService.Initializer()
-            {
-                ApiKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY") ?? await File.ReadAllTextAsync("google.key"),
-                ApplicationName = Program.ApplicationInfo.Name
-            });
-
-            var listRequest = service.Channels.List("snippet, statistics, contentDetails");
+            var listRequest = Service.Channels.List("snippet, statistics, contentDetails");
             listRequest.Id = id;
             listRequest.ForUsername = username;
             var listResponse = await listRequest.ExecuteAsync();
