@@ -26,6 +26,10 @@ namespace wow2.Modules.Main
         [Summary("If MODULE is left empty, displays all commands. Otherwise displays detailed info about a specific group of commands.")]
         public async Task HelpAsync([Name("MODULE")] string group = null, int page = 1)
         {
+            // Assume user meant page number instead of group if number.
+            if (int.TryParse(group, out page))
+                group = null;
+
             var commandPrefix = GetConfigForGuild(Context.Guild).CommandPrefix;
             if (string.IsNullOrWhiteSpace(group))
             {
