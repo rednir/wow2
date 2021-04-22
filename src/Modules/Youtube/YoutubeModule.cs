@@ -51,16 +51,18 @@ namespace wow2.Modules.Youtube
         }
 
         [Command("subscribe")]
-        public async Task SubscribeAsync(string channelId)
+        public async Task SubscribeAsync([Name("CHANNEL")] string userInput)
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            // TODO: fetch channel data here (you shouldnt have to type only the id).
-
-            config.SubscribedChannelIds.Add(channelId);
+            var channel = await GetChannelAsync(userInput);
+            config.SubscribedChannelIds.Add(channel.Id);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage("You'll get notifications about this channel.")
-                .SendAsync(Context.Channel);
+
+            await new SuccessMessage(config.AnnouncementsChannelId == 0 ? 
+                $"Once you use `set-announcements-channel`, you'll get notifications when {channel.Snippet.Title} uploads a new video." :
+                $"You'll get notifications when {channel.Snippet.Title} uploads a new video.")
+                    .SendAsync(Context.Channel);
         }
 
         [Command("set-announcements-channel")]
@@ -71,6 +73,7 @@ namespace wow2.Modules.Youtube
 
             config.AnnouncementsChannelId = channel.Id;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+
             await new SuccessMessage($"You'll get Youtube announcements in {channel.Mention}")
                 .SendAsync(Context.Channel);
         }
