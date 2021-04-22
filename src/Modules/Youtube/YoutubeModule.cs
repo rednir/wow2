@@ -86,6 +86,7 @@ namespace wow2.Modules.Youtube
                     Url = "https://www.youtube.com/channel/" + channel.Id
                 },
                 Title = "Channel Overview",
+                // TODO: truncate sub count
                 Description = $"{channel.Statistics.SubscriberCount} subscribers   |   {channel.Statistics.VideoCount} uploads",
                 Color = Color.LightGrey
             }
