@@ -19,25 +19,29 @@ namespace wow2.Modules.Youtube
     public class Youtube : ModuleBase<SocketCommandContext>
     {
         [Command("channel")]
-        public async Task Channel([Name("CHANNEL")] string channelId)
+        public async Task Channel([Name("CHANNEL")] string userInput)
         {
-            if (!channelId.Contains("UC"))
-                throw new CommandReturnException(Context, "Couldn't find a channel ID.");
+            // Youtube channel IDs always start with UC.
 
-            if (!channelId.StartsWith("UC"))
+            string channelToFetchId = null;
+
+            if (!userInput.StartsWith("UC") && userInput.Contains("/UC"))
             {
                 // Get channel ID from assumed-to-be channel URL.
-                channelId = channelId.Split('/')
+                channelToFetchId = userInput.Split('/')
                     .Where(part => part.StartsWith("UC")).FirstOrDefault();
-
-                if (string.IsNullOrEmpty(channelId))
-                    throw new CommandReturnException(Context, "Couldn't find a channel ID.");
+            }
+            else if (userInput.StartsWith("UC"))
+            {
+                channelToFetchId = userInput;
             }
 
             Channel channel;
             try
             {
-                channel = await GetChannel(channelId.Split('/')[0]);
+                // Only pass in userInput if a channel ID was not found.
+                channel = await GetChannel(
+                    channelToFetchId, channelToFetchId == null ? userInput : null);
             }
             catch (ArgumentException)
             {
@@ -47,7 +51,7 @@ namespace wow2.Modules.Youtube
             await ReplyAsync(embed: BuildChannelOverviewEmbed(channel));
         }
 
-        private static async Task<Channel> GetChannel(string id)
+        private static async Task<Channel> GetChannel(string id = null, string username = null)
         {
             var service = new YouTubeService(new BaseClientService.Initializer()
             {
@@ -55,8 +59,9 @@ namespace wow2.Modules.Youtube
                 ApplicationName = Program.ApplicationInfo.Name
             });
 
-            var listRequest = service.Channels.List("snippet, statistics");
+            var listRequest = service.Channels.List("snippet, statistics, contentDetails");
             listRequest.Id = id;
+            listRequest.ForUsername = username;
             var listResponse = await listRequest.ExecuteAsync();
 
             if (listResponse.Items == null)
