@@ -10,7 +10,7 @@ using Google.Apis.Services;
 using wow2.Verbose.Messages;
 using wow2.Data;
 
-namespace wow2.Modules.Announcements
+namespace wow2.Modules.Youtube
 {
     [Name("Youtube")]
     [Group("yt")]
