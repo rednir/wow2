@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using Discord;
@@ -23,6 +24,23 @@ namespace wow2.Modules.Youtube
     {
         private static YouTubeService Service;
         private static DateTime TimeOfLastVideoCheck = DateTime.Now;
+        private Thread YoutubePollingThread = new Thread(async () =>
+        {
+            const int delayMins = 5; 
+            while (true)
+            {
+                try
+                {
+                    await Task.Delay(delayMins * 60000);
+                    await CheckForNewVideos();
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogException(ex, $"Failure to check for new Youtube videos.");
+                    await Task.Delay(delayMins * 60000);
+                }
+            }
+        });
 
         public Youtube()
         {
@@ -32,6 +50,7 @@ namespace wow2.Modules.Youtube
                 ApiKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY") ?? File.ReadAllText("google.key"),
                 ApplicationName = "wow2"
             });
+            YoutubePollingThread.Start();
         }
 
         [Command("channel")]
@@ -78,7 +97,7 @@ namespace wow2.Modules.Youtube
                 .SendAsync(Context.Channel);
         }
 
-        private async Task CheckForNewVideos()
+        private static async Task CheckForNewVideos()
         {
             // Dictionary where the key is the video ID, and the
             // value is a list of ID's of the text channels to notify.
