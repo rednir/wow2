@@ -76,14 +76,18 @@ namespace wow2.Modules.Youtube
             var config = GetConfigForGuild(Context.Guild);
             var channel = await GetChannelAsync(userInput);
 
-            if (config.SubscribedChannelIds.Remove(channel.Id))
+            if (config.SubscribedChannelIds.RemoveAll(ch => ch.Id == channel.Id) != 0)
             {
                 await new SuccessMessage($"You'll no longer get notifications from `{channel.Snippet.Title}`.")
                     .SendAsync(Context.Channel);
             }
             else
             {
-                config.SubscribedChannelIds.Add(channel.Id);
+                config.SubscribedChannelIds.Add(new SubscribedChannel()
+                {
+                    Id = channel.Id,
+                    Name = channel.Snippet.Title
+                });
                 await new SuccessMessage(config.AnnouncementsChannelId == 0 ?
                     $"Once you use `set-announcements-channel`, you'll get notifications when {channel.Snippet.Title} uploads a new video." :
                     $"You'll get notifications when `{channel.Snippet.Title}` uploads a new video.")
@@ -100,7 +104,7 @@ namespace wow2.Modules.Youtube
             var config = GetConfigForGuild(Context.Guild);
 
             string description = "";
-            foreach (string id in config.SubscribedChannelIds)
+            foreach (string id in config.SubscribedChannelIds.Select(c => c.Id))
             {
                 description += $"https://www.youtube.com/channel/{id}\n";
             }
@@ -134,7 +138,7 @@ namespace wow2.Modules.Youtube
                 if (guildData.Youtube.AnnouncementsChannelId == 0) continue;
 
                 var subscribedChannelIds = guildData.Youtube.SubscribedChannelIds;
-                foreach (string id in subscribedChannelIds)
+                foreach (string id in subscribedChannelIds.Select(c => c.Id))
                 {
                     // TODO: proper error handling.
                     var latestUpload = (await GetChannelUploadsAsync(await GetChannelAsync(id), 1))[0];
