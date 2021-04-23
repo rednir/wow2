@@ -83,6 +83,9 @@ namespace wow2.Modules.Youtube
             }
             else
             {
+                if (config.SubscribedChannelIds.Count > 20)
+                    throw new CommandReturnException(Context, "Remove some channels before adding more.", "Too many subscribers");
+
                 config.SubscribedChannelIds.Add(new SubscribedChannel()
                 {
                     Id = channel.Id,
