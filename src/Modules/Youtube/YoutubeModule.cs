@@ -59,7 +59,7 @@ namespace wow2.Modules.Youtube
             config.SubscribedChannelIds.Add(channel.Id);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
 
-            await new SuccessMessage(config.AnnouncementsChannelId == 0 ? 
+            await new SuccessMessage(config.AnnouncementsChannelId == 0 ?
                 $"Once you use `set-announcements-channel`, you'll get notifications when {channel.Snippet.Title} uploads a new video." :
                 $"You'll get notifications when {channel.Snippet.Title} uploads a new video.")
                     .SendAsync(Context.Channel);
@@ -80,27 +80,48 @@ namespace wow2.Modules.Youtube
 
         private async Task CheckForNewVideos()
         {
-            foreach (GuildData guild in DataManager.DictionaryOfGuildData.Values)
+            // Dictionary where the key is the video ID, and the
+            // value is a list of ID's of the text channels to notify.
+            var newVideosDictionary = new Dictionary<string, List<ulong>>();
+
+            foreach (GuildData guildData in DataManager.DictionaryOfGuildData.Values)
             {
-                var subscribedChannelIds = guild.Youtube.SubscribedChannelIds;
+                // Guild hasn't set a announcements channel, so ignore it.
+                if (guildData.Youtube.AnnouncementsChannelId == 0) continue;
+
+                var subscribedChannelIds = guildData.Youtube.SubscribedChannelIds;
                 foreach (string id in subscribedChannelIds)
                 {
-                    // ERROR handling!!!!!!!!!!!!
-                    var uploads = await GetChannelUploadsAsync(await GetChannelAsync(id), 1);
-                    if (uploads[0].Snippet.PublishedAt.Value > TimeOfLastVideoCheck)
+                    // TODO: proper error handling.
+                    var latestUpload = (await GetChannelUploadsAsync(await GetChannelAsync(id), 1))[0];
+                    string latestUploadVideoId = latestUpload.ContentDetails.VideoId;
+
+                    if (latestUpload.Snippet.PublishedAt.Value > TimeOfLastVideoCheck)
                     {
-                        await NotifyGuildForNewVideo(
-                            video: await GetVideoAsync(uploads[0].ContentDetails.VideoId),
-                            channel: (SocketTextChannel)Program.Client.GetChannel(guild.Youtube.AnnouncementsChannelId));
+                        // Add to dictionary if video is new.
+                        newVideosDictionary.TryAdd(latestUploadVideoId, new List<ulong>());
+                        newVideosDictionary[latestUploadVideoId].Add(guildData.Youtube.AnnouncementsChannelId);
                     }
                 }
             }
+
+            foreach (var pair in newVideosDictionary)
+            {
+                foreach (ulong channelId in pair.Value)
+                {
+                    // Notify necessary text channels for this new video.
+                    await NotifyGuildForNewVideo(
+                        video: await GetVideoAsync(pair.Key),
+                        channel: (SocketTextChannel)Program.Client.GetChannel(channelId));
+                }
+            }
+
             TimeOfLastVideoCheck = DateTime.Now;
         }
 
         private static async Task NotifyGuildForNewVideo(Video video, SocketTextChannel channel)
         {
-            await new InfoMessage($"{video.Snippet.Title}")
+            await new InfoMessage($"NEW: {video.Snippet.Title}")
                 .SendAsync(channel);
         }
 
@@ -140,7 +161,7 @@ namespace wow2.Modules.Youtube
             listRequest.PlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
             listRequest.MaxResults = maxResults;
             var listResponse = await listRequest.ExecuteAsync();
-            
+
             return listResponse.Items;
         }
 
