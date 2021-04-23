@@ -26,7 +26,7 @@ namespace wow2.Modules.Youtube
         private static DateTime TimeOfLastVideoCheck = DateTime.Now;
         private Thread YoutubePollingThread = new Thread(async () =>
         {
-            const int delayMins = 5; 
+            const int delayMins = 5;
             while (true)
             {
                 try
@@ -70,18 +70,27 @@ namespace wow2.Modules.Youtube
         }
 
         [Command("subscribe")]
+        [Alias("sub")]
         public async Task SubscribeAsync([Name("CHANNEL")] string userInput)
         {
             var config = GetConfigForGuild(Context.Guild);
-
             var channel = await GetChannelAsync(userInput);
-            config.SubscribedChannelIds.Add(channel.Id);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
 
-            await new SuccessMessage(config.AnnouncementsChannelId == 0 ?
-                $"Once you use `set-announcements-channel`, you'll get notifications when {channel.Snippet.Title} uploads a new video." :
-                $"You'll get notifications when {channel.Snippet.Title} uploads a new video.")
+            if (config.SubscribedChannelIds.Remove(channel.Id))
+            {
+                await new SuccessMessage($"You'll no longer get notifications from `{channel.Snippet.Title}`.")
                     .SendAsync(Context.Channel);
+            }
+            else
+            {
+                config.SubscribedChannelIds.Add(channel.Id);
+                await new SuccessMessage(config.AnnouncementsChannelId == 0 ?
+                    $"Once you use `set-announcements-channel`, you'll get notifications when {channel.Snippet.Title} uploads a new video." :
+                    $"You'll get notifications when `{channel.Snippet.Title}` uploads a new video.")
+                        .SendAsync(Context.Channel);
+            }
+
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("set-announcements-channel")]
