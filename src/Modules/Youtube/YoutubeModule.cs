@@ -93,6 +93,22 @@ namespace wow2.Modules.Youtube
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
+        [Command("list-subs")]
+        [Alias("list")]
+        public async Task ListSubsAsync()
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            string description = "";
+            foreach (string id in config.SubscribedChannelIds)
+            {
+                description += $"https://www.youtube.com/channel/{id}\n";
+            }
+
+            await new GenericMessage(description, "Subscribed Channels")
+                .SendAsync(Context.Channel);
+        }
+
         [Command("set-announcements-channel")]
         [Alias("announcements-channel", "set-announce-channel", "set-channel")]
         public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
