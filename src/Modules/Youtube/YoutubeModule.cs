@@ -99,18 +99,26 @@ namespace wow2.Modules.Youtube
 
         [Command("list-subs")]
         [Alias("list")]
-        public async Task ListSubsAsync()
+        public async Task ListSubsAsync(int page = 1)
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            string description = "";
-            foreach (string id in config.SubscribedChannelIds.Select(c => c.Id))
+            var fieldBuilders = new List<EmbedFieldBuilder>(); 
+            foreach (SubscribedChannel channel in config.SubscribedChannelIds)
             {
-                description += $"https://www.youtube.com/channel/{id}\n";
+                fieldBuilders.Add(new EmbedFieldBuilder()
+                {
+                    Name = channel.Name,
+                    Value = $"[View channel](https://www.youtube.com/channel/{channel.Id})",
+                    IsInline = true
+                });
             }
 
-            await new GenericMessage(description, "Subscribed Channels")
-                .SendAsync(Context.Channel);
+            await new GenericMessage(
+                title: "Subscribed Channels",
+                fieldBuilders: fieldBuilders,
+                fieldBuildersPage: page)
+                    .SendAsync(Context.Channel);
         }
 
         [Command("set-announcements-channel")]
