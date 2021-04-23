@@ -76,17 +76,17 @@ namespace wow2.Modules.Youtube
             var config = GetConfigForGuild(Context.Guild);
             var channel = await GetChannelAsync(userInput);
 
-            if (config.SubscribedChannelIds.RemoveAll(ch => ch.Id == channel.Id) != 0)
+            if (config.SubscribedChannels.RemoveAll(ch => ch.Id == channel.Id) != 0)
             {
                 await new SuccessMessage($"You'll no longer get notifications from `{channel.Snippet.Title}`.")
                     .SendAsync(Context.Channel);
             }
             else
             {
-                if (config.SubscribedChannelIds.Count > 20)
+                if (config.SubscribedChannels.Count > 20)
                     throw new CommandReturnException(Context, "Remove some channels before adding more.", "Too many subscribers");
 
-                config.SubscribedChannelIds.Add(new SubscribedChannel()
+                config.SubscribedChannels.Add(new SubscribedChannel()
                 {
                     Id = channel.Id,
                     Name = channel.Snippet.Title
@@ -107,7 +107,7 @@ namespace wow2.Modules.Youtube
             var config = GetConfigForGuild(Context.Guild);
 
             var fieldBuilders = new List<EmbedFieldBuilder>(); 
-            foreach (SubscribedChannel channel in config.SubscribedChannelIds)
+            foreach (SubscribedChannel channel in config.SubscribedChannels)
             {
                 fieldBuilders.Add(new EmbedFieldBuilder()
                 {
@@ -148,7 +148,7 @@ namespace wow2.Modules.Youtube
                 // Guild hasn't set a announcements channel, so ignore it.
                 if (guildData.Youtube.AnnouncementsChannelId == 0) continue;
 
-                var subscribedChannelIds = guildData.Youtube.SubscribedChannelIds;
+                var subscribedChannelIds = guildData.Youtube.SubscribedChannels;
                 foreach (string id in subscribedChannelIds.Select(c => c.Id))
                 {
                     // TODO: proper error handling.

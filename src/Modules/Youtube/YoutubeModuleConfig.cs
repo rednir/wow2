@@ -6,6 +6,6 @@ namespace wow2.Modules.Youtube
     public class YoutubeModuleConfig
     {
         public ulong AnnouncementsChannelId { get; set; }
-        public List<SubscribedChannel> SubscribedChannelIds { get; set; } = new List<SubscribedChannel>();
+        public List<SubscribedChannel> SubscribedChannels { get; set; } = new List<SubscribedChannel>();
     }
 }
