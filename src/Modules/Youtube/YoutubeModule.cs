@@ -140,8 +140,8 @@ namespace wow2.Modules.Youtube
 
         private static async Task NotifyGuildForNewVideo(Video video, SocketTextChannel channel)
         {
-            await new InfoMessage($"NEW: {video.Snippet.Title}")
-                .SendAsync(channel);
+            await channel.SendMessageAsync(
+                $"**{video.Snippet.ChannelTitle}** just uploaded a new video! Check it out:\nhttps://www.youtube.com/watch?v={video.Id}");
         }
 
         private static async Task<Channel> GetChannelAsync(string channelIdOrUsername)
