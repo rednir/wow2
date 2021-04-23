@@ -32,7 +32,7 @@ namespace wow2.Modules.Youtube
                 try
                 {
                     await Task.Delay(delayMins * 60000);
-                    await CheckForNewVideos();
+                    await CheckForNewVideosAsync();
                 }
                 catch (Exception ex)
                 {
@@ -95,7 +95,7 @@ namespace wow2.Modules.Youtube
 
         [Command("set-announcements-channel")]
         [Alias("announcements-channel", "set-announce-channel", "set-channel")]
-        public async Task SetAnnoucementsChannel(SocketTextChannel channel)
+        public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
         {
             var config = GetConfigForGuild(Context.Guild);
 
@@ -106,7 +106,7 @@ namespace wow2.Modules.Youtube
                 .SendAsync(Context.Channel);
         }
 
-        private static async Task CheckForNewVideos()
+        private static async Task CheckForNewVideosAsync()
         {
             // Dictionary where the key is the video ID, and the
             // value is a list of ID's of the text channels to notify.
@@ -138,7 +138,7 @@ namespace wow2.Modules.Youtube
                 foreach (ulong channelId in pair.Value)
                 {
                     // Notify necessary text channels for this new video.
-                    await NotifyGuildForNewVideo(
+                    await NotifyGuildForNewVideoAsync(
                         video: await GetVideoAsync(pair.Key),
                         channel: (SocketTextChannel)Program.Client.GetChannel(channelId));
                 }
@@ -147,7 +147,7 @@ namespace wow2.Modules.Youtube
             TimeOfLastVideoCheck = DateTime.Now;
         }
 
-        private static async Task NotifyGuildForNewVideo(Video video, SocketTextChannel channel)
+        private static async Task NotifyGuildForNewVideoAsync(Video video, SocketTextChannel channel)
         {
             await channel.SendMessageAsync(
                 $"**{video.Snippet.ChannelTitle}** just uploaded a new video! Check it out:\nhttps://www.youtube.com/watch?v={video.Id}");
