@@ -31,14 +31,6 @@ namespace wow2.Modules.Dev
             if (alsoExit) Environment.Exit(0);
         }
 
-        [Command("raw-savedata")]
-        public async Task UploadRawGuildDataAsync()
-        {
-            await Context.Channel.SendFileAsync(
-                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json"
-            );
-        }
-
         [Command("generic-messenger")]
         public async Task GenericMessengerAsync()
         {

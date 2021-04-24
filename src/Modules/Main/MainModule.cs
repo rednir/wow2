@@ -129,6 +129,15 @@ namespace wow2.Modules.Main
                 => message.Embed = new SuccessMessage($"That was about `{pongTimeSpan.Milliseconds}ms`", "Pong!").Embed);
         }
 
+        [Command("upload-raw-data")]
+        [Summary("Uploads a file containing all the data the bot stores about this server.")]
+        public async Task UploadRawGuildDataAsync()
+        {
+            await Context.Channel.SendFileAsync(
+                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json"
+            );
+        }
+
         [Command("set-command-prefix")]
         [Summary("Change the prefix used to identify commands. '!wow' is the default.")]
         public async Task SetCommandPrefixAsync(string prefix)
