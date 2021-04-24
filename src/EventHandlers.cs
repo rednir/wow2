@@ -46,7 +46,7 @@ namespace wow2
 
         public static async Task JoinedGuildAsync(SocketGuild guild)
         {
-            var guildData = await DataManager.EnsureGuildDataFileExistsAsync(guild.Id);
+            var guildData = await DataManager.EnsureGuildDataExistsAsync(guild.Id);
             string commandPrefix = MainModule.GetConfigForGuild(guild).CommandPrefix;
 
             // Only set if it's the first time the bot has joined this guild.
@@ -137,7 +137,7 @@ namespace wow2
             if (receivedMessage.Author.Id == Program.Client.CurrentUser.Id) return;
             if (receivedMessage.Channel is SocketDMChannel) return;
 
-            await DataManager.EnsureGuildDataFileExistsAsync(receivedMessage.GetGuild().Id);
+            await DataManager.EnsureGuildDataExistsAsync(receivedMessage.GetGuild().Id);
 
             // Only auto mod message if not related to a game.
             if (!(await CountingGame.CheckMessageAsync(receivedMessage)) &&

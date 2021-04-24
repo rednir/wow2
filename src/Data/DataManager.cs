@@ -104,13 +104,21 @@ namespace wow2.Data
             Logger.Log($"Saved guild data for {guildId} (specific save)", LogSeverity.Verbose);
         }
 
-        /// <summary>If the data file for the specified guild does not exist, one will be created and loaded.</summary>
+        /// <summary>If the GuildData for the specified guild does not exist, one will be created.</summary>
         /// <returns>The GuildData for the guild.</returns>
-        public static async Task<GuildData> EnsureGuildDataFileExistsAsync(ulong guildId)
+        public static async Task<GuildData> EnsureGuildDataExistsAsync(ulong guildId)
         {
-            DictionaryOfGuildData.TryAdd(guildId, new GuildData());
-            var guildData = DictionaryOfGuildData[guildId];
+            if (File.Exists($"{GuildDataDirPath}/{guildId}.json"))
+            {
+                await LoadGuildDataFromFileAsync(guildId);
+            }
+            else
+            {
+                DictionaryOfGuildData.TryAdd(guildId, new GuildData());
+                await SaveGuildDataToFileAsync(guildId);
+            }
 
+            var guildData = DictionaryOfGuildData[guildId];
             if (guildData.NameOfGuild == null)
             {
                 try
@@ -121,12 +129,6 @@ namespace wow2.Data
                 {
                     Logger.Log($"Could not get name of guild {guildId}", LogSeverity.Warning);
                 }
-            }
-
-            if (!File.Exists($"{GuildDataDirPath}/{guildId}.json"))
-            {
-                await SaveGuildDataToFileAsync(guildId);
-                await LoadGuildDataFromFileAsync(guildId);
             }
 
             return guildData;
