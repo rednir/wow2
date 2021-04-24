@@ -14,9 +14,6 @@ namespace wow2
     public class Program
     {
         private const string ReleaseVersion = "v2.0";
-        private const string DiscordTokenFilePath = "discord.token";
-        private const string DiscordTokenEnvironmentVariable = "DISCORD_BOT_TOKEN";
-
         private static bool IsDebugField;
 
         [System.Diagnostics.Conditional("DEBUG")]
@@ -50,6 +47,7 @@ namespace wow2
         {
             SetIsDebugField();
             await Logger.LogInitialize();
+            await DataManager.LoadSecretsFromFileAsync();
 
             Client = new DiscordSocketClient();
             Client.Ready += EventHandlers.ReadyAsync;
@@ -59,38 +57,12 @@ namespace wow2
             Client.JoinedGuild += EventHandlers.JoinedGuildAsync;
             Client.LeftGuild += EventHandlers.LeftGuildAsync;
 
-            await GetTokenAndLoginAsync(Client);
+            await Client.LoginAsync(TokenType.Bot, DataManager.Secrets.DiscordBotToken);
             await Client.StartAsync();
 
             ApplicationInfo = await Program.Client.GetApplicationInfoAsync();
 
             await Task.Delay(-1);
-        }
-
-        private async Task GetTokenAndLoginAsync(DiscordSocketClient client)
-        {
-            string token = null;
-            try
-            {
-                token = (await File.ReadAllLinesAsync(DiscordTokenFilePath)).First();
-                await client.LoginAsync(TokenType.Bot, token);
-                Logger.Log($"Logged in with token found in {DiscordTokenFilePath}", LogSeverity.Info);
-            }
-            catch
-            {
-                try
-                {
-                    token = Environment.GetEnvironmentVariable(DiscordTokenEnvironmentVariable);
-                    await client.LoginAsync(TokenType.Bot, token);
-                    Logger.Log($"Logged in with token found in environment variable {DiscordTokenEnvironmentVariable}", LogSeverity.Info);
-                }
-                catch
-                {
-                    Logger.Log($"A valid bot token was not found. It is recommended to put your bot token in an environment variable called {DiscordTokenEnvironmentVariable}. Alternatively, you can put your bot token in a file named {DiscordTokenFilePath}, and place it in the working directory of this executable.", LogSeverity.Critical);
-                    Console.Read();
-                    Environment.Exit(-1);
-                }
-            }
         }
     }
 }

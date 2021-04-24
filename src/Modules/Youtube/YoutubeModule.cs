@@ -47,7 +47,7 @@ namespace wow2.Modules.YouTube
             Service = new YouTubeService(new BaseClientService.Initializer()
             {
                 // TODO: fix this if no file
-                ApiKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY") ?? File.ReadAllText("google.key"),
+                ApiKey = DataManager.Secrets.GoogleApiKey,
                 ApplicationName = "wow2"
             });
             YouTubePollingThread.Start();

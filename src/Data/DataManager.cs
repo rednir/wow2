@@ -12,6 +12,7 @@ namespace wow2.Data
     public static class DataManager
     {
         public static Dictionary<ulong, GuildData> DictionaryOfGuildData { get; set; } = new Dictionary<ulong, GuildData>();
+        public static Secrets Secrets { get; set; } = new Secrets();
 
         public static readonly string ResDirPath = Directory.Exists($"{Program.RuntimeDirectory}/res") ? $"{Program.RuntimeDirectory}/res" : "res";
         public static readonly string AppDataDirPath = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
@@ -33,8 +34,10 @@ namespace wow2.Data
             try
             {
                 Directory.CreateDirectory(AppDataDirPath);
+
                 AppDataDirInfo = Directory.CreateDirectory(GuildDataDirPath);
                 Directory.CreateDirectory(LogsDirPath);
+                await LoadSecretsFromFileAsync();
             }
             catch (Exception ex)
             {
@@ -44,6 +47,20 @@ namespace wow2.Data
             }
 
             await LoadGuildDataFromFileAsync();
+        }
+
+        public static async Task LoadSecretsFromFileAsync()
+        {
+            string fullPath = AppDataDirPath + "/secrets.json";
+            if (!File.Exists(fullPath))
+            {
+                // Create a new blank secrets file.
+                await File.WriteAllTextAsync(fullPath, JsonSerializer.Serialize(Secrets, SerializerOptions));
+            }
+            else
+            {
+                Secrets = JsonSerializer.Deserialize<Secrets>(File.ReadAllText(fullPath));
+            } 
         }
 
         /// <summary>Load all guild data from all files, excluding the guilds the client is not in.</summary>
