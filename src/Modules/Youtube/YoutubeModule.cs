@@ -14,17 +14,17 @@ using wow2.Verbose;
 using wow2.Verbose.Messages;
 using wow2.Data;
 
-namespace wow2.Modules.Youtube
+namespace wow2.Modules.YouTube
 {
-    [Name("Youtube")]
+    [Name("YouTube")]
     [Group("yt")]
     [Alias("youtube")]
-    [Summary("Integrations with Youtube, such as getting notified for new videos.")]
-    public class Youtube : ModuleBase<SocketCommandContext>
+    [Summary("Integrations with YouTube, such as getting notified for new videos.")]
+    public class YouTube : ModuleBase<SocketCommandContext>
     {
         private static YouTubeService Service;
         private static DateTime TimeOfLastVideoCheck = DateTime.Now;
-        private Thread YoutubePollingThread = new Thread(async () =>
+        private Thread YouTubePollingThread = new Thread(async () =>
         {
             const int delayMins = 5;
             while (true)
@@ -36,13 +36,13 @@ namespace wow2.Modules.Youtube
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogException(ex, $"Failure to check for new Youtube videos.");
+                    Logger.LogException(ex, $"Failure to check for new YouTube videos.");
                     await Task.Delay(delayMins * 60000);
                 }
             }
         });
 
-        public Youtube()
+        public YouTube()
         {
             Service = new YouTubeService(new BaseClientService.Initializer()
             {
@@ -50,7 +50,7 @@ namespace wow2.Modules.Youtube
                 ApiKey = Environment.GetEnvironmentVariable("GOOGLE_API_KEY") ?? File.ReadAllText("google.key"),
                 ApplicationName = "wow2"
             });
-            YoutubePollingThread.Start();
+            YouTubePollingThread.Start();
         }
 
         [Command("channel")]
@@ -140,7 +140,7 @@ namespace wow2.Modules.Youtube
             config.AnnouncementsChannelId = channel.Id;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
 
-            await new SuccessMessage($"You'll get Youtube announcements in {channel.Mention}")
+            await new SuccessMessage($"You'll get YouTube announcements in {channel.Mention}")
                 .SendAsync(Context.Channel);
         }
 
@@ -153,9 +153,9 @@ namespace wow2.Modules.Youtube
             foreach (GuildData guildData in DataManager.DictionaryOfGuildData.Values)
             {
                 // Guild hasn't set a announcements channel, so ignore it.
-                if (guildData.Youtube.AnnouncementsChannelId == 0) continue;
+                if (guildData.YouTube.AnnouncementsChannelId == 0) continue;
 
-                var subscribedChannelIds = guildData.Youtube.SubscribedChannels;
+                var subscribedChannelIds = guildData.YouTube.SubscribedChannels;
                 foreach (string id in subscribedChannelIds.Select(c => c.Id))
                 {
                     // TODO: proper error handling.
@@ -166,7 +166,7 @@ namespace wow2.Modules.Youtube
                     {
                         // Add to dictionary if video is new.
                         newVideosDictionary.TryAdd(latestUploadVideoId, new List<ulong>());
-                        newVideosDictionary[latestUploadVideoId].Add(guildData.Youtube.AnnouncementsChannelId);
+                        newVideosDictionary[latestUploadVideoId].Add(guildData.YouTube.AnnouncementsChannelId);
                     }
                 }
             }
@@ -183,7 +183,7 @@ namespace wow2.Modules.Youtube
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogException(ex, "Exception thrown when notifying guild for new Youtube video.");
+                        Logger.LogException(ex, "Exception thrown when notifying guild for new YouTube video.");
                     }
                 }
             }
@@ -280,7 +280,7 @@ namespace wow2.Modules.Youtube
             .Build();
         }
 
-        public static YoutubeModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Youtube;
+        public static YouTubeModuleConfig GetConfigForGuild(IGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].YouTube;
     }
 }

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace wow2.Modules.Voice
 {
-    public class YoutubeDl
+    public class YouTubeDl
     {
-        public static string YoutubeDlPath = Environment.GetEnvironmentVariable("YOUTUBE_DL_PATH") ?? "youtube-dl";
+        public static string YouTubeDlPath = Environment.GetEnvironmentVariable("YOUTUBE_DL_PATH") ?? "youtube-dl";
         public static string FFmpegPath = Environment.GetEnvironmentVariable("FFMPEG_PATH") ?? "ffmpeg";
 
         /// <summary>Looks up a URL or search term and gets the video metadata.</summary>
-        /// <returns>Video metadata deserialized into <c>YoutubeVideoMetadata</c>.</returns>
+        /// <returns>Video metadata deserialized into <c>YouTubeVideoMetadata</c>.</returns>
         public static async Task<VideoMetadata> GetMetadata(string searchOrUrl)
         {
             searchOrUrl = searchOrUrl.Trim('\"');
@@ -25,7 +25,7 @@ namespace wow2.Modules.Voice
             {
                 using (var process = new Process())
                 {
-                    process.StartInfo.FileName = YoutubeDlPath;
+                    process.StartInfo.FileName = YouTubeDlPath;
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.RedirectStandardOutput = true;
                     process.StartInfo.RedirectStandardError = true;
@@ -52,7 +52,7 @@ namespace wow2.Modules.Voice
         /// <returns>The FFmpeg process.</returns>
         public static Process CreateStreamFromVideoUrl(string url)
         {
-            string shellCommand = $"{YoutubeDl.YoutubeDlPath} {url} -q -o - | {YoutubeDl.FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
+            string shellCommand = $"{YouTubeDl.YouTubeDlPath} {url} -q -o - | {YouTubeDl.FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
             return Process.Start(new ProcessStartInfo

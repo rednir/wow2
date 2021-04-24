@@ -16,7 +16,7 @@ namespace wow2.Modules.Voice
     [Name("Voice")]
     [Group("vc")]
     [Alias("voice")]
-    [Summary("For playing Youtube/Twitch audio in a voice channel.")]
+    [Summary("For playing YouTube or Twitch audio in a voice channel.")]
     public class VoiceModule : ModuleBase<SocketCommandContext>
     {
         [Command("list")]
@@ -77,7 +77,7 @@ namespace wow2.Modules.Voice
             VideoMetadata metadata;
             try
             {
-                metadata = await YoutubeDl.GetMetadata(songRequest);
+                metadata = await YouTubeDl.GetMetadata(songRequest);
             }
             catch (ArgumentException)
             {
@@ -248,7 +248,7 @@ namespace wow2.Modules.Voice
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            using (var ffmpeg = YoutubeDl.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
+            using (var ffmpeg = YouTubeDl.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
             using (var output = ffmpeg.StandardOutput.BaseStream)
             using (var discord = config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
             {
