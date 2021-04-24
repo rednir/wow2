@@ -1,10 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Discord;
 using Discord.Commands;
 using wow2.Modules.Main;
 using wow2.Modules.Voice;
 using wow2.Modules.Keywords;
+using wow2.Verbose.Messages;
 
 namespace wow2.Modules.Dev
 {
@@ -15,6 +17,27 @@ namespace wow2.Modules.Dev
 
         public static Dictionary<string, Func<ICommandContext, Task>> TestList = new Dictionary<string, Func<ICommandContext, Task>>()
         {
+            {
+                "messages", async (context) =>
+                {
+                    await new SuccessMessage($"This is a success message.", "Success").SendAsync(context.Channel);
+                    await new InfoMessage($"This is an info message.", "Info").SendAsync(context.Channel);
+                    await new WarningMessage($"This is a warning message.", "Warning").SendAsync(context.Channel);
+                    await new ErrorMessage($"This is an error message.", "Error").SendAsync(context.Channel);
+                    await new GenericMessage($"This is a response message.", "Response").SendAsync(context.Channel);
+
+                    var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+                    for (int i = 0; i < 46; i++)
+                    {
+                        listOfFieldBuilders.Add(new EmbedFieldBuilder()
+                        {
+                            Name = $"Field title {i}",
+                            Value = $"This is some description text."
+                        });
+                    }
+                    await new GenericMessage($"This is a response message with fields.", "Fields", listOfFieldBuilders, 2).SendAsync(context.Channel);
+                }
+            },
             {
                 "aliases", async (context) =>
                 {

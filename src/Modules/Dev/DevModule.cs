@@ -31,17 +31,6 @@ namespace wow2.Modules.Dev
             if (alsoExit) Environment.Exit(0);
         }
 
-        [Command("generic-messenger")]
-        public async Task GenericMessengerAsync()
-        {
-            await new SuccessMessage($"This is a success message.", "Success").SendAsync(Context.Channel);
-            await new InfoMessage($"This is an info message.", "Info").SendAsync(Context.Channel);
-            await new WarningMessage($"This is a warning message.", "Warning").SendAsync(Context.Channel);
-            await new ErrorMessage($"This is an error message.", "Error").SendAsync(Context.Channel);
-            await new GenericMessage($"This is a response message.", "Response").SendAsync(Context.Channel);
-            await new GenericMessage($"This is a response message with fields.", "Fields", CreateSampleFields(50), 2).SendAsync(Context.Channel);
-        }
-
         [Command("set-status")]
         public async Task SetStatus(string message, UserStatus status)
         {
@@ -82,19 +71,5 @@ namespace wow2.Modules.Dev
         [Command("throw")]
         public Task Throw()
             => throw new Exception("This is a test exception.");
-
-        private List<EmbedFieldBuilder> CreateSampleFields(int amount)
-        {
-            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-            for (int i = 0; i < amount; i++)
-            {
-                listOfFieldBuilders.Add(new EmbedFieldBuilder()
-                {
-                    Name = $"Field title {i}",
-                    Value = $"This is some description text."
-                });
-            }
-            return listOfFieldBuilders;
-        }
     }
 }
