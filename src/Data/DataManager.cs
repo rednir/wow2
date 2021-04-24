@@ -118,10 +118,13 @@ namespace wow2.Data
         {
             if (File.Exists($"{GuildDataDirPath}/{guildId}.json"))
             {
-                await LoadGuildDataFromFileAsync(guildId);
+                // If not already loaded in memory, do so.
+                if (!DictionaryOfGuildData.ContainsKey(guildId))
+                    await LoadGuildDataFromFileAsync(guildId);
             }
             else
             {
+                // Ensure guild data file exists.
                 DictionaryOfGuildData.TryAdd(guildId, new GuildData());
                 await SaveGuildDataToFileAsync(guildId);
             }
