@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -44,7 +45,7 @@ namespace wow2.Data
             await LoadGuildDataFromFileAsync();
         }
 
-        /// <summary>Load all guild data from all files.</summary>
+        /// <summary>Load all guild data from all files, excluding the guilds the client is not in.</summary>
         public static async Task LoadGuildDataFromFileAsync()
         {
             foreach (FileInfo fileInfo in AppDataDirInfo.EnumerateFiles())
@@ -53,6 +54,12 @@ namespace wow2.Data
                 {
                     ulong guildId = Convert.ToUInt64(Path.GetFileNameWithoutExtension(fileInfo.FullName));
 
+                    if (!Program.Client.Guilds.Select(g => g.Id).Contains(guildId))
+                    {
+                        Logger.Log($"Not loading guild data for {guildId}, as the bot is not connected to it. (mass load)", LogSeverity.Verbose);
+                        continue;
+                    }
+
                     string guildDataJson = await File.ReadAllTextAsync(fileInfo.FullName);
                     DictionaryOfGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
 
@@ -60,7 +67,7 @@ namespace wow2.Data
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log($"Failed to load from file {fileInfo.Name} due to: {ex.Message} (mass load)", LogSeverity.Error);
+                    Logger.LogException(ex, $"Failed to load from file {fileInfo.Name}");
                 }
             }
         }
@@ -96,10 +103,8 @@ namespace wow2.Data
         {
             GuildData guildData;
             if (!DictionaryOfGuildData.TryGetValue(guildId, out guildData))
-            {
-                Logger.Log($"Failed to load for guild {guildId} as the guild ID was not found in the dictionary (specific load)", LogSeverity.Error);
-                return;
-            }
+                throw new KeyNotFoundException($"Failed to load for guild {guildId} as the guild ID was not found in the dictionary (specific save)");
+
             await File.WriteAllTextAsync($"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(guildData));
             Logger.Log($"Saved guild data for {guildId} (specific save)", LogSeverity.Verbose);
         }
@@ -130,8 +135,14 @@ namespace wow2.Data
                     Logger.Log($"Could not get name of guild {guildId}", LogSeverity.Warning);
                 }
             }
-
             return guildData;
+        }
+
+        public static async Task UnloadGuildDataAsync(ulong guildId)
+        {
+            await SaveGuildDataToFileAsync(guildId);
+            DictionaryOfGuildData.Remove(guildId);
+            Logger.Log($"Unloaded guild data for {guildId}", LogSeverity.Verbose);
         }
     }
 }

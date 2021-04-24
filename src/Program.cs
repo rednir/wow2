@@ -49,18 +49,15 @@ namespace wow2
         private async Task MainAsync()
         {
             SetIsDebugField();
-
             await Logger.LogInitialize();
-            await DataManager.InitializeAsync();
-            await EventHandlers.InstallCommandsAsync();
 
             Client = new DiscordSocketClient();
-
             Client.Ready += EventHandlers.ReadyAsync;
             Client.Log += EventHandlers.DiscordLogRecievedAsync;
             Client.ReactionAdded += EventHandlers.ReactionAddedAsync;
             Client.MessageReceived += EventHandlers.MessageRecievedAsync;
             Client.JoinedGuild += EventHandlers.JoinedGuildAsync;
+            Client.LeftGuild += EventHandlers.LeftGuildAsync;
 
             await GetTokenAndLoginAsync(Client);
             await Client.StartAsync();

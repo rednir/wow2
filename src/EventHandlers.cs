@@ -41,6 +41,9 @@ namespace wow2
 
         public static async Task ReadyAsync()
         {
+            await DataManager.InitializeAsync();
+            await EventHandlers.InstallCommandsAsync();
+
             await Program.Client.SetGameAsync("!wow help");
         }
 
@@ -62,6 +65,11 @@ namespace wow2
                 Color = Color.Gold
             };
             await guild.DefaultChannel.SendMessageAsync(embed: embedBuilder.Build());
+        }
+
+        public static async Task LeftGuildAsync(SocketGuild guild)
+        {
+            await DataManager.UnloadGuildDataAsync(guild.Id);
         }
 
         public static async Task DiscordLogRecievedAsync(LogMessage logMessage)
