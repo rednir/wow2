@@ -175,9 +175,16 @@ namespace wow2.Modules.Youtube
             {
                 foreach (ulong channelId in pair.Value)
                 {
-                    await NotifyGuildForNewVideoAsync(
-                        video: await GetVideoAsync(pair.Key),
-                        channel: (SocketTextChannel)Program.Client.GetChannel(channelId));
+                    try
+                    {
+                        await NotifyGuildForNewVideoAsync(
+                            video: await GetVideoAsync(pair.Key),
+                            channel: (SocketTextChannel)Program.Client.GetChannel(channelId));  
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogException(ex, "Exception thrown when notifying guild for new Youtube video.");
+                    }
                 }
             }
 
