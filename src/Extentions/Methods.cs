@@ -27,7 +27,7 @@ namespace wow2.Extentions
             }
             else
             {
-                string url = matches[0].Value.ToString();
+                string url = matches[0].Value;
                 return (stringContainingUrl.Substring(stringContainingUrl.IndexOf("http") + url.Length), url);
             }
         }
