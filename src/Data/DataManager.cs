@@ -11,10 +11,11 @@ namespace wow2.Data
 {
     public static class DataManager
     {
+        public static Dictionary<ulong, GuildData> DictionaryOfGuildData { get; set; } = new Dictionary<ulong, GuildData>();
+
         public static readonly string ResDirPath = Directory.Exists($"{Program.RuntimeDirectory}/res") ? $"{Program.RuntimeDirectory}/res" : "res";
         public static readonly string AppDataDirPath = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
         public static DirectoryInfo AppDataDirInfo { get; set; }
-
         public static string GuildDataDirPath
         {
             get { return $"{AppDataDirPath}/GuildData"; }
@@ -24,7 +25,7 @@ namespace wow2.Data
             get { return $"{AppDataDirPath}/Logs"; }
         }
 
-        public static Dictionary<ulong, GuildData> DictionaryOfGuildData { get; set; } = new Dictionary<ulong, GuildData>();
+        private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions() { WriteIndented = true };
 
         /// <summary>Creates required directories if necessary and loads all guild data.</summary>
         public static async Task InitializeAsync()
@@ -93,7 +94,8 @@ namespace wow2.Data
         {
             foreach (ulong id in DictionaryOfGuildData.Keys)
             {
-                await File.WriteAllTextAsync($"{GuildDataDirPath}/{id}.json", JsonSerializer.Serialize(DictionaryOfGuildData[id]));
+                await File.WriteAllTextAsync(
+                    $"{GuildDataDirPath}/{id}.json", JsonSerializer.Serialize(DictionaryOfGuildData[id], SerializerOptions));
                 Logger.Log($"Saved guild data for {id} (mass save)", LogSeverity.Verbose);
             }
         }
@@ -105,7 +107,8 @@ namespace wow2.Data
             if (!DictionaryOfGuildData.TryGetValue(guildId, out guildData))
                 throw new KeyNotFoundException($"Failed to load for guild {guildId} as the guild ID was not found in the dictionary (specific save)");
 
-            await File.WriteAllTextAsync($"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(guildData));
+            await File.WriteAllTextAsync(
+                $"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(guildData, SerializerOptions));
             Logger.Log($"Saved guild data for {guildId} (specific save)", LogSeverity.Verbose);
         }
 
