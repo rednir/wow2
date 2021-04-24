@@ -19,7 +19,7 @@ namespace wow2.Modules.Youtube
     [Name("Youtube")]
     [Group("yt")]
     [Alias("youtube")]
-    [Summary("Get notified on new slkd;fjsa;lkdfsj")]
+    [Summary("Integrations with Youtube, such as getting notified for new videos.")]
     public class Youtube : ModuleBase<SocketCommandContext>
     {
         private static YouTubeService Service;
@@ -54,6 +54,7 @@ namespace wow2.Modules.Youtube
         }
 
         [Command("channel")]
+        [Summary("Shows some basic data about a channel.")]
         public async Task ChannelAsync([Name("CHANNEL")] string userInput)
         {
             Channel channel;
@@ -71,6 +72,7 @@ namespace wow2.Modules.Youtube
 
         [Command("subscribe")]
         [Alias("sub")]
+        [Summary("Toggle whether your server will get notified when CHANNEL uploads a new video.")]
         public async Task SubscribeAsync([Name("CHANNEL")] string userInput)
         {
             var config = GetConfigForGuild(Context.Guild);
@@ -102,6 +104,7 @@ namespace wow2.Modules.Youtube
 
         [Command("list-subs")]
         [Alias("list")]
+        [Summary("Lists the channels your server will get notified about.")]
         public async Task ListSubsAsync(int page = 1)
         {
             var config = GetConfigForGuild(Context.Guild);
@@ -126,6 +129,7 @@ namespace wow2.Modules.Youtube
 
         [Command("set-announcements-channel")]
         [Alias("announcements-channel", "set-announce-channel", "set-channel")]
+        [Summary("Sets the channel where notifications about new videos will be sent.")]
         public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
         {
             var config = GetConfigForGuild(Context.Guild);
@@ -168,7 +172,6 @@ namespace wow2.Modules.Youtube
             {
                 foreach (ulong channelId in pair.Value)
                 {
-                    // Notify necessary text channels for this new video.
                     await NotifyGuildForNewVideoAsync(
                         video: await GetVideoAsync(pair.Key),
                         channel: (SocketTextChannel)Program.Client.GetChannel(channelId));
