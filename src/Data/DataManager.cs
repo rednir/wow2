@@ -60,7 +60,7 @@ namespace wow2.Data
             else
             {
                 Secrets = JsonSerializer.Deserialize<Secrets>(File.ReadAllText(fullPath));
-            } 
+            }
         }
 
         /// <summary>Load all guild data from all files, excluding the guilds the client is not in.</summary>
@@ -111,6 +111,7 @@ namespace wow2.Data
         {
             foreach (ulong id in DictionaryOfGuildData.Keys)
             {
+                EnsureGuildNameExists(id);
                 await File.WriteAllTextAsync(
                     $"{GuildDataDirPath}/{id}.json", JsonSerializer.Serialize(DictionaryOfGuildData[id], SerializerOptions));
                 Logger.Log($"Saved guild data for {id} (mass save)", LogSeverity.Verbose);
@@ -124,6 +125,7 @@ namespace wow2.Data
             if (!DictionaryOfGuildData.TryGetValue(guildId, out guildData))
                 throw new KeyNotFoundException($"Failed to load for guild {guildId} as the guild ID was not found in the dictionary (specific save)");
 
+            EnsureGuildNameExists(guildId);
             await File.WriteAllTextAsync(
                 $"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(guildData, SerializerOptions));
             Logger.Log($"Saved guild data for {guildId} (specific save)", LogSeverity.Verbose);
@@ -147,6 +149,19 @@ namespace wow2.Data
             }
 
             var guildData = DictionaryOfGuildData[guildId];
+            return guildData;
+        }
+
+        public static async Task UnloadGuildDataAsync(ulong guildId)
+        {
+            await SaveGuildDataToFileAsync(guildId);
+            DictionaryOfGuildData.Remove(guildId);
+            Logger.Log($"Unloaded guild data for {guildId}", LogSeverity.Verbose);
+        }
+
+        public static void EnsureGuildNameExists(ulong guildId)
+        {
+            var guildData = DictionaryOfGuildData[guildId];
             if (guildData.NameOfGuild == null)
             {
                 try
@@ -158,14 +173,6 @@ namespace wow2.Data
                     Logger.Log($"Could not get name of guild {guildId}", LogSeverity.Warning);
                 }
             }
-            return guildData;
-        }
-
-        public static async Task UnloadGuildDataAsync(ulong guildId)
-        {
-            await SaveGuildDataToFileAsync(guildId);
-            DictionaryOfGuildData.Remove(guildId);
-            Logger.Log($"Unloaded guild data for {guildId}", LogSeverity.Verbose);
         }
     }
 }
