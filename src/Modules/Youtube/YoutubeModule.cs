@@ -109,6 +109,9 @@ namespace wow2.Modules.Youtube
         {
             var config = GetConfigForGuild(Context.Guild);
 
+            if (config.SubscribedChannels.Count == 0)
+                throw new CommandReturnException(Context, "Add some channels to the subscriber list first.", "Nothing to show");
+
             var fieldBuilders = new List<EmbedFieldBuilder>(); 
             foreach (SubscribedChannel channel in config.SubscribedChannels)
             {
