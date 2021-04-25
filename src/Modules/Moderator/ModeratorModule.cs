@@ -56,7 +56,7 @@ namespace wow2.Modules.Moderator
             }
 
             // Don't auto warn the user too many times in a short time period.
-            if (record.Warnings.Count() > 0)
+            if (record.Warnings.Count > 0)
             {
                 var lastWarningTime = DateTime.FromBinary(record.Warnings.Last().DateTimeBinary);
                 if (DateTime.Now - lastWarningTime < TimeSpan.FromSeconds(20))
@@ -125,7 +125,7 @@ namespace wow2.Modules.Moderator
                     IconUrl = user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl(),
                 },
                 Title = "User record overview",
-                Description = $"{record.Warnings.Count()} warnings, {record.Mutes.Count()} mutes.",
+                Description = $"{record.Warnings.Count} warnings, {record.Mutes.Count} mutes.",
                 Color = Color.LightGrey
             };
 
@@ -140,7 +140,7 @@ namespace wow2.Modules.Moderator
             if (number == -1)
             {
                 config.WarningsUntilBan = number;
-                await new SuccessMessage($"A user will not get automatically banned from too many warnings.")
+                await new SuccessMessage("A user will no longer get automatically banned from too many warnings.")
                     .SendAsync(Context.Channel);
             }
             else
@@ -213,8 +213,7 @@ namespace wow2.Modules.Moderator
                 throw new ArgumentException("Cannot get user record for bot.");
 
             UserRecord matchingRecord = config.UserRecords
-                .Where(record => record.UserId == id)
-                .FirstOrDefault();
+                .Find(record => record.UserId == id);
 
             // Ensure the user record exists
             if (matchingRecord == null)

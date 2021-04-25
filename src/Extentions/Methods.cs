@@ -16,10 +16,11 @@ namespace wow2.Extentions
         public static SocketGuild GetGuild(this IUserMessage socketMessage)
             => ((SocketGuildChannel)socketMessage.Channel).Guild;
 
+        // I don't think this even works as intended but it's unused for now anyway.
         /// <returns>The first url in the string and the new string without the url, or an empty string in place of the url if there is none.</returns>
         public static (string newString, string url) StripUrlIfExists(this string stringContainingUrl)
         {
-            Regex regex = new Regex(@"(http|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?");
+            Regex regex = new(@"(http|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?");
             MatchCollection matches = regex.Matches(stringContainingUrl);
             if (matches.Count == 0)
             {
@@ -28,7 +29,7 @@ namespace wow2.Extentions
             else
             {
                 string url = matches[0].Value;
-                return (stringContainingUrl.Substring(stringContainingUrl.IndexOf("http") + url.Length), url);
+                return (stringContainingUrl[(stringContainingUrl.IndexOf("http") + url.Length)..], url);
             }
         }
 
@@ -37,20 +38,22 @@ namespace wow2.Extentions
             var stringBuilder = new StringBuilder();
 
             // No separators exist or only one separator exist.
-            if (stringToSearch.IndexOf(separator) == -1 ||
-                (stringToSearch.IndexOf(separator) == stringToSearch.LastIndexOf(separator)))
+            if (!stringToSearch.Contains(separator) ||
+                stringToSearch.IndexOf(separator) == stringToSearch.LastIndexOf(separator))
+            {
                 return null;
+            }
 
             // The index of the next character after the first instance of the seperator.
             int startIndex = stringToSearch.IndexOf(separator) + separator.Length;
 
             int charactersOfNextSeparatorFound = 0;
-            foreach (char character in stringToSearch.Substring(startIndex))
+            foreach (char character in stringToSearch[startIndex..])
             {
                 stringBuilder.Append(character);
                 if (separator.Contains(character))
                 {
-                    charactersOfNextSeparatorFound += 1;
+                    charactersOfNextSeparatorFound++;
                     if (charactersOfNextSeparatorFound == separator.Length)
                     {
                         stringBuilder.Replace(separator, null);
@@ -77,12 +80,12 @@ namespace wow2.Extentions
                 charsThisLine += word.Length + 1;
                 if (charsThisLine > maxCharsPerLine)
                 {
-                    stringBuilder.Append("\n" + word + " ");
+                    stringBuilder.Append($"\n{word} ");
                     charsThisLine = word.Length;
                 }
                 else
                 {
-                    stringBuilder.Append(word + " ");
+                    stringBuilder.Append($"{word} ");
                 }
             }
 

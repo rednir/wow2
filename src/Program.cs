@@ -40,7 +40,7 @@ namespace wow2
         public static async Task<SocketGuildUser> GetClientGuildUserAsync(ISocketMessageChannel channel)
             => (SocketGuildUser)(await channel.GetUserAsync(Program.Client.CurrentUser.Id));
 
-        private static void Main(string[] args)
+        private static void Main()
             => new Program().MainAsync().GetAwaiter().GetResult();
 
         private async Task MainAsync()

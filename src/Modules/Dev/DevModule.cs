@@ -36,7 +36,7 @@ namespace wow2.Modules.Dev
         {
             await Program.Client.SetGameAsync(message);
             await Program.Client.SetStatusAsync(status);
-            await new SuccessMessage($"Set status.")
+            await new SuccessMessage("Set status.")
                 .SendAsync(Context.Channel);
         }
 
@@ -63,7 +63,7 @@ namespace wow2.Modules.Dev
             }
             catch (Exception ex)
             {
-                await new ErrorMessage($"```{ex.ToString()}```")
+                await new ErrorMessage($"```{ex}```")
                     .SendAsync(Context.Channel);
             }
         }

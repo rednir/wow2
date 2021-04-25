@@ -44,7 +44,7 @@ namespace wow2.Modules.Main
                 await new GenericMessage(
                     fieldBuilders: await CommandInfoToEmbedFieldsAsync(group, commandPrefix),
                     fieldBuildersPage: page,
-                    title: $"📃 Command Help")
+                    title: "📃 Command Help")
                         .SendAsync(Context.Channel);
             }
         }
@@ -60,7 +60,7 @@ namespace wow2.Modules.Main
 
             // Remove command prefix from user input as it might cause confusion.
             if (definition.StartsWithWord(config.CommandPrefix, true))
-                definition = definition.Substring(config.CommandPrefix.Length + 1);
+                definition = definition[(config.CommandPrefix.Length + 1)..];
 
             if (config.AliasesDictionary.ContainsKey(name))
             {
@@ -81,7 +81,7 @@ namespace wow2.Modules.Main
             else
             {
                 if (string.IsNullOrWhiteSpace(definition))
-                    throw new CommandReturnException(Context, $"An alias should have a definition that isn't blank.");
+                    throw new CommandReturnException(Context, "An alias should have a definition that isn't blank.");
 
                 config.AliasesDictionary.Add(name, definition);
             }
@@ -183,7 +183,7 @@ namespace wow2.Modules.Main
 
             var aliasesFound = config.AliasesDictionary.Where(a => message.Content.StartsWithWord(a.Key));
 
-            if (aliasesFound.Count() != 0)
+            if (aliasesFound.Any())
             {
                 var context = new SocketCommandContext(Program.Client, (SocketUserMessage)message);
                 var aliasToExecute = aliasesFound.First();
@@ -249,7 +249,7 @@ namespace wow2.Modules.Main
                 || c.Module.Aliases.Contains(specifiedModuleName.ToLower())
             );
 
-            if (listOfCommandInfo.Count() == 0)
+            if (!listOfCommandInfo.Any())
                 throw new CommandReturnException(Context, "Did you make a typo?", "No such module");
 
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();

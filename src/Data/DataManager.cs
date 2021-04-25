@@ -26,7 +26,7 @@ namespace wow2.Data
             get { return $"{AppDataDirPath}/Logs"; }
         }
 
-        private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions() { WriteIndented = true };
+        private static readonly JsonSerializerOptions SerializerOptions = new() { WriteIndented = true };
 
         /// <summary>Creates required directories if necessary and loads all guild data.</summary>
         public static async Task InitializeAsync()
@@ -121,8 +121,7 @@ namespace wow2.Data
         /// <summary>Write guild data to file for a specific guild.</summary>
         public static async Task SaveGuildDataToFileAsync(ulong guildId)
         {
-            GuildData guildData;
-            if (!DictionaryOfGuildData.TryGetValue(guildId, out guildData))
+            if (!DictionaryOfGuildData.TryGetValue(guildId, out GuildData guildData))
                 throw new KeyNotFoundException($"Failed to load for guild {guildId} as the guild ID was not found in the dictionary (specific save)");
 
             EnsureGuildNameExists(guildId);

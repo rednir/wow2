@@ -6,10 +6,10 @@ namespace wow2.Modules.Text
     // Rethink this
     public static class TextModuleFonts
     {
-        private static FontCollection FontCollection = new FontCollection();
-        private static FontFamily RegularFontFamily = FontCollection.Install($"{DataManager.ResDirPath}/ClearSans-Medium.ttf");
-        private static FontFamily LightFontFamily = FontCollection.Install($"{DataManager.ResDirPath}/Cantarell-Light.ttf");
-        private static FontFamily FancyFontFamily = FontCollection.Install($"{DataManager.ResDirPath}/Z003-MediumItalic.ttf");
+        private static readonly FontCollection FontCollection = new();
+        private static readonly FontFamily RegularFontFamily = FontCollection.Install($"{DataManager.ResDirPath}/ClearSans-Medium.ttf");
+        private static readonly FontFamily LightFontFamily = FontCollection.Install($"{DataManager.ResDirPath}/Cantarell-Light.ttf");
+        private static readonly FontFamily FancyFontFamily = FontCollection.Install($"{DataManager.ResDirPath}/Z003-MediumItalic.ttf");
 
         public static Font QuoteTextFont
         {

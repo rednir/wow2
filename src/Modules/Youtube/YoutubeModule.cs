@@ -25,7 +25,7 @@ namespace wow2.Modules.YouTube
     {
         private static YouTubeService Service;
         private static DateTime TimeOfLastVideoCheck = DateTime.Now;
-        private Thread YouTubePollingThread = new Thread(async () =>
+        private readonly Thread YouTubePollingThread = new(async () =>
         {
             const int delayMins = 5;
             while (true)
@@ -37,7 +37,7 @@ namespace wow2.Modules.YouTube
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogException(ex, $"Failure to check for new YouTube videos.");
+                    Logger.LogException(ex, "Failure to check for new YouTube videos.");
                     await Task.Delay(delayMins * 60000);
                 }
             }
@@ -204,8 +204,8 @@ namespace wow2.Modules.YouTube
             if (!channelIdOrUsername.StartsWith("UC") && channelIdOrUsername.Contains("/UC"))
             {
                 // Get channel ID from assumed-to-be channel URL.
-                listRequest.Id = channelIdOrUsername.Split('/')
-                    .Where(part => part.StartsWith("UC")).FirstOrDefault();
+                listRequest.Id = Array.Find(
+                    channelIdOrUsername.Split('/'), part => part.StartsWith("UC"));
             }
             else if (channelIdOrUsername.StartsWith("UC"))
             {

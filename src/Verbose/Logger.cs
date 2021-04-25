@@ -12,7 +12,7 @@ namespace wow2.Verbose
     /// <summary>Contains methods used for writing to a log file and the standard output stream.</summary>
     public static class Logger
     {
-        private static readonly HttpClient GithubHttpClient = new HttpClient()
+        private static readonly HttpClient GithubHttpClient = new()
         {
             BaseAddress = new Uri("https://api.github.com/")
         };
@@ -30,7 +30,7 @@ namespace wow2.Verbose
         }
 
         public static void Log(object message, LogSeverity severity = LogSeverity.Debug)
-            => Output($"{DateTime.Now} [{severity.ToString()}] {message}");
+            => Output($"{DateTime.Now} [{severity}] {message}");
 
         public static void Log(LogMessage logMessage)
             => Output($"{DateTime.Now} [{logMessage.Severity}] {logMessage.Source}: {logMessage.Message}");
@@ -42,7 +42,7 @@ namespace wow2.Verbose
         {
             try
             {
-                File.AppendAllText($"{DataManager.LogsDirPath}/{Program.TimeStarted.ToString("yyyy-MM-dd_HH-mm-ss")}.log", message + "\n");
+                File.AppendAllText($"{DataManager.LogsDirPath}/{Program.TimeStarted:yyyy-MM-dd_HH-mm-ss}.log", message + "\n");
             }
             catch { }
             finally

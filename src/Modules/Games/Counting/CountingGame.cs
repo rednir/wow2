@@ -11,7 +11,7 @@ using wow2.Data;
 
 namespace wow2.Modules.Games.Counting
 {
-    public class CountingGame
+    public static class CountingGame
     {
         public static async Task StartGame(SocketCommandContext context, float increment)
         {
@@ -37,9 +37,11 @@ namespace wow2.Modules.Games.Counting
             float userNumber;
 
             if (receivedMessage.Author.IsBot ||
-                config.IsGameStarted == false ||
+                !config.IsGameStarted ||
                 config.InitalContext.Channel != receivedMessage.Channel)
+            {
                 return false;
+            }
 
             try { userNumber = Convert.ToSingle(receivedMessage.Content); }
             catch { return false; }

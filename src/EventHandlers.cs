@@ -25,7 +25,7 @@ namespace wow2
 {
     public static class EventHandlers
     {
-        public static CommandService BotCommandService;
+        public static CommandService BotCommandService { get; set; }
 
         public static async Task InstallCommandsAsync()
         {
@@ -108,7 +108,9 @@ namespace wow2
                     logMessage.Exception.InnerException is WebSocketClosedException ||
                     logMessage.Exception.InnerException is WebSocketException) &&
                     !Program.IsDebug)
+                {
                     return;
+                }
 
                 try
                 {
@@ -188,7 +190,7 @@ namespace wow2
 
             await ExecuteCommandAsync(
                 context,
-                socketMessage.Content.RemoveUnnecessaryWhiteSpace().Substring(commandPrefix.Length + 1));
+                socketMessage.Content.RemoveUnnecessaryWhiteSpace()[(commandPrefix.Length + 1)..]);
         }
 
         public static async Task<IResult> ExecuteCommandAsync(ICommandContext context, string input)
@@ -235,10 +237,10 @@ namespace wow2
 
                 case CommandError.UnknownCommand:
                     var matchingCommands = await SearchCommandsAsync(context,
-                        context.Message.Content.Substring(commandPrefix.Length + 1));
+                        context.Message.Content[(commandPrefix.Length + 1)..]);
 
                     await new WarningMessage(
-                        description: matchingCommands.Count() == 0 ?
+                        description: !matchingCommands.Any() ?
                             "Did you make a typo?" : $"Maybe you meant to type:\n{matchingCommands.MakeReadableString(commandPrefix)}",
                         title: "That command doesn't exist")
                             .SendAsync(context.Channel);

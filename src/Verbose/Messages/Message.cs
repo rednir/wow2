@@ -42,7 +42,7 @@ namespace wow2.Verbose.Messages
             }
         }
 
-        protected string GetStatusMessageFormattedDescription(string description, string title)
+        protected static string GetStatusMessageFormattedDescription(string description, string title)
             => $"{(title == null ? null : $"**{title}**\n")}{description}";
     }
 }

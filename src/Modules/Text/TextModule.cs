@@ -45,11 +45,8 @@ namespace wow2.Modules.Text
                     searchPattern: $"*{author}*",
                     enumerationOptions: new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive }
                 )
-                .FirstOrDefault();
-
                 // Default to random template if no template matches author parameter.
-                if (templateToUsePath == null)
-                    templateToUsePath = listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
+                .FirstOrDefault() ?? listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
             }
             else
             {
@@ -57,20 +54,18 @@ namespace wow2.Modules.Text
                 templateToUsePath = listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
             }
 
-            using (SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(templateToUsePath))
-            {
-                MemoryStream fileStreamForImage = new MemoryStream();
+            using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(templateToUsePath);
+            var fileStreamForImage = new MemoryStream();
 
-                Size imageSize = image.Size();
-                int quoteXPos = imageSize.Width / 2;
-                int quoteYPos = (imageSize.Height / 2) - (imageSize.Height / 6) - (quote.Length / 4);
+            Size imageSize = image.Size();
+            int quoteXPos = imageSize.Width / 2;
+            int quoteYPos = (imageSize.Height / 2) - (imageSize.Height / 6) - (quote.Length / 4);
 
-                image.Mutate(x => x.DrawText($"\"{quote.Wrap(40)}\"\n\n - {author}", TextModuleFonts.QuoteTextFont, SixLabors.ImageSharp.Color.LightGrey, new PointF(quoteXPos, quoteYPos)));
+            image.Mutate(x => x.DrawText($"\"{quote.Wrap(40)}\"\n\n - {author}", TextModuleFonts.QuoteTextFont, SixLabors.ImageSharp.Color.LightGrey, new PointF(quoteXPos, quoteYPos)));
 
-                await image.SaveAsync(fileStreamForImage, new JpegEncoder());
-                fileStreamForImage.Position = 0;
-                await Context.Channel.SendFileAsync(fileStreamForImage, "wow2quoteresult.jpg");
-            }
+            await image.SaveAsync(fileStreamForImage, new JpegEncoder());
+            fileStreamForImage.Position = 0;
+            await Context.Channel.SendFileAsync(fileStreamForImage, "wow2quoteresult.jpg");
         }
 
         [Command("replace")]
@@ -102,13 +97,13 @@ namespace wow2.Modules.Text
                 var matchingEmojis = Emoijs.Array.Where(emoij
                     => emoij.Contains(wordWithoutSymbols, StringComparison.CurrentCultureIgnoreCase));
 
-                if (matchingEmojis.Count() == 0)
+                if (!matchingEmojis.Any())
                 {
                     if (random.Next(3) == 1)
                     {
                         // Sometimes use a completely random emoji if no matching emoji is found.
                         stringBuilder.Append(
-                            Emoijs.Array[random.Next(Emoijs.Array.Count())]);
+                            Emoijs.Array[random.Next(Emoijs.Array.Length)]);
                     }
                 }
                 else

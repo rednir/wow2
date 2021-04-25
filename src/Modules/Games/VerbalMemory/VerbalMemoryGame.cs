@@ -20,12 +20,14 @@ namespace wow2.Modules.Games.VerbalMemory
         {
             var config = GetConfigForGuild(receivedMessage.GetGuild());
 
-            if (config.IsGameStarted == false)
+            if (!config.IsGameStarted)
                 return false;
 
             if (receivedMessage.Channel != config.InitalContext.Channel
                 || receivedMessage.Author != config.InitalContext.User)
+            {
                 return false;
+            }
 
             string currentWord = config.CurrentWordMessage.Content;
             switch (receivedMessage.Content)
@@ -98,10 +100,10 @@ namespace wow2.Modules.Games.VerbalMemory
         {
             var random = new Random();
 
-            bool pickSeenWord = (random.NextDouble() >= 0.5) && (config.SeenWords.Count() > 3);
+            bool pickSeenWord = (random.NextDouble() >= 0.5) && (config.SeenWords.Count > 3);
             string currentWord = pickSeenWord ?
-                config.SeenWords[random.Next(config.SeenWords.Count())] :
-                config.UnseenWords[random.Next(config.UnseenWords.Count())];
+                config.SeenWords[random.Next(config.SeenWords.Count)] :
+                config.UnseenWords[random.Next(config.UnseenWords.Count)];
 
             // Check if it's necessary to send a new message.
             if (config.CurrentWordMessage == null)

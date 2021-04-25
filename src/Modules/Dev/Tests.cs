@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Discord;
@@ -15,16 +16,16 @@ namespace wow2.Modules.Dev
         /// <summary>The time in milliseconds between asserts/commands</summary>
         private const int CommandDelay = 1000;
 
-        public static Dictionary<string, Func<ICommandContext, Task>> TestList = new Dictionary<string, Func<ICommandContext, Task>>()
+        public static readonly Dictionary<string, Func<ICommandContext, Task>> TestList = new()
         {
             {
                 "messages", async (context) =>
                 {
-                    await new SuccessMessage($"This is a success message.", "Success").SendAsync(context.Channel);
-                    await new InfoMessage($"This is an info message.", "Info").SendAsync(context.Channel);
-                    await new WarningMessage($"This is a warning message.", "Warning").SendAsync(context.Channel);
-                    await new ErrorMessage($"This is an error message.", "Error").SendAsync(context.Channel);
-                    await new GenericMessage($"This is a response message.", "Response").SendAsync(context.Channel);
+                    await new SuccessMessage("This is a success message.", "Success").SendAsync(context.Channel);
+                    await new InfoMessage("This is an info message.", "Info").SendAsync(context.Channel);
+                    await new WarningMessage("This is a warning message.", "Warning").SendAsync(context.Channel);
+                    await new ErrorMessage("This is an error message.", "Error").SendAsync(context.Channel);
+                    await new GenericMessage("This is a response message.", "Response").SendAsync(context.Channel);
 
                     var listOfFieldBuilders = new List<EmbedFieldBuilder>();
                     for (int i = 0; i < 46; i++)
@@ -32,10 +33,10 @@ namespace wow2.Modules.Dev
                         listOfFieldBuilders.Add(new EmbedFieldBuilder()
                         {
                             Name = $"Field title {i}",
-                            Value = $"This is some description text."
+                            Value = "This is some description text."
                         });
                     }
-                    await new GenericMessage($"This is a response message with fields.", "Fields", listOfFieldBuilders, 2).SendAsync(context.Channel);
+                    await new GenericMessage("This is a response message with fields.", "Fields", listOfFieldBuilders, 2).SendAsync(context.Channel);
                 }
             },
             {
@@ -115,7 +116,6 @@ namespace wow2.Modules.Dev
                 {
                     var config = KeywordsModule.GetConfigForGuild(context.Guild);
                     const string keywordName = "testing_keyword";
-                    List<KeywordValue> keywordValues;
 
                     await ExecuteAsync(context,
                         $"keywords remove {keywordName}");
@@ -127,9 +127,9 @@ namespace wow2.Modules.Dev
                         $"keywords add \"{keywordName}\" \"value2 **Title!**with title\"");
                     await AssertAsync(context, new Dictionary<string, bool>()
                     {
-                        {$"keyword exists in dictionary", config.KeywordsDictionary.TryGetValue(keywordName, out keywordValues)},
-                        {$"check value1", keywordValues[0].Content == "value1"},
-                        {$"check value2", keywordValues[1].Content == "value2 with title" && keywordValues[1].Title == "Title!"}
+                        {"keyword exists in dictionary", config.KeywordsDictionary.TryGetValue(keywordName, out List<KeywordValue> keywordValues)},
+                        {"check value1", keywordValues[0].Content == "value1"},
+                        {"check value2", keywordValues[1].Content == "value2 with title" && keywordValues[1].Title == "Title!"}
                     });
 
                     await ExecuteAsync(context,
@@ -147,8 +147,11 @@ namespace wow2.Modules.Dev
                 // TODO: also test specified author
                 "quotes", async (context) =>
                 {
+                    string repeatedText = string.Concat(
+                        Enumerable.Repeat("This is a quote with a lot of text.", 10));
+
                     var results = await ExecuteAsync(context,
-                        $"text quote \"This is a very long quote without a author specified. This is a very long quote without a author specified. This is a very long quote without a author specified. \"");
+                        $"text quote \"{repeatedText}\"");
                 }
             }
         };

@@ -35,7 +35,7 @@ namespace wow2.Modules.Voice
                 var fieldBuilderForSongRequest = new EmbedFieldBuilder()
                 {
                     Name = $"{i}) {songRequest.VideoMetadata.title}",
-                    Value = $"{songRequest.VideoMetadata.webpage_url}\nRequested at {songRequest.TimeRequested.ToString("HH:mm")} by {songRequest.RequestedBy.Mention}"
+                    Value = $"{songRequest.VideoMetadata.webpage_url}\nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy.Mention}"
                 };
                 listOfFieldBuilders.Add(fieldBuilderForSongRequest);
             }
@@ -81,11 +81,11 @@ namespace wow2.Modules.Voice
             }
             catch (ArgumentException)
             {
-                throw new CommandReturnException(Context, $"One or more errors were returned.", "Could not fetch video metadata");
+                throw new CommandReturnException(Context, "One or more errors were returned.", "Could not fetch video metadata");
             }
             catch
             {
-                throw new CommandReturnException(Context, $"The host may be missing some required dependencies.", "Could not fetch video metadata");
+                throw new CommandReturnException(Context, "The host may be missing some required dependencies.", "Could not fetch video metadata");
             }
 
             config.SongRequests.Enqueue(new UserSongRequest()
@@ -113,14 +113,14 @@ namespace wow2.Modules.Voice
             if (config.CurrentlyPlayingSongRequest == null)
                 throw new CommandReturnException(Context, "There's nothing playing right now.");
 
-            if (config.ListOfUserIdsThatVoteSkipped.Count() + 1 < config.VoteSkipsNeeded)
+            if (config.ListOfUserIdsThatVoteSkipped.Count + 1 < config.VoteSkipsNeeded)
             {
                 if (config.ListOfUserIdsThatVoteSkipped.Contains(Context.User.Id))
                     throw new CommandReturnException(Context, "You've already sent a skip request.");
 
                 config.ListOfUserIdsThatVoteSkipped.Add(Context.User.Id);
                 await new InfoMessage(
-                    description: $"Waiting for `{config.VoteSkipsNeeded - config.ListOfUserIdsThatVoteSkipped.Count()}` more vote(s) before skipping.\n",
+                    description: $"Waiting for `{config.VoteSkipsNeeded - config.ListOfUserIdsThatVoteSkipped.Count}` more vote(s) before skipping.\n",
                     title: "Sent skip request")
                         .SendAsync(Context.Channel);
                 return;
@@ -255,7 +255,8 @@ namespace wow2.Modules.Voice
                 try
                 {
                     // No need to np if loop is enabled, and it is not the first time the song is playing.
-                    if (config.IsLoopEnabled && config.CurrentlyPlayingSongRequest != request || !config.IsLoopEnabled)
+                    if ((config.IsLoopEnabled && config.CurrentlyPlayingSongRequest != request) ||
+                        !config.IsLoopEnabled)
                     {
                         config.CurrentlyPlayingSongRequest = request;
                         if (config.IsAutoNpOn)
@@ -266,7 +267,7 @@ namespace wow2.Modules.Voice
                 }
                 finally
                 {
-                    await discord.FlushAsync();
+                    await discord.FlushAsync(cancellationToken);
                 }
             }
 
@@ -277,7 +278,6 @@ namespace wow2.Modules.Voice
         private async Task ContinueAsync()
         {
             var config = GetConfigForGuild(Context.Guild);
-            UserSongRequest nextRequest;
 
             StopPlaying(config);
 
@@ -288,7 +288,7 @@ namespace wow2.Modules.Voice
             {
                 await PlayRequestAsync(config.CurrentlyPlayingSongRequest, config.CtsForAudioStreaming.Token);
             }
-            else if (config.SongRequests.TryDequeue(out nextRequest))
+            else if (config.SongRequests.TryDequeue(out UserSongRequest nextRequest))
             {
                 await PlayRequestAsync(nextRequest, config.CtsForAudioStreaming.Token);
             }
@@ -302,7 +302,7 @@ namespace wow2.Modules.Voice
             }
         }
 
-        private void StopPlaying(VoiceModuleConfig config)
+        private static void StopPlaying(VoiceModuleConfig config)
         {
             config.ListOfUserIdsThatVoteSkipped.Clear();
             config.CtsForAudioStreaming.Cancel();
@@ -334,8 +334,8 @@ namespace wow2.Modules.Voice
             {
                 Author = authorBuilder,
                 Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
-                ThumbnailUrl = request.VideoMetadata.thumbnails.LastOrDefault().url,
-                Description = $"Requested at {request.TimeRequested.ToString("HH:mm")} by {request.RequestedBy.Mention}",
+                ThumbnailUrl = request.VideoMetadata.thumbnails.Last().url,
+                Description = $"Requested at {request.TimeRequested:HH:mm} by {request.RequestedBy.Mention}",
                 Footer = footerBuilder,
                 Color = Color.LightGrey
             };

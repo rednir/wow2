@@ -29,7 +29,7 @@ namespace wow2.Modules.Keywords
         {
             var config = GetConfigForGuild(message.GetGuild());
             string messageContent = message.Content.ToLower();
-            List<string> listOfFoundKeywords = new List<string>();
+            List<string> listOfFoundKeywords = new();
 
             foreach (string keyword in config.KeywordsDictionary.Keys)
             {
@@ -136,7 +136,7 @@ namespace wow2.Modules.Keywords
 
             if (!keywordsDictionary.ContainsKey(keyword))
             {
-                if (keywordsDictionary.Count() >= MaxNumberOfKeywords)
+                if (keywordsDictionary.Count >= MaxNumberOfKeywords)
                     throw new CommandReturnException(Context, "You've got too many keywords. Try remove some first.", "Keywords limit reached");
 
                 // Create new dictionary key if necessary.
@@ -145,7 +145,7 @@ namespace wow2.Modules.Keywords
 
             if (keywordsDictionary[keyword].FindIndex(x => x.Content == valueContent) != -1)
                 throw new CommandReturnException(Context, "The value already exists in this keyword.");
-            if (keywordsDictionary[keyword].Count() >= MaxNumberOfValues)
+            if (keywordsDictionary[keyword].Count >= MaxNumberOfValues)
                 throw new CommandReturnException(Context, "You've got too many values in this keyword. Try remove some first.", "Value limit reached");
 
             keywordsDictionary[keyword].Add(new KeywordValue()
@@ -181,7 +181,7 @@ namespace wow2.Modules.Keywords
             }
             else
             {
-                valueContent.Trim('\"');
+                valueContent = valueContent.Trim('\"');
 
                 if (keywordsDictionary[keyword].RemoveAll(x => x.Content.Equals(valueContent, StringComparison.CurrentCultureIgnoreCase)) == 0)
                     throw new CommandReturnException(Context, $"No such value `{valueContent}` exists. Did you make a typo?");
@@ -240,10 +240,10 @@ namespace wow2.Modules.Keywords
             }
 
             await new GenericMessage(
-                fieldBuilders: listOfFieldBuilders,
-                fieldBuildersPage: page,
+                description: $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*",
                 title: "📒 Keywords",
-                description: $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*")
+                fieldBuilders: listOfFieldBuilders,
+                fieldBuildersPage: page)
                     .SendAsync(Context.Channel);
         }
 
@@ -253,12 +253,10 @@ namespace wow2.Modules.Keywords
         public async Task ListKeywordValuesAsync([Name("keyword")] string keyword, int page = 1)
         {
             var keywordsDictionary = GetConfigForGuild(Context.Guild).KeywordsDictionary;
-
-            List<KeywordValue> values;
             keyword = keyword.ToLower();
 
-            if (!keywordsDictionary.TryGetValue(keyword, out values))
-                throw new CommandReturnException(Context, $"If you want to list all keywords available, don't specify a keyword in the command.", "No such keyword");
+            if (!keywordsDictionary.TryGetValue(keyword, out List<KeywordValue> values))
+                throw new CommandReturnException(Context, "If you want to list all keywords available, don't specify a keyword in the command.", "No such keyword");
 
             var fieldBuildersForValueList = new List<EmbedFieldBuilder>();
             foreach (KeywordValue value in values)
@@ -278,7 +276,7 @@ namespace wow2.Modules.Keywords
             }
 
             await new GenericMessage(
-                description: $"*There are {values.Count()} values in total, as listed below.*",
+                description: $"*There are {values.Count} values in total, as listed below.*",
                 title: $"📒 Values for '{keyword}'",
                 fieldBuilders: fieldBuildersForValueList,
                 fieldBuildersPage: page)
