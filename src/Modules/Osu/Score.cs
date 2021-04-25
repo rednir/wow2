@@ -10,6 +10,7 @@ namespace wow2.Modules.Osu
         public ulong score { get; set; }
         public int max_combo { get; set; }
         public string rank { get; set; }
+        public double pp { get; set; }
         public Beatmap beatmap { get; set; }
         public BeatmapSet beatmapSet { get; set; }
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -33,6 +34,18 @@ namespace wow2.Modules.Osu
         public async Task UserAsync(string user)
         {
             UserData userData = await GetUserAsync(user);
+
+            var fieldBuildersForScores = new List<EmbedFieldBuilder>();
+            foreach (Score score in userData.BestScores)
+            {
+                fieldBuildersForScores.Add(new EmbedFieldBuilder()
+                {
+                    Name = $"{score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}",
+                    Value = $"{Math.Round(score.accuracy * 100)}% • {score.max_combo}x • {Math.Round(score.pp, 0)}pp",
+                    IsInline = true
+                });
+            }
+
             var embedBuilder = new EmbedBuilder()
             {
                 Author = new EmbedAuthorBuilder()
@@ -47,6 +60,7 @@ namespace wow2.Modules.Osu
                 },
                 Description = $"**Performance:** {userData.statistics.pp}pp\n**Accuracy:** {Math.Round(userData.statistics.hit_accuracy, 2)}%\n**Time Played:** {userData.statistics.play_time / 3600}h",
                 ImageUrl = userData.cover_url,
+                Fields = fieldBuildersForScores,
                 Color = Color.LightGrey
             };
             await ReplyAsync(embed: embedBuilder.Build());
@@ -57,7 +71,7 @@ namespace wow2.Modules.Osu
         [Summary("Toggle whether your server will get notified about USER.")]
         public async Task SubscribeAsync(string user)
         {
-            
+
         }
 
         private static async Task InitializeHttpClient()
@@ -103,5 +117,8 @@ namespace wow2.Modules.Osu
 
             return userData;
         }
+
+        private static string MakeReadableModsList(IEnumerable<string> mods)
+            => $"{(mods.Any() ? "+" : null)}{string.Join(' ', mods)}";
     }
 }
