@@ -130,6 +130,34 @@ namespace wow2.Modules.Osu
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
+        [Command("list-subs")]
+        [Alias("list")]
+        [Summary("Lists the users your server will get notified about.")]
+        public async Task ListSubsAsync(int page = 1)
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            if (config.SubscribedUsers.Count == 0)
+                throw new CommandReturnException(Context, "Add some users to the subscriber list first.", "Nothing to show");
+
+            var fieldBuilders = new List<EmbedFieldBuilder>();
+            foreach (UserData user in config.SubscribedUsers)
+            {
+                fieldBuilders.Add(new EmbedFieldBuilder()
+                {
+                    Name = $"{user.username} | #{user.statistics.global_rank}",
+                    Value = $"[View profile](https://osu.ppy.sh/users/{user.id})",
+                    IsInline = true
+                });
+            }
+
+            await new GenericMessage(
+                title: "Subscribed Users",
+                fieldBuilders: fieldBuilders,
+                fieldBuildersPage: page)
+                    .SendAsync(Context.Channel);
+        }
+
         [Command("set-announcements-channel")]
         [Alias("announcements-channel", "set-announce-channel", "set-channel")]
         [Summary("Sets the channel where notifications about users will be sent.")]
