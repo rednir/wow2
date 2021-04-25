@@ -1,13 +1,14 @@
 using System;
 using System.Linq;
 using System.Net;
-using System.Text.Json;
+using System.Threading;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Discord;
+using Discord.WebSocket;
 using Discord.Commands;
 using wow2.Verbose;
 using wow2.Verbose.Messages;
@@ -24,10 +25,30 @@ namespace wow2.Modules.Osu
         {
             BaseAddress = new Uri("https://osu.ppy.sh/")
         };
+        private static readonly Thread PollingThread = new(async () =>
+        {
+            const int delayMins = 15;
+            while (true)
+            {
+                try
+                {
+                    Logger.Log("yt");
+                    await Task.Delay(delayMins * 60000);
+                    Logger.Log("ytfsdfsasfa");
+                    await CheckForUserMilestonesAsync();
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogException(ex, "Failure to check for new osu! user milestones.");
+                    await Task.Delay(delayMins * 60000);
+                }
+            }
+        });
 
         static OsuModule()
         {
             _ = InitializeHttpClient();
+            PollingThread.Start();
         }
 
         [Command("user")]
@@ -112,6 +133,20 @@ namespace wow2.Modules.Osu
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
+        [Command("set-announcements-channel")]
+        [Alias("announcements-channel", "set-announce-channel", "set-channel")]
+        [Summary("Sets the channel where notifications about users will be sent.")]
+        public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            config.AnnouncementsChannelId = channel.Id;
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+
+            await new SuccessMessage($"You'll get osu! announcements in {channel.Mention}")
+                .SendAsync(Context.Channel);
+        }
+
         private static async Task InitializeHttpClient()
         {
             var tokenRequestParams = new Dictionary<string, string>()
@@ -157,6 +192,37 @@ namespace wow2.Modules.Osu
             userData.BestScores = await bestScoresGetResponse.Content.ReadFromJsonAsync<List<Score>>();
 
             return userData;
+        }
+
+        private static async Task CheckForUserMilestonesAsync()
+        {
+            foreach (GuildData guildData in DataManager.DictionaryOfGuildData.Values)
+            {
+                var config = guildData.Osu;
+
+                // Guild hasn't set a announcements channel, so ignore it.
+                if (config.AnnouncementsChannelId == 0) continue;
+
+                for (int i = 0; i < config.SubscribedUsers.Count; i++)
+                {
+                    UserData currentUserData = config.SubscribedUsers[i];
+                    UserData updatedUserData = await GetUserAsync(config.SubscribedUsers[i].id.ToString());
+
+                    // Check if top play has changed.
+                    if (currentUserData.BestScores.FirstOrDefault() != updatedUserData.BestScores.FirstOrDefault())
+                    {
+                        config.SubscribedUsers[i] = updatedUserData;
+                        await NotifyGuildForNewTopPlayAsync(
+                            user: updatedUserData,
+                            channel: (SocketTextChannel)Program.Client.GetChannel(config.AnnouncementsChannelId));
+                    }
+                }
+            }
+        }
+
+        private static async Task NotifyGuildForNewTopPlayAsync(UserData user, SocketTextChannel channel)
+        {
+            await channel.SendMessageAsync($"{user.username} {user.BestScores[0].pp}");
         }
 
         private static string MakeReadableModsList(IEnumerable<string> mods)

@@ -20,6 +20,6 @@ namespace wow2.Modules.Osu
             public int? global_rank { get; set; }
         }
 
-        public List<Score> BestScores { get; set; }
+        public List<Score> BestScores { get; set; } = new();
     }
 }
