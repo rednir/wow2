@@ -9,7 +9,7 @@ using wow2.Data;
 
 namespace wow2.Modules.Games.NumberMemory
 {
-    public class NumberMemoryGame
+    public static class NumberMemoryGame
     {
         /// <returns>True if the message was related to the game.</returns>
         public static async Task<bool> CheckMessageAsync(SocketMessage receivedMessage)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace wow2.Modules.Voice
 {
-    public class YouTubeDl
+    public static class YouTubeDl
     {
         public static string YouTubeDlPath = Environment.GetEnvironmentVariable("YOUTUBE_DL_PATH") ?? "youtube-dl";
         public static string FFmpegPath = Environment.GetEnvironmentVariable("FFMPEG_PATH") ?? "ffmpeg";

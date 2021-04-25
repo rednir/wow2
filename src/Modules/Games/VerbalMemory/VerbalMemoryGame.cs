@@ -10,7 +10,7 @@ using wow2.Data;
 
 namespace wow2.Modules.Games.VerbalMemory
 {
-    public class VerbalMemoryGame
+    public static class VerbalMemoryGame
     {
         public const string SeenKeyword = "s";
         public const string NewKeyword = "n";
