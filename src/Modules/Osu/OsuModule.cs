@@ -41,7 +41,7 @@ namespace wow2.Modules.Osu
                 fieldBuildersForScores.Add(new EmbedFieldBuilder()
                 {
                     Name = $"{score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}",
-                    Value = $"{Math.Round(score.accuracy * 100)}% • {score.max_combo}x • {Math.Round(score.pp, 0)}pp",
+                    Value = $"{Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x • {Math.Round(score.pp, 0)}pp",
                     IsInline = true
                 });
             }
