@@ -32,9 +32,7 @@ namespace wow2.Modules.Osu
             {
                 try
                 {
-                    Logger.Log("yt");
                     await Task.Delay(delayMins * 60000);
-                    Logger.Log("ytfsdfsasfa");
                     await CheckForUserMilestonesAsync();
                 }
                 catch (Exception ex)
