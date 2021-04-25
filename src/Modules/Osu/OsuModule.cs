@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Discord.Commands;
-using wow2.Verbose.Messages;
+using wow2.Verbose;
 using wow2.Data;
 
 namespace wow2.Modules.Osu
@@ -42,9 +43,19 @@ namespace wow2.Modules.Osu
                 {"grant_type", "client_credentials"},
                 {"scope", "public"}
             };
-            var tokenRequestResponse = await HttpClient
-                .PostAsync("oauth/token", new FormUrlEncodedContent(tokenRequestParams))
-                .Result.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+
+            Dictionary<string, object> tokenRequestResponse;
+            try
+            {
+                tokenRequestResponse = await HttpClient
+                    .PostAsync("oauth/token", new FormUrlEncodedContent(tokenRequestParams))
+                    .Result.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "Exception thrown when attempting to get an osu!api access token.");
+                return;
+            }
 
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 "Bearer", tokenRequestResponse["access_token"].ToString());
