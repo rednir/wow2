@@ -16,12 +16,12 @@ namespace wow2.Modules.Osu
     [Summary("Integrations with the osu!api")]
     public class OsuModule : ModuleBase<SocketCommandContext>
     {
-        private readonly HttpClient HttpClient = new()
+        private static readonly HttpClient HttpClient = new()
         {
             BaseAddress = new Uri("https://osu.ppy.sh/")
         };
 
-        public OsuModule()
+        static OsuModule()
         {
             _ = InitializeHttpClient();
         }
@@ -34,7 +34,7 @@ namespace wow2.Modules.Osu
             throw new NotImplementedException();
         }
 
-        private async Task InitializeHttpClient()
+        private static async Task InitializeHttpClient()
         {
             var tokenRequestParams = new Dictionary<string, string>()
             {
