@@ -1,8 +1,9 @@
+using System;
 
 namespace wow2.Modules.Osu
 {
     /// <summary>What the score HTTP request will be deserialized into.</summary>
-    public class Score
+    public class Score : IEquatable<Score>
     {
         public ulong id { get; set; }
         public double accuracy { get; set; }
@@ -13,5 +14,11 @@ namespace wow2.Modules.Osu
         public double pp { get; set; }
         public Beatmap beatmap { get; set; }
         public BeatmapSet beatmapSet { get; set; }
+
+        public bool Equals(Score other)
+        {
+            if (other == null) return false;
+            return id == other.id;
+        }
     }
 }

@@ -193,9 +193,9 @@ namespace wow2.Modules.Osu
 
         private static async Task CheckForUserMilestonesAsync()
         {
-            foreach (GuildData guildData in DataManager.DictionaryOfGuildData.Values)
+            foreach (var pair in DataManager.DictionaryOfGuildData)
             {
-                var config = guildData.Osu;
+                var config = pair.Value.Osu;
 
                 // Guild hasn't set a announcements channel, so ignore it.
                 if (config.AnnouncementsChannelId == 0) continue;
@@ -206,12 +206,14 @@ namespace wow2.Modules.Osu
                     UserData updatedUserData = await GetUserAsync(config.SubscribedUsers[i].id.ToString());
 
                     // Check if top play has changed.
-                    if (currentUserData.BestScores.FirstOrDefault() != updatedUserData.BestScores.FirstOrDefault())
+                    if (!currentUserData.BestScores.FirstOrDefault()?
+                        .Equals(updatedUserData.BestScores.FirstOrDefault()) ?? false)
                     {
                         config.SubscribedUsers[i] = updatedUserData;
                         await NotifyGuildForNewTopPlayAsync(
                             userData: updatedUserData,
                             channel: (SocketTextChannel)Program.Client.GetChannel(config.AnnouncementsChannelId));
+                        await DataManager.SaveGuildDataToFileAsync(pair.Key);
                     }
                 }
             }
