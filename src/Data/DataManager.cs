@@ -52,15 +52,11 @@ namespace wow2.Data
         public static async Task LoadSecretsFromFileAsync()
         {
             string fullPath = AppDataDirPath + "/secrets.json";
-            if (!File.Exists(fullPath))
-            {
-                // Create a new blank secrets file.
-                await File.WriteAllTextAsync(fullPath, JsonSerializer.Serialize(Secrets, SerializerOptions));
-            }
-            else
-            {
+            if (File.Exists(fullPath))
                 Secrets = JsonSerializer.Deserialize<Secrets>(File.ReadAllText(fullPath));
-            }
+
+            // Always rewrite file, just in case there are new properties.
+            await File.WriteAllTextAsync(fullPath, JsonSerializer.Serialize(Secrets, SerializerOptions));
         }
 
         /// <summary>Load all guild data from all files, excluding the guilds the client is not in.</summary>

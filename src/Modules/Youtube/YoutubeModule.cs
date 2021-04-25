@@ -23,9 +23,9 @@ namespace wow2.Modules.YouTube
     [Summary("Integrations with YouTube, such as getting notified for new videos.")]
     public class YouTube : ModuleBase<SocketCommandContext>
     {
-        private static YouTubeService Service;
         private static DateTime TimeOfLastVideoCheck = DateTime.Now;
-        private readonly Thread YouTubePollingThread = new(async () =>
+        private readonly static YouTubeService Service;
+        private static readonly Thread YouTubePollingThread = new(async () =>
         {
             const int delayMins = 5;
             while (true)
@@ -43,7 +43,7 @@ namespace wow2.Modules.YouTube
             }
         });
 
-        public YouTube()
+        static YouTube()
         {
             Service = new YouTubeService(new BaseClientService.Initializer()
             {
