@@ -7,6 +7,7 @@ using System.IO;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
+using Google;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using Google.Apis.Services;
@@ -66,7 +67,6 @@ namespace wow2.Modules.YouTube
             {
                 throw new CommandReturnException(Context, "That channel doesn't exist.");
             }
-
             await ReplyAsync(embed: await BuildChannelOverviewEmbedAsync(channel));
         }
 
@@ -112,7 +112,7 @@ namespace wow2.Modules.YouTube
             if (config.SubscribedChannels.Count == 0)
                 throw new CommandReturnException(Context, "Add some channels to the subscriber list first.", "Nothing to show");
 
-            var fieldBuilders = new List<EmbedFieldBuilder>(); 
+            var fieldBuilders = new List<EmbedFieldBuilder>();
             foreach (SubscribedChannel channel in config.SubscribedChannels)
             {
                 fieldBuilders.Add(new EmbedFieldBuilder()
@@ -179,7 +179,7 @@ namespace wow2.Modules.YouTube
                     {
                         await NotifyGuildForNewVideoAsync(
                             video: await GetVideoAsync(pair.Key),
-                            channel: (SocketTextChannel)Program.Client.GetChannel(channelId));  
+                            channel: (SocketTextChannel)Program.Client.GetChannel(channelId));
                     }
                     catch (Exception ex)
                     {
@@ -229,12 +229,18 @@ namespace wow2.Modules.YouTube
         private static async Task<IList<PlaylistItem>> GetChannelUploadsAsync(Channel channel, long maxResults = 5)
         {
             var listRequest = Service.PlaylistItems.List("snippet, contentDetails");
-            // TODO: throw some exception if channel has no uploads
             listRequest.PlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
             listRequest.MaxResults = maxResults;
-            var listResponse = await listRequest.ExecuteAsync();
-
-            return listResponse.Items;
+            try
+            {
+                var listResponse = await listRequest.ExecuteAsync();
+                return listResponse.Items;
+            }
+            catch (GoogleApiException)
+            {
+                // Empty list, assume the channel has no uploads
+                return new List<PlaylistItem>();
+            }
         }
 
         private static async Task<Video> GetVideoAsync(string id)
@@ -252,13 +258,15 @@ namespace wow2.Modules.YouTube
 
         private static async Task<Embed> BuildChannelOverviewEmbedAsync(Channel channel)
         {
+            var uploads = await GetChannelUploadsAsync(channel);
+
             var fieldBuilders = new List<EmbedFieldBuilder>();
-            foreach (var upload in await GetChannelUploadsAsync(channel))
+            foreach (var upload in uploads)
             {
                 fieldBuilders.Add(new EmbedFieldBuilder()
                 {
                     Name = upload.Snippet.Title,
-                    Value = $"[{upload.Snippet.PublishedAt.Value.ToString("dd MMM yyyy")}](https://www.youtube.com/watch?v={upload.Id})",
+                    Value = $"[{upload.Snippet.PublishedAt.Value:dd MMM yyyy}](https://www.youtube.com/watch?v={upload.Id})",
                     IsInline = true
                 });
             }
