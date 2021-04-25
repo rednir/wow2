@@ -215,6 +215,7 @@ namespace wow2.Modules.Osu
                             channel: (SocketTextChannel)Program.Client.GetChannel(config.AnnouncementsChannelId));
                         await DataManager.SaveGuildDataToFileAsync(pair.Key);
                     }
+                    await Task.Delay(2000);
                 }
             }
         }
