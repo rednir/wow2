@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace wow2.Modules.Osu
 {
-    /// <summary>What the HTTP request will be deserialized into.</summary>
+    /// <summary>What the user HTTP request will be deserialized into.</summary>
     public class UserData
     {
         public int id { get; set; }
@@ -19,5 +19,7 @@ namespace wow2.Modules.Osu
             public int? play_time { get; set; }
             public int? global_rank { get; set; }
         }
+
+        public List<Score> BestScores { get; set; }
     }
 }

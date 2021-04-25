@@ -57,7 +57,7 @@ namespace wow2.Modules.Osu
         [Summary("Toggle whether your server will get notified about USER.")]
         public async Task SubscribeAsync(string user)
         {
-            throw new NotImplementedException();
+            
         }
 
         private static async Task InitializeHttpClient()
@@ -90,14 +90,18 @@ namespace wow2.Modules.Osu
 
         private static async Task<UserData> GetUserAsync(string user)
         {
-            var response = await HttpClient.GetAsync($"api/v2/users/{user}");
+            var userGetResponse = await HttpClient.GetAsync($"api/v2/users/{user}");
 
             // If `user` is a username, the client will be redirected, losing
             // its headers. So another request will need to be made. 
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-                response = await HttpClient.GetAsync(response.RequestMessage.RequestUri);
+            if (userGetResponse.StatusCode == HttpStatusCode.Unauthorized)
+                userGetResponse = await HttpClient.GetAsync(userGetResponse.RequestMessage.RequestUri);
 
-            return await response.Content.ReadFromJsonAsync<UserData>();
+            var userData = await userGetResponse.Content.ReadFromJsonAsync<UserData>();
+            var bestScoresGetResponse = await HttpClient.GetAsync($"api/v2/users/{userData.id}/scores/best");
+            userData.BestScores = await bestScoresGetResponse.Content.ReadFromJsonAsync<List<Score>>();
+
+            return userData;
         }
     }
 }
