@@ -69,9 +69,8 @@ namespace wow2.Modules.Osu
             {
                 fieldBuildersForScores.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"{score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}",
-                    Value = $"{Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x • {Math.Round(score.pp, 0)}pp",
-                    IsInline = true
+                    Name = MakeScoreTitle(score),
+                    Value = MakeScoreDescription(score)
                 });
             }
 
@@ -211,17 +210,37 @@ namespace wow2.Modules.Osu
                     {
                         config.SubscribedUsers[i] = updatedUserData;
                         await NotifyGuildForNewTopPlayAsync(
-                            user: updatedUserData,
+                            userData: updatedUserData,
                             channel: (SocketTextChannel)Program.Client.GetChannel(config.AnnouncementsChannelId));
                     }
                 }
             }
         }
 
-        private static async Task NotifyGuildForNewTopPlayAsync(UserData user, SocketTextChannel channel)
+        private static async Task NotifyGuildForNewTopPlayAsync(UserData userData, SocketTextChannel channel)
         {
-            await channel.SendMessageAsync($"{user.username} {user.BestScores[0].pp}");
+            Score score = userData.BestScores[0];
+            var embedBuilder = new EmbedBuilder()
+            {
+                Author = new EmbedAuthorBuilder()
+                {
+                    Name = $"{userData.username} set a new top play!",
+                    IconUrl = userData.avatar_url,
+                    Url = $"https://osu.ppy.sh/users/{userData.id}"
+                },
+                Title = MakeScoreTitle(score),
+                Description = MakeScoreDescription(score),
+                ImageUrl = score.beatmapSet.covers.cover,
+                Color = Color.LightGrey
+            }; 
+            await channel.SendMessageAsync(embed: embedBuilder.Build());
         }
+
+        private static string MakeScoreTitle(Score score)
+            => $"{score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
+
+        private static string MakeScoreDescription(Score score)
+            => $"[More details](https://osu.ppy.sh/scores/osu/{score.id}) | {Math.Round(score.pp, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
 
         private static string MakeReadableModsList(IEnumerable<string> mods)
             => $"{(mods.Any() ? "+" : null)}{string.Join(' ', mods)}";
