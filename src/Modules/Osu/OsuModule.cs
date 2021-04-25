@@ -79,7 +79,7 @@ namespace wow2.Modules.Osu
                 Author = new EmbedAuthorBuilder()
                 {
                     Name = $"{userData.username} | #{userData.statistics.global_rank}",
-                    IconUrl = userData.avatar_url,
+                    IconUrl = userData.avatar_url.StartsWith("http") ? userData.avatar_url : null,
                     Url = $"https://osu.ppy.sh/users/{userData.id}"
                 },
                 Footer = new EmbedFooterBuilder()
