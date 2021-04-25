@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -42,11 +41,11 @@ namespace wow2.Modules.Osu
                     IconUrl = userData.avatar_url,
                     Url = $"https://osu.ppy.sh/users/{userData.id}"
                 },
-                Description = $"**Performance:** {userData.statistics.pp}pp\n**Accuracy:** {Math.Round(userData.statistics.hit_accuracy, 2)}%\n**Time Played:** {userData.statistics.play_time / 3600}h",
                 Footer = new EmbedFooterBuilder()
                 {
                     Text = $"Joined: {DateTime.Parse(userData.join_date)}"
                 },
+                Description = $"**Performance:** {userData.statistics.pp}pp\n**Accuracy:** {Math.Round(userData.statistics.hit_accuracy, 2)}%\n**Time Played:** {userData.statistics.play_time / 3600}h",
                 ImageUrl = userData.cover_url,
                 Color = Color.LightGrey
             };
