@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 
 namespace wow2.Modules.Osu
 {
@@ -15,7 +16,8 @@ namespace wow2.Modules.Osu
         {
             public double pp { get; set; }
             public double hit_accuracy { get; set; }
-            public int play_time { get; set; }
+            public int? play_time { get; set; }
+            public int? global_rank { get; set; }
         }
     }
 }

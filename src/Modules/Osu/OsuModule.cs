@@ -38,12 +38,11 @@ namespace wow2.Modules.Osu
             {
                 Author = new EmbedAuthorBuilder()
                 {
-                    Name = $"{userData.username} | #1234",
+                    Name = $"{userData.username} | #{userData.statistics.global_rank}",
                     IconUrl = userData.avatar_url,
                     Url = $"https://osu.ppy.sh/users/{userData.id}"
                 },
-                //Title = "User Overview",
-                Description = $"**Performance:** {userData.statistics.pp}\n**Accuracy:** {Math.Round(userData.statistics.hit_accuracy)}%\n**Time Played:** {userData.statistics.play_time / 3600}h",
+                Description = $"**Performance:** {userData.statistics.pp}pp\n**Accuracy:** {Math.Round(userData.statistics.hit_accuracy, 2)}%\n**Time Played:** {userData.statistics.play_time / 3600}h",
                 Footer = new EmbedFooterBuilder()
                 {
                     Text = $"Joined: {DateTime.Parse(userData.join_date)}"
