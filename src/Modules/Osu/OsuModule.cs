@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -33,7 +34,15 @@ namespace wow2.Modules.Osu
         [Summary("Get some infomation about a user.")]
         public async Task UserAsync(string user)
         {
-            UserData userData = await GetUserAsync(user);
+            UserData userData;
+            try
+            {
+                userData = await GetUserAsync(user);
+            }
+            catch (WebException)
+            {
+                throw new CommandReturnException(Context, "That user doesn't exist.");
+            }
 
             var fieldBuildersForScores = new List<EmbedFieldBuilder>();
             foreach (Score score in userData.BestScores)
@@ -71,7 +80,10 @@ namespace wow2.Modules.Osu
         [Summary("Toggle whether your server will get notified about USER.")]
         public async Task SubscribeAsync(string user)
         {
+            var config = GetConfigForGuild(Context.Guild);
+            UserData userData = await GetUserAsync(user);
 
+            config.SubscribedUsers.Add(userData);
         }
 
         private static async Task InitializeHttpClient()
@@ -111,6 +123,9 @@ namespace wow2.Modules.Osu
             if (userGetResponse.StatusCode == HttpStatusCode.Unauthorized)
                 userGetResponse = await HttpClient.GetAsync(userGetResponse.RequestMessage.RequestUri);
 
+            if (!userGetResponse.IsSuccessStatusCode)
+                throw new WebException(userGetResponse.StatusCode.ToString());
+
             var userData = await userGetResponse.Content.ReadFromJsonAsync<UserData>();
             var bestScoresGetResponse = await HttpClient.GetAsync($"api/v2/users/{userData.id}/scores/best");
             userData.BestScores = await bestScoresGetResponse.Content.ReadFromJsonAsync<List<Score>>();
@@ -120,5 +135,8 @@ namespace wow2.Modules.Osu
 
         private static string MakeReadableModsList(IEnumerable<string> mods)
             => $"{(mods.Any() ? "+" : null)}{string.Join(' ', mods)}";
+
+        public static OsuModuleConfig GetConfigForGuild(IGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Osu;
     }
 }
