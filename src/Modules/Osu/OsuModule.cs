@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using wow2.Verbose;
+using wow2.Verbose.Messages;
 using wow2.Data;
 
 namespace wow2.Modules.Osu
@@ -81,9 +82,34 @@ namespace wow2.Modules.Osu
         public async Task SubscribeAsync(string user)
         {
             var config = GetConfigForGuild(Context.Guild);
-            UserData userData = await GetUserAsync(user);
+            UserData userData;
+            try
+            {
+                userData = await GetUserAsync(user);
+            }
+            catch (WebException)
+            {
+                throw new CommandReturnException(Context, "That user doesn't exist.");
+            }
 
-            config.SubscribedUsers.Add(userData);
+            if (config.SubscribedUsers.RemoveAll(u => u.id == userData.id) != 0)
+            {
+                await new SuccessMessage($"You'll no longer get notifications about `{userData.username}`")
+                    .SendAsync(Context.Channel);
+            }
+            else
+            {
+                if (config.SubscribedUsers.Count > 15)
+                    throw new CommandReturnException(Context, "Remove some users before adding more.", "Too many subscribers");
+
+                config.SubscribedUsers.Add(userData);
+
+                await new SuccessMessage(config.AnnouncementsChannelId == 0 ?
+                    $"Once you use `set-announcements-channel`, you'll get notifications about `{userData.username}`" :
+                    $"You'll get notifications about `{userData.username}`.")
+                        .SendAsync(Context.Channel);
+            }
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         private static async Task InitializeHttpClient()
