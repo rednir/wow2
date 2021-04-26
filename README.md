@@ -12,10 +12,12 @@ Once the bot has joined, you can type `!wow help` in any text channel to view a 
 ## Hosting the bot yourself
 Download and run the executable from the [releases page](https://github.com/rednir/wow2/releases/)
 
-You'll be asked for a bot token. Make sure you've created an application [here](https://discord.com/developers/applications), and added a bot user to it with sufficient privileges.
+At the very least, you need:
+ - the [.NET 5.0](https://dotnet.microsoft.com/download) runtime installed.
+ - a bot token, which you can get [from this site](https://discord.com/developers/applications)
 
-### Dependencies
-- .NET 5.0
-- For voice commands: `libsodium`, `opus`, `ffmpeg`, `youtube-dl`
-	- For Windows users, the necessary binaries are already included in releases.
-	- Windows users should install [Microsoft Visual C++ 2010 Redistributable Package](https://www.microsoft.com/en-US/download/details.aspx?id=5555)
+The below is already included in Windows releases. Otherwise, you'll need them if you want to use voice commands.
+ - `libsodium`
+ - `opus`
+ - `ffmpeg`
+ - `youtube-dl`
