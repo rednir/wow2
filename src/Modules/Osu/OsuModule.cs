@@ -52,12 +52,12 @@ namespace wow2.Modules.Osu
         [Command("user")]
         [Alias("player")]
         [Summary("Get some infomation about a user.")]
-        public async Task UserAsync(string user)
+        public async Task UserAsync([Name("USER")] params string[] userSplit)
         {
             UserData userData;
             try
             {
-                userData = await GetUserAsync(user);
+                userData = await GetUserAsync(string.Join(' ', userSplit));
             }
             catch (WebException)
             {
@@ -97,13 +97,13 @@ namespace wow2.Modules.Osu
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified about USER.")]
-        public async Task SubscribeAsync(string user)
+        public async Task SubscribeAsync([Name("USER")] params string[] userSplit)
         {
             var config = GetConfigForGuild(Context.Guild);
             UserData userData;
             try
             {
-                userData = await GetUserAsync(user);
+                userData = await GetUserAsync(string.Join(' ', userSplit));
             }
             catch (WebException)
             {
@@ -263,7 +263,7 @@ namespace wow2.Modules.Osu
                 Description = MakeScoreDescription(score),
                 ImageUrl = score.beatmapSet.covers.cover,
                 Color = Color.LightGrey
-            }; 
+            };
             await channel.SendMessageAsync(embed: embedBuilder.Build());
         }
 

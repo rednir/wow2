@@ -56,12 +56,12 @@ namespace wow2.Modules.YouTube
 
         [Command("channel")]
         [Summary("Shows some basic data about a channel.")]
-        public async Task ChannelAsync([Name("CHANNEL")] string userInput)
+        public async Task ChannelAsync([Name("CHANNEL")] params string[] userInputSplit)
         {
             Channel channel;
             try
             {
-                channel = await GetChannelAsync(userInput);
+                channel = await GetChannelAsync(string.Join(' ', userInputSplit));
             }
             catch (ArgumentException)
             {
@@ -73,10 +73,10 @@ namespace wow2.Modules.YouTube
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified when CHANNEL uploads a new video.")]
-        public async Task SubscribeAsync([Name("CHANNEL")] string userInput)
+        public async Task SubscribeAsync([Name("CHANNEL")] params string[] userInputSplit)
         {
             var config = GetConfigForGuild(Context.Guild);
-            var channel = await GetChannelAsync(userInput);
+            var channel = await GetChannelAsync(string.Join(' ', userInputSplit));
 
             if (config.SubscribedChannels.RemoveAll(ch => ch.Id == channel.Id) != 0)
             {
