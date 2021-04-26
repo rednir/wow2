@@ -3,7 +3,7 @@ using System;
 namespace wow2.Modules.Osu
 {
     /// <summary>What the score HTTP request will be deserialized into.</summary>
-    public class Score : IEquatable<Score>
+    public class Score
     {
         public ulong id { get; set; }
         public double accuracy { get; set; }
