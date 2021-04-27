@@ -24,7 +24,7 @@ namespace wow2.Modules.YouTube
     public class YouTube : ModuleBase<SocketCommandContext>
     {
         private static DateTime TimeOfLastVideoCheck = DateTime.Now;
-        private readonly static YouTubeService Service;
+        private static readonly YouTubeService Service;
         private static readonly Thread YouTubePollingThread = new(async () =>
         {
             const int delayMins = 5;
