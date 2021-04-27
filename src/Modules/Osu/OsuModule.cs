@@ -21,10 +21,13 @@ namespace wow2.Modules.Osu
     [Summary("Integrations with the osu!api")]
     public class OsuModule : ModuleBase<SocketCommandContext>
     {
+        private static readonly System.Timers.Timer RefreshAccessTokenTimer = new(18 * 3600000);
+
         private static readonly HttpClient HttpClient = new()
         {
             BaseAddress = new Uri("https://osu.ppy.sh/")
         };
+
         private static readonly Thread PollingThread = new(async () =>
         {
             const int delayMins = 15;
@@ -45,8 +48,11 @@ namespace wow2.Modules.Osu
 
         static OsuModule()
         {
-            _ = InitializeHttpClient();
             PollingThread.Start();
+
+            _ = AuthenticateHttpClient();
+            RefreshAccessTokenTimer.Elapsed += OnRefreshAccessTokenTimerElapsed;
+            RefreshAccessTokenTimer.Start();
         }
 
         [Command("user")]
@@ -172,7 +178,10 @@ namespace wow2.Modules.Osu
                 .SendAsync(Context.Channel);
         }
 
-        private static async Task InitializeHttpClient()
+        private static void OnRefreshAccessTokenTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+            => _ = AuthenticateHttpClient();
+
+        private static async Task AuthenticateHttpClient()
         {
             var tokenRequestParams = new Dictionary<string, string>()
             {
@@ -197,7 +206,6 @@ namespace wow2.Modules.Osu
 
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 "Bearer", tokenRequestResponse["access_token"].ToString());
-            HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         private static async Task<UserData> GetUserAsync(string user)
