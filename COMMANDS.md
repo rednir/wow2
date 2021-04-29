@@ -74,7 +74,7 @@
      - Replaces all instances of OLDVALUE with NEWVALUE within TEXT
 
  - `!wow text emojify [TEXT]`
-     - Replaces all instances of OLDVALUE with NEWVALUE within TEXT
+     - Adds emojis to some text because its funny haha.
 
 ## osu!
  - `!wow osu user [USER]`
@@ -139,13 +139,19 @@
 
 ## Developer
  - `!wow dev load-guild-data`
+     - Loads guild data from file to memory, discarding any unsaved changes.
 
  - `!wow dev save-guild-data [optional:ALSOEXIT]`
+     - Save guild data from memory to file, optionally stopping the bot.
 
  - `!wow dev set-status [MESSAGE] [STATUS]`
+     - Sets the 'playing' text and the status of the bot user.
 
  - `!wow dev run-test [optional:GROUP]`
+     - Runs a list of commands.
 
  - `!wow dev commands-list`
+     - Creates a COMMANDS.md file with a list of all commands.
 
  - `!wow dev throw`
+     - Throws an unhandled exception.

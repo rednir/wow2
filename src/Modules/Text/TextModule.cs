@@ -82,7 +82,7 @@ namespace wow2.Modules.Text
 
         [Command("emojify")]
         [Alias("emoji")]
-        [Summary("Replaces all instances of OLDVALUE with NEWVALUE within TEXT")]
+        [Summary("Adds emojis to some text because its funny haha.")]
         public async Task EmojifyAsync([Name("text")][Remainder] string text)
         {
             text = text.RemoveUnnecessaryWhiteSpace();

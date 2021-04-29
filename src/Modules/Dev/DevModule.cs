@@ -18,6 +18,8 @@ namespace wow2.Modules.Dev
     public class DevModule : ModuleBase<SocketCommandContext>
     {
         [Command("load-guild-data")]
+        [Alias("load")]
+        [Summary("Loads guild data from file to memory, discarding any unsaved changes.")]
         public async Task LoadGuildDataAsync()
         {
             await DataManager.LoadGuildDataFromFileAsync();
@@ -26,6 +28,8 @@ namespace wow2.Modules.Dev
         }
 
         [Command("save-guild-data")]
+        [Alias("save")]
+        [Summary("Save guild data from memory to file, optionally stopping the bot.")]
         public async Task SaveGuildDataAsync(bool alsoExit = false)
         {
             await DataManager.SaveGuildDataToFileAsync();
@@ -35,6 +39,7 @@ namespace wow2.Modules.Dev
         }
 
         [Command("set-status")]
+        [Summary("Sets the 'playing' text and the status of the bot user.")]
         public async Task SetStatus(string message, UserStatus status)
         {
             await Program.Client.SetGameAsync(message);
@@ -45,6 +50,7 @@ namespace wow2.Modules.Dev
 
         [Command("run-test")]
         [Alias("test")]
+        [Summary("Runs a list of commands.")]
         public async Task TestAsync(string group = null)
         {
             if (string.IsNullOrWhiteSpace(group))
@@ -73,6 +79,7 @@ namespace wow2.Modules.Dev
 
         [Command("commands-list")]
         [Alias("commands")]
+        [Summary("Creates a COMMANDS.md file with a list of all commands.")]
         public async Task CommandsListAsync()
         {
             var commandsGroupedByModule = EventHandlers.BotCommandService.Commands
@@ -96,6 +103,7 @@ namespace wow2.Modules.Dev
         }
 
         [Command("throw")]
+        [Summary("Throws an unhandled exception.")]
         public Task Throw()
             => throw new Exception("This is a test exception.");
     }
