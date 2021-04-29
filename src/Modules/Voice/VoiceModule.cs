@@ -320,25 +320,22 @@ namespace wow2.Modules.Voice
             string formattedDuration = TimeSpan.FromSeconds(request.VideoMetadata.duration ?? 0)
                 .ToString((request.VideoMetadata.duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
 
-            var authorBuilder = new EmbedAuthorBuilder()
-            {
-                Name = "Now Playing",
-                IconUrl = request.VideoMetadata.extractor.StartsWith("twitch") ? twitchIconUrl : youtubeIconUrl,
-                Url = request.VideoMetadata.webpage_url
-            };
-            var footerBuilder = new EmbedFooterBuilder()
-            {
-                Text = request.VideoMetadata.extractor.StartsWith("youtube") ?
-                    $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {formattedDuration}" : ""
-            };
-
             var embedBuilder = new EmbedBuilder()
             {
-                Author = authorBuilder,
+                Author = new EmbedAuthorBuilder()
+                {
+                    Name = "Now Playing",
+                    IconUrl = request.VideoMetadata.extractor.StartsWith("twitch") ? twitchIconUrl : youtubeIconUrl,
+                    Url = request.VideoMetadata.webpage_url
+                },
+                Footer = new EmbedFooterBuilder()
+                {
+                    Text = request.VideoMetadata.extractor.StartsWith("youtube") ?
+                        $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {formattedDuration}" : ""
+                },
                 Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
                 ThumbnailUrl = request.VideoMetadata.thumbnails.Last().url,
                 Description = $"Requested at {request.TimeRequested:HH:mm} by {request.RequestedBy.Mention}",
-                Footer = footerBuilder,
                 Color = Color.LightGrey
             };
 
