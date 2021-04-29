@@ -1,10 +1,13 @@
 using System;
-using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using wow2.Verbose.Messages;
 using wow2.Data;
+using wow2.Extentions;
 
 namespace wow2.Modules.Dev
 {
@@ -66,6 +69,30 @@ namespace wow2.Modules.Dev
                 await new ErrorMessage($"```{ex}```")
                     .SendAsync(Context.Channel);
             }
+        }
+
+        [Command("commands-list")]
+        [Alias("commands")]
+        public async Task CommandsListAsync()
+        {
+            var commandsGroupedByModule = EventHandlers.BotCommandService.Commands
+                .GroupBy(c => c.Module);
+
+            var stringBuilder = new StringBuilder("# List of commands\n\n");
+            foreach (var module in commandsGroupedByModule)
+            {
+                stringBuilder.AppendLine($"## {module.Key.Name}");
+                foreach (var command in module)
+                {
+                    string summary = command.Summary == null ? null : $"\n     - {command.Summary}";
+                    stringBuilder.AppendLine(
+                        $" - {command.MakeFullCommandString("!wow")}{summary}\n");
+                }
+            }
+
+            await Context.Channel.SendFileAsync(
+                new MemoryStream(Encoding.ASCII.GetBytes(stringBuilder.ToString())),
+                "COMMANDS.md");
         }
 
         [Command("throw")]
