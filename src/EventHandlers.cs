@@ -190,7 +190,7 @@ namespace wow2
 
             await ExecuteCommandAsync(
                 context,
-                socketMessage.Content.RemoveUnnecessaryWhiteSpace()[(commandPrefix.Length + 1)..]);
+                socketMessage.Content.MakeCommandInput(commandPrefix));
         }
 
         public static async Task<IResult> ExecuteCommandAsync(ICommandContext context, string input)
@@ -219,26 +219,28 @@ namespace wow2
         {
             string commandPrefix = MainModule.GetConfigForGuild((SocketGuild)context.Guild).CommandPrefix;
 
+            var matchingCommands = await SearchCommandsAsync(context,
+                context.Message.Content.MakeCommandInput(commandPrefix));
+            var bestMatchingCommandString = $"``{matchingCommands.FirstOrDefault()?.MakeFullCommandString(commandPrefix)}``";
+
             switch (commandError)
             {
                 case CommandError.BadArgCount:
                     await new WarningMessage(
-                        description: "You either typed the wrong number of parameters, or forgot to put a parameter in \"quotes\"",
+                        description: $"You might have typed too many or too little parameters. {bestMatchingCommandString}",
                         title: "Invalid usage of command")
                             .SendAsync(context.Channel);
                     return;
 
+                case CommandError.ObjectNotFound:
                 case CommandError.ParseFailed:
                     await new WarningMessage(
-                        description: "You might have typed an invalid parameter.",
+                        description: $"You might have typed an invalid parameter. {bestMatchingCommandString}",
                         title: "Parsing arguments failed")
                             .SendAsync(context.Channel);
                     return;
 
                 case CommandError.UnknownCommand:
-                    var matchingCommands = await SearchCommandsAsync(context,
-                        context.Message.Content[(commandPrefix.Length + 1)..]);
-
                     await new WarningMessage(
                         description: !matchingCommands.Any() ?
                             "Did you make a typo?" : $"Maybe you meant to type:\n{matchingCommands.MakeReadableString(commandPrefix)}",
@@ -250,13 +252,6 @@ namespace wow2
                     await new WarningMessage(
                         description: "You most likely don't have the correct permissions to use this command.",
                         title: "Unmet precondition")
-                            .SendAsync(context.Channel);
-                    return;
-
-                case CommandError.ObjectNotFound:
-                    await new WarningMessage(
-                        description: "Object not found.",
-                        title: "Invalid usage of command")
                             .SendAsync(context.Channel);
                     return;
 

@@ -60,7 +60,7 @@ namespace wow2.Modules.Main
 
             // Remove command prefix from user input as it might cause confusion.
             if (definition.StartsWithWord(config.CommandPrefix, true))
-                definition = definition[(config.CommandPrefix.Length + 1)..];
+                definition = definition.MakeCommandInput(config.CommandPrefix);
 
             if (config.AliasesDictionary.ContainsKey(name))
             {
