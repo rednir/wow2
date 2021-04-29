@@ -174,6 +174,8 @@ namespace wow2.Modules.Voice
                 throw new CommandReturnException(Context, "I'm not currently in a voice channel.");
 
             await config.AudioClient.StopAsync();
+            await new SuccessMessage("Goodbye!")
+                .SendAsync(Context.Channel);
         }
 
         [Command("np")]
