@@ -6,12 +6,6 @@ using wow2.Modules.Games.NumberMemory;
 
 namespace wow2.Modules.Games
 {
-    public abstract class GameConfigBase
-    {
-        public ICommandContext InitalContext { get; set; }
-        public bool IsGameStarted { get; set; }
-    }
-
     public class GamesModuleConfig
     {
         [JsonIgnore]
