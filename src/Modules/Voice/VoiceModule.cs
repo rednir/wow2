@@ -9,6 +9,7 @@ using Discord.Net;
 using Discord.Commands;
 using Discord.Audio;
 using wow2.Data;
+using wow2.Verbose;
 using wow2.Verbose.Messages;
 
 namespace wow2.Modules.Voice
@@ -79,13 +80,12 @@ namespace wow2.Modules.Voice
             {
                 metadata = await YouTubeDl.GetMetadata(songRequest);
             }
-            catch (ArgumentException)
+            catch (Exception ex)
             {
-                throw new CommandReturnException(Context, "One or more errors were returned.", "Could not fetch video metadata");
-            }
-            catch
-            {
-                throw new CommandReturnException(Context, "The host may be missing some required dependencies.", "Could not fetch video metadata");
+                Logger.LogException(ex, "Could not fetch video metadata");
+                await new ErrorMessage("One or more errors were returned.", "Could not fetch video metadata")
+                    .SendAsync(Context.Channel);
+                return;
             }
 
             config.SongRequests.Enqueue(new UserSongRequest()
