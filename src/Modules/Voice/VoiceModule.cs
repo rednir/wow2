@@ -98,12 +98,15 @@ namespace wow2.Modules.Voice
             await new SuccessMessage($"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
                 .SendAsync(Context.Channel);
 
-            try
+            if (config.IsAutoJoinOn)
             {
-                await JoinVoiceChannelAsync(config, ((IGuildUser)Context.User).VoiceChannel);
-            }
-            catch
-            {
+                try
+                {
+                    await JoinVoiceChannelAsync(config, ((IGuildUser)Context.User).VoiceChannel);
+                }
+                catch
+                {
+                }
             }
 
             // Play song if nothing else is playing.
@@ -212,6 +215,18 @@ namespace wow2.Modules.Voice
             config.IsAutoNpOn = !config.IsAutoNpOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"Auto execution of `vc np` is turned `{(config.IsAutoNpOn ? "on" : "off")}`")
+                .SendAsync(Context.Channel);
+        }
+
+        [Command("toggle-auto-join")]
+        [Summary("Toggles whether the bot will try join when a new song is added to the queue.")]
+        public async Task ToggleAutoJoin()
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            config.IsAutoJoinOn = !config.IsAutoJoinOn;
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await new SuccessMessage($"Auto joining when a new song is added is turned `{(config.IsAutoNpOn ? "on" : "off")}`")
                 .SendAsync(Context.Channel);
         }
 
