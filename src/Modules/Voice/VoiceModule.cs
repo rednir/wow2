@@ -138,27 +138,19 @@ namespace wow2.Modules.Voice
         public async Task JoinAsync()
         {
             var config = GetConfigForGuild(Context.Guild);
-            IVoiceChannel voiceChannelToJoin = ((IGuildUser)Context.User).VoiceChannel ?? null;
-
-            if (!CheckIfAudioClientDisconnected(config.AudioClient))
-            {
-                IGuildUser guildUser = await Program.GetClientGuildUserAsync(Context.Channel);
-                if (guildUser.VoiceChannel == voiceChannelToJoin)
-                    throw new CommandReturnException(Context, "I'm already in this voice channel.");
-            }
+            IVoiceChannel voiceChannelToJoin = ((IGuildUser)Context.User).VoiceChannel;
 
             try
             {
-                config.AudioClient = await voiceChannelToJoin.ConnectAsync();
-                _ = ContinueAsync();
+                await JoinVoiceChannelAsync(config, voiceChannelToJoin);
+            }
+            catch (ArgumentException)
+            {
+                throw new CommandReturnException(Context, "I'm already in this voice channel.");
             }
             catch (NullReferenceException)
             {
                 throw new CommandReturnException(Context, "Join a voice channel first.");
-            }
-            catch (Exception ex) when (ex is WebSocketClosedException || ex is TaskCanceledException)
-            {
-                // No need to notify the user of these exceptions.
             }
         }
 
@@ -227,6 +219,26 @@ namespace wow2.Modules.Voice
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"`{newNumberOfSkips}` votes are now required to skip a song request.")
                 .SendAsync(Context.Channel);
+        }
+
+        private async Task JoinVoiceChannelAsync(VoiceModuleConfig config, IVoiceChannel channel)
+        {
+            if (!CheckIfAudioClientDisconnected(config.AudioClient))
+            {
+                IGuildUser clientUser = await Program.GetClientGuildUserAsync(Context.Channel);
+                if (clientUser.VoiceChannel == channel)
+                   throw new ArgumentException("Already in voice channel.");
+            }
+
+            try
+            {
+                config.AudioClient = await channel.ConnectAsync();
+                _ = ContinueAsync();
+            }
+            catch (Exception ex) when (ex is WebSocketClosedException || ex is TaskCanceledException)
+            {
+                // No need to notify the user of these exceptions.
+            }
         }
 
         private async Task DisplayCurrentlyPlayingRequestAsync()
