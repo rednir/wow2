@@ -128,6 +128,10 @@ namespace wow2.Extentions
             return stringBuilder.ToString();
         }
 
+        /// <returns>The string without the command prefix.</return>
+        public static string MakeCommandInput(this string messageContent, string commandPrefix)
+            => messageContent.RemoveUnnecessaryWhiteSpace()[(commandPrefix.Length + 1)..];
+
         /// <returns>The string with the list of characters removed.</returns>
         public static string ReplaceAll(this string stringToChange, char[] charsToReplace, char? replacementChar)
         {

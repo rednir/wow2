@@ -3,7 +3,7 @@ using Discord.WebSocket;
 
 namespace wow2.Modules.Games.Counting
 {
-    public class CountingGameConfig : GameConfigBase
+    public class CountingGameConfig : GameConfig
     {
         public float Increment { get; set; }
         public List<SocketMessage> ListOfMessages { get; set; } = new List<SocketMessage>();
