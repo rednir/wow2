@@ -51,7 +51,8 @@ namespace wow2.Modules.Voice
         /// <returns>The FFmpeg process.</returns>
         public static Process CreateStreamFromVideoUrl(string url)
         {
-            string shellCommand = $"{YouTubeDl.YouTubeDlPath} {url} -q -o - | {YouTubeDl.FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
+            const string youtubeDlArgs = "-q -f worstaudio --no-playlist --no-warnings";
+            string shellCommand = $"{YouTubeDlPath} {url} {youtubeDlArgs} -o - | {FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
 
             return Process.Start(new ProcessStartInfo
