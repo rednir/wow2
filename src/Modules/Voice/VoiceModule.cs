@@ -98,6 +98,14 @@ namespace wow2.Modules.Voice
             await new SuccessMessage($"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
                 .SendAsync(Context.Channel);
 
+            try
+            {
+                await JoinVoiceChannelAsync(config, ((IGuildUser)Context.User).VoiceChannel);
+            }
+            catch
+            {
+            }
+
             // Play song if nothing else is playing.
             if (!CheckIfAudioClientDisconnected(config.AudioClient) && config.CurrentlyPlayingSongRequest == null)
                 _ = ContinueAsync();
@@ -227,7 +235,7 @@ namespace wow2.Modules.Voice
             {
                 IGuildUser clientUser = await Program.GetClientGuildUserAsync(Context.Channel);
                 if (clientUser.VoiceChannel == channel)
-                   throw new ArgumentException("Already in voice channel.");
+                    throw new ArgumentException("Already in voice channel.");
             }
 
             try
