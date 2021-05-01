@@ -157,7 +157,7 @@ namespace wow2.Modules.Voice
             }
             catch (ArgumentException)
             {
-                throw new CommandReturnException(Context, "I'm already in this voice channel.");
+                throw new CommandReturnException(Context, "I'm already in a voice channel.");
             }
             catch (NullReferenceException)
             {
@@ -248,9 +248,10 @@ namespace wow2.Modules.Voice
         {
             if (!CheckIfAudioClientDisconnected(config.AudioClient))
             {
-                IGuildUser clientUser = await Program.GetClientGuildUserAsync(Context.Channel);
-                if (clientUser.VoiceChannel == channel)
-                    throw new ArgumentException("Already in voice channel.");
+                // Uncomment below code to also check the voice channel the bot is in.
+                //IGuildUser clientUser = await Program.GetClientGuildUserAsync(Context.Channel);
+                //if (clientUser.VoiceChannel == channel)
+                throw new ArgumentException("Already in voice channel.");
             }
 
             try
