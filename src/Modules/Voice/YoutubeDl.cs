@@ -21,10 +21,8 @@ namespace wow2.Modules.Voice
             string standardOutput = "";
             string standardError = "";
 
-            await Task.Run(() =>
+            using (var process = new Process())
             {
-                using var process = new Process();
-
                 process.StartInfo.FileName = YouTubeDlPath;
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -38,8 +36,8 @@ namespace wow2.Modules.Voice
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
 
-                process.WaitForExit();
-            });
+                await process.WaitForExitAsync();
+            }
 
             if (!string.IsNullOrWhiteSpace(standardError))
                 throw new ArgumentException(standardError);
