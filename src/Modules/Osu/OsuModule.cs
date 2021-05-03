@@ -37,6 +37,7 @@ namespace wow2.Modules.Osu
                 {
                     await Task.Delay(delayMins * 60000);
                     await CheckForUserMilestonesAsync();
+                    Logger.Log("Successfully checked osu! user milestones", LogSeverity.Debug);
                 }
                 catch (Exception ex)
                 {

@@ -34,6 +34,7 @@ namespace wow2.Modules.YouTube
                 {
                     await Task.Delay(delayMins * 60000);
                     await CheckForNewVideosAsync();
+                    Logger.Log("Successfully checked for new Youtube videos.", LogSeverity.Debug);
                 }
                 catch (Exception ex)
                 {
