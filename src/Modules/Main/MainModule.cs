@@ -156,7 +156,7 @@ namespace wow2.Modules.Main
         public static async Task SendAboutMessageToChannelAsync(SocketCommandContext context)
         {
             var commandPrefix = GetConfigForGuild(context.Guild).CommandPrefix;
-            var appInfo = Program.ApplicationInfo;
+            var appInfo = Bot.ApplicationInfo;
 
             var embedBuilder = new EmbedBuilder()
             {

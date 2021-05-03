@@ -66,7 +66,7 @@ namespace wow2.Modules.Moderator
             await WarnOrBanUserAsync(
                 config: config,
                 victim: (SocketGuildUser)message.Author,
-                requestedBy: await Program.GetClientGuildUserAsync(message.Channel),
+                requestedBy: await Bot.GetClientGuildUserAsync(message.Channel),
                 message: warningMessage);
 
             await new InfoMessage($"{message.Author.Mention} has been warned due to {dueTo}.")
