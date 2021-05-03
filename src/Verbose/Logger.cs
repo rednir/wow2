@@ -35,8 +35,12 @@ namespace wow2.Verbose
         public static void Log(LogMessage logMessage)
             => Output($"{DateTime.Now} [{logMessage.Severity}] {logMessage.Source}: {logMessage.Message}");
 
-        public static void LogException(Exception exception, string message = "Exception was thrown:")
-            => Output($"{DateTime.Now} [Exception] {message}\n------ START OF EXCEPTION ------\n\n{exception}\n\n------ END OF EXCEPTION ------");
+        public static void LogException(Exception exception, string message = "Exception was thrown:", bool notifyOwner = true)
+        {
+            Output($"{DateTime.Now} [Exception] {message}\n------ START OF EXCEPTION ------\n\n{exception}\n\n------ END OF EXCEPTION ------");
+            if (notifyOwner)
+                _ = Bot.ApplicationInfo.Owner.SendMessageAsync($"```\n{exception}\n```");
+        }
 
         private static void Output(string message)
         {

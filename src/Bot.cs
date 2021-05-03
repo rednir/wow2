@@ -122,19 +122,18 @@ namespace wow2
                         .SendAsync(commandException.Context.Channel);
                 }
 
-                Logger.LogException(logMessage.Exception);
-
-                // Client will immediately reconnect after these exceptions. 
                 if ((logMessage.Exception is GatewayReconnectException ||
                     logMessage.Exception.InnerException is WebSocketClosedException ||
                     logMessage.Exception.InnerException is WebSocketException) &&
                     !Program.IsDebug)
                 {
-                    return;
+                    // Client will immediately reconnect after these
+                    // exceptions, so no need to dm bot owner.
+                    Logger.LogException(logMessage.Exception, notifyOwner: false);
                 }
                 else
                 {
-                    await ApplicationInfo.Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
+                    Logger.LogException(logMessage.Exception, notifyOwner: true);
                 }
             }
             else
