@@ -179,6 +179,16 @@ namespace wow2.Modules.Osu
                 .SendAsync(Context.Channel);
         }
 
+        [Command("test-poll")]
+        [RequireOwner(Group = "Permission")]
+        [Summary("Check for new user milestones.")]
+        public async Task TestPollAsync()
+        {
+            await CheckForUserMilestonesAsync();
+            await new SuccessMessage("Done!")
+                .SendAsync(Context.Channel);
+        }
+
         private static void OnRefreshAccessTokenTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
             => _ = AuthenticateHttpClient();
 

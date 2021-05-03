@@ -145,6 +145,16 @@ namespace wow2.Modules.YouTube
                 .SendAsync(Context.Channel);
         }
 
+        [Command("test-poll")]
+        [RequireOwner(Group = "Permission")]
+        [Summary("Check for new videos.")]
+        public async Task TestPollAsync()
+        {
+            await CheckForNewVideosAsync();
+            await new SuccessMessage("Done!")
+                .SendAsync(Context.Channel);
+        }
+
         private static async Task CheckForNewVideosAsync()
         {
             // Dictionary where the key is the video ID, and the
