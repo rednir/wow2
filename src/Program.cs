@@ -10,7 +10,7 @@ namespace wow2
 {
     public class Program
     {
-        private const string ReleaseVersion = "v2.0";
+        private const string ReleaseVersion = "v3.0";
         private static bool IsDebugField;
 
         [Conditional("DEBUG")]
