@@ -209,7 +209,7 @@ namespace wow2.Modules.Moderator
 
         private static UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
         {
-            SocketUser user = Program.Client.GetUser(id);
+            SocketUser user = Bot.Client.GetUser(id);
             if (user == null)
                 throw new ArgumentException("User was not found.");
             if (user.IsBot)

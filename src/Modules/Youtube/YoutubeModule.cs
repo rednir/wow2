@@ -179,7 +179,7 @@ namespace wow2.Modules.YouTube
                     {
                         await NotifyGuildForNewVideoAsync(
                             video: await GetVideoAsync(pair.Key),
-                            channel: (SocketTextChannel)Program.Client.GetChannel(channelId));
+                            channel: (SocketTextChannel)Bot.Client.GetChannel(channelId));
                     }
                     catch (Exception ex)
                     {

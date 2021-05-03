@@ -75,7 +75,7 @@ namespace wow2.Data
                 {
                     ulong guildId = Convert.ToUInt64(Path.GetFileNameWithoutExtension(fileInfo.FullName));
 
-                    if (!Program.Client.Guilds.Select(g => g.Id).Contains(guildId))
+                    if (!Bot.Client.Guilds.Select(g => g.Id).Contains(guildId))
                     {
                         Logger.Log($"Not loading guild data for {guildId}, as the bot is not connected to it. (mass load)", LogSeverity.Verbose);
                         continue;
@@ -168,7 +168,7 @@ namespace wow2.Data
             {
                 try
                 {
-                    guildData.NameOfGuild = Program.Client.GetGuild(guildId).Name;
+                    guildData.NameOfGuild = Bot.Client.GetGuild(guildId).Name;
                 }
                 catch
                 {

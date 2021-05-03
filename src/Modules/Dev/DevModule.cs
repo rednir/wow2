@@ -42,8 +42,8 @@ namespace wow2.Modules.Dev
         [Summary("Sets the 'playing' text and the status of the bot user.")]
         public async Task SetStatus(string message, UserStatus status)
         {
-            await Program.Client.SetGameAsync(message);
-            await Program.Client.SetStatusAsync(status);
+            await Bot.Client.SetGameAsync(message);
+            await Bot.Client.SetStatusAsync(status);
             await new SuccessMessage("Set status.")
                 .SendAsync(Context.Channel);
         }

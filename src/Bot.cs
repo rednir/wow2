@@ -9,6 +9,7 @@ using Discord;
 using Discord.Net;
 using Discord.WebSocket;
 using Discord.Commands;
+using Discord.Rest;
 using wow2.Verbose;
 using wow2.Verbose.Messages;
 using wow2.Modules;
@@ -25,7 +26,27 @@ namespace wow2
 {
     public static class Bot
     {
+        public static DiscordSocketClient Client { get; set; } = new DiscordSocketClient();
+        public static RestApplication ApplicationInfo { get; set; }
         public static CommandService CommandService { get; set; }
+
+        public static async Task<SocketGuildUser> GetClientGuildUserAsync(ISocketMessageChannel channel)
+            => (SocketGuildUser)await channel.GetUserAsync(Client.CurrentUser.Id);
+
+        public static async Task InitializeAndStartClientAsync()
+        {
+            Client.Ready += ReadyAsync;
+            Client.Log += DiscordLogRecievedAsync;
+            Client.ReactionAdded += ReactionAddedAsync;
+            Client.MessageReceived += MessageRecievedAsync;
+            Client.JoinedGuild += JoinedGuildAsync;
+            Client.LeftGuild += LeftGuildAsync;
+
+            await Client.LoginAsync(TokenType.Bot, DataManager.Secrets.DiscordBotToken);
+            await Client.StartAsync();
+
+            ApplicationInfo = await Client.GetApplicationInfoAsync();
+        }
 
         public static async Task InstallCommandsAsync()
         {
@@ -44,7 +65,7 @@ namespace wow2
             await DataManager.InitializeAsync();
             await Bot.InstallCommandsAsync();
 
-            await Program.Client.SetGameAsync("!wow help");
+            await Client.SetGameAsync("!wow help");
         }
 
         public static async Task JoinedGuildAsync(SocketGuild guild)
@@ -114,7 +135,7 @@ namespace wow2
 
                 try
                 {
-                    await Program.ApplicationInfo.Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
+                    await ApplicationInfo.Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
                 }
                 catch
                 {
@@ -128,7 +149,7 @@ namespace wow2
 
         public static async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
         {
-            if (reaction.UserId == Program.Client.CurrentUser.Id)
+            if (reaction.UserId == Client.CurrentUser.Id)
                 return;
 
             IUserMessage message = await cachedMessage.GetOrDownloadAsync();
@@ -144,7 +165,7 @@ namespace wow2
 
         public static async Task MessageRecievedAsync(SocketMessage receivedMessage)
         {
-            if (receivedMessage.Author.Id == Program.Client.CurrentUser.Id) return;
+            if (receivedMessage.Author.Id == Client.CurrentUser.Id) return;
             if (receivedMessage.Channel is SocketDMChannel) return;
 
             await DataManager.EnsureGuildDataExistsAsync(receivedMessage.GetGuild().Id);
@@ -179,7 +200,7 @@ namespace wow2
             // Return if the message is not a user message.
             if (socketMessage == null) return;
 
-            var context = new SocketCommandContext(Program.Client, socketUserMessage);
+            var context = new SocketCommandContext(Client, socketUserMessage);
 
             string commandPrefix = MainModule.GetConfigForGuild(socketMessage.GetGuild()).CommandPrefix;
             if (socketMessage.Content == commandPrefix)

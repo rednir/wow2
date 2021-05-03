@@ -262,7 +262,7 @@ namespace wow2.Modules.Keywords
             foreach (KeywordValue value in values)
             {
                 var user = value.AddedByUserId == 0 ?
-                    "[UNKNOWN USER]" : Program.Client.GetUser(value.AddedByUserId).Username;
+                    "[UNKNOWN USER]" : Bot.Client.GetUser(value.AddedByUserId).Username;
                 var date = value.DateTimeAddedBinary == 0 ?
                     "[UNKNOWN DATE]" : DateTime.FromBinary(value.DateTimeAddedBinary).ToShortDateString();
 

@@ -185,7 +185,7 @@ namespace wow2.Modules.Main
 
             if (aliasesFound.Any())
             {
-                var context = new SocketCommandContext(Program.Client, (SocketUserMessage)message);
+                var context = new SocketCommandContext(Bot.Client, (SocketUserMessage)message);
                 var aliasToExecute = aliasesFound.First();
 
                 await Bot.ExecuteCommandAsync(

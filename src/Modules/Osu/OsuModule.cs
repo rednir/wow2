@@ -248,7 +248,7 @@ namespace wow2.Modules.Osu
                         config.SubscribedUsers[i] = updatedUserData;
                         await NotifyGuildForNewTopPlayAsync(
                             userData: updatedUserData,
-                            channel: (SocketTextChannel)Program.Client.GetChannel(config.AnnouncementsChannelId));
+                            channel: (SocketTextChannel)Bot.Client.GetChannel(config.AnnouncementsChannelId));
                         await DataManager.SaveGuildDataToFileAsync(pair.Key);
                     }
                     await Task.Delay(2000);
