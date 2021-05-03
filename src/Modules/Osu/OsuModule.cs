@@ -21,6 +21,18 @@ namespace wow2.Modules.Osu
     [Summary("Integrations with the osu!api")]
     public class OsuModule : ModuleBase<SocketCommandContext>
     {
+        private static readonly Dictionary<string, IEmote> RankingEmotes = new()
+        {
+            {"D", Emote.Parse("<:osud:838780206747090964>")},
+            {"C", Emote.Parse("<:osuc:838780141433257995>")},
+            {"B", Emote.Parse("<:osub:838780016278896712>")},
+            {"A", Emote.Parse("<:osua:807023193264881664>")},
+            {"S", Emote.Parse("<:osus:807023232116981801>")},
+            {"SH", Emote.Parse("<:osush:807023257357123595>")},
+            {"SS", Emote.Parse("<:osuss:807023277180583958>")},
+            {"SSH", Emote.Parse("<:osussh:807023289742262272>")}
+        };
+
         private static readonly System.Timers.Timer RefreshAccessTokenTimer = new(18 * 3600000);
 
         private static readonly HttpClient HttpClient = new()
@@ -287,7 +299,7 @@ namespace wow2.Modules.Osu
         }
 
         private static string MakeScoreTitle(Score score)
-            => $"{score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
+            => $"{RankingEmotes[score.rank]} {score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
 
         private static string MakeScoreDescription(Score score)
             => $"[More details](https://osu.ppy.sh/scores/osu/{score.id}) | {Math.Round(score.pp, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
