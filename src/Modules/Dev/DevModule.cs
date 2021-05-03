@@ -82,7 +82,7 @@ namespace wow2.Modules.Dev
         [Summary("Creates a COMMANDS.md file with a list of all commands.")]
         public async Task CommandsListAsync()
         {
-            var commandsGroupedByModule = EventHandlers.BotCommandService.Commands
+            var commandsGroupedByModule = Bot.CommandService.Commands
                 .GroupBy(c => c.Module);
 
             var stringBuilder = new StringBuilder("# List of commands\n\n");

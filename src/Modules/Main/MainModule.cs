@@ -188,7 +188,7 @@ namespace wow2.Modules.Main
                 var context = new SocketCommandContext(Program.Client, (SocketUserMessage)message);
                 var aliasToExecute = aliasesFound.First();
 
-                await EventHandlers.ExecuteCommandAsync(
+                await Bot.ExecuteCommandAsync(
                     context,
                     aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, "", true, null));
 
@@ -200,7 +200,7 @@ namespace wow2.Modules.Main
         /// <summary>Builds embed fields for all command modules.</summary>
         private async Task<List<EmbedFieldBuilder>> ModuleInfoToEmbedFieldsAsync(string commandPrefix)
         {
-            var listOfModules = (await EventHandlers.BotCommandService.GetExecutableCommandsAsync(Context, null))
+            var listOfModules = (await Bot.CommandService.GetExecutableCommandsAsync(Context, null))
                 .Select(command => command.Module)
 
                 // Remove duplicate modules.
@@ -241,7 +241,7 @@ namespace wow2.Modules.Main
         private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFieldsAsync(string specifiedModuleName, string commandPrefix)
         {
             // Find commands in module.
-            var listOfCommandInfo = (await EventHandlers.BotCommandService.GetExecutableCommandsAsync(
+            var listOfCommandInfo = (await Bot.CommandService.GetExecutableCommandsAsync(
                 new CommandContext(Context.Client, Context.Message), null
             ))
             .Where(c =>

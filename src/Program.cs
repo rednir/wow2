@@ -50,12 +50,12 @@ namespace wow2
             await DataManager.LoadSecretsFromFileAsync();
 
             Client = new DiscordSocketClient();
-            Client.Ready += EventHandlers.ReadyAsync;
-            Client.Log += EventHandlers.DiscordLogRecievedAsync;
-            Client.ReactionAdded += EventHandlers.ReactionAddedAsync;
-            Client.MessageReceived += EventHandlers.MessageRecievedAsync;
-            Client.JoinedGuild += EventHandlers.JoinedGuildAsync;
-            Client.LeftGuild += EventHandlers.LeftGuildAsync;
+            Client.Ready += Bot.ReadyAsync;
+            Client.Log += Bot.DiscordLogRecievedAsync;
+            Client.ReactionAdded += Bot.ReactionAddedAsync;
+            Client.MessageReceived += Bot.MessageRecievedAsync;
+            Client.JoinedGuild += Bot.JoinedGuildAsync;
+            Client.LeftGuild += Bot.LeftGuildAsync;
 
             await Client.LoginAsync(TokenType.Bot, DataManager.Secrets.DiscordBotToken);
             await Client.StartAsync();

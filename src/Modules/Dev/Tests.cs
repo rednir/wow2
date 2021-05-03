@@ -166,7 +166,7 @@ namespace wow2.Modules.Dev
                 await context.Channel.SendMessageAsync($"`{commandPrefix} {command}`");
 
                 await Task.Delay(CommandDelay);
-                results.Add(await EventHandlers.ExecuteCommandAsync(context, command));
+                results.Add(await Bot.ExecuteCommandAsync(context, command));
                 await Task.Delay(CommandDelay);
             }
             return results;

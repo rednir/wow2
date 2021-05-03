@@ -23,9 +23,9 @@ using wow2.Data;
 
 namespace wow2
 {
-    public static class EventHandlers
+    public static class Bot
     {
-        public static CommandService BotCommandService { get; set; }
+        public static CommandService CommandService { get; set; }
 
         public static async Task InstallCommandsAsync()
         {
@@ -34,15 +34,15 @@ namespace wow2
                 LogLevel = LogSeverity.Verbose,
                 DefaultRunMode = RunMode.Async
             };
-            BotCommandService = new CommandService(config);
-            BotCommandService.Log += DiscordLogRecievedAsync;
-            await BotCommandService.AddModulesAsync(Assembly.GetEntryAssembly(), null);
+            CommandService = new CommandService(config);
+            CommandService.Log += DiscordLogRecievedAsync;
+            await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), null);
         }
 
         public static async Task ReadyAsync()
         {
             await DataManager.InitializeAsync();
-            await EventHandlers.InstallCommandsAsync();
+            await Bot.InstallCommandsAsync();
 
             await Program.Client.SetGameAsync("!wow help");
         }
@@ -198,7 +198,7 @@ namespace wow2
             var typingState = context.Channel.EnterTypingState();
             try
             {
-                IResult result = await BotCommandService.ExecuteAsync
+                IResult result = await CommandService.ExecuteAsync
                 (
                     context: context,
                     input: input,
@@ -262,7 +262,7 @@ namespace wow2
 
         private static async Task<IEnumerable<CommandInfo>> SearchCommandsAsync(ICommandContext context, string term)
         {
-            var listOfMatchingCommands = (await EventHandlers.BotCommandService.GetExecutableCommandsAsync(
+            return (await CommandService.GetExecutableCommandsAsync(
                 new CommandContext(context.Client, context.Message), null
             ))
             .Where(command =>
@@ -270,7 +270,6 @@ namespace wow2
                 command.Module.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
                 term.Contains(command.Name, StringComparison.OrdinalIgnoreCase) ||
                 term.Contains(command.Module.Name, StringComparison.OrdinalIgnoreCase));
-            return listOfMatchingCommands;
         }
     }
 }
