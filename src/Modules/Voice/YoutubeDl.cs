@@ -42,8 +42,7 @@ namespace wow2.Modules.Voice
             if (!string.IsNullOrWhiteSpace(standardError))
                 throw new ArgumentException(standardError);
 
-            var metadata = JsonSerializer.Deserialize<VideoMetadata>(standardOutput);
-            return metadata;
+            return JsonSerializer.Deserialize<VideoMetadata>(standardOutput);
         }
 
         /// <returns>The FFmpeg process.</returns>
