@@ -20,7 +20,7 @@ namespace wow2.Modules.Keywords
     {
         public static readonly IEmote DeleteReactionEmote = new Emoji("🗑");
         public static readonly IEmote LikeReactionEmote = new Emoji("👍");
-        private const int MaxCountOfRememberedKeywordResponses = 100;
+        private const int MaxCountOfRememberedKeywordResponses = 50;
         private const int MaxNumberOfKeywords = 50;
         private const int MaxNumberOfValues = 20;
 
@@ -90,11 +90,12 @@ namespace wow2.Modules.Keywords
 
             // Remember the messages that are actually keyword responses by adding them to a list.
             config.ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
-            await DataManager.SaveGuildDataToFileAsync(message.GetGuild().Id);
 
             // Remove the oldest message if ListOfResponsesId has reached its max.
             if (config.ListOfResponsesId.Count > MaxCountOfRememberedKeywordResponses)
                 config.ListOfResponsesId.RemoveAt(0);
+
+            await DataManager.SaveGuildDataToFileAsync(message.GetGuild().Id);
         }
 
         /// <summary>Checks if a message was a keyword response sent by the bot, deleting the message if so.</summary>
