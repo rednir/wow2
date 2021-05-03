@@ -124,7 +124,7 @@ namespace wow2
 
                 Logger.LogException(logMessage.Exception);
 
-                // Return as client will immediately reconnect after this exception. 
+                // Client will immediately reconnect after these exceptions. 
                 if ((logMessage.Exception is GatewayReconnectException ||
                     logMessage.Exception.InnerException is WebSocketClosedException ||
                     logMessage.Exception.InnerException is WebSocketException) &&
@@ -132,13 +132,9 @@ namespace wow2
                 {
                     return;
                 }
-
-                try
+                else
                 {
                     await ApplicationInfo.Owner.SendMessageAsync($"```\n{logMessage.Exception}\n```");
-                }
-                catch
-                {
                 }
             }
             else
