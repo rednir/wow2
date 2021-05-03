@@ -72,7 +72,7 @@ namespace wow2.Modules.Dev
             }
             catch (Exception ex)
             {
-                await new ErrorMessage($"```{ex}```")
+                await new ErrorMessage($"```{ex}```", "Test failed due to exception.")
                     .SendAsync(Context.Channel);
             }
         }
