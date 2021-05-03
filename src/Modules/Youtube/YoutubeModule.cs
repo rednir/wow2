@@ -27,7 +27,7 @@ namespace wow2.Modules.YouTube
         private static readonly YouTubeService Service;
         private static readonly Thread YouTubePollingThread = new(async () =>
         {
-            const int delayMins = 5;
+            const int delayMins = 10;
             while (true)
             {
                 try
