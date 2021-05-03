@@ -164,7 +164,7 @@ namespace wow2.Data
         public static void EnsureGuildNameExists(ulong guildId)
         {
             var guildData = DictionaryOfGuildData[guildId];
-            if (guildData.NameOfGuild == null)
+            if (guildData?.NameOfGuild == null)
             {
                 try
                 {
