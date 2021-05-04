@@ -30,10 +30,16 @@ namespace wow2.Verbose
         }
 
         public static void Log(object message, LogSeverity severity = LogSeverity.Debug)
-            => Output($"{DateTime.Now} [{severity}] {message}");
+        {
+            if (severity == LogSeverity.Debug && !Program.IsDebug) return;
+            Output($"{DateTime.Now} [{severity}] {message}");
+        }
 
         public static void Log(LogMessage logMessage)
-            => Output($"{DateTime.Now} [{logMessage.Severity}] {logMessage.Source}: {logMessage.Message}");
+        {
+            if (logMessage.Severity == LogSeverity.Debug && !Program.IsDebug) return;
+            Output($"{DateTime.Now} [{logMessage.Severity}] {logMessage.Source}: {logMessage.Message}");
+        }
 
         public static void LogException(Exception exception, string message = "Exception was thrown:", bool notifyOwner = true)
         {
