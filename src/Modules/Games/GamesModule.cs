@@ -22,7 +22,7 @@ namespace wow2.Modules.Games
 
         [Command("verbal-memory")]
         [Alias("verbal")]
-        [Summary("Try remember as many words as you can, discerning words you have seen before from new words.")]
+        [Summary("Try remember as many words as you can.")]
         public async Task VerbalMemoryAsync()
         {
             await VerbalMemoryGame.StartGame(Context);

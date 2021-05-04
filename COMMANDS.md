@@ -2,13 +2,13 @@
 
 ## Main
  - `!wow about`
-     - Shows infomation about the bot.
+     - Shows some infomation about the bot.
 
  - `!wow help [optional:MODULE] [optional:PAGE]`
-     - If MODULE is left empty, displays all commands. Otherwise displays detailed info about a specific group of commands.
+     - Displays a list of modules or commands in a specific module.
 
  - `!wow alias [NAME] [DEFINITION]`
-     - Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to "" to remove it.
+     - Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to blank to remove it.
 
  - `!wow alias-list`
      - Displays a list of aliases.
@@ -34,6 +34,9 @@
 
  - `!wow yt set-announcements-channel [CHANNEL]`
      - Sets the channel where notifications about new videos will be sent.
+
+ - `!wow yt test-poll`
+     - Check for new videos.
 
 ## Voice
  - `!wow vc list [optional:PAGE]`
@@ -63,6 +66,9 @@
  - `!wow vc toggle-auto-np`
      - Toggles whether the np command will be executed everytime a new song is playing.
 
+ - `!wow vc toggle-auto-join`
+     - Toggles whether the bot will try join when a new song is added to the queue.
+
  - `!wow vc set-vote-skips-needed [NUMBER]`
      - Sets the number of votes needed to skip a song request to NUMBER.
 
@@ -71,7 +77,7 @@
      - Creates a fake quote of a famous person. If you want to use a specific person, set AUTHOR to their name.
 
  - `!wow text replace [OLDVALUE] [NEWVALUE] [TEXT]`
-     - Replaces all instances of OLDVALUE with NEWVALUE within TEXT
+     - Replaces all instances of OLDVALUE with NEWVALUE within TEXT.
 
  - `!wow text emojify [TEXT]`
      - Adds emojis to some text because its funny haha.
@@ -88,6 +94,9 @@
 
  - `!wow osu set-announcements-channel [CHANNEL]`
      - Sets the channel where notifications about users will be sent.
+
+ - `!wow osu test-poll`
+     - Check for new user milestones.
 
 ## Moderator
  - `!wow mod warn [MENTION] [optional:MESSAGE]`
@@ -132,7 +141,7 @@
      - Start counting in a text channel. INCREMENT is the number that will be added each time.
 
  - `!wow games verbal-memory`
-     - Try remember as many words as you can, discerning words you have seen before from new words.
+     - Try remember as many words as you can.
 
  - `!wow games number-memory`
      - Try remember the largest number possible.
@@ -152,6 +161,9 @@
 
  - `!wow dev commands-list`
      - Creates a COMMANDS.md file with a list of all commands.
+
+ - `!wow dev get-logs`
+     - Sends the log file for this session.
 
  - `!wow dev throw`
      - Throws an unhandled exception.

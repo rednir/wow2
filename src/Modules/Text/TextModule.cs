@@ -16,7 +16,7 @@ namespace wow2.Modules.Text
 {
     [Name("Text")]
     [Group("text")]
-    [Summary("For changing and manipulating text.")]
+    [Summary("Change and manipulate text.")]
     public class TextModule : ModuleBase<SocketCommandContext>
     {
         [Command("quote")]
@@ -70,7 +70,7 @@ namespace wow2.Modules.Text
 
         [Command("replace")]
         [Alias("change")]
-        [Summary("Replaces all instances of OLDVALUE with NEWVALUE within TEXT")]
+        [Summary("Replaces all instances of OLDVALUE with NEWVALUE within TEXT.")]
         public async Task ReplaceAsync(string oldValue, string newValue, [Name("text")][Remainder] string text)
         {
             if (!text.Contains(oldValue))

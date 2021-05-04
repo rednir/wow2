@@ -12,18 +12,18 @@ using wow2.Extentions;
 namespace wow2.Modules.Main
 {
     [Name("Main")]
-    [Summary("Commands about the bot.")]
+    [Summary("Stuff to do with the bot.")]
     public class MainModule : ModuleBase<SocketCommandContext>
     {
         [Command("about")]
-        [Summary("Shows infomation about the bot.")]
+        [Summary("Shows some infomation about the bot.")]
         public async Task AboutAsync()
         {
             await SendAboutMessageToChannelAsync(Context);
         }
 
         [Command("help")]
-        [Summary("If MODULE is left empty, displays all commands. Otherwise displays detailed info about a specific group of commands.")]
+        [Summary("Displays a list of modules or commands in a specific module.")]
         public async Task HelpAsync([Name("MODULE")] string group = null, int page = 1)
         {
             // Assume user meant page number instead of group if number.
@@ -52,7 +52,7 @@ namespace wow2.Modules.Main
 
         [Command("alias")]
         [Alias("aliases")]
-        [Summary("Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to \"\" to remove it.")]
+        [Summary("Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to blank to remove it.")]
         public async Task AliasAsync(string name, [Name("DEFINITION")] params string[] definitionSplit)
         {
             var config = GetConfigForGuild(Context.Guild);
@@ -216,7 +216,7 @@ namespace wow2.Modules.Main
                 {
                     var fieldBuilderForModule = new EmbedFieldBuilder()
                     {
-                        Name = $"{module.Name} Module"
+                        Name = $"• {module.Name} Module"
                     };
 
                     if (!String.IsNullOrWhiteSpace(module.Summary))

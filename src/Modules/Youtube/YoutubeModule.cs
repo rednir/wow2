@@ -20,7 +20,7 @@ namespace wow2.Modules.YouTube
     [Name("YouTube")]
     [Group("yt")]
     [Alias("youtube")]
-    [Summary("Integrations with YouTube, such as getting notified for new videos.")]
+    [Summary("Integrations with YouTube, like getting notified for new videos.")]
     public class YouTube : ModuleBase<SocketCommandContext>
     {
         private static DateTime TimeOfLastVideoCheck = DateTime.Now;
