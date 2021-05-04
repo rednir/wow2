@@ -12,6 +12,8 @@ namespace wow2.Verbose
     /// <summary>Contains methods used for writing to a log file and the standard output stream.</summary>
     public static class Logger
     {
+        public static readonly string LogFilePath = $"{DataManager.LogsDirPath}/{Program.TimeStarted:yyyy-MM-dd_HH-mm-ss}.log";
+
         private static readonly HttpClient GithubHttpClient = new()
         {
             BaseAddress = new Uri("https://api.github.com/")
@@ -48,11 +50,14 @@ namespace wow2.Verbose
                 _ = Bot.ApplicationInfo.Owner.SendMessageAsync($"```\n{exception}\n```");
         }
 
+        public static async Task<string> GetLogsForSessionAsync()
+            => await File.ReadAllTextAsync(LogFilePath);
+
         private static void Output(string message)
         {
             try
             {
-                File.AppendAllText($"{DataManager.LogsDirPath}/{Program.TimeStarted:yyyy-MM-dd_HH-mm-ss}.log", message + "\n");
+                File.AppendAllText(LogFilePath, message + "\n");
             }
             catch { }
             finally

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using wow2.Verbose.Messages;
+using wow2.Verbose;
 using wow2.Data;
 using wow2.Extentions;
 
@@ -100,6 +101,15 @@ namespace wow2.Modules.Dev
             await Context.Channel.SendFileAsync(
                 new MemoryStream(Encoding.ASCII.GetBytes(stringBuilder.ToString())),
                 "COMMANDS.md");
+        }
+
+        [Command("get-logs")]
+        [Alias("logs", "log")]
+        [Summary("Sends the log file for this session.")]
+        public async Task GetLogsAsync()
+        {
+            string logs = await Logger.GetLogsForSessionAsync();
+            await Context.Channel.SendFileAsync(new MemoryStream(Encoding.ASCII.GetBytes(logs)), "wow2.log");
         }
 
         [Command("throw")]
