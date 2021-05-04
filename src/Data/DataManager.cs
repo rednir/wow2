@@ -84,7 +84,7 @@ namespace wow2.Data
                     string guildDataJson = await File.ReadAllTextAsync(fileInfo.FullName);
                     DictionaryOfGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
 
-                    Logger.Log($"Loaded guild data for {guildId} (mass load)", LogSeverity.Verbose);
+                    Logger.Log($"Loaded guild data for {DictionaryOfGuildData[guildId].NameOfGuild} ({guildId}) (mass load)", LogSeverity.Verbose);
                 }
                 catch (Exception ex)
                 {
@@ -94,30 +94,30 @@ namespace wow2.Data
         }
 
         /// <summary>Load guild data from the corresponding file.</summary>
-        public static async Task LoadGuildDataFromFileAsync(ulong specifiedGuildId)
+        public static async Task LoadGuildDataFromFileAsync(ulong guildId)
         {
             try
             {
-                string guildDataJson = await File.ReadAllTextAsync($"{AppDataDirPath}/GuildData/{specifiedGuildId}.json");
-                DictionaryOfGuildData[specifiedGuildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
+                string guildDataJson = await File.ReadAllTextAsync($"{AppDataDirPath}/GuildData/{guildId}.json");
+                DictionaryOfGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
 
-                Logger.Log($"Loaded guild data for {specifiedGuildId} (specific load)", LogSeverity.Verbose);
+                Logger.Log($"Loaded guild data for {DictionaryOfGuildData[guildId].NameOfGuild} ({guildId}) (specific load)", LogSeverity.Verbose);
             }
             catch (Exception ex)
             {
-                Logger.Log($"Failed to load for guild {specifiedGuildId} due to: {ex.Message} (specific load)", LogSeverity.Error);
+                Logger.Log($"Failed to load for guild {guildId} due to: {ex.Message} (specific load)", LogSeverity.Error);
             }
         }
 
         /// <summary>Write all guild data to corresponding files.</summary>
         public static async Task SaveGuildDataToFileAsync()
         {
-            foreach (ulong id in DictionaryOfGuildData.Keys)
+            foreach (ulong guildId in DictionaryOfGuildData.Keys)
             {
-                EnsureGuildNameExists(id);
+                EnsureGuildNameExists(guildId);
                 await File.WriteAllTextAsync(
-                    $"{GuildDataDirPath}/{id}.json", JsonSerializer.Serialize(DictionaryOfGuildData[id], SerializerOptions));
-                Logger.Log($"Saved guild data for {id} (mass save)", LogSeverity.Verbose);
+                    $"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(DictionaryOfGuildData[guildId], SerializerOptions));
+                Logger.Log($"Saved guild data for {DictionaryOfGuildData[guildId].NameOfGuild} ({guildId}) (mass save)", LogSeverity.Verbose);
             }
         }
 
@@ -130,7 +130,7 @@ namespace wow2.Data
             EnsureGuildNameExists(guildId);
             await File.WriteAllTextAsync(
                 $"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(guildData, SerializerOptions));
-            Logger.Log($"Saved guild data for {guildId} (specific save)", LogSeverity.Verbose);
+            Logger.Log($"Saved guild data for {DictionaryOfGuildData[guildId].NameOfGuild} ({guildId}) (specific save)", LogSeverity.Verbose);
         }
 
         /// <summary>If the GuildData for the specified guild does not exist, one will be created.</summary>
