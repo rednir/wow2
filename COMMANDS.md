@@ -1,6 +1,8 @@
-# List of commands
+# List of commands (53 total)
 
 ## Main
+Stuff to do with the bot.
+
  - `!wow about`
      - Shows some infomation about the bot.
 
@@ -23,6 +25,8 @@
      - Change the prefix used to identify commands. '!wow' is the default.
 
 ## YouTube
+Integrations with YouTube, like getting notified for new videos.
+
  - `!wow yt channel [CHANNEL]`
      - Shows some basic data about a channel.
 
@@ -39,6 +43,8 @@
      - Check for new videos.
 
 ## Voice
+For playing YouTube or Twitch audio in a voice channel.
+
  - `!wow vc list [optional:PAGE]`
      - Show the song request queue.
 
@@ -73,6 +79,8 @@
      - Sets the number of votes needed to skip a song request to NUMBER.
 
 ## Text
+Change and manipulate text.
+
  - `!wow text quote [QUOTE] [optional:AUTHOR]`
      - Creates a fake quote of a famous person. If you want to use a specific person, set AUTHOR to their name.
 
@@ -83,6 +91,8 @@
      - Adds emojis to some text because its funny haha.
 
 ## osu!
+Integrations with the osu!api
+
  - `!wow osu user [USER]`
      - Get some infomation about a user.
 
@@ -99,6 +109,8 @@
      - Check for new user milestones.
 
 ## Moderator
+For using tools to manage the server. This is still very rudimentary and unfinished.  Requires the 'Ban Members' permission.
+
  - `!wow mod warn [MENTION] [optional:MESSAGE]`
      - Sends a warning to a user with an optional message.
 
@@ -115,6 +127,8 @@
      - Toggles whether the bot give warnings to users, for example if spam is detected.
 
 ## Keywords
+For automatically responding to keywords in user messages.
+
  - `!wow keywords add [KEYWORD] [VALUE]`
      - Adds value(s) to a keyword, creating a new keyword if it doesn't exist.
 
@@ -137,6 +151,8 @@
      - Toggles whether bot responses to keywords should have a thumbs up reaction.
 
 ## Games
+For having a bit of fun.
+
  - `!wow games counting [optional:INCREMENT]`
      - Start counting in a text channel. INCREMENT is the number that will be added each time.
 
@@ -147,6 +163,8 @@
      - Try remember the largest number possible.
 
 ## Developer
+Boring stuff for developers.
+
  - `!wow dev load-guild-data`
      - Loads guild data from file to memory, discarding any unsaved changes.
 
@@ -167,3 +185,4 @@
 
  - `!wow dev throw`
      - Throws an unhandled exception.
+

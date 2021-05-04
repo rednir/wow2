@@ -86,10 +86,12 @@ namespace wow2.Modules.Dev
             var commandsGroupedByModule = Bot.CommandService.Commands
                 .GroupBy(c => c.Module);
 
-            var stringBuilder = new StringBuilder("# List of commands\n\n");
+            var stringBuilder = new StringBuilder($"# List of commands ({Bot.CommandService.Commands.Count()} total)\n\n");
             foreach (var module in commandsGroupedByModule)
             {
-                stringBuilder.AppendLine($"## {module.Key.Name}");
+                stringBuilder.AppendLine(
+                    $"## {module.Key.Name}\n{module.First().Module.Summary}\n");
+
                 foreach (var command in module)
                 {
                     string summary = command.Summary == null ? null : $"\n     - {command.Summary}";
