@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -152,6 +153,10 @@ namespace wow2.Extentions
                 .Insert(0, ' ').Append(' ').ToString();
             return stringToSearchWithBoundaries.Contains($" {word} ");
         }
+
+        /// <returns>A memory stream containing the bytes of the string</returns>
+        public static MemoryStream ToMemoryStream(this string inputString)
+            => new(Encoding.ASCII.GetBytes(inputString));
 
         /// <returns>The list of commands as a readable string, with newlines placed between each command.</returns>
         public static string MakeReadableString(this IEnumerable<CommandInfo> commands, string commandPrefix)

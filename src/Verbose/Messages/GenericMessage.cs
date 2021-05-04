@@ -3,6 +3,7 @@ using System.Text;
 using System.IO;
 using System.Collections.Generic;
 using Discord;
+using wow2.Extentions;
 
 namespace wow2.Verbose.Messages
 {
@@ -20,7 +21,7 @@ namespace wow2.Verbose.Messages
             if (description.Length >= maxDescriptionLength)
             {
                 // The description will be uploaded as a file.
-                DescriptionAsStream = new MemoryStream(Encoding.ASCII.GetBytes(description));
+                DescriptionAsStream = description.ToMemoryStream();
                 description = "[DELETED]";
             }
 

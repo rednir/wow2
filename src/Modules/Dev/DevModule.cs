@@ -99,8 +99,7 @@ namespace wow2.Modules.Dev
             }
 
             await Context.Channel.SendFileAsync(
-                new MemoryStream(Encoding.ASCII.GetBytes(stringBuilder.ToString())),
-                "COMMANDS.md");
+                stringBuilder.ToString().ToMemoryStream(), "COMMANDS.md");
         }
 
         [Command("get-logs")]
@@ -109,7 +108,7 @@ namespace wow2.Modules.Dev
         public async Task GetLogsAsync()
         {
             string logs = await Logger.GetLogsForSessionAsync();
-            await Context.Channel.SendFileAsync(new MemoryStream(Encoding.ASCII.GetBytes(logs)), "wow2.log");
+            await Context.Channel.SendFileAsync(logs.ToMemoryStream(), "wow2.log");
         }
 
         [Command("throw")]
