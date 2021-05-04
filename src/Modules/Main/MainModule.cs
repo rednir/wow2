@@ -12,7 +12,7 @@ using wow2.Extentions;
 namespace wow2.Modules.Main
 {
     [Name("Main")]
-    [Summary("Commands that don't fit anywhere else.")]
+    [Summary("Commands about the bot.")]
     public class MainModule : ModuleBase<SocketCommandContext>
     {
         [Command("about")]
@@ -34,9 +34,10 @@ namespace wow2.Modules.Main
             if (string.IsNullOrWhiteSpace(group))
             {
                 await new GenericMessage(
+                    description: $"There's {Bot.CommandService.Commands.Count()} total commands for you to play around with.",
+                    title: "📃 Help",
                     fieldBuilders: await ModuleInfoToEmbedFieldsAsync(commandPrefix),
-                    fieldBuildersPage: page,
-                    title: "📃 Help")
+                    fieldBuildersPage: page)
                         .SendAsync(Context.Channel);
             }
             else
