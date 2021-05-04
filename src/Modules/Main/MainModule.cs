@@ -27,8 +27,11 @@ namespace wow2.Modules.Main
         public async Task HelpAsync([Name("MODULE")] string group = null, int page = 1)
         {
             // Assume user meant page number instead of group if number.
-            if (int.TryParse(group, out page))
+            if (int.TryParse(group, out int groupParameterAsPage))
+            {
+                page = groupParameterAsPage;
                 group = null;
+            }
 
             var commandPrefix = GetConfigForGuild(Context.Guild).CommandPrefix;
             if (string.IsNullOrWhiteSpace(group))
