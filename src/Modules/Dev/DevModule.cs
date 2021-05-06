@@ -1,7 +1,8 @@
 using System;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -111,6 +112,31 @@ namespace wow2.Modules.Dev
         {
             string logs = await Logger.GetLogsForSessionAsync();
             await Context.Channel.SendFileAsync(logs.ToMemoryStream(), "wow2.log");
+        }
+
+        [Command("shell-execute")]
+        [Alias("shell", "execute")]
+        [Summary("Executes a command on the host machine.")]
+        public async Task ShellExecuteAsync([Remainder] string command)
+        {
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            string standardOutput = "";
+            string standardError = "";
+            using (var process = new Process())
+            {
+                process.StartInfo.FileName = isWindows ? "cmd" : "bash";
+                process.StartInfo.Arguments = $"{(isWindows ? "/c" : "-c")} \"{command}\"";
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.OutputDataReceived += (_, outline) => standardOutput += outline.Data + "\n";
+                process.ErrorDataReceived += (_, outline) => standardError += outline.Data + "\n";
+
+                process.Start();
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+                await process.WaitForExitAsync();
+            }
+            await ReplyAsync($"```STDOUT:\n{standardOutput}```\n```STDERR:\n{standardError}```");
         }
 
         [Command("throw")]
