@@ -36,7 +36,7 @@ namespace wow2.Modules.Voice
                 var fieldBuilderForSongRequest = new EmbedFieldBuilder()
                 {
                     Name = $"{i}) {songRequest.VideoMetadata.title}",
-                    Value = $"{songRequest.VideoMetadata.webpage_url}\nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy.Mention}"
+                    Value = $"{songRequest.VideoMetadata.webpage_url}\nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy?.Mention}"
                 };
                 listOfFieldBuilders.Add(fieldBuilderForSongRequest);
             }
@@ -242,7 +242,12 @@ namespace wow2.Modules.Voice
 
             config.SavedSongRequestQueues.Add(name, config.SongRequestQueue);
 
-            await new SuccessMessage("You can safely clear the current song request queue if you want.", "Saved queue")
+            // TODO: Slow, hacky workaround to copy the queue.
+            //       Maybe look into ICloneable or something.
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await DataManager.LoadGuildDataFromFileAsync(Context.Guild.Id);
+
+            await new SuccessMessage("The current queue was cleared. You can reload this queue anytime you want.", "Saved queue")
                 .SendAsync(Context.Channel);
         }
 
@@ -259,7 +264,8 @@ namespace wow2.Modules.Voice
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
                     Name = $"`{pair.Key}`",
-                    Value = $"Total songs: {pair.Value.Count}"
+                    Value = $"Total songs: {pair.Value.Count}",
+                    IsInline = true
                 });
             }
 
@@ -268,6 +274,24 @@ namespace wow2.Modules.Voice
                 fieldBuilders: listOfFieldBuilders,
                 fieldBuildersPage: page)
                     .SendAsync(Context.Channel);
+        }
+
+        [Command("pop-queue")]
+        [Alias("load", "load-queue", "loadqueue", "pop", "popqueue")]
+        [Summary("Replaces the current song request queue with a saved queue. The saved queue will also be deleted.")]
+        public async Task PopQueueAsync([Remainder] string name)
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            if (!config.SavedSongRequestQueues.TryGetValue(name, out var loadedQueue))
+                throw new CommandReturnException(Context, "No queue with that name exists.");
+
+            config.SongRequestQueue = loadedQueue;
+            config.SavedSongRequestQueues.Remove(name);
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+
+            await new SuccessMessage("Also deleted queue from the saved queue list.", "Loaded queue")
+                .SendAsync(Context.Channel);
         }
 
         [Command("toggle-loop")]
