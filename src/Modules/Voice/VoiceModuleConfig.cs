@@ -10,13 +10,11 @@ namespace wow2.Modules.Voice
         public bool IsAutoNpOn { get; set; } = true;
         public bool IsAutoJoinOn { get; set; } = true;
         public int VoteSkipsNeeded { get; set; } = 1;
+        public Queue<UserSongRequest> CurrentSongRequestQueue { get; set; } = new();
         public Dictionary<string, Queue<UserSongRequest>> SavedSongRequestQueues { get; set; } = new();
 
         [JsonIgnore]
         public List<ulong> ListOfUserIdsThatVoteSkipped { get; set; } = new();
-
-        [JsonIgnore]
-        public Queue<UserSongRequest> SongRequestQueue { get; set; } = new();
 
         [JsonIgnore]
         public UserSongRequest CurrentlyPlayingSongRequest { get; set; }

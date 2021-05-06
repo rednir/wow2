@@ -29,7 +29,7 @@ namespace wow2.Modules.Voice
 
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             int i = 0;
-            foreach (UserSongRequest songRequest in config.SongRequestQueue)
+            foreach (UserSongRequest songRequest in config.CurrentSongRequestQueue)
             {
                 i++;
 
@@ -58,7 +58,7 @@ namespace wow2.Modules.Voice
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            config.SongRequestQueue.Clear();
+            config.CurrentSongRequestQueue.Clear();
             StopPlaying(config);
             await new SuccessMessage("The song request queue was cleared.")
                 .SendAsync(Context.Channel);
@@ -88,14 +88,14 @@ namespace wow2.Modules.Voice
                 return;
             }
 
-            config.SongRequestQueue.Enqueue(new UserSongRequest()
+            config.CurrentSongRequestQueue.Enqueue(new UserSongRequest()
             {
                 VideoMetadata = metadata,
                 TimeRequested = DateTime.Now,
                 RequestedBy = Context.User
             });
 
-            await new SuccessMessage($"Added song request to the number `{config.SongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
+            await new SuccessMessage($"Added song request to the number `{config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
                 .SendAsync(Context.Channel);
 
             if (config.IsAutoJoinOn)
@@ -121,12 +121,12 @@ namespace wow2.Modules.Voice
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            if (number < 1 || number > config.SongRequestQueue.Count)
+            if (number < 1 || number > config.CurrentSongRequestQueue.Count)
                 throw new CommandReturnException(Context, "There's no song request at that place in the queue", "Invalid number");
 
             int elementToRemoveIndex = number - 1;
-            config.SongRequestQueue = new Queue<UserSongRequest>(
-                config.SongRequestQueue.Where((_, i) => i != elementToRemoveIndex));
+            config.CurrentSongRequestQueue = new Queue<UserSongRequest>(
+                config.CurrentSongRequestQueue.Where((_, i) => i != elementToRemoveIndex));
 
             await new SuccessMessage("Removed from the queue.")
                 .SendAsync(Context.Channel);
@@ -141,10 +141,10 @@ namespace wow2.Modules.Voice
 
             int startIndex = start - 1;
             int endIndex = end - 1;
-            config.SongRequestQueue = new Queue<UserSongRequest>(
-                config.SongRequestQueue.Where((_, i) => i < startIndex || i > endIndex));
+            config.CurrentSongRequestQueue = new Queue<UserSongRequest>(
+                config.CurrentSongRequestQueue.Where((_, i) => i < startIndex || i > endIndex));
 
-            await new SuccessMessage($"There's now {config.SongRequestQueue.Count} songs in the queue.", "Removed from the queue.")
+            await new SuccessMessage($"There's now {config.CurrentSongRequestQueue.Count} songs in the queue.", "Removed from the queue.")
                 .SendAsync(Context.Channel);
         }
 
@@ -240,7 +240,7 @@ namespace wow2.Modules.Voice
             if (config.SavedSongRequestQueues.ContainsKey(name))
                 throw new CommandReturnException(Context, "You already have a saved queue with that name.");
 
-            config.SavedSongRequestQueues.Add(name, config.SongRequestQueue);
+            config.SavedSongRequestQueues.Add(name, config.CurrentSongRequestQueue);
 
             // TODO: Slow, hacky workaround to copy the queue.
             //       Maybe look into ICloneable or something.
@@ -286,7 +286,7 @@ namespace wow2.Modules.Voice
             if (!config.SavedSongRequestQueues.TryGetValue(name, out var loadedQueue))
                 throw new CommandReturnException(Context, "No queue with that name exists.");
 
-            config.SongRequestQueue = loadedQueue;
+            config.CurrentSongRequestQueue = loadedQueue;
             config.SavedSongRequestQueues.Remove(name);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
 
@@ -426,7 +426,7 @@ namespace wow2.Modules.Voice
             {
                 await PlayRequestAsync(config.CurrentlyPlayingSongRequest, config.CtsForAudioStreaming.Token);
             }
-            else if (config.SongRequestQueue.TryDequeue(out UserSongRequest nextRequest))
+            else if (config.CurrentSongRequestQueue.TryDequeue(out UserSongRequest nextRequest))
             {
                 await PlayRequestAsync(nextRequest, config.CtsForAudioStreaming.Token);
             }
