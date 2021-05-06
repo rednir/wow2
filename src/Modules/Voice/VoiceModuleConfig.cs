@@ -10,12 +10,13 @@ namespace wow2.Modules.Voice
         public bool IsAutoNpOn { get; set; } = true;
         public bool IsAutoJoinOn { get; set; } = true;
         public int VoteSkipsNeeded { get; set; } = 1;
+        public Dictionary<string, Queue<UserSongRequest>> SavedSongRequestQueues { get; set; } = new();
 
         [JsonIgnore]
-        public List<ulong> ListOfUserIdsThatVoteSkipped { get; set; } = new List<ulong>();
+        public List<ulong> ListOfUserIdsThatVoteSkipped { get; set; } = new();
 
         [JsonIgnore]
-        public Queue<UserSongRequest> SongRequests { get; set; } = new Queue<UserSongRequest>();
+        public Queue<UserSongRequest> SongRequestQueue { get; set; } = new();
 
         [JsonIgnore]
         public UserSongRequest CurrentlyPlayingSongRequest { get; set; }
@@ -27,6 +28,6 @@ namespace wow2.Modules.Voice
         public IAudioClient AudioClient { get; set; }
 
         [JsonIgnore]
-        public CancellationTokenSource CtsForAudioStreaming { get; set; } = new CancellationTokenSource();
+        public CancellationTokenSource CtsForAudioStreaming { get; set; } = new();
     }
 }

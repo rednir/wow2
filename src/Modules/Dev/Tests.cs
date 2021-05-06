@@ -73,7 +73,7 @@ namespace wow2.Modules.Dev
                     await DelayAsync(context, 3000);
                     await AssertAsync(context, new Dictionary<string, bool>()
                     {
-                        {"song request queue is empty", config.SongRequests.Count == 0},
+                        {"song request queue is empty", config.SongRequestQueue.Count == 0},
                         {"nothing is playing", config.CurrentlyPlayingSongRequest == null},
                         {"audio client has connected", !VoiceModule.CheckIfAudioClientDisconnected(config.AudioClient)}
                     });
@@ -88,7 +88,7 @@ namespace wow2.Modules.Dev
                     await AssertAsync(context, new Dictionary<string, bool>()
                     {
                         {"currently playing is not null", config.CurrentlyPlayingSongRequest != null},
-                        {"song request queue is correct length", config.SongRequests.Count == 2}
+                        {"song request queue is correct length", config.SongRequestQueue.Count == 2}
                     });
 
                     var firstCurrentlyPlayingRequest = config.CurrentlyPlayingSongRequest;
@@ -103,7 +103,7 @@ namespace wow2.Modules.Dev
                     await ExecuteAsync(context,
                         "vc clear");
                     await AssertAsync(context,
-                        "song request queue is empty", config.SongRequests.Count == 0);
+                        "song request queue is empty", config.SongRequestQueue.Count == 0);
 
                     await ExecuteAsync(context,
                         "vc leave");

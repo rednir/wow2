@@ -29,7 +29,7 @@ namespace wow2.Modules.Voice
 
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             int i = 0;
-            foreach (UserSongRequest songRequest in config.SongRequests)
+            foreach (UserSongRequest songRequest in config.SongRequestQueue)
             {
                 i++;
 
@@ -58,7 +58,7 @@ namespace wow2.Modules.Voice
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            config.SongRequests.Clear();
+            config.SongRequestQueue.Clear();
             StopPlaying(config);
             await new SuccessMessage("The song request queue was cleared.")
                 .SendAsync(Context.Channel);
@@ -88,14 +88,14 @@ namespace wow2.Modules.Voice
                 return;
             }
 
-            config.SongRequests.Enqueue(new UserSongRequest()
+            config.SongRequestQueue.Enqueue(new UserSongRequest()
             {
                 VideoMetadata = metadata,
                 TimeRequested = DateTime.Now,
                 RequestedBy = Context.User
             });
 
-            await new SuccessMessage($"Added song request to the number `{config.SongRequests.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
+            await new SuccessMessage($"Added song request to the number `{config.SongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
                 .SendAsync(Context.Channel);
 
             if (config.IsAutoJoinOn)
@@ -121,12 +121,12 @@ namespace wow2.Modules.Voice
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            if (number < 1 || number > config.SongRequests.Count)
+            if (number < 1 || number > config.SongRequestQueue.Count)
                 throw new CommandReturnException(Context, "There's no song request at that place in the queue", "Invalid number");
 
             int elementToRemoveIndex = number - 1;
-            config.SongRequests = new Queue<UserSongRequest>(
-                config.SongRequests.Where((_, i) => i != elementToRemoveIndex));
+            config.SongRequestQueue = new Queue<UserSongRequest>(
+                config.SongRequestQueue.Where((_, i) => i != elementToRemoveIndex));
 
             await new SuccessMessage("Removed from the queue.")
                 .SendAsync(Context.Channel);
@@ -141,10 +141,10 @@ namespace wow2.Modules.Voice
 
             int startIndex = start - 1;
             int endIndex = end - 1;
-            config.SongRequests = new Queue<UserSongRequest>(
-                config.SongRequests.Where((_, i) => i < startIndex || i > endIndex));
+            config.SongRequestQueue = new Queue<UserSongRequest>(
+                config.SongRequestQueue.Where((_, i) => i < startIndex || i > endIndex));
 
-            await new SuccessMessage($"There's now {config.SongRequests.Count} songs in the queue.", "Removed from the queue.")
+            await new SuccessMessage($"There's now {config.SongRequestQueue.Count} songs in the queue.", "Removed from the queue.")
                 .SendAsync(Context.Channel);
         }
 
@@ -228,10 +228,52 @@ namespace wow2.Modules.Voice
             await DisplayCurrentlyPlayingRequestAsync();
         }
 
+        [Command("save-queue")]
+        [Alias("save", "savequeue", "save-list", "savelist")]
+        [Summary("Saves the current song request queue with a name for later use.")]
+        public async Task SaveQueueAsync([Remainder] string name)
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            if (name.Length > 50)
+                throw new CommandReturnException(Context, "Name can't be longer than 50 characters");
+            if (config.SavedSongRequestQueues.ContainsKey(name))
+                throw new CommandReturnException(Context, "You already have a saved queue with that name.");
+
+            config.SavedSongRequestQueues.Add(name, config.SongRequestQueue);
+
+            await new SuccessMessage("You can safely clear the current song request queue if you want.", "Saved queue")
+                .SendAsync(Context.Channel);
+        }
+
+        [Command("list-saved")]
+        [Alias("listsaved", "saved")]
+        [Summary("Shows a list of saved song request queues.")]
+        public async Task ListSavedAsync(int page = 1)
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+            foreach (var pair in config.SavedSongRequestQueues)
+            {
+                listOfFieldBuilders.Add(new EmbedFieldBuilder()
+                {
+                    Name = $"`{pair.Key}`",
+                    Value = $"Total songs: {pair.Value.Count}"
+                });
+            }
+
+            await new GenericMessage(
+                title: "💾 Saved Queues",
+                fieldBuilders: listOfFieldBuilders,
+                fieldBuildersPage: page)
+                    .SendAsync(Context.Channel);
+        }
+
         [Command("toggle-loop")]
         [Alias("loop")]
         [Summary("Toggles whether the current song request will keep looping.")]
-        public async Task ToggleLoop()
+        public async Task ToggleLoopAsync()
         {
             var config = GetConfigForGuild(Context.Guild);
 
@@ -242,7 +284,7 @@ namespace wow2.Modules.Voice
 
         [Command("toggle-auto-np")]
         [Summary("Toggles whether the np command will be executed everytime a new song is playing.")]
-        public async Task ToggleAutoNp()
+        public async Task ToggleAutoNpAsync()
         {
             var config = GetConfigForGuild(Context.Guild);
 
@@ -254,7 +296,7 @@ namespace wow2.Modules.Voice
 
         [Command("toggle-auto-join")]
         [Summary("Toggles whether the bot will try join when a new song is added to the queue.")]
-        public async Task ToggleAutoJoin()
+        public async Task ToggleAutoJoinAsync()
         {
             var config = GetConfigForGuild(Context.Guild);
 
@@ -266,7 +308,7 @@ namespace wow2.Modules.Voice
 
         [Command("set-vote-skips-needed")]
         [Summary("Sets the number of votes needed to skip a song request to NUMBER.")]
-        public async Task SetVoteSkipsNeeded([Name("NUMBER")] int newNumberOfSkips)
+        public async Task SetVoteSkipsNeededAsync([Name("NUMBER")] int newNumberOfSkips)
         {
             if (newNumberOfSkips > Context.Guild.MemberCount)
                 throw new CommandReturnException(Context, "The number of votes required is greater than the amount of people in the server.", "Number too large");
@@ -360,7 +402,7 @@ namespace wow2.Modules.Voice
             {
                 await PlayRequestAsync(config.CurrentlyPlayingSongRequest, config.CtsForAudioStreaming.Token);
             }
-            else if (config.SongRequests.TryDequeue(out UserSongRequest nextRequest))
+            else if (config.SongRequestQueue.TryDequeue(out UserSongRequest nextRequest))
             {
                 await PlayRequestAsync(nextRequest, config.CtsForAudioStreaming.Token);
             }
