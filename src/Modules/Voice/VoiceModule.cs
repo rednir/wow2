@@ -114,6 +114,40 @@ namespace wow2.Modules.Voice
                 _ = ContinueAsync();
         }
 
+        [Command("remove")]
+        [Alias("delete")]
+        [Summary("Removes a song request from the queue at the given index.")]
+        public async Task RemoveAsync(int number)
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            if (number < 1 || number > config.SongRequests.Count)
+                throw new CommandReturnException(Context, "There's no song request at that place in the queue", "Invalid number");
+
+            int elementToRemoveIndex = number - 1;
+            config.SongRequests = new Queue<UserSongRequest>(
+                config.SongRequests.Where((_, i) => i != elementToRemoveIndex));
+
+            await new SuccessMessage("Removed from the queue.")
+                .SendAsync(Context.Channel);
+        }
+
+        [Command("remove-many")]
+        [Alias("remove", "delete", "delete-many", "deletemany", "remove-many", "removemany")]
+        [Summary("Removes all song requests from START to END inclusive.")]
+        public async Task RemoveManyAsync(int start, int end)
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            int startIndex = start - 1;
+            int endIndex = end - 1;
+            config.SongRequests = new Queue<UserSongRequest>(
+                config.SongRequests.Where((_, i) => i < startIndex || i > endIndex));
+
+            await new SuccessMessage($"There's now {config.SongRequests.Count} songs in the queue.", "Removed from the queue.")
+                .SendAsync(Context.Channel);
+        }
+
         [Command("skip")]
         [Alias("next")]
         [Summary("Stops the currently playing request and starts the next request if it exists.")]
