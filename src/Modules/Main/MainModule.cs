@@ -164,7 +164,7 @@ namespace wow2.Modules.Main
 
             var embedBuilder = new EmbedBuilder()
             {
-                Title = appInfo.Name,
+                Title = $"{appInfo.Name}  •  in {Bot.Client.Guilds.Count} servers",
                 Description = (string.IsNullOrWhiteSpace(appInfo.Description) ? "" : appInfo.Description) + "\n[Link to github](https://github.com/rednir/wow2)",
                 Color = Color.LightGrey,
                 Author = new EmbedAuthorBuilder()
