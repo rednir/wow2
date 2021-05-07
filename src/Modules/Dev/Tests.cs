@@ -132,6 +132,33 @@ namespace wow2.Modules.Dev
                     await DelayAsync(context, 10000);
                     await AssertAsync(context,
                         "song request queue is correct length", config.CurrentSongRequestQueue.Count == 2);
+
+                    await ExecuteAsync(context,
+                        $"vc save {queueName}");
+                    await AssertAsync(context, new()
+                    {
+                        {"testing queue exists in saved queues", config.SavedSongRequestQueues.ContainsKey(queueName)},
+                        {"correct number of songs in testing queue", config.SavedSongRequestQueues[queueName].Count == 2}
+                    });
+
+                    await ExecuteAsync(context,
+                        "vc clear");
+                    await AssertAsync(context, new()
+                    {
+                        {"song request queue is empty", config.CurrentSongRequestQueue.Count == 0},
+                        {"testing queue was unmodified", config.SavedSongRequestQueues[queueName].Count == 2}
+                    });
+
+                    await ExecuteAsync(context,
+                        $"vc pop-queue {queueName}");
+                    await AssertAsync(context, new()
+                    {
+                        {"testing queue does not exist", !config.SavedSongRequestQueues.ContainsKey(queueName)},
+                        {"song request queue is correct length", config.CurrentSongRequestQueue.Count == 2}
+                    });
+
+                    await ExecuteAsync(context,
+                        "vc clear");
                 }
             },
             {
