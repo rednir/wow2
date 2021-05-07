@@ -63,7 +63,7 @@ namespace wow2.Modules.Dev
                 foreach (string name in testList.Keys)
                     result += $"`{name}`\n";
 
-                await new InfoMessage(result, "List of tests")
+                await new GenericMessage(result, "List of tests")
                     .SendAsync(Context.Channel);
                 return;
             }

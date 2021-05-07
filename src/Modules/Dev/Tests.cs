@@ -17,7 +17,7 @@ namespace wow2.Modules.Dev
         /// <summary>The time in milliseconds between asserts/commands</summary>
         private const int CommandDelay = 1000;
 
-        private static Dictionary<string, Func<ICommandContext, Task>> TestList = new();
+        private static readonly Dictionary<string, Func<ICommandContext, Task>> TestList = new();
 
         static Tests()
         {
