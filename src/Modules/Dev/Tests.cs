@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -16,35 +17,26 @@ namespace wow2.Modules.Dev
         /// <summary>The time in milliseconds between asserts/commands</summary>
         private const int CommandDelay = 1000;
 
-        public static readonly Dictionary<string, Func<ICommandContext, Task>> TestList = new()
-        {
-            {
-                "messages",
-                MessagesTest
-            },
-            {
-                "aliases",
-                AliasesTest
-            },
-            {
-                "voice",
-                VoiceTest
-            },
-            {
-                "voice-queue",
-                VoiceQueueTest
-            },
-            {
-                "keywords",
-                KeywordsTest
-            },
-            {
-                "quotes",
-                QuotesTest
-            }
-        };
+        private static Dictionary<string, Func<ICommandContext, Task>> TestList = new();
 
-        private static async Task MessagesTest(ICommandContext context)
+        static Tests()
+        {
+            var a = typeof(Tests).GetMethods();
+            var testMethods = typeof(Tests).GetMethods().Where(
+                m => m.GetCustomAttributes(typeof(TestAttribute), false).Length > 0);
+
+            foreach (MethodInfo method in testMethods)
+            {
+                var func = (Func<ICommandContext, Task>)Delegate.CreateDelegate(
+                    typeof(Func<ICommandContext, Task>), null, method);
+                TestList.Add(method.Name, func);
+            }
+        }
+
+        public static Dictionary<string, Func<ICommandContext, Task>> GetTestList() => TestList;
+
+        [Test]
+        public static async Task MessagesTest(ICommandContext context)
         {
             await new SuccessMessage("This is a success message.", "Success").SendAsync(context.Channel);
             await new InfoMessage("This is an info message.", "Info").SendAsync(context.Channel);
@@ -65,7 +57,8 @@ namespace wow2.Modules.Dev
                 .SendAsync(context.Channel);
         }
 
-        private static async Task AliasesTest(ICommandContext context)
+        [Test]
+        public static async Task AliasesTest(ICommandContext context)
         {
             var config = MainModule.GetConfigForGuild(context.Guild);
             const string aliasName = "testing_alias";
@@ -84,7 +77,8 @@ namespace wow2.Modules.Dev
                 "alias has been removed", !config.AliasesDictionary.ContainsKey(aliasName));
         }
 
-        private static async Task VoiceTest(ICommandContext context)
+        [Test]
+        public static async Task VoiceTest(ICommandContext context)
         {
             // TODO: These Task.Delays are a bit of a hacky workaround.
             //       Find some way to reliably wait until the command finishes with timeout.
@@ -136,7 +130,8 @@ namespace wow2.Modules.Dev
                 "audio client has disconnected", VoiceModule.CheckIfAudioClientDisconnected(config.AudioClient));
         }
 
-        private static async Task VoiceQueueTest(ICommandContext context)
+        [Test]
+        public static async Task VoiceQueueTest(ICommandContext context)
         {
             var config = VoiceModule.GetConfigForGuild(context.Guild);
             const string queueName = "testing-queue";
@@ -185,7 +180,8 @@ namespace wow2.Modules.Dev
                 "vc clear");
         }
 
-        private static async Task KeywordsTest(ICommandContext context)
+        [Test]
+        public static async Task KeywordsTest(ICommandContext context)
         {
             var config = KeywordsModule.GetConfigForGuild(context.Guild);
             const string keywordName = "testing_keyword";
@@ -216,7 +212,8 @@ namespace wow2.Modules.Dev
                 "keyword was removed", !config.KeywordsDictionary.ContainsKey(keywordName));
         }
 
-        private static async Task QuotesTest(ICommandContext context)
+        [Test]
+        public static async Task QuotesTest(ICommandContext context)
         {
             // TODO: also test specified author
             string repeatedText = string.Concat(
