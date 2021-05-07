@@ -47,7 +47,7 @@ namespace wow2.Modules.Dev
 
                     await ExecuteAsync(context,
                         $"alias {aliasName} \"{config.CommandPrefix} help\"");
-                    await AssertAsync(context, new Dictionary<string, bool>()
+                    await AssertAsync(context, new()
                     {
                         {"key exists in dictionary", config.AliasesDictionary.ContainsKey(aliasName)},
                         {"check definition", config.AliasesDictionary[aliasName] == "help"}
@@ -71,7 +71,7 @@ namespace wow2.Modules.Dev
                         "vc skip",
                         "vc join");
                     await DelayAsync(context, 3000);
-                    await AssertAsync(context, new Dictionary<string, bool>()
+                    await AssertAsync(context, new()
                     {
                         {"song request queue is empty", config.CurrentSongRequestQueue.Count == 0},
                         {"nothing is playing", config.CurrentlyPlayingSongRequest == null},
@@ -82,10 +82,10 @@ namespace wow2.Modules.Dev
                         "vc add never gonna give you up",
                         "vc add https://www.youtube.com/watch?v=dQw4w9WgXcQ",
                         "vc add \"me at the zoo\"");
-                    await DelayAsync(context, 15000);
+                    await DelayAsync(context, 10000);
                     await ExecuteAsync(context,
                         "vc list");
-                    await AssertAsync(context, new Dictionary<string, bool>()
+                    await AssertAsync(context, new()
                     {
                         {"currently playing is not null", config.CurrentlyPlayingSongRequest != null},
                         {"song request queue is correct length", config.CurrentSongRequestQueue.Count == 2}
@@ -95,7 +95,7 @@ namespace wow2.Modules.Dev
 
                     await ExecuteAsync(context,
                         "vc skip");
-                    await AssertAsync(context, new Dictionary<string, bool>()
+                    await AssertAsync(context, new()
                     {
                         {"check next request is playing", config.CurrentlyPlayingSongRequest != firstCurrentlyPlayingRequest}
                     });
@@ -112,6 +112,29 @@ namespace wow2.Modules.Dev
                 }
             },
             {
+                "voice-queue", async (context) =>
+                {
+                    var config = VoiceModule.GetConfigForGuild(context.Guild);
+                    const string queueName = "testing-queue";
+
+                    await ExecuteAsync(context,
+                        $"vc pop-queue {queueName}",
+                        "vc clear");
+                    await AssertAsync(context, new()
+                    {
+                        {"testing queue does not exist", !config.SavedSongRequestQueues.ContainsKey(queueName)},
+                        {"song request queue is empty", config.CurrentSongRequestQueue.Count == 0}
+                    });
+
+                    await ExecuteAsync(context,
+                        "vc add https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                        "vc add https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+                    await DelayAsync(context, 10000);
+                    await AssertAsync(context,
+                        "song request queue is correct length", config.CurrentSongRequestQueue.Count == 2);
+                }
+            },
+            {
                 "keywords", async (context) =>
                 {
                     var config = KeywordsModule.GetConfigForGuild(context.Guild);
@@ -125,7 +148,7 @@ namespace wow2.Modules.Dev
                     await ExecuteAsync(context,
                         $"keywords add {keywordName} value1",
                         $"keywords add \"{keywordName}\" \"value2 **Title!**with title\"");
-                    await AssertAsync(context, new Dictionary<string, bool>()
+                    await AssertAsync(context, new()
                     {
                         {"keyword exists in dictionary", config.KeywordsDictionary.TryGetValue(keywordName, out List<KeywordValue> keywordValues)},
                         {"check value1", keywordValues[0].Content == "value1"},
