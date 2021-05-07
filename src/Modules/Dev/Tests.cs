@@ -29,13 +29,14 @@ namespace wow2.Modules.Dev
             {
                 var func = (Func<ICommandContext, Task>)Delegate.CreateDelegate(
                     typeof(Func<ICommandContext, Task>), null, method);
-                TestList.Add(method.Name, func);
+                var attribute = (TestAttribute)method.GetCustomAttribute(typeof(TestAttribute));
+                TestList.Add(attribute.Name, func);
             }
         }
 
         public static Dictionary<string, Func<ICommandContext, Task>> GetTestList() => TestList;
 
-        [Test]
+        [Test("messages")]
         public static async Task MessagesTest(ICommandContext context)
         {
             await new SuccessMessage("This is a success message.", "Success").SendAsync(context.Channel);
@@ -57,7 +58,7 @@ namespace wow2.Modules.Dev
                 .SendAsync(context.Channel);
         }
 
-        [Test]
+        [Test("aliases")]
         public static async Task AliasesTest(ICommandContext context)
         {
             var config = MainModule.GetConfigForGuild(context.Guild);
@@ -77,7 +78,7 @@ namespace wow2.Modules.Dev
                 "alias has been removed", !config.AliasesDictionary.ContainsKey(aliasName));
         }
 
-        [Test]
+        [Test("voice")]
         public static async Task VoiceTest(ICommandContext context)
         {
             // TODO: These Task.Delays are a bit of a hacky workaround.
@@ -130,7 +131,7 @@ namespace wow2.Modules.Dev
                 "audio client has disconnected", VoiceModule.CheckIfAudioClientDisconnected(config.AudioClient));
         }
 
-        [Test]
+        [Test("voice-queue")]
         public static async Task VoiceQueueTest(ICommandContext context)
         {
             var config = VoiceModule.GetConfigForGuild(context.Guild);
@@ -180,7 +181,7 @@ namespace wow2.Modules.Dev
                 "vc clear");
         }
 
-        [Test]
+        [Test("keywords")]
         public static async Task KeywordsTest(ICommandContext context)
         {
             var config = KeywordsModule.GetConfigForGuild(context.Guild);
@@ -212,7 +213,7 @@ namespace wow2.Modules.Dev
                 "keyword was removed", !config.KeywordsDictionary.ContainsKey(keywordName));
         }
 
-        [Test]
+        [Test("quotes")]
         public static async Task QuotesTest(ICommandContext context)
         {
             // TODO: also test specified author
