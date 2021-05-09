@@ -14,10 +14,10 @@ namespace wow2.Modules.Dev
 {
     public static class Tests
     {
+        public static readonly Dictionary<string, Func<ICommandContext, Task>> TestList = new();
+
         /// <summary>The time in milliseconds between asserts/commands</summary>
         private const int CommandDelay = 1000;
-
-        private static readonly Dictionary<string, Func<ICommandContext, Task>> TestList = new();
 
         static Tests()
         {
@@ -33,8 +33,6 @@ namespace wow2.Modules.Dev
                 TestList.Add(attribute.Name, func);
             }
         }
-
-        public static Dictionary<string, Func<ICommandContext, Task>> GetTestList() => TestList;
 
         [Test("messages")]
         public static async Task MessagesTest(ICommandContext context)

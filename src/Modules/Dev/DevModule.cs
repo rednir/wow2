@@ -55,12 +55,10 @@ namespace wow2.Modules.Dev
         [Summary("Runs a list of commands.")]
         public async Task TestAsync(string group = null)
         {
-            var testList = Tests.GetTestList();
-
             if (string.IsNullOrWhiteSpace(group))
             {
                 string result = "";
-                foreach (string name in testList.Keys)
+                foreach (string name in Tests.TestList.Keys)
                     result += $"`{name}`\n";
 
                 await new GenericMessage(result, "List of tests")
@@ -70,7 +68,7 @@ namespace wow2.Modules.Dev
 
             try
             {
-                await testList[group](Context);
+                await Tests.TestList[group](Context);
                 await new SuccessMessage("Finished test.")
                     .SendAsync(Context.Channel);
             }
