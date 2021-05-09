@@ -23,14 +23,14 @@ namespace wow2.Modules.Osu
     {
         private static readonly Dictionary<string, IEmote> RankingEmotes = new()
         {
-            {"D", Emote.Parse("<:osud:838780206747090964>")},
-            {"C", Emote.Parse("<:osuc:838780141433257995>")},
-            {"B", Emote.Parse("<:osub:838780016278896712>")},
-            {"A", Emote.Parse("<:osua:807023193264881664>")},
-            {"S", Emote.Parse("<:osus:807023232116981801>")},
-            {"SH", Emote.Parse("<:osush:807023257357123595>")},
-            {"SS", Emote.Parse("<:osuss:807023277180583958>")},
-            {"SSH", Emote.Parse("<:osussh:807023289742262272>")}
+            { "D", Emote.Parse("<:osud:838780206747090964>") },
+            { "C", Emote.Parse("<:osuc:838780141433257995>") },
+            { "B", Emote.Parse("<:osub:838780016278896712>") },
+            { "A", Emote.Parse("<:osua:807023193264881664>") },
+            { "S", Emote.Parse("<:osus:807023232116981801>") },
+            { "SH", Emote.Parse("<:osush:807023257357123595>") },
+            { "SS", Emote.Parse("<:osuss:807023277180583958>") },
+            { "SSH", Emote.Parse("<:osussh:807023289742262272>") }
         };
 
         private static readonly System.Timers.Timer RefreshAccessTokenTimer = new(18 * 3600000);

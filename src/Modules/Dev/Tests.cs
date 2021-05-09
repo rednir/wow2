@@ -218,7 +218,7 @@ namespace wow2.Modules.Dev
             string repeatedText = string.Concat(
                 Enumerable.Repeat("This is a quote with a lot of text.", 10));
 
-            var results = await ExecuteAsync(context,
+            await ExecuteAsync(context,
                 $"text quote \"{repeatedText}\"");
         }
 
