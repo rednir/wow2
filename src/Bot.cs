@@ -278,14 +278,29 @@ namespace wow2
 
         private static async Task<IEnumerable<CommandInfo>> SearchCommandsAsync(ICommandContext context, string term)
         {
-            return (await CommandService.GetExecutableCommandsAsync(
-                new CommandContext(context.Client, context.Message), null
-            ))
-            .Where(command =>
-                command.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                command.Module.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                term.Contains(command.Name, StringComparison.OrdinalIgnoreCase) ||
-                term.Contains(command.Module.Name, StringComparison.OrdinalIgnoreCase));
+            if (term.Length < 2) return Array.Empty<CommandInfo>();
+
+            SearchResult result = CommandService.Search(
+                context: new CommandContext(context.Client, context.Message),
+                input: term
+            );
+
+            if (result.Commands == null)
+            {
+                // This provides more results but is not as accurate.
+                return (await CommandService.GetExecutableCommandsAsync(
+                    new CommandContext(context.Client, context.Message), null
+                ))
+                .Where(command =>
+                    command.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    command.Module.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    term.Contains(command.Name, StringComparison.OrdinalIgnoreCase) ||
+                    term.Contains(command.Module.Name, StringComparison.OrdinalIgnoreCase));
+            }
+            else
+            {
+                return result.Commands.Select(c => c.Command);
+            }
         }
     }
 }
