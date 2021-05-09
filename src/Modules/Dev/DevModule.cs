@@ -53,9 +53,9 @@ namespace wow2.Modules.Dev
         [Command("run-test")]
         [Alias("test")]
         [Summary("Runs a list of commands.")]
-        public async Task TestAsync(string group = null)
+        public async Task TestAsync(params string[] groups)
         {
-            if (string.IsNullOrWhiteSpace(group))
+            if (groups.Length == 0)
             {
                 string result = "";
                 foreach (string name in Tests.TestList.Keys)
@@ -66,16 +66,19 @@ namespace wow2.Modules.Dev
                 return;
             }
 
-            try
+            foreach (string group in groups)
             {
-                await Tests.TestList[group](Context);
-                await new SuccessMessage("Finished test.")
-                    .SendAsync(Context.Channel);
-            }
-            catch (Exception ex)
-            {
-                await new ErrorMessage($"```{ex}```", "Test failed due to exception.")
-                    .SendAsync(Context.Channel);
+                try
+                {
+                    await Tests.TestList[group](Context);
+                    await new SuccessMessage("Finished test.")
+                        .SendAsync(Context.Channel);
+                }
+                catch (Exception ex)
+                {
+                    await new ErrorMessage($"```{ex}```", "Test failed due to exception.")
+                        .SendAsync(Context.Channel);
+                }
             }
         }
 
