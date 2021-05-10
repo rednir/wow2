@@ -109,19 +109,28 @@ namespace wow2.Data
         {
             Logger.Log("About to save all guild data.", LogSeverity.Verbose);
             foreach (ulong guildId in DictionaryOfGuildData.Keys)
-                await SaveGuildDataToFileAsync(guildId);
+            {
+                try
+                {
+                    await SaveGuildDataToFileAsync(guildId);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogException(ex, $"Error thrown when saving guild data for {guildId}");
+                }
+            }
         }
 
         /// <summary>Write guild data to file for a specific guild.</summary>
         public static async Task SaveGuildDataToFileAsync(ulong guildId)
         {
             if (!DictionaryOfGuildData.TryGetValue(guildId, out GuildData guildData))
-                throw new KeyNotFoundException($"Failed to load for guild {guildId} as the guild ID was not found in the dictionary");
+                throw new KeyNotFoundException($"The guild ID {guildId} was not found in the dictionary");
 
             EnsureGuildNameExists(guildId);
             await File.WriteAllTextAsync(
                 $"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(guildData, SerializerOptions));
-            Logger.Log($"Saved guild data for {DictionaryOfGuildData[guildId].NameOfGuild} ({guildId})", LogSeverity.Verbose);
+            Logger.Log($"Saved guild data for {DictionaryOfGuildData[guildId]?.NameOfGuild} ({guildId})", LogSeverity.Verbose);
         }
 
         /// <summary>If the GuildData for the specified guild does not exist, one will be created.</summary>
