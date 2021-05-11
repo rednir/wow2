@@ -18,6 +18,7 @@ namespace wow2
             => IsDebugField = true;
 
         public static readonly DateTime TimeStarted = DateTime.Now;
+        public static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
 
         public static bool IsDebug
         {

@@ -10,4 +10,8 @@
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta11"/>
     <PackageReference Include="Google.Apis.YouTube.v3" Version="1.51.0.2294"/>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\*"/>
+    <EmbeddedResource Include="res\quotetemplates\*"/>
+  </ItemGroup>
 </Project>

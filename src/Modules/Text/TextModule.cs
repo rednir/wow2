@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text;
@@ -19,42 +20,58 @@ namespace wow2.Modules.Text
     [Summary("Change and manipulate text.")]
     public class TextModule : ModuleBase<SocketCommandContext>
     {
+        /// <summary>Dictionary where the key is the name and the value is the image stream</summary>
+        private readonly static Dictionary<string, Stream> QuoteTemplates;
+
+        static TextModule()
+        {
+            QuoteTemplates = GetQuoteTemplateImages();
+        }
+
         [Command("quote")]
         [Alias("quotes")]
         [Summary("Creates a fake quote of a famous person. If you want to use a specific person, set AUTHOR to their name.")]
         public async Task QuoteAsync(string quote, string author = null)
         {
-            // Search for folder `quotetemplates` in runtime directory and in working directory.
-            string templatesFolderPath = $"{DataManager.ResDirPath}/quotetemplates";
+            Stream templateImageToUse = null;
 
-            var listOfTemplatePaths = Directory.EnumerateFiles(templatesFolderPath);
-
-            string templateToUsePath;
             if (author == null)
             {
                 // Author has not been specified, so choose random template and use default name.
-                templateToUsePath = listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
-                author = Path.GetFileNameWithoutExtension(templateToUsePath);
+                var chosenPair = QuoteTemplates.ElementAt(
+                    new Random().Next(QuoteTemplates.Count - 1));
+                author = chosenPair.Key;
+                templateImageToUse = chosenPair.Value;
             }
             else if (author.Length > 3)
             {
                 // Check if author parameter matches the name of a quote template, and use it if so.
-                templateToUsePath = Directory.EnumerateFiles
-                (
-                    path: templatesFolderPath,
-                    searchPattern: $"*{author}*",
-                    enumerationOptions: new EnumerationOptions() { MatchCasing = MatchCasing.CaseInsensitive }
-                )
+                foreach (var pair in QuoteTemplates)
+                {
+                    if (author.Contains(pair.Key))
+                    {
+                        templateImageToUse = pair.Value;
+                        break;
+                    }
+                }
+
                 // Default to random template if no template matches author parameter.
-                .FirstOrDefault() ?? listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
+                if (templateImageToUse == null)
+                {
+                    templateImageToUse = QuoteTemplates.Values
+                        .ElementAt(new Random().Next(QuoteTemplates.Count - 1));
+                }
             }
             else
             {
                 // Assume the user didn't want a specific template because of the small length.
-                templateToUsePath = listOfTemplatePaths.ElementAt(new Random().Next(listOfTemplatePaths.Count() - 1));
+                templateImageToUse = QuoteTemplates.Values
+                    .ElementAt(new Random().Next(QuoteTemplates.Count - 1));
             }
 
-            using SixLabors.ImageSharp.Image image = SixLabors.ImageSharp.Image.Load(templateToUsePath);
+            templateImageToUse.Seek(0, SeekOrigin.Begin);
+
+            using var image = Image.Load(templateImageToUse);
             var fileStreamForImage = new MemoryStream();
 
             Size imageSize = image.Size();
@@ -118,6 +135,24 @@ namespace wow2.Modules.Text
 
             await new GenericMessage(stringBuilder.ToString())
                 .SendAsync(Context.Channel);
+        }
+
+        private static Dictionary<string, Stream> GetQuoteTemplateImages()
+        {
+            const string parentFolder = "quotetemplates.";
+            var result = new Dictionary<string, Stream>();
+            foreach (var resourceName in Program.Assembly.GetManifestResourceNames())
+            {
+                if (resourceName.Contains(parentFolder))
+                {
+                    // Get actual file name, not path.
+                    int startIndex = resourceName.LastIndexOf(parentFolder) + parentFolder.Length;
+                    string readableName = Path
+                        .GetFileNameWithoutExtension(resourceName)[startIndex..];
+                    result.Add(readableName, Program.Assembly.GetManifestResourceStream(resourceName));
+                }
+            }
+            return result;
         }
     }
 }
