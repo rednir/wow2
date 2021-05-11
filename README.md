@@ -3,6 +3,9 @@
 # wow2
 A Discord bot written in C# using the [Discord.NET](https://github.com/discord-net/Discord.Net) library.
 
+[![Discord Bots](https://top.gg/api/widget/status/818156344594792451.svg)](https://top.gg/bot/818156344594792451)
+[![CodeFactor](https://www.codefactor.io/repository/github/rednir/wow2/badge/master)](https://www.codefactor.io/repository/github/rednir/wow2/overview/master)
+
 ## Using the bot
 Invite the bot to a server with this link:
  - https://discord.com/api/oauth2/authorize?client_id=818156344594792451&permissions=37022788&scope=bot
