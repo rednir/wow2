@@ -35,6 +35,10 @@ namespace wow2.Verbose.Messages
             SetEmbedFields();
             ListOfPagedMessages.Add(this);
 
+            // TODO: Performance might still be slow. Maybe have a list for every guild?
+            if (ListOfPagedMessages.Count > 40)
+                ListOfPagedMessages.RemoveAt(40);
+
             IUserMessage message = await base.SendAsync(channel);
             await message.AddReactionsAsync(new IEmote[] { PageLeftEmote, PageRightEmote });
             return message;
