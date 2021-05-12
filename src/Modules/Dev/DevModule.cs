@@ -17,7 +17,7 @@ namespace wow2.Modules.Dev
     [Group("dev")]
     [RequireOwner(Group = "Permission")]
     [Summary("Boring stuff for developers.")]
-    public class DevModule : ModuleBase<SocketCommandContext>
+    public class DevModule : Module
     {
         [Command("load-guild-data")]
         [Alias("load")]

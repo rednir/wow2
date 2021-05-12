@@ -16,7 +16,7 @@ namespace wow2.Modules.Keywords
     [Group("keywords")]
     [Alias("keyword")]
     [Summary("For automatically responding to keywords in user messages.")]
-    public class KeywordsModule : ModuleBase<SocketCommandContext>
+    public class KeywordsModule : Module
     {
         public static readonly IEmote DeleteReactionEmote = new Emoji("🗑");
         public static readonly IEmote LikeReactionEmote = new Emoji("👍");

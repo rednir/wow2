@@ -10,7 +10,7 @@ namespace wow2.Modules.Games
     [Group("games")]
     [Alias("game")]
     [Summary("For having a bit of fun.")]
-    public class GamesModule : ModuleBase<SocketCommandContext>
+    public class GamesModule : Module
     {
         [Command("counting")]
         [Alias("count")]

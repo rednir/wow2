@@ -18,7 +18,7 @@ namespace wow2.Modules.Voice
     [Group("vc")]
     [Alias("voice")]
     [Summary("For playing YouTube or Twitch audio in a voice channel.")]
-    public class VoiceModule : ModuleBase<SocketCommandContext>
+    public class VoiceModule : Module
     {
         [Command("list")]
         [Alias("queue", "upnext")]

@@ -13,7 +13,7 @@ namespace wow2.Modules.Main
 {
     [Name("Main")]
     [Summary("Stuff to do with the bot.")]
-    public class MainModule : ModuleBase<SocketCommandContext>
+    public class MainModule : Module
     {
         [Command("about")]
         [Summary("Shows some infomation about the bot.")]

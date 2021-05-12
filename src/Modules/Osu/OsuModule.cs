@@ -19,7 +19,7 @@ namespace wow2.Modules.Osu
     [Name("osu!")]
     [Group("osu")]
     [Summary("Integrations with the osu!api")]
-    public class OsuModule : ModuleBase<SocketCommandContext>
+    public class OsuModule : Module
     {
         private static readonly Dictionary<string, IEmote> RankingEmotes = new()
         {

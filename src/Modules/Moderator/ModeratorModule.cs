@@ -17,7 +17,7 @@ namespace wow2.Modules.Moderator
     [Alias("moderator")]
     [Summary("For using tools to manage the server. This is still very rudimentary and unfinished.  Requires the 'Ban Members' permission.")]
     [RequireUserPermission(GuildPermission.BanMembers)]
-    public class ModeratorModule : ModuleBase<SocketCommandContext>
+    public class ModeratorModule : Module
     {
         public static async Task CheckMessageWithAutoMod(SocketMessage message)
         {
