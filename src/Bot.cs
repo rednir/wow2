@@ -160,9 +160,9 @@ namespace wow2
             await DataManager.EnsureGuildDataExistsAsync(receivedMessage.GetGuild().Id);
 
             // Only auto mod message if not related to a game.
-            if (!(await CountingGame.CheckMessageAsync(receivedMessage)) &&
-                !(await VerbalMemoryGame.CheckMessageAsync(receivedMessage)) &&
-                !(await NumberMemoryGame.CheckMessageAsync(receivedMessage)))
+            if (!await CountingGame.CheckMessageAsync(receivedMessage) &&
+                !await VerbalMemoryGame.CheckMessageAsync(receivedMessage) &&
+                !await NumberMemoryGame.CheckMessageAsync(receivedMessage))
             {
                 await ModeratorModule.CheckMessageWithAutoMod(receivedMessage);
             }
