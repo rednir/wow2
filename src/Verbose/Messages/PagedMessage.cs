@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Discord;
+using Discord.WebSocket;
 using System.Threading.Tasks;
 
 namespace wow2.Verbose.Messages
@@ -8,7 +10,10 @@ namespace wow2.Verbose.Messages
     /// <summary>Class for sending and building embeds with pages of fields.</summary>
     public class PagedMessage : Message
     {
-        public static List<PagedMessage> ListOfPagedMessages { get; protected set; }
+        public static readonly IEmote PageLeftEmote = new Emoji("⏪");
+        public static readonly IEmote PageRightEmote = new Emoji("⏩");
+
+        public static List<PagedMessage> ListOfPagedMessages { get; protected set; } = new();
 
         public List<EmbedFieldBuilder> AllFieldBuilders { get; protected set; }
         public int Page { get; protected set; }
@@ -28,11 +33,24 @@ namespace wow2.Verbose.Messages
         public override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             SetEmbedFields();
+            ListOfPagedMessages.Add(this);
             return base.SendAsync(channel);
         }
 
-        /// <summary>Modify the page and therefore the embed of this message</summary>
-        public async Task ChangePageBy(int increment)
+        /// <summary>If the message has pages and the emote is recognised, modifies the page of the message.</summary>
+        public static async Task ActOnReactionAsync(SocketReaction reaction)
+        {
+            PagedMessage message = ListOfPagedMessages.Find(m => m.SentMessage.Id == reaction.MessageId);
+            if (message == null) return;
+
+            if (reaction.Emote.Name == PageLeftEmote.Name)
+                await message.ChangePageByAsync(-1);
+            else if (reaction.Emote.Name == PageRightEmote.Name)
+                await message.ChangePageByAsync(1);
+        }
+
+        /// <summary>Modify the page and therefore the embed of this message.</summary>
+        public async Task ChangePageByAsync(int increment)
         {
             Page += increment;
             SetEmbedFields();

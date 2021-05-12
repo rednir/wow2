@@ -143,12 +143,14 @@ namespace wow2
 
             IUserMessage message = await cachedMessage.GetOrDownloadAsync();
 
-            if (reaction.Emote.Name == KeywordsModule.DeleteReactionEmote.Name)
+            if (reaction.Emote.Name == KeywordsModule.DeleteReactionEmote.Name &&
+                await KeywordsModule.DeleteMessageIfKeywordResponse(message))
             {
-                if (await KeywordsModule.DeleteMessageIfKeywordResponse(message))
-                {
-                    Logger.Log($"Message was deleted in channel `{channel.Name}` due to reaction added by `{reaction.User}` ({reaction.UserId})", LogSeverity.Verbose);
-                }
+                Logger.Log($"Message was deleted in channel `{channel.Name}` due to reaction added by `{reaction.User}` ({reaction.UserId})", LogSeverity.Verbose);
+            }
+            else
+            {
+                await PagedMessage.ActOnReactionAsync(reaction);
             }
         }
 
