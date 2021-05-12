@@ -44,10 +44,10 @@ namespace wow2.Modules.Voice
             if (listOfFieldBuilders.Count == 0)
                 throw new CommandReturnException(Context, "There's nothing in the queue... how sad.");
 
-            await new GenericMessage(
+            await new PagedMessage(
                 title: "🔉 Up Next",
                 fieldBuilders: listOfFieldBuilders,
-                fieldBuildersPage: page)
+                page: page)
                     .SendAsync(Context.Channel);
         }
 
@@ -269,10 +269,10 @@ namespace wow2.Modules.Voice
                 });
             }
 
-            await new GenericMessage(
+            await new PagedMessage(
                 title: "💾 Saved Queues",
                 fieldBuilders: listOfFieldBuilders,
-                fieldBuildersPage: page)
+                page: page)
                     .SendAsync(Context.Channel);
         }
 

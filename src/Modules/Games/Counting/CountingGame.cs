@@ -109,7 +109,7 @@ namespace wow2.Modules.Games.Counting
             else if (absNextNumber >= 75 * absIncrement) commentOnFinalNumber = "Amazing!";
             else commentOnFinalNumber = "";
 
-            await new GenericMessage(
+            await new PagedMessage(
                 fieldBuilders: listOfFieldBuilders,
                 title: "📈 Final Stats",
                 description: $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*")

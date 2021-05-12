@@ -170,10 +170,10 @@ namespace wow2.Modules.Osu
                 });
             }
 
-            await new GenericMessage(
+            await new PagedMessage(
                 title: "Subscribed Users",
                 fieldBuilders: fieldBuilders,
-                fieldBuildersPage: page)
+                page: page)
                     .SendAsync(Context.Channel);
         }
 

@@ -124,10 +124,10 @@ namespace wow2.Modules.YouTube
                 });
             }
 
-            await new GenericMessage(
+            await new PagedMessage(
                 title: "Subscribed Channels",
                 fieldBuilders: fieldBuilders,
-                fieldBuildersPage: page)
+                page: page)
                     .SendAsync(Context.Channel);
         }
 

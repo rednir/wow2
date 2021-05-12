@@ -41,7 +41,7 @@ namespace wow2.Modules.Dev
             await new InfoMessage("This is an info message.", "Info").SendAsync(context.Channel);
             await new WarningMessage("This is a warning message.", "Warning").SendAsync(context.Channel);
             await new ErrorMessage("This is an error message.", "Error").SendAsync(context.Channel);
-            await new GenericMessage("This is a response message.", "Response").SendAsync(context.Channel);
+            await new GenericMessage("This is a generic message.", "Response").SendAsync(context.Channel);
 
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             for (int i = 0; i < 46; i++)
@@ -52,7 +52,7 @@ namespace wow2.Modules.Dev
                     Value = "This is some description text."
                 });
             }
-            await new GenericMessage("This is a response message with fields.", "Fields", listOfFieldBuilders, 2)
+            await new PagedMessage(listOfFieldBuilders, "This is a response message with fields.", "Fields", 2)
                 .SendAsync(context.Channel);
         }
 

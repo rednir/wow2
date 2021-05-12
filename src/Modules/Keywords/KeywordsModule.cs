@@ -240,11 +240,11 @@ namespace wow2.Modules.Keywords
                 listOfFieldBuilders.Add(fieldBuilderForKeyword);
             }
 
-            await new GenericMessage(
+            await new PagedMessage(
+                fieldBuilders: listOfFieldBuilders,
                 description: $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*",
                 title: "📒 Keywords",
-                fieldBuilders: listOfFieldBuilders,
-                fieldBuildersPage: page)
+                page: page)
                     .SendAsync(Context.Channel);
         }
 
@@ -276,11 +276,11 @@ namespace wow2.Modules.Keywords
                 );
             }
 
-            await new GenericMessage(
+            await new PagedMessage(
+                fieldBuilders: fieldBuildersForValueList,
                 description: $"*There are {values.Count} values in total, as listed below.*",
                 title: $"📒 Values for '{keyword}'",
-                fieldBuilders: fieldBuildersForValueList,
-                fieldBuildersPage: page)
+                page: page)
                     .SendAsync(Context.Channel);
         }
 

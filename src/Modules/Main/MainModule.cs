@@ -36,18 +36,18 @@ namespace wow2.Modules.Main
             var commandPrefix = GetConfigForGuild(Context.Guild).CommandPrefix;
             if (string.IsNullOrWhiteSpace(group))
             {
-                await new GenericMessage(
+                await new PagedMessage(
+                    fieldBuilders: await ModuleInfoToEmbedFieldsAsync(commandPrefix),
                     description: $"There's {Bot.CommandService.Commands.Count()} total commands for you to play around with.",
                     title: "📃 Help",
-                    fieldBuilders: await ModuleInfoToEmbedFieldsAsync(commandPrefix),
-                    fieldBuildersPage: page)
+                    page: page)
                         .SendAsync(Context.Channel);
             }
             else
             {
-                await new GenericMessage(
+                await new PagedMessage(
                     fieldBuilders: await CommandInfoToEmbedFieldsAsync(group, commandPrefix),
-                    fieldBuildersPage: page,
+                    page: page,
                     title: "📃 Command Help")
                         .SendAsync(Context.Channel);
             }
@@ -114,7 +114,7 @@ namespace wow2.Modules.Main
                 listOfFieldBuilders.Add(fieldBuilderForAlias);
             }
 
-            await new GenericMessage(
+            await new PagedMessage(
                 fieldBuilders: listOfFieldBuilders,
                 title: "📎 List of Aliases",
                 description: "To remove any of these aliases, set the alias definition to a blank value.")

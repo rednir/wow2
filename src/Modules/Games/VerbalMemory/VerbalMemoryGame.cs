@@ -119,8 +119,8 @@ namespace wow2.Modules.Games.VerbalMemory
         private static async Task EndGameAsync(VerbalMemoryGameConfig config)
         {
             await new GenericMessage(
-                title: "📈 Final Stats",
-                description: $"You got `{config.Turns}` points, with `{config.SeenWords.Count}` different words.")
+                description: $"You got `{config.Turns}` points, with `{config.SeenWords.Count}` different words.",
+                title: "📈 Final Stats")
                     .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
 
             config.IsGameStarted = false;

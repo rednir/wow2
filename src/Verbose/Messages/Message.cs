@@ -13,6 +13,7 @@ namespace wow2.Verbose.Messages
         public const ulong ErrorEmoteId = 804732656721199144;
 
         public ulong ReplyToMessageId { get; set; }
+        public IUserMessage SentMessage { get; protected set; }
         public Embed Embed
         {
             get { return EmbedBuilder.Build(); }
@@ -21,13 +22,13 @@ namespace wow2.Verbose.Messages
         protected EmbedBuilder EmbedBuilder;
         protected MemoryStream DescriptionAsStream;
 
-        public async Task<IUserMessage> SendAsync(IMessageChannel channel)
+        public virtual async Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             var reference = ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null;
 
             if (DescriptionAsStream != null)
             {
-                return await channel.SendFileAsync(
+                SentMessage = await channel.SendFileAsync(
                     stream: DescriptionAsStream,
                     filename: $"{Embed?.Title}_desc.txt",
                     embed: new WarningMessage("A message was too long, so it was uploaded as a file.").Embed,
@@ -35,11 +36,12 @@ namespace wow2.Verbose.Messages
             }
             else
             {
-                return await channel.SendMessageAsync(
+                SentMessage = await channel.SendMessageAsync(
                     embed: EmbedBuilder.Build(),
                     allowedMentions: AllowedMentions.None,
                     messageReference: reference);
             }
+            return SentMessage;
         }
 
         protected static string GetStatusMessageFormattedDescription(string description, string title)
