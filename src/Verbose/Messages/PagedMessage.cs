@@ -30,11 +30,14 @@ namespace wow2.Verbose.Messages
             };
         }
 
-        public override Task<IUserMessage> SendAsync(IMessageChannel channel)
+        public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             SetEmbedFields();
             ListOfPagedMessages.Add(this);
-            return base.SendAsync(channel);
+
+            IUserMessage message = await base.SendAsync(channel);
+            await message.AddReactionsAsync(new IEmote[] { PageLeftEmote, PageRightEmote });
+            return message;
         }
 
         /// <summary>If the message has pages and the emote is recognised, modifies the page of the message.</summary>
@@ -44,9 +47,15 @@ namespace wow2.Verbose.Messages
             if (message == null) return;
 
             if (reaction.Emote.Name == PageLeftEmote.Name)
+            {
                 await message.ChangePageByAsync(-1);
+                await message.SentMessage.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
+            }
             else if (reaction.Emote.Name == PageRightEmote.Name)
+            {
                 await message.ChangePageByAsync(1);
+                await message.SentMessage.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
+            }
         }
 
         /// <summary>Modify the page and therefore the embed of this message.</summary>
