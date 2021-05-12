@@ -1,4 +1,3 @@
-
 namespace wow2.Data
 {
     /// <summary>The contents of the secrets.json file.</summary>

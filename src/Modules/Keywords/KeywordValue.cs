@@ -1,4 +1,3 @@
-
 namespace wow2.Modules.Keywords
 {
     public class KeywordValue

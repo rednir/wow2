@@ -1,5 +1,3 @@
-using System;
-
 namespace wow2.Modules.Osu
 {
     /// <summary>What the score HTTP request will be deserialized into.</summary>
