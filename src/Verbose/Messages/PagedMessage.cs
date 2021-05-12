@@ -18,7 +18,7 @@ namespace wow2.Verbose.Messages
         public List<EmbedFieldBuilder> AllFieldBuilders { get; protected set; }
         public int Page { get; protected set; }
 
-        public PagedMessage(List<EmbedFieldBuilder> fieldBuilders, string description = "", string title = "", int page = 0)
+        public PagedMessage(List<EmbedFieldBuilder> fieldBuilders, string description = "", string title = "", int page = -1)
         {
             AllFieldBuilders = fieldBuilders;
             Page = page;
@@ -32,15 +32,19 @@ namespace wow2.Verbose.Messages
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
-            SetEmbedFields();
-            ListOfPagedMessages.Add(this);
-
             // TODO: Performance might still be slow. Maybe have a list for every guild?
             if (ListOfPagedMessages.Count > 40)
                 ListOfPagedMessages.RemoveAt(40);
 
+            SetEmbedFields();
             IUserMessage message = await base.SendAsync(channel);
-            await message.AddReactionsAsync(new IEmote[] { PageLeftEmote, PageRightEmote });
+
+            // A negative page number means the message does not use pages.
+            if (Page >= 0)
+            {
+                ListOfPagedMessages.Add(this);
+                await message.AddReactionsAsync(new IEmote[] { PageLeftEmote, PageRightEmote });
+            }
             return message;
         }
 
@@ -80,8 +84,8 @@ namespace wow2.Verbose.Messages
             {
                 int totalNumberOfPages = (int)Math.Ceiling((float)AllFieldBuilders.Count / maxFieldsPerPage);
 
-                // Check if the page number has not been specifed by the method caller.
-                if (Page == 0)
+                // Pages are not used if page number is negative.
+                if (Page < 0)
                 {
                     EmbedBuilder.Footer = new EmbedFooterBuilder()
                     {
@@ -108,6 +112,11 @@ namespace wow2.Verbose.Messages
                 bool isFinalPage = Page == totalNumberOfPages;
                 EmbedBuilder.Fields = AllFieldBuilders.GetRange(startIndex,
                     isFinalPage ? (AllFieldBuilders.Count - startIndex) : maxFieldsPerPage);
+            }
+            else
+            {
+                Page = -1;
+                EmbedBuilder.Fields = AllFieldBuilders;
             }
         }
     }
