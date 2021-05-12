@@ -8,6 +8,8 @@ namespace wow2.Verbose.Messages
     /// <summary>Class for sending and building embeds with pages of fields.</summary>
     public class PagedMessage : Message
     {
+        public static List<PagedMessage> ListOfPagedMessages { get; protected set; }
+
         public List<EmbedFieldBuilder> AllFieldBuilders { get; protected set; }
         public int Page { get; protected set; }
 
@@ -24,6 +26,21 @@ namespace wow2.Verbose.Messages
         }
 
         public override Task<IUserMessage> SendAsync(IMessageChannel channel)
+        {
+            SetEmbedFields();
+            return base.SendAsync(channel);
+        }
+
+        /// <summary>Modify the page and therefore the embed of this message</summary>
+        public async Task ChangePageBy(int increment)
+        {
+            Page += increment;
+            SetEmbedFields();
+            await SentMessage.ModifyAsync(
+                message => message.Embed = EmbedBuilder.Build());
+        }
+
+        private void SetEmbedFields()
         {
             const int maxFieldsPerPage = 8;
 
@@ -61,8 +78,6 @@ namespace wow2.Verbose.Messages
                 EmbedBuilder.Fields = AllFieldBuilders.GetRange(startIndex,
                     isFinalPage ? (AllFieldBuilders.Count - startIndex) : maxFieldsPerPage);
             }
-
-            return base.SendAsync(channel);
         }
     }
 }
