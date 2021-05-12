@@ -156,7 +156,6 @@ namespace wow2
         {
             if (receivedMessage.Author.Id == Client.CurrentUser.Id) return;
             if (receivedMessage.Channel is SocketDMChannel) return;
-            await SendWelcomeMessageAsync(receivedMessage.GetGuild());
 
             await DataManager.EnsureGuildDataExistsAsync(receivedMessage.GetGuild().Id);
 
