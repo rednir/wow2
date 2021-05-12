@@ -71,7 +71,6 @@ namespace wow2
         public static async Task JoinedGuildAsync(SocketGuild guild)
         {
             var guildData = await DataManager.EnsureGuildDataExistsAsync(guild.Id);
-            string commandPrefix = MainModule.GetConfigForGuild(guild).CommandPrefix;
 
             // Only set if it's the first time the bot has joined this guild.
             if (guildData.DateTimeJoinedBinary == 0)
@@ -79,13 +78,8 @@ namespace wow2
                 DataManager.DictionaryOfGuildData[guild.Id]
                     .DateTimeJoinedBinary = DateTime.Now.ToBinary();
             }
-            var embedBuilder = new EmbedBuilder()
-            {
-                Title = "👋 Hi there!",
-                Description = $"Thanks for adding me to your server!\nTo get started, type `{commandPrefix} help` to see the wide range of commands available.\n",
-                Color = Color.Gold
-            };
-            await guild.DefaultChannel.SendMessageAsync(embed: embedBuilder.Build());
+
+            await SendWelcomeMessageAsync(guild);
         }
 
         public static async Task LeftGuildAsync(SocketGuild guild)
@@ -300,6 +294,30 @@ namespace wow2
             else
             {
                 return result.Commands.Select(c => c.Command);
+            }
+        }
+
+        private static async Task SendWelcomeMessageAsync(SocketGuild guild)
+        {
+            string commandPrefix = MainModule.GetConfigForGuild(guild).CommandPrefix;
+            Embed embed = new EmbedBuilder()
+            {
+                Title = "👋 Hi there!",
+                Description = $"Thanks for adding me to your server!\nTo get started, type `{commandPrefix} help` to see the wide range of commands available.\n",
+                Color = Color.Gold
+            }
+            .Build();
+            foreach (SocketTextChannel channel in guild.Channels)
+            {
+                try
+                {
+                    await channel.SendMessageAsync(embed: embed);
+                    break;
+                }
+                catch (HttpException)
+                {
+                    // Most likely the bot does not have sufficient privileges. 
+                }
             }
         }
     }
