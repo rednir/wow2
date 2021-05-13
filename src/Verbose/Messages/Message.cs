@@ -14,37 +14,24 @@ namespace wow2.Verbose.Messages
 
         public ulong ReplyToMessageId { get; set; }
         public IUserMessage SentMessage { get; protected set; }
+        public MessageReference MessageReference
+        {
+            get { return ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null; }
+        }
         public Embed Embed
         {
             get { return EmbedBuilder.Build(); }
         }
 
         protected EmbedBuilder EmbedBuilder;
-        protected MemoryStream DescriptionAsStream;
 
         public virtual async Task<IUserMessage> SendAsync(IMessageChannel channel)
-        {
-            var reference = ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null;
-
-            if (DescriptionAsStream != null)
-            {
-                SentMessage = await channel.SendFileAsync(
-                    stream: DescriptionAsStream,
-                    filename: $"{Embed?.Title}_desc.txt",
-                    embed: new WarningMessage("A message was too long, so it was uploaded as a file.").Embed,
-                    messageReference: reference);
-            }
-            else
-            {
-                SentMessage = await channel.SendMessageAsync(
-                    embed: EmbedBuilder.Build(),
-                    allowedMentions: AllowedMentions.None,
-                    messageReference: reference);
-            }
-            return SentMessage;
-        }
+            => await channel.SendMessageAsync(
+                embed: EmbedBuilder.Build(),
+                allowedMentions: AllowedMentions.None,
+                messageReference: MessageReference);
 
         protected static string GetStatusMessageFormattedDescription(string description, string title)
-            => $"{(title == null ? null : $"**{title}**\n")}{description}";
+            => (title == null ? null : $"**{title}**\n") + description;
     }
 }
