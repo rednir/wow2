@@ -69,7 +69,7 @@ namespace wow2.Data
         public static async Task LoadGuildDataFromFileAsync()
         {
             Logger.Log("About to load all guild data.", LogSeverity.Verbose);
-            foreach (FileInfo fileInfo in new DirectoryInfo(AppDataDirPath).EnumerateFiles())
+            foreach (FileInfo fileInfo in new DirectoryInfo(GuildDataDirPath).EnumerateFiles())
             {
                 try
                 {
