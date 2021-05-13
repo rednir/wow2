@@ -53,7 +53,7 @@ namespace wow2.Verbose.Messages
         /// <summary>If the message has pages and the emote is recognised, modifies the page of the message.</summary>
         public static async Task ActOnReactionAsync(SocketReaction reaction)
         {
-            PagedMessage message = ListOfPagedMessages.Find(m => m.SentMessage.Id == reaction.MessageId);
+            PagedMessage message = ListOfPagedMessages.Find(m => m.SentMessage?.Id == reaction.MessageId);
             if (message == null) return;
 
             if (reaction.Emote.Name == PageLeftEmote.Name)

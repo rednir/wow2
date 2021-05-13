@@ -26,10 +26,13 @@ namespace wow2.Verbose.Messages
         protected EmbedBuilder EmbedBuilder;
 
         public virtual async Task<IUserMessage> SendAsync(IMessageChannel channel)
-            => await channel.SendMessageAsync(
+        {
+            SentMessage = await channel.SendMessageAsync(
                 embed: EmbedBuilder.Build(),
                 allowedMentions: AllowedMentions.None,
                 messageReference: MessageReference);
+            return SentMessage;
+        }
 
         protected static string GetStatusMessageFormattedDescription(string description, string title)
             => (title == null ? null : $"**{title}**\n") + description;
