@@ -77,7 +77,7 @@ namespace wow2.Modules.Text
             int quoteXPos = imageSize.Width / 2;
             int quoteYPos = (imageSize.Height / 2) - (imageSize.Height / 6) - (quote.Length / 4);
 
-            image.Mutate(x => x.DrawText($"\"{quote.Wrap(40)}\"\n\n - {author}", TextModuleFonts.QuoteTextFont, Color.LightGrey, new PointF(quoteXPos, quoteYPos)));
+            image.Mutate(x => x.DrawText($"\"{quote.Wrap(40)}\"\n\n - {author}", Fonts.QuoteTextFont, Color.LightGrey, new PointF(quoteXPos, quoteYPos)));
 
             await image.SaveAsync(fileStreamForImage, new JpegEncoder());
             fileStreamForImage.Position = 0;

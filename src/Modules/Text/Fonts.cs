@@ -3,7 +3,7 @@ using SixLabors.Fonts;
 namespace wow2.Modules.Text
 {
     // Rethink this
-    public static class TextModuleFonts
+    public static class Fonts
     {
         private static readonly FontCollection FontCollection = new();
 
