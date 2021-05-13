@@ -71,7 +71,7 @@ namespace wow2.Verbose
             GithubHttpClient.DefaultRequestHeaders.Add("User-Agent", "wow2");
             var response = await GithubHttpClient.GetAsync("repos/rednir/wow2/releases/latest");
             var latestRelease = await JsonSerializer.DeserializeAsync<GithubRelease>(await response.Content.ReadAsStreamAsync());
-
+            Log($"Got latest github release with tag {latestRelease.tag_name}", LogSeverity.Debug);
             return latestRelease;
         }
     }
