@@ -11,6 +11,7 @@ namespace wow2.Verbose.Messages
     public class PagedMessage : Message, IDisposable
     {
         public static readonly IEmote PageLeftEmote = new Emoji("⏪");
+        public static readonly IEmote StopEmote = new Emoji("🛑");
         public static readonly IEmote PageRightEmote = new Emoji("⏩");
 
         public static List<PagedMessage> ListOfPagedMessages { get; protected set; } = new();
@@ -43,7 +44,8 @@ namespace wow2.Verbose.Messages
             if (Page >= 0)
             {
                 ListOfPagedMessages.Add(this);
-                await message.AddReactionsAsync(new IEmote[] { PageLeftEmote, PageRightEmote });
+                await message.AddReactionsAsync(
+                    new IEmote[] { PageLeftEmote, PageRightEmote, StopEmote });
             }
             return message;
         }
@@ -64,6 +66,10 @@ namespace wow2.Verbose.Messages
                 await message.ChangePageByAsync(1);
                 await message.SentMessage.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
             }
+            else if (reaction.Emote.Name == StopEmote.Name)
+            {
+                await message.StopAsync();
+            }
         }
 
         /// <summary>Modify the page and therefore the embed of this message.</summary>
@@ -75,9 +81,17 @@ namespace wow2.Verbose.Messages
                 message => message.Embed = EmbedBuilder.Build());
         }
 
+        /// <summary>Removes reactions, and stops ability to scroll through pages for this message</summary>
+        public async Task StopAsync()
+        {
+            Dispose();
+            await SentMessage.RemoveAllReactionsAsync();
+        }
+
         public void Dispose()
         {
             ListOfPagedMessages.Remove(this);
+            GC.SuppressFinalize(this);
         }
 
         private void SetEmbedFields()
