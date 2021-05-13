@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace wow2.Verbose.Messages
 {
     /// <summary>Class for sending and building embeds with pages of fields.</summary>
-    public class PagedMessage : Message
+    public class PagedMessage : Message, IDisposable
     {
         public static readonly IEmote PageLeftEmote = new Emoji("⏪");
         public static readonly IEmote PageRightEmote = new Emoji("⏩");
@@ -73,6 +73,11 @@ namespace wow2.Verbose.Messages
             SetEmbedFields();
             await SentMessage.ModifyAsync(
                 message => message.Embed = EmbedBuilder.Build());
+        }
+
+        public void Dispose()
+        {
+            ListOfPagedMessages.Remove(this);
         }
 
         private void SetEmbedFields()
