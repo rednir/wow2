@@ -14,7 +14,7 @@ namespace wow2.Modules.Keywords
 {
     [Name("Keywords")]
     [Group("keywords")]
-    [Alias("keyword")]
+    [Alias("keyword", "k")]
     [Summary("For automatically responding to keywords in user messages.")]
     public class KeywordsModule : Module
     {
