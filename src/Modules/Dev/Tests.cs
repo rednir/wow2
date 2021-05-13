@@ -8,6 +8,7 @@ using Discord.Commands;
 using wow2.Modules.Main;
 using wow2.Modules.Voice;
 using wow2.Modules.Keywords;
+using wow2.Modules.Osu;
 using wow2.Verbose.Messages;
 
 namespace wow2.Modules.Dev
@@ -25,6 +26,7 @@ namespace wow2.Modules.Dev
             var testMethods = typeof(Tests).GetMethods().Where(
                 m => m.GetCustomAttributes(typeof(TestAttribute), false).Length > 0);
 
+            // Get the method bodies and put them in `TestList`.
             foreach (MethodInfo method in testMethods)
             {
                 var func = (Func<ICommandContext, Task>)Delegate.CreateDelegate(
@@ -220,6 +222,28 @@ namespace wow2.Modules.Dev
 
             await ExecuteAsync(context,
                 $"text quote \"{repeatedText}\"");
+        }
+
+        [Test("osu")]
+        public static async Task OsuTest(ICommandContext context)
+        {
+            var config = OsuModule.GetConfigForGuild(context.Guild);
+
+            await ExecuteAsync(context,
+                $"osu set-announcements-channel {context.Channel.Id}");
+
+            if (!config.SubscribedUsers.Any(u => u.username == "peppy"))
+            {
+                await ExecuteAsync(context,
+                    "osu subscribe peppy");
+                await AssertAsync(context,
+                    "User exists in subscribed user list", config.SubscribedUsers.Any(u => u.username == "peppy"));
+            }
+
+            config.SubscribedUsers.Find(u => u.username == "peppy")
+                .BestScores.RemoveAt(0);
+
+            await ExecuteAsync(context, "osu test-poll");
         }
 
         private static async Task<List<IResult>> ExecuteAsync(ICommandContext context, params string[] commands)
