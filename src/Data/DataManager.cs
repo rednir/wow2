@@ -14,9 +14,7 @@ namespace wow2.Data
         public static Dictionary<ulong, GuildData> DictionaryOfGuildData { get; set; } = new Dictionary<ulong, GuildData>();
         public static Secrets Secrets { get; set; } = new Secrets();
 
-        public static readonly string ResDirPath = Directory.Exists($"{Program.RuntimeDirectory}/res") ? $"{Program.RuntimeDirectory}/res" : "res";
         public static readonly string AppDataDirPath = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
-        public static DirectoryInfo AppDataDirInfo { get; set; }
         public static string GuildDataDirPath
         {
             get { return $"{AppDataDirPath}/GuildData"; }
@@ -35,7 +33,7 @@ namespace wow2.Data
             {
                 Directory.CreateDirectory(AppDataDirPath);
 
-                AppDataDirInfo = Directory.CreateDirectory(GuildDataDirPath);
+                Directory.CreateDirectory(GuildDataDirPath);
                 Directory.CreateDirectory(LogsDirPath);
                 await LoadSecretsFromFileAsync();
             }
@@ -49,6 +47,7 @@ namespace wow2.Data
             await LoadGuildDataFromFileAsync();
         }
 
+        /// <summary>Deserializes the secrets.json file into the Secrets property. If it doesn't exist, creates one and stops the program.</summary>
         public static async Task LoadSecretsFromFileAsync()
         {
             string fullPath = AppDataDirPath + "/secrets.json";
@@ -70,7 +69,7 @@ namespace wow2.Data
         public static async Task LoadGuildDataFromFileAsync()
         {
             Logger.Log("About to load all guild data.", LogSeverity.Verbose);
-            foreach (FileInfo fileInfo in AppDataDirInfo.EnumerateFiles())
+            foreach (FileInfo fileInfo in new DirectoryInfo(AppDataDirPath).EnumerateFiles())
             {
                 try
                 {
