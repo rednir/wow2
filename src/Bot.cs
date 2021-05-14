@@ -158,8 +158,8 @@ namespace wow2
         public static Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)
         {
             PagedMessage message = PagedMessage.ListOfPagedMessages.Find(
-                m => m?.SentMessage.Id == cachedMessage.Id);
-            message.Dispose();
+                m => m.SentMessage.Id == cachedMessage.Id);
+            message?.Dispose();
             return Task.CompletedTask;
         }
 
