@@ -55,7 +55,7 @@ namespace wow2.Data
             {
                 Logger.Log($"Couldn't find a secrets file at {fullPath}, so one was created. You MUST have your Discord bot token at the very least in the secrets file in order to run this program.", LogSeverity.Warning);
                 await File.WriteAllTextAsync(fullPath, JsonSerializer.Serialize(Secrets, SerializerOptions));
-                Console.ReadKey();
+                Console.Read();
                 Environment.Exit(-1);
             }
 
