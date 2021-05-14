@@ -326,7 +326,7 @@ namespace wow2.Modules.Voice
 
             config.IsAutoJoinOn = !config.IsAutoJoinOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Auto joining when a new song is added is turned `{(config.IsAutoNpOn ? "on" : "off")}`")
+            await new SuccessMessage($"Auto joining when a new song is added is turned `{(config.IsAutoJoinOn ? "on" : "off")}`")
                 .SendAsync(Context.Channel);
         }
 
