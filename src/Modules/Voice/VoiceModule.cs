@@ -375,9 +375,11 @@ namespace wow2.Modules.Voice
             {
                 await ReplyAsync(embed: BuildNowPlayingEmbed(request));
             }
-            catch
+            catch (Exception ex)
             {
-                await new WarningMessage($"Displaying metadata failed for the following video:\n{request?.VideoMetadata?.webpage_url}")
+                string errorText = $"Displaying metadata failed for the following video:\n{request?.VideoMetadata?.webpage_url}";
+                Logger.LogException(ex, errorText);
+                await new ErrorMessage(errorText)
                     .SendAsync(Context.Channel);
             }
         }
