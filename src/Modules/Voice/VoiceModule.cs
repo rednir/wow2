@@ -473,7 +473,7 @@ namespace wow2.Modules.Voice
                 },
                 Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
                 ThumbnailUrl = request.VideoMetadata.thumbnails.Last().url,
-                Description = $"Requested at {request.TimeRequested:HH:mm} by {request.RequestedBy.Mention}",
+                Description = $"Requested at {request.TimeRequested:HH:mm} by {request.RequestedBy?.Mention}",
                 Color = Color.LightGrey
             };
 
