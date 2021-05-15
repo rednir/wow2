@@ -26,29 +26,10 @@ namespace wow2.Modules.Voice
         public async Task ListAsync(int page = 1)
         {
             var config = GetConfigForGuild(Context.Guild);
-
-            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-            int i = 0;
-            foreach (UserSongRequest songRequest in config.CurrentSongRequestQueue)
-            {
-                i++;
-
-                var fieldBuilderForSongRequest = new EmbedFieldBuilder()
-                {
-                    Name = $"{i}) {songRequest.VideoMetadata.title}",
-                    Value = $"{songRequest.VideoMetadata.webpage_url}\nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy?.Mention}"
-                };
-                listOfFieldBuilders.Add(fieldBuilderForSongRequest);
-            }
-
-            if (listOfFieldBuilders.Count == 0)
+            PagedMessage message = BuildListOfSongsMessage(config.CurrentSongRequestQueue, page);
+            if (message.Embed.Fields.Length == 0)
                 throw new CommandReturnException(Context, "There's nothing in the queue... how sad.");
-
-            await new PagedMessage(
-                title: "🔉 Up Next",
-                fieldBuilders: listOfFieldBuilders,
-                page: page)
-                    .SendAsync(Context.Channel);
+            await message.SendAsync(Context.Channel);
         }
 
         [Command("clear")]
@@ -250,7 +231,7 @@ namespace wow2.Modules.Voice
         [Command("list-saved")]
         [Alias("listsaved", "saved")]
         [Summary("Shows a list of saved song request queues.")]
-        public async Task ListSavedAsync(int page = 1)
+        public async Task ListSavedAsync(int page)
         {
             var config = GetConfigForGuild(Context.Guild);
 
@@ -289,6 +270,7 @@ namespace wow2.Modules.Voice
             await new SuccessMessage("Also deleted queue from the saved queue list.", "Loaded queue")
                 .SendAsync(Context.Channel);
         }
+
         [Command("load-queue")]
         [Alias("load", "loadqueue")]
         [Summary("Replaces the current song request queue with a saved queue. The saved queue will also be deleted.")]
@@ -459,6 +441,31 @@ namespace wow2.Modules.Voice
             config.ListOfUserIdsThatVoteSkipped.Clear();
             config.CtsForAudioStreaming.Cancel();
             config.CtsForAudioStreaming = new CancellationTokenSource();
+        }
+
+        private static PagedMessage BuildListOfSongsMessage(Queue<UserSongRequest> queue, int page = -1)
+        {
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+            int i = 0;
+            foreach (UserSongRequest songRequest in queue)
+            {
+                i++;
+
+                var fieldBuilderForSongRequest = new EmbedFieldBuilder()
+                {
+                    Name = $"{i}) {songRequest.VideoMetadata.title}",
+                    Value = $"{songRequest.VideoMetadata.webpage_url}\nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy?.Mention}"
+                };
+                listOfFieldBuilders.Add(fieldBuilderForSongRequest);
+            }
+
+            if (listOfFieldBuilders.Count == 0)
+                throw new ArgumentException("Song request queue was empty.");
+
+            return new PagedMessage(
+                title: "🔉 Up Next",
+                fieldBuilders: listOfFieldBuilders,
+                page: page);
         }
 
         private static Embed BuildNowPlayingEmbed(UserSongRequest request)

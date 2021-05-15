@@ -29,6 +29,7 @@ namespace wow2.Verbose.Messages
                 Description = description,
                 Color = Color.LightGrey,
             };
+            SetEmbedFields();
         }
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
@@ -37,7 +38,6 @@ namespace wow2.Verbose.Messages
             if (ListOfPagedMessages.Count > 40)
                 ListOfPagedMessages.RemoveAt(40);
 
-            SetEmbedFields();
             IUserMessage message = await base.SendAsync(channel);
 
             // A negative page number means the message does not use pages.
