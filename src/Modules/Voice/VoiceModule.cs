@@ -196,6 +196,21 @@ namespace wow2.Modules.Voice
                 .SendAsync(Context.Channel);
         }
 
+        [Command("shuffle")]
+        [Alias("random")]
+        [Summary("Randomly shuffles the song request queue.")]
+        public async Task ShuffleAsync()
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            var random = new Random();
+            config.CurrentSongRequestQueue = new Queue<UserSongRequest>(
+                config.CurrentSongRequestQueue.OrderBy(_ => random.Next()));
+
+            await new SuccessMessage("Shuffled the queue.")
+                .SendAsync(Context.Channel);
+        }
+
         [Command("np")]
         [Alias("nowplaying")]
         [Summary("Shows details about the currently playing song request.")]
