@@ -224,7 +224,7 @@ namespace wow2.Modules.Voice
             config.SavedSongRequestQueues.Add(name, new(config.CurrentSongRequestQueue));
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
 
-            await new SuccessMessage("The current queue was cleared. You can reload this queue anytime you want.", "Saved queue")
+            await new SuccessMessage("You can load this queue anytime you want.", "Saved queue")
                 .SendAsync(Context.Channel);
         }
 
@@ -471,9 +471,6 @@ namespace wow2.Modules.Voice
                 };
                 listOfFieldBuilders.Add(fieldBuilderForSongRequest);
             }
-
-            if (listOfFieldBuilders.Count == 0)
-                throw new ArgumentException("Song request queue was empty.");
 
             return new PagedMessage(
                 title: "🔉 Up Next",
