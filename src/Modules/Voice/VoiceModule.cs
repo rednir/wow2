@@ -231,7 +231,7 @@ namespace wow2.Modules.Voice
         [Command("list-saved")]
         [Alias("listsaved", "saved")]
         [Summary("Shows a list of saved song request queues.")]
-        public async Task ListSavedAsync(int page)
+        public async Task ListSavedAsync(int page = 1)
         {
             var config = GetConfigForGuild(Context.Guild);
 
@@ -251,6 +251,19 @@ namespace wow2.Modules.Voice
                 fieldBuilders: listOfFieldBuilders,
                 page: page)
                     .SendAsync(Context.Channel);
+        }
+
+        [Command("list-saved")]
+        [Alias("listsaved", "saved")]
+        [Summary("Shows a list of songs in a saved queue.")]
+        public async Task ListSavedAsync(string name, int page = 1)
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            if (!config.SavedSongRequestQueues.TryGetValue(name, out var queue))
+                throw new CommandReturnException(Context, "No queue with that name exists.");
+
+            await BuildListOfSongsMessage(queue, page).SendAsync(Context.Channel);
         }
 
         [Command("pop-queue")]
