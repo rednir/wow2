@@ -240,12 +240,8 @@ namespace wow2.Modules.Voice
             if (config.SavedSongRequestQueues.ContainsKey(name))
                 throw new CommandReturnException(Context, "You already have a saved queue with that name.");
 
-            config.SavedSongRequestQueues.Add(name, config.CurrentSongRequestQueue);
-
-            // TODO: Slow, hacky workaround to copy the queue.
-            //       Maybe look into ICloneable or something.
+            config.SavedSongRequestQueues.Add(name, new(config.CurrentSongRequestQueue));
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await DataManager.LoadGuildDataFromFileAsync(Context.Guild.Id);
 
             await new SuccessMessage("The current queue was cleared. You can reload this queue anytime you want.", "Saved queue")
                 .SendAsync(Context.Channel);
