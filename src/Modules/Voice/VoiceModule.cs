@@ -273,7 +273,7 @@ namespace wow2.Modules.Voice
         }
 
         [Command("pop-queue")]
-        [Alias("load", "load-queue", "loadqueue", "pop", "popqueue")]
+        [Alias("pop", "popqueue")]
         [Summary("Replaces the current song request queue with a saved queue. The saved queue will also be deleted.")]
         public async Task PopQueueAsync([Remainder] string name)
         {
@@ -287,6 +287,22 @@ namespace wow2.Modules.Voice
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
 
             await new SuccessMessage("Also deleted queue from the saved queue list.", "Loaded queue")
+                .SendAsync(Context.Channel);
+        }
+        [Command("load-queue")]
+        [Alias("load", "loadqueue")]
+        [Summary("Replaces the current song request queue with a saved queue. The saved queue will also be deleted.")]
+        public async Task LoadQueueAsync([Remainder] string name)
+        {
+            var config = GetConfigForGuild(Context.Guild);
+
+            if (!config.SavedSongRequestQueues.TryGetValue(name, out var loadedQueue))
+                throw new CommandReturnException(Context, "No queue with that name exists.");
+
+            config.CurrentSongRequestQueue = new(loadedQueue);
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+
+            await new SuccessMessage("You can safely delete this queue from the saved queue list if you want.", "Loaded queue")
                 .SendAsync(Context.Channel);
         }
 
