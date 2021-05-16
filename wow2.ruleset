@@ -54,7 +54,7 @@
         <Rule Id="SA1114"  Action="Warning" />          <!-- Parameter list should follow declaration -->
         <Rule Id="SA1115"  Action="Warning" />          <!-- Parameter should follow comma -->
         <Rule Id="SA1116"  Action="None" />          <!-- Split parameters should start on line after declaration -->
-        <Rule Id="SA1117"  Action="Warning" />          <!-- Parameters should be on same line or separate lines -->
+        <Rule Id="SA1117"  Action="None" />          <!-- Parameters should be on same line or separate lines -->
         <Rule Id="SA1118"  Action="None" />          <!-- Parameter should not span multiple lines -->
         <Rule Id="SA1120"  Action="Warning" />          <!-- Comments should contain text -->
         <Rule Id="SA1121"  Action="Warning" />          <!-- Use built-in type alias -->
