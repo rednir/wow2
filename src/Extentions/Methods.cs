@@ -53,6 +53,7 @@ namespace wow2.Extentions
             return stringBuilder.ToString();
         }
 
+        /// <summary>Copies a string and places newline characters after words.</summary>
         /// <returns>The string with newlines placed.</returns>
         public static string Wrap(this string originalString, int maxCharsPerLine)
         {
@@ -65,12 +66,12 @@ namespace wow2.Extentions
                 charsThisLine += word.Length + 1;
                 if (charsThisLine > maxCharsPerLine)
                 {
-                    stringBuilder.Append($"\n{word} ");
+                    stringBuilder.Append("\n" + word + " ");
                     charsThisLine = word.Length;
                 }
                 else
                 {
-                    stringBuilder.Append($"{word} ");
+                    stringBuilder.Append(word + " ");
                 }
             }
 
@@ -100,7 +101,8 @@ namespace wow2.Extentions
             dictionary.Add(newKey, valuesToMove);
         }
 
-        /// <returns>The string with no more than one adjacent whitespace.</returns>
+        /// <summary>Creates a new string where there is no more than one adjacent whitespace.</summary>
+        /// <returns>The modified string.</returns>
         public static string RemoveUnnecessaryWhiteSpace(this string stringToChange)
         {
             var stringBuilder = new StringBuilder();
@@ -116,10 +118,12 @@ namespace wow2.Extentions
             return stringBuilder.ToString();
         }
 
+        /// <summary>Changes command input to one without the command prefix, also discarding unnecessary whitespaces.</summary>
         /// <returns>The string without the command prefix.</return>
         public static string MakeCommandInput(this string messageContent, string commandPrefix)
             => messageContent.RemoveUnnecessaryWhiteSpace()[(commandPrefix.Length + 1)..];
 
+        /// <summary>Replaces all instances of some characters with a new character.</summary>
         /// <returns>The string with the list of characters removed.</returns>
         public static string ReplaceAll(this string stringToChange, char[] charsToReplace, char? replacementChar)
         {
@@ -133,7 +137,8 @@ namespace wow2.Extentions
             return stringBuilder.ToString();
         }
 
-        /// <returns>True if the string contains the parameter, and the parameter is adjacent to two whitespaces.</returns>
+        /// <summary>Checks whether a given string contains a term, and that term is adjacent to two whitespaces.</summary>
+        /// <returns>True if the string contains the term.</returns>
         public static bool ContainsWord(this string stringToSearch, string word)
         {
             var stringBuilder = new StringBuilder(stringToSearch);
@@ -142,11 +147,13 @@ namespace wow2.Extentions
             return stringToSearchWithBoundaries.Contains($" {word} ");
         }
 
-        /// <returns>A memory stream containing the bytes of the string.</returns>
+        /// <summary>Converts a string to a memory stream.</summary>
+        /// <returns>A new instance of MemoryStream containing the bytes of the string.</returns>
         public static MemoryStream ToMemoryStream(this string inputString)
             => new(Encoding.ASCII.GetBytes(inputString));
 
-        /// <returns>The list of commands as a readable string, with newlines placed between each command.</returns>
+        /// <summary>Creates a string from a list of commands, with newlines placed between each command.</summary>
+        /// <returns>A string representing the list of commands.</returns>
         public static string MakeReadableString(this IEnumerable<CommandInfo> commands, string commandPrefix)
         {
             string result = string.Empty;
@@ -162,7 +169,8 @@ namespace wow2.Extentions
             return result.TrimEnd('\n');
         }
 
-        /// <returns>The list of parameters as a readable string.</returns>
+        /// <summary>Creates a string from a list of parameters.</summary>
+        /// <returns>A string representing the list of parameters.</returns>
         public static string MakeReadableString(this IEnumerable<ParameterInfo> parameters)
         {
             string parametersInfo = string.Empty;
@@ -175,7 +183,8 @@ namespace wow2.Extentions
             return parametersInfo;
         }
 
-        /// <returns>The command info into a readable string.</returns>
+        /// <summary>Creates a string from a CommandInfo, showing the command prefix and the parameters.</summary>
+        /// <returns>A string representing the command.</returns>
         public static string MakeFullCommandString(this CommandInfo command, string commandPrefix)
             => $"`{commandPrefix} {(string.IsNullOrWhiteSpace(command.Module.Group) ? string.Empty : $"{command.Module.Group} ")}{command.Name}{command.Parameters.MakeReadableString()}`";
     }

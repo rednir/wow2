@@ -178,7 +178,7 @@
         <Rule Id="SA1615"  Action="None" />          <!-- Element return value should be documented -->
         <Rule Id="SA1616"  Action="Warning" />          <!-- Element return value documentation should have text -->
         <Rule Id="SA1617"  Action="Warning" />          <!-- Void return value should not be documented -->
-        <Rule Id="SA1618"  Action="Warning" />          <!-- Generic type parameters should be documented -->
+        <Rule Id="SA1618"  Action="None" />          <!-- Generic type parameters should be documented -->
         <Rule Id="SA1619"  Action="Warning" />          <!-- Generic type parameters should be documented partial class -->
         <Rule Id="SA1620"  Action="Warning" />          <!-- Generic type parameter documentation should match type parameters -->
         <Rule Id="SA1621"  Action="Warning" />          <!-- Generic type parameter documentation should declare parameter name -->
