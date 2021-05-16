@@ -1,4 +1,7 @@
 using System;
+using System.Web;
+using System.Text.RegularExpressions;
+using System.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -21,10 +24,16 @@ namespace wow2.Modules.Voice
         public static async Task<VideoMetadata> GetMetadata(string searchOrUrl)
         {
             searchOrUrl = searchOrUrl.Trim('\"');
-            bool isUrl = searchOrUrl.StartsWith("http://") || searchOrUrl.StartsWith("https://"); // TODO
-
-            SearchResult searchResult = await YouTubeModule.SearchForAsync(searchOrUrl, "video");
-            Video video = await YouTubeModule.GetVideoAsync(searchResult.Id.VideoId);
+            Video video;
+            if (TryGetVideoIdFromUrl(searchOrUrl, out string id))
+            {
+                video = await YouTubeModule.GetVideoAsync(id);
+            }
+            else
+            {
+                SearchResult searchResult = await YouTubeModule.SearchForAsync(searchOrUrl, "video");
+                video = await YouTubeModule.GetVideoAsync(searchResult.Id.VideoId);
+            }
             return new VideoMetadata(video);
         }
 
@@ -42,6 +51,28 @@ namespace wow2.Modules.Voice
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
             });
+        }
+
+        private static bool TryGetVideoIdFromUrl(string url, out string id)
+        {
+            try
+            {
+                var uri = new Uri(url);
+                if (!uri.Host.Contains("youtu"))
+                {
+                    id = null;
+                    return false;
+                }
+
+                var query = HttpUtility.ParseQueryString(uri.Query);
+                id = query.AllKeys.Contains("v") ? query["v"] : uri.Segments.Last();
+                return true;
+            }
+            catch (UriFormatException)
+            {
+                id = null;
+                return false;
+            }
         }
     }
 }
