@@ -256,7 +256,7 @@ namespace wow2.Modules.YouTube
 
         public static async Task<Video> GetVideoAsync(string id)
         {
-            var listRequest = Service.Videos.List("snippet");
+            var listRequest = Service.Videos.List("snippet, contentDetails, statistics");
             listRequest.Id = id;
             listRequest.MaxResults = 1;
             var listResponse = await listRequest.ExecuteAsync();

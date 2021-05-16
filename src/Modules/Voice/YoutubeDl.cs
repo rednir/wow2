@@ -1,8 +1,12 @@
 using System;
+using System.Web;
 using System.Text.Json;
+using System.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Google.Apis.YouTube.v3.Data;
+using wow2.Modules.YouTube;
 
 namespace wow2.Modules.Voice
 {
@@ -13,11 +17,46 @@ namespace wow2.Modules.Voice
 
         /// <summary>Looks up a URL or search term and gets the video metadata.</summary>
         /// <returns>Video metadata deserialized into <c>YouTubeVideoMetadata</c>.</returns>
-        public static async Task<VideoMetadata> GetMetadata(string searchOrUrl)
+        public static async Task<VideoMetadata> GetMetadataAsync(string searchOrUrl)
         {
             searchOrUrl = searchOrUrl.Trim('\"');
+            Video video;
+            if (TryGetVideoIdFromUrl(searchOrUrl, out string id))
+            {
+                video = await YouTubeModule.GetVideoAsync(id);
+            }
+            else if (searchOrUrl.Contains("twitch.tv/"))
+            {
+                return await GetMetadataFromYoutubeDlAsync(searchOrUrl);
+            }
+            else
+            {
+                SearchResult searchResult = await YouTubeModule.SearchForAsync(searchOrUrl, "video");
+                video = await YouTubeModule.GetVideoAsync(searchResult.Id.VideoId);
+            }
+            return new VideoMetadata(video);
+        }
+
+        /// <returns>The FFmpeg process.</returns>
+        public static Process CreateStreamFromVideoUrl(string url)
+        {
+            const string youtubeDlArgs = "-q -f worstaudio --no-playlist --no-warnings";
+            string shellCommand = $"{YouTubeDlPath} {url} {youtubeDlArgs} -o - | {FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+            return Process.Start(new ProcessStartInfo
+            {
+                FileName = isWindows ? "cmd" : "bash",
+                Arguments = $"{(isWindows ? "/c" : "-c")} \"{shellCommand}\"",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+            });
+        }
+
+        private static async Task<VideoMetadata> GetMetadataFromYoutubeDlAsync(string input)
+        {
             const string arguments = "-j -q";
-            bool isUrl = searchOrUrl.StartsWith("http://") || searchOrUrl.StartsWith("https://");
+            bool isUrl = input.StartsWith("http://") || input.StartsWith("https://");
             string standardOutput = "";
             string standardError = "";
 
@@ -27,7 +66,7 @@ namespace wow2.Modules.Voice
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.Arguments = isUrl ? $"\"{searchOrUrl}\" {arguments}" : $"ytsearch:\"{searchOrUrl}\" {arguments}";
+                process.StartInfo.Arguments = isUrl ? $"\"{input}\" {arguments}" : $"ytsearch:\"{input}\" {arguments}";
 
                 process.OutputDataReceived += (sendingProcess, outline) => standardOutput += outline.Data + "\n";
                 process.ErrorDataReceived += (sendingProcess, outline) => standardError += outline.Data + "\n";
@@ -45,20 +84,26 @@ namespace wow2.Modules.Voice
             return JsonSerializer.Deserialize<VideoMetadata>(standardOutput);
         }
 
-        /// <returns>The FFmpeg process.</returns>
-        public static Process CreateStreamFromVideoUrl(string url)
+        private static bool TryGetVideoIdFromUrl(string url, out string id)
         {
-            const string youtubeDlArgs = "-q -f worstaudio --no-playlist --no-warnings";
-            string shellCommand = $"{YouTubeDlPath} {url} {youtubeDlArgs} -o - | {FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
-            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-
-            return Process.Start(new ProcessStartInfo
+            try
             {
-                FileName = isWindows ? "cmd" : "bash",
-                Arguments = $"{(isWindows ? "/c" : "-c")} \"{shellCommand}\"",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-            });
+                var uri = new Uri(url);
+                if (!uri.Host.Contains("youtu"))
+                {
+                    id = null;
+                    return false;
+                }
+
+                var query = HttpUtility.ParseQueryString(uri.Query);
+                id = query.AllKeys.Contains("v") ? query["v"] : uri.Segments.Last();
+                return true;
+            }
+            catch (UriFormatException)
+            {
+                id = null;
+                return false;
+            }
         }
     }
 }

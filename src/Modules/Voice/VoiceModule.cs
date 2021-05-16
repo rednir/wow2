@@ -59,7 +59,11 @@ namespace wow2.Modules.Voice
             VideoMetadata metadata;
             try
             {
-                metadata = await YouTubeDl.GetMetadata(songRequest);
+                metadata = await YouTubeDl.GetMetadataAsync(songRequest);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new CommandReturnException(Context, $"`{ex.Message}`", "Invalid input");
             }
             catch (Exception ex)
             {
@@ -516,7 +520,7 @@ namespace wow2.Modules.Voice
                         $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {formattedDuration}" : ""
                 },
                 Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
-                ThumbnailUrl = request.VideoMetadata.thumbnails.Last().url,
+                ThumbnailUrl = request.VideoMetadata.thumbnails.LastOrDefault()?.url,
                 Description = $"Requested at {request.TimeRequested:HH:mm} by {request.RequestedBy?.Mention}",
                 Color = Color.LightGrey
             };
