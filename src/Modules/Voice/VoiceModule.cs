@@ -385,21 +385,22 @@ namespace wow2.Modules.Voice
         private static PagedMessage BuildListOfSongsMessage(Queue<UserSongRequest> queue, int page = -1)
         {
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+            float? totalDuration = 0;
             int i = 0;
             foreach (UserSongRequest songRequest in queue)
             {
                 i++;
-
+                totalDuration += songRequest.VideoMetadata.duration;
                 var fieldBuilderForSongRequest = new EmbedFieldBuilder()
                 {
                     Name = $"{i}) {songRequest.VideoMetadata.title}",
-                    Value = $"{songRequest.VideoMetadata.webpage_url}\nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy?.Mention}",
+                    Value = $"[More details]({songRequest.VideoMetadata.webpage_url}) • {DurationAsString(songRequest.VideoMetadata.duration)} \nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy?.Mention}",
                 };
                 listOfFieldBuilders.Add(fieldBuilderForSongRequest);
             }
 
             return new PagedMessage(
-                title: "🔉 Up Next",
+                title: $"🔉 Up Next ({DurationAsString(totalDuration)})",
                 fieldBuilders: listOfFieldBuilders,
                 page: page);
         }
@@ -408,10 +409,6 @@ namespace wow2.Modules.Voice
         {
             const string youtubeIconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png";
             const string twitchIconUrl = "https://www.net-aware.org.uk/siteassets/images-and-icons/application-icons/app-icons-twitch.png?w=585&scale=down";
-
-            // Don't display hours if less than 1 hour.
-            string formattedDuration = TimeSpan.FromSeconds(request.VideoMetadata.duration ?? 0)
-                .ToString((request.VideoMetadata.duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
 
             var embedBuilder = new EmbedBuilder()
             {
@@ -424,7 +421,7 @@ namespace wow2.Modules.Voice
                 Footer = new EmbedFooterBuilder()
                 {
                     Text = request.VideoMetadata.extractor.StartsWith("youtube") ?
-                        $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {formattedDuration}" : string.Empty,
+                        $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {DurationAsString(request.VideoMetadata.duration)}" : string.Empty,
                 },
                 Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
                 ThumbnailUrl = request.VideoMetadata.thumbnails.LastOrDefault()?.url,
@@ -434,6 +431,10 @@ namespace wow2.Modules.Voice
 
             return embedBuilder.Build();
         }
+
+        // Doesn't display hours if less than 1 hour.
+        private static string DurationAsString(float? duration) =>
+            TimeSpan.FromSeconds(duration ?? 0).ToString((duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
 
         private async Task JoinVoiceChannelAsync(VoiceModuleConfig config, IVoiceChannel channel)
         {
