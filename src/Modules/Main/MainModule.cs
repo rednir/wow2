@@ -138,8 +138,7 @@ namespace wow2.Modules.Main
         public async Task UploadRawGuildDataAsync()
         {
             await Context.Channel.SendFileAsync(
-                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json"
-            );
+                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json");
         }
 
         [Command("set-command-prefix")]
@@ -246,12 +245,10 @@ namespace wow2.Modules.Main
         {
             // Find commands in module.
             var listOfCommandInfo = (await Bot.CommandService.GetExecutableCommandsAsync(
-                new CommandContext(Context.Client, Context.Message), null
-            ))
+                new CommandContext(Context.Client, Context.Message), null))
             .Where(c =>
                 c.Module.Name.Equals(specifiedModuleName, StringComparison.CurrentCultureIgnoreCase)
-                || c.Module.Aliases.Contains(specifiedModuleName.ToLower())
-            );
+                || c.Module.Aliases.Contains(specifiedModuleName.ToLower()));
 
             if (!listOfCommandInfo.Any())
                 throw new CommandReturnException(Context, "Did you make a typo?", "No such module");

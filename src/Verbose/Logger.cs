@@ -61,7 +61,9 @@ namespace wow2.Verbose
             {
                 File.AppendAllText(LogFilePath, message + "\n");
             }
-            catch { }
+            catch
+            {
+            }
             finally
             {
                 Console.WriteLine(message);

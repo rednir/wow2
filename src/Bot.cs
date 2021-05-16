@@ -220,12 +220,12 @@ namespace wow2
         public static async Task<IResult> ExecuteCommandAsync(ICommandContext context, string input)
         {
             using var _ = context.Channel.EnterTypingState();
-            IResult result = await CommandService.ExecuteAsync
-            (
+
+            IResult result = await CommandService.ExecuteAsync(
                 context: context,
                 input: input,
-                services: null
-            );
+                services: null);
+
             if (result.Error.HasValue)
                 await SendErrorMessageToChannel(result.Error, context);
             return result;
@@ -283,20 +283,18 @@ namespace wow2
 
             SearchResult result = CommandService.Search(
                 context: new CommandContext(context.Client, context.Message),
-                input: term
-            );
+                input: term);
 
             if (result.Commands == null)
             {
                 // This provides more results but is not as accurate.
                 return (await CommandService.GetExecutableCommandsAsync(
-                    new CommandContext(context.Client, context.Message), null
-                ))
-                .Where(command =>
-                    command.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                    command.Module.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-                    term.Contains(command.Name, StringComparison.OrdinalIgnoreCase) ||
-                    term.Contains(command.Module.Name, StringComparison.OrdinalIgnoreCase));
+                    new CommandContext(context.Client, context.Message), null))
+                        .Where(command =>
+                            command.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                            command.Module.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                            term.Contains(command.Name, StringComparison.OrdinalIgnoreCase) ||
+                            term.Contains(command.Module.Name, StringComparison.OrdinalIgnoreCase));
             }
             else
             {

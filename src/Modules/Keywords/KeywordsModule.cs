@@ -231,8 +231,8 @@ namespace wow2.Modules.Keywords
 
             foreach (var keywordPair in keywordsDictionary)
             {
-                string nameToShow = (keywordPair.Value.Count > 1) ? ($"{keywordPair.Key}:\t({keywordPair.Value.Count} values)") : ($"{keywordPair.Key}:");
-                string valueToShow = (keywordPair.Value[0].Content.Length > 50) ? ($"`{keywordPair.Value[0].Content.Substring(0, 47)}...`") : ($"`{keywordPair.Value[0].Content}`");
+                string nameToShow = (keywordPair.Value.Count > 1) ? $"{keywordPair.Key}:\t({keywordPair.Value.Count} values)" : $"{keywordPair.Key}:";
+                string valueToShow = (keywordPair.Value[0].Content.Length > 50) ? $"`{keywordPair.Value[0].Content.Substring(0, 47)}...`" : $"`{keywordPair.Value[0].Content}`";
 
                 var fieldBuilderForKeyword = new EmbedFieldBuilder()
                 {
@@ -274,8 +274,7 @@ namespace wow2.Modules.Keywords
                     {
                         Name = $"Added by {user} at {date}",
                         Value = $"```{value.Content}```",
-                    }
-                );
+                    });
             }
 
             await new PagedMessage(
