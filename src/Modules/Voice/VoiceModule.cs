@@ -517,7 +517,7 @@ namespace wow2.Modules.Voice
                 Footer = new EmbedFooterBuilder()
                 {
                     Text = request.VideoMetadata.extractor.StartsWith("youtube") ?
-                        $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {formattedDuration}" : "",
+                        $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {formattedDuration}" : string.Empty,
                 },
                 Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
                 ThumbnailUrl = request.VideoMetadata.thumbnails.LastOrDefault()?.url,

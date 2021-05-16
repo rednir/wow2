@@ -57,8 +57,8 @@ namespace wow2.Modules.Voice
         {
             const string arguments = "-j -q";
             bool isUrl = input.StartsWith("http://") || input.StartsWith("https://");
-            string standardOutput = "";
-            string standardError = "";
+            string standardOutput = string.Empty;
+            string standardError = string.Empty;
 
             using (var process = new Process())
             {

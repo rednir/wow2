@@ -58,7 +58,7 @@ namespace wow2.Modules.Dev
         {
             if (groups.Length == 0)
             {
-                string result = "";
+                string result = string.Empty;
                 foreach (string name in Tests.TestList.Keys)
                     result += $"`{name}`\n";
 
@@ -124,8 +124,8 @@ namespace wow2.Modules.Dev
         public async Task ShellExecuteAsync([Remainder] string command)
         {
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-            string standardOutput = "";
-            string standardError = "";
+            string standardOutput = string.Empty;
+            string standardError = string.Empty;
             using (var process = new Process())
             {
                 process.StartInfo.FileName = isWindows ? "cmd" : "bash";

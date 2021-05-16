@@ -25,7 +25,7 @@ namespace wow2.Extentions
             MatchCollection matches = regex.Matches(stringContainingUrl);
             if (matches.Count == 0)
             {
-                return (stringContainingUrl, "");
+                return (stringContainingUrl, string.Empty);
             }
             else
             {
@@ -162,7 +162,7 @@ namespace wow2.Extentions
         /// <returns>The list of commands as a readable string, with newlines placed between each command.</returns>
         public static string MakeReadableString(this IEnumerable<CommandInfo> commands, string commandPrefix)
         {
-            string result = "";
+            string result = string.Empty;
             int index = 0;
             foreach (var command in commands)
             {
@@ -177,10 +177,10 @@ namespace wow2.Extentions
         /// <returns>The list of parameters as a readable string.</returns>
         public static string MakeReadableString(this IEnumerable<ParameterInfo> parameters)
         {
-            string parametersInfo = "";
+            string parametersInfo = string.Empty;
             foreach (ParameterInfo parameter in parameters)
             {
-                string optionalText = parameter.IsOptional ? "optional:" : "";
+                string optionalText = parameter.IsOptional ? "optional:" : string.Empty;
                 parametersInfo += $" [{optionalText}{parameter.Name.ToUpper()}]";
             }
             return parametersInfo;
@@ -188,6 +188,6 @@ namespace wow2.Extentions
 
         /// <returns>The command info into a readable string.</returns>
         public static string MakeFullCommandString(this CommandInfo command, string commandPrefix)
-            => $"`{commandPrefix} {(string.IsNullOrWhiteSpace(command.Module.Group) ? "" : $"{command.Module.Group} ")}{command.Name}{command.Parameters.MakeReadableString()}`";
+            => $"`{commandPrefix} {(string.IsNullOrWhiteSpace(command.Module.Group) ? string.Empty : $"{command.Module.Group} ")}{command.Name}{command.Parameters.MakeReadableString()}`";
     }
 }

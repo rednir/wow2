@@ -164,7 +164,7 @@ namespace wow2.Modules.Main
             var embedBuilder = new EmbedBuilder()
             {
                 Title = $"{appInfo.Name}  •  in {Bot.Client.Guilds.Count} servers",
-                Description = (string.IsNullOrWhiteSpace(appInfo.Description) ? "" : appInfo.Description) + "\n[Link to github](https://github.com/rednir/wow2)",
+                Description = (string.IsNullOrWhiteSpace(appInfo.Description) ? string.Empty : appInfo.Description) + "\n[Link to github](https://github.com/rednir/wow2)",
                 Color = Color.LightGrey,
                 Author = new EmbedAuthorBuilder()
                 {
@@ -193,7 +193,7 @@ namespace wow2.Modules.Main
 
                 await Bot.ExecuteCommandAsync(
                     context,
-                    aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, "", true, null));
+                    aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, string.Empty, true, null));
 
                 return true;
             }
