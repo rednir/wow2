@@ -7,7 +7,7 @@ namespace wow2.Modules
     [Name("Reddit")]
     [Group("reddit")]
     [Alias("r")]
-    [Summary("Integrations with the Reddit api")]
+    [Summary("Integrations with Reddit.")]
     public class RedditModule : Module
     {
         [Command("top")]
