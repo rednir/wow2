@@ -216,24 +216,16 @@ namespace wow2
 
         public static async Task<IResult> ExecuteCommandAsync(ICommandContext context, string input)
         {
-            var typingState = context.Channel.EnterTypingState();
-            try
-            {
-                IResult result = await CommandService.ExecuteAsync
-                (
-                    context: context,
-                    input: input,
-                    services: null
-                );
-
-                if (result.Error.HasValue)
-                    await SendErrorMessageToChannel(result.Error, context);
-                return result;
-            }
-            finally
-            {
-                typingState.Dispose();
-            }
+            using var _ = context.Channel.EnterTypingState();
+            IResult result = await CommandService.ExecuteAsync
+            (
+                context: context,
+                input: input,
+                services: null
+            );
+            if (result.Error.HasValue)
+                await SendErrorMessageToChannel(result.Error, context);
+            return result;
         }
 
         public static async Task SendErrorMessageToChannel(CommandError? commandError, ICommandContext context)
