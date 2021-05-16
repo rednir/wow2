@@ -68,6 +68,7 @@ namespace wow2.Modules.YouTube
             {
                 throw new CommandReturnException(Context, "That channel doesn't exist.");
             }
+
             await ReplyAsync(embed: await BuildChannelOverviewEmbedAsync(channel));
         }
 

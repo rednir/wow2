@@ -20,6 +20,7 @@ namespace wow2.Modules.Moderator
                 if (timeSpan < TimeSpan.FromSeconds(12))
                     return true;
             }
+
             return false;
         }
 

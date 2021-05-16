@@ -197,6 +197,7 @@ namespace wow2.Modules.Main
 
                 return true;
             }
+
             return false;
         }
 
@@ -262,6 +263,7 @@ namespace wow2.Modules.Main
                     Value = $"*{(string.IsNullOrWhiteSpace(command.Summary) ? "No description provided." : command.Summary)}*",
                 });
             }
+
             return listOfFieldBuilders;
         }
 

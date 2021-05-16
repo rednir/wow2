@@ -321,7 +321,7 @@ namespace wow2
                 }
                 catch (HttpException)
                 {
-                    // Most likely the bot does not have sufficient privileges. 
+                    // Most likely the bot does not have sufficient privileges.
                 }
             }
         }

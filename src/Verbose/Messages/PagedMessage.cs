@@ -46,6 +46,7 @@ namespace wow2.Verbose.Messages
                 await message.AddReactionsAsync(
                     new IEmote[] { PageLeftEmote, PageRightEmote, StopEmote });
             }
+
             return message;
         }
 

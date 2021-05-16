@@ -52,6 +52,7 @@ namespace wow2.Modules.Dev
                     Value = "This is some description text.",
                 });
             }
+
             await new PagedMessage(listOfFieldBuilders, "This is a response message with fields.", "Fields", 2)
                 .SendAsync(context.Channel);
         }
@@ -234,6 +235,7 @@ namespace wow2.Modules.Dev
                 results.Add(await Bot.ExecuteCommandAsync(context, command));
                 await Task.Delay(CommandDelay);
             }
+
             return results;
         }
 

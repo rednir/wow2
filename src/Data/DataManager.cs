@@ -15,10 +15,12 @@ namespace wow2.Data
         public static Secrets Secrets { get; set; } = new Secrets();
 
         public static readonly string AppDataDirPath = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
+
         public static string GuildDataDirPath
         {
             get { return $"{AppDataDirPath}/GuildData"; }
         }
+
         public static string LogsDirPath
         {
             get { return $"{AppDataDirPath}/Logs"; }
@@ -79,6 +81,7 @@ namespace wow2.Data
                         Logger.Log($"Not loading guild data for {guildId}, as the bot is not connected to it.", LogSeverity.Info);
                         continue;
                     }
+
                     await LoadGuildDataFromFileAsync(guildId);
                 }
                 catch (Exception ex)

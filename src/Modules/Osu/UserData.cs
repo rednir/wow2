@@ -12,6 +12,8 @@ namespace wow2.Modules.Osu
         public string cover_url { get; set; }
         public Statistics statistics { get; set; }
 
+        public List<Score> BestScores { get; set; } = new();
+
         public class Statistics
         {
             public double pp { get; set; }
@@ -19,7 +21,5 @@ namespace wow2.Modules.Osu
             public int? play_time { get; set; }
             public int? global_rank { get; set; }
         }
-
-        public List<Score> BestScores { get; set; } = new();
     }
 }

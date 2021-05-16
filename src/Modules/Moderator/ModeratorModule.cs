@@ -201,6 +201,7 @@ namespace wow2.Modules.Moderator
                     // User is most likely admin, so just give another warning.
                 }
             }
+
             await new WarningMessage(
                 description: $"You have recieved a warning from {requestedBy.Mention} in the server '{requestedBy.Guild.Name}'\nFurther warnings may result in a ban.\n```\n{message}\n```",
                 title: "You have been warned!")

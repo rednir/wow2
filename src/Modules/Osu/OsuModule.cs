@@ -146,6 +146,7 @@ namespace wow2.Modules.Osu
                     $"You'll get notifications about `{userData.username}`.")
                         .SendAsync(Context.Channel);
             }
+
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
@@ -208,10 +209,10 @@ namespace wow2.Modules.Osu
         {
             var tokenRequestParams = new Dictionary<string, string>()
             {
-                {"client_id", DataManager.Secrets.OsuClientId},
-                {"client_secret", DataManager.Secrets.OsuClientSecret},
-                {"grant_type", "client_credentials"},
-                {"scope", "public"},
+                { "client_id", DataManager.Secrets.OsuClientId },
+                { "client_secret", DataManager.Secrets.OsuClientSecret },
+                { "grant_type", "client_credentials" },
+                { "scope", "public" },
             };
 
             Dictionary<string, object> tokenRequestResponse;
@@ -236,7 +237,7 @@ namespace wow2.Modules.Osu
             var userGetResponse = await HttpClient.GetAsync($"api/v2/users/{user}");
 
             // If `user` is a username, the client will be redirected, losing
-            // its headers. So another request will need to be made. 
+            // its headers. So another request will need to be made.
             if (userGetResponse.StatusCode == HttpStatusCode.Unauthorized)
                 userGetResponse = await HttpClient.GetAsync(userGetResponse.RequestMessage.RequestUri);
 
@@ -275,6 +276,7 @@ namespace wow2.Modules.Osu
                             channel: (SocketTextChannel)Bot.Client.GetChannel(config.AnnouncementsChannelId));
                         await DataManager.SaveGuildDataToFileAsync(pair.Key);
                     }
+
                     await Task.Delay(2000);
                 }
             }

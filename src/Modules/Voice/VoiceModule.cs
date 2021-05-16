@@ -156,7 +156,7 @@ namespace wow2.Modules.Voice
             }
             else
             {
-                // Required number of vote skips has been met. 
+                // Required number of vote skips has been met.
                 config.IsLoopEnabled = false;
                 _ = ContinueAsync();
             }

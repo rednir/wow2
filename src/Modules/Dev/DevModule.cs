@@ -140,6 +140,7 @@ namespace wow2.Modules.Dev
                 process.BeginOutputReadLine();
                 await process.WaitForExitAsync();
             }
+
             await ReplyAsync($"```STDOUT:\n{standardOutput}```\n```STDERR:\n{standardError}```");
         }
 

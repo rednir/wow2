@@ -139,6 +139,7 @@ namespace wow2.Modules.Games.Counting
                 await EndGameAsync(GetConfigForGuild(message.GetGuild()));
                 return true;
             }
+
             return false;
         }
 

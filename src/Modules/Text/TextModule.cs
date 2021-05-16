@@ -151,6 +151,7 @@ namespace wow2.Modules.Text
                     result.Add(readableName, Program.Assembly.GetManifestResourceStream(resourceName));
                 }
             }
+
             return result;
         }
     }

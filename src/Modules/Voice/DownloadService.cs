@@ -34,6 +34,7 @@ namespace wow2.Modules.Voice
                 SearchResult searchResult = await YouTubeModule.SearchForAsync(searchOrUrl, "video");
                 video = await YouTubeModule.GetVideoAsync(searchResult.Id.VideoId);
             }
+
             return new VideoMetadata(video);
         }
 

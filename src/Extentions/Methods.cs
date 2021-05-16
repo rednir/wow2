@@ -66,6 +66,7 @@ namespace wow2.Extentions
                     charactersOfNextSeparatorFound = 0;
                 }
             }
+
             return stringBuilder.ToString();
         }
 
@@ -128,6 +129,7 @@ namespace wow2.Extentions
                 lastCharWasWhiteSpace = char.IsWhiteSpace(character);
                 stringBuilder.Append(character);
             }
+
             return stringBuilder.ToString();
         }
 
@@ -144,6 +146,7 @@ namespace wow2.Extentions
                 stringBuilder.Append(
                     charsToReplace.Contains(character) ? replacementChar : character);
             }
+
             return stringBuilder.ToString();
         }
 
@@ -172,6 +175,7 @@ namespace wow2.Extentions
                     break;
                 index++;
             }
+
             return result.TrimEnd('\n');
         }
 
@@ -184,6 +188,7 @@ namespace wow2.Extentions
                 string optionalText = parameter.IsOptional ? "optional:" : string.Empty;
                 parametersInfo += $" [{optionalText}{parameter.Name.ToUpper()}]";
             }
+
             return parametersInfo;
         }
 
