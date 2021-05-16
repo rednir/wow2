@@ -17,15 +17,8 @@ namespace wow2.Data
         public static Dictionary<ulong, GuildData> DictionaryOfGuildData { get; set; } = new Dictionary<ulong, GuildData>();
         public static Secrets Secrets { get; set; } = new Secrets();
 
-        public static string GuildDataDirPath
-        {
-            get { return $"{AppDataDirPath}/GuildData"; }
-        }
-
-        public static string LogsDirPath
-        {
-            get { return $"{AppDataDirPath}/Logs"; }
-        }
+        public static string GuildDataDirPath => $"{AppDataDirPath}/GuildData";
+        public static string LogsDirPath => $"{AppDataDirPath}/Logs";
 
         /// <summary>Creates required directories if necessary and loads all guild data.</summary>
         public static async Task InitializeAsync()

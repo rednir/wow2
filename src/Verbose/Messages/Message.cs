@@ -15,16 +15,9 @@ namespace wow2.Verbose.Messages
 
         public ulong ReplyToMessageId { get; set; }
         public IUserMessage SentMessage { get; protected set; }
-
-        public MessageReference MessageReference
-        {
-            get { return ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null; }
-        }
-
-        public Embed Embed
-        {
-            get { return EmbedBuilder.Build(); }
-        }
+        public Embed Embed => EmbedBuilder.Build();
+        public MessageReference MessageReference =>
+            ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null;
 
         public virtual async Task<IUserMessage> SendAsync(IMessageChannel channel)
         {

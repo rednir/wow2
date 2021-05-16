@@ -13,9 +13,6 @@ namespace wow2.Modules.Text
         private static readonly FontFamily LightFontFamily = FontCollection.Install(
             Program.Assembly.GetManifestResourceStream("wow2.res.Cantarell-Light.ttf"));
 
-        public static Font QuoteTextFont
-        {
-            get { return LightFontFamily.CreateFont(32, FontStyle.Regular); }
-        }
+        public static Font QuoteTextFont => LightFontFamily.CreateFont(32, FontStyle.Regular);
     }
 }

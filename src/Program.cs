@@ -14,17 +14,10 @@ namespace wow2
         public static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
         private const string ReleaseVersion = "v3.0";
 
+        public static string Version => IsDebug ? "DEBUG BUILD" : ReleaseVersion;
+        public static string RuntimeDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
         public static bool IsDebug { get; private set; }
-
-        public static string Version
-        {
-            get { return IsDebug ? "DEBUG BUILD" : ReleaseVersion; }
-        }
-
-        public static string RuntimeDirectory
-        {
-            get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); }
-        }
 
         [Conditional("DEBUG")]
         private static void SetIsDebugField()
