@@ -17,23 +17,6 @@ namespace wow2.Extentions
         public static SocketGuild GetGuild(this IUserMessage socketMessage)
             => ((SocketGuildChannel)socketMessage.Channel).Guild;
 
-        // I don't think this even works as intended but it's unused for now anyway.
-        /// <returns>The first url in the string and the new string without the url, or an empty string in place of the url if there is none.</returns>
-        public static (string newString, string url) StripUrlIfExists(this string stringContainingUrl)
-        {
-            Regex regex = new(@"(http|https):\/\/([\w\-_]+(?:(?:\.[\w\-_]+)+))([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?");
-            MatchCollection matches = regex.Matches(stringContainingUrl);
-            if (matches.Count == 0)
-            {
-                return (stringContainingUrl, string.Empty);
-            }
-            else
-            {
-                string url = matches[0].Value;
-                return (stringContainingUrl[(stringContainingUrl.IndexOf("http") + url.Length)..], url);
-            }
-        }
-
         public static string TextBetween(this string stringToSearch, string separator)
         {
             var stringBuilder = new StringBuilder();
