@@ -8,7 +8,7 @@ namespace wow2.Verbose.Messages
     /// <summary>Basic message, nothing special.</summary>
     public class GenericMessage : Message
     {
-        protected MemoryStream DescriptionAsStream;
+        private readonly MemoryStream DescriptionAsStream;
 
         public GenericMessage(string description, string title = "")
         {

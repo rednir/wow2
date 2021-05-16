@@ -23,7 +23,6 @@ namespace wow2.Modules.YouTube
     [Summary("Integrations with YouTube, like getting notified for new videos.")]
     public class YouTubeModule : Module
     {
-        private static DateTime TimeOfLastVideoCheck = DateTime.Now;
         private static readonly YouTubeService Service;
         private static readonly Thread YouTubePollingThread = new(async () =>
         {
@@ -43,6 +42,7 @@ namespace wow2.Modules.YouTube
                 }
             }
         });
+        private static DateTime TimeOfLastVideoCheck = DateTime.Now;
 
         static YouTubeModule()
         {

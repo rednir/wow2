@@ -11,10 +11,11 @@ namespace wow2.Data
 {
     public static class DataManager
     {
+        public static readonly string AppDataDirPath = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
+        private static readonly JsonSerializerOptions SerializerOptions = new() { WriteIndented = true };
+
         public static Dictionary<ulong, GuildData> DictionaryOfGuildData { get; set; } = new Dictionary<ulong, GuildData>();
         public static Secrets Secrets { get; set; } = new Secrets();
-
-        public static readonly string AppDataDirPath = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
 
         public static string GuildDataDirPath
         {
@@ -25,8 +26,6 @@ namespace wow2.Data
         {
             get { return $"{AppDataDirPath}/Logs"; }
         }
-
-        private static readonly JsonSerializerOptions SerializerOptions = new() { WriteIndented = true };
 
         /// <summary>Creates required directories if necessary and loads all guild data.</summary>
         public static async Task InitializeAsync()
