@@ -22,7 +22,8 @@ namespace wow2.Modules.Moderator
         {
             var config = GetConfigForGuild(message.GetGuild());
 
-            if (!config.IsAutoModOn) return;
+            if (!config.IsAutoModOn)
+                return;
 
             UserRecord record;
             try

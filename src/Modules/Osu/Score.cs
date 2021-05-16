@@ -15,7 +15,8 @@ namespace wow2.Modules.Osu
 
         public bool Equals(Score other)
         {
-            if (other == null) return false;
+            if (other == null)
+                return false;
             return id == other.id;
         }
     }

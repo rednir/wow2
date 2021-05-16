@@ -33,13 +33,15 @@ namespace wow2.Verbose
 
         public static void Log(object message, LogSeverity severity = LogSeverity.Debug)
         {
-            if (severity == LogSeverity.Debug && !Program.IsDebug) return;
+            if (severity == LogSeverity.Debug && !Program.IsDebug)
+                return;
             Output($"{DateTime.Now} [{severity}] {message}");
         }
 
         public static void Log(LogMessage logMessage)
         {
-            if (logMessage.Severity == LogSeverity.Debug && !Program.IsDebug) return;
+            if (logMessage.Severity == LogSeverity.Debug && !Program.IsDebug)
+                return;
             Output($"{DateTime.Now} [{logMessage.Severity}] {logMessage.Source}: {logMessage.Message}");
         }
 

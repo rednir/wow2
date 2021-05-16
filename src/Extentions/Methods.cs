@@ -122,7 +122,8 @@ namespace wow2.Extentions
             bool lastCharWasWhiteSpace = false;
             foreach (char character in stringToChange)
             {
-                if (char.IsWhiteSpace(character) && lastCharWasWhiteSpace) continue;
+                if (char.IsWhiteSpace(character) && lastCharWasWhiteSpace)
+                    continue;
                 lastCharWasWhiteSpace = char.IsWhiteSpace(character);
                 stringBuilder.Append(character);
             }
@@ -166,7 +167,8 @@ namespace wow2.Extentions
             foreach (var command in commands)
             {
                 result += command.MakeFullCommandString(commandPrefix) + "\n";
-                if (index >= 5) break;
+                if (index >= 5)
+                    break;
                 index++;
             }
             return result.TrimEnd('\n');

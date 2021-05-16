@@ -43,8 +43,14 @@ namespace wow2.Modules.Games.Counting
                 return false;
             }
 
-            try { userNumber = Convert.ToSingle(receivedMessage.Content); }
-            catch { return false; }
+            try
+            {
+                userNumber = Convert.ToSingle(receivedMessage.Content);
+            }
+            catch
+            {
+                return false;
+            }
 
             // If this is the first counting message, there is no need to check if a user counts twice in a row.
             if (config.ListOfMessages.Count != 0)
@@ -103,11 +109,16 @@ namespace wow2.Modules.Games.Counting
             float absNextNumber = Math.Abs((float)config.NextNumber);
             float absIncrement = Math.Abs((float)config.Increment);
 
-            if (absNextNumber < 3 * absIncrement) commentOnFinalNumber = "Pathetic.";
-            else if (absNextNumber < 25 * absIncrement) commentOnFinalNumber = "There's plenty room for improvement.";
-            else if (absNextNumber < 75 * absIncrement) commentOnFinalNumber = "Not bad!";
-            else if (absNextNumber >= 75 * absIncrement) commentOnFinalNumber = "Amazing!";
-            else commentOnFinalNumber = "";
+            if (absNextNumber < 3 * absIncrement)
+                commentOnFinalNumber = "Pathetic.";
+            else if (absNextNumber < 25 * absIncrement)
+                commentOnFinalNumber = "There's plenty room for improvement.";
+            else if (absNextNumber < 75 * absIncrement)
+                commentOnFinalNumber = "Not bad!";
+            else if (absNextNumber >= 75 * absIncrement)
+                commentOnFinalNumber = "Amazing!";
+            else
+                commentOnFinalNumber = "";
 
             await new PagedMessage(
                 fieldBuilders: listOfFieldBuilders,

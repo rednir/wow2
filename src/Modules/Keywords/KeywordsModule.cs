@@ -34,7 +34,8 @@ namespace wow2.Modules.Keywords
             foreach (string keyword in config.KeywordsDictionary.Keys)
             {
                 // No need to check with symbols removed.
-                if (!messageContent.Contains(keyword)) continue;
+                if (!messageContent.Contains(keyword))
+                    continue;
 
                 // Replace unnecessary symbols with a whitespace.
                 var symbolsToReplace = "!.?;.'#\"_-\\".Where(c => !keyword.Contains(c)).ToArray();
@@ -45,7 +46,8 @@ namespace wow2.Modules.Keywords
                     listOfFoundKeywords.Add(keyword);
             }
 
-            if (listOfFoundKeywords.Count == 0) return false;
+            if (listOfFoundKeywords.Count == 0)
+                return false;
 
             // Prioritize the longest keyword if multiple keywords have been found.
             string foundKeyword = listOfFoundKeywords.OrderByDescending(s => s.Length).First();

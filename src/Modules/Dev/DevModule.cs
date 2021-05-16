@@ -37,7 +37,8 @@ namespace wow2.Modules.Dev
             await DataManager.SaveGuildDataToFileAsync();
             await new SuccessMessage($"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data saved.")
                 .SendAsync(Context.Channel);
-            if (alsoExit) Environment.Exit(0);
+            if (alsoExit)
+                Environment.Exit(0);
         }
 
         [Command("set-status")]

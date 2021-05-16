@@ -257,7 +257,8 @@ namespace wow2.Modules.Osu
                 var config = pair.Value.Osu;
 
                 // Guild hasn't set a announcements channel, so ignore it.
-                if (config.AnnouncementsChannelId == 0) continue;
+                if (config.AnnouncementsChannelId == 0)
+                    continue;
 
                 for (int i = 0; i < config.SubscribedUsers.Count; i++)
                 {

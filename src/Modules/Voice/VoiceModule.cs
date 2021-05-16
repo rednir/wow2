@@ -394,7 +394,8 @@ namespace wow2.Modules.Voice
         {
             UserSongRequest request = GetConfigForGuild(Context.Guild).CurrentlyPlayingSongRequest;
 
-            if (request == null) return;
+            if (request == null)
+                return;
 
             try
             {

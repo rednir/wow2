@@ -246,7 +246,8 @@ namespace wow2.Modules.Dev
 
         private static async Task AssertAsync(ICommandContext context, string description, bool value)
         {
-            if (!value) throw new Exception($"Assert failure ({description})");
+            if (!value)
+                throw new Exception($"Assert failure ({description})");
             await context.Channel.SendMessageAsync($"**✅ ASSERT:** {description}");
             await Task.Delay(CommandDelay);
         }

@@ -165,8 +165,10 @@ namespace wow2
 
         public static async Task MessageRecievedAsync(SocketMessage receivedMessage)
         {
-            if (receivedMessage.Author.Id == Client.CurrentUser.Id) return;
-            if (receivedMessage.Channel is SocketDMChannel) return;
+            if (receivedMessage.Author.Id == Client.CurrentUser.Id)
+                return;
+            if (receivedMessage.Channel is SocketDMChannel)
+                return;
 
             await DataManager.EnsureGuildDataExistsAsync(receivedMessage.GetGuild().Id);
 
@@ -198,7 +200,8 @@ namespace wow2
             var socketUserMessage = (SocketUserMessage)socketMessage;
 
             // Return if the message is not a user message.
-            if (socketMessage == null) return;
+            if (socketMessage == null)
+                return;
 
             var context = new SocketCommandContext(Client, socketUserMessage);
 
@@ -275,7 +278,8 @@ namespace wow2
 
         private static async Task<IEnumerable<CommandInfo>> SearchCommandsAsync(ICommandContext context, string term)
         {
-            if (term.Length < 2) return Array.Empty<CommandInfo>();
+            if (term.Length < 2)
+                return Array.Empty<CommandInfo>();
 
             SearchResult result = CommandService.Search(
                 context: new CommandContext(context.Client, context.Message),

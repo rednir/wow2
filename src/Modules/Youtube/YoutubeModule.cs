@@ -164,7 +164,8 @@ namespace wow2.Modules.YouTube
             foreach (GuildData guildData in DataManager.DictionaryOfGuildData.Values)
             {
                 // Guild hasn't set a announcements channel, so ignore it.
-                if (guildData.YouTube.AnnouncementsChannelId == 0) continue;
+                if (guildData.YouTube.AnnouncementsChannelId == 0)
+                    continue;
 
                 var subscribedChannelIds = guildData.YouTube.SubscribedChannels;
                 foreach (string id in subscribedChannelIds.Select(c => c.Id))

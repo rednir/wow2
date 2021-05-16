@@ -53,7 +53,8 @@ namespace wow2.Verbose.Messages
         public static async Task ActOnReactionAsync(SocketReaction reaction)
         {
             PagedMessage message = ListOfPagedMessages.Find(m => m.SentMessage?.Id == reaction.MessageId);
-            if (message == null) return;
+            if (message == null)
+                return;
 
             if (reaction.Emote.Name == PageLeftEmote.Name)
             {
