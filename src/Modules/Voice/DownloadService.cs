@@ -38,6 +38,7 @@ namespace wow2.Modules.Voice
             return new VideoMetadata(video);
         }
 
+        /// <summary>Creates a new FFmpeg process that creates an audio stream from youtube-dl.</summary>
         /// <returns>The FFmpeg process.</returns>
         public static Process CreateStreamFromVideoUrl(string url)
         {

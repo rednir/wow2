@@ -9,7 +9,7 @@ namespace wow2.Modules.Games.VerbalMemory
         public List<string> SeenWords { get; set; } = new List<string>();
         public int Turns { get; set; } = 0;
 
-        /// <summary>Represents the message with the current word.</summary>
+        /// <summary>Gets or sets the message with the current word.</summary>
         public IUserMessage CurrentWordMessage { get; set; }
     }
 }
