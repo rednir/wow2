@@ -208,7 +208,7 @@ namespace wow2.Modules.YouTube
                 $"**{video.Snippet.ChannelTitle}** just uploaded a new video! Check it out:\nhttps://www.youtube.com/watch?v={video.Id}");
         }
 
-        private static async Task<Channel> GetChannelAsync(string channelIdOrUsername)
+        public static async Task<Channel> GetChannelAsync(string channelIdOrUsername)
         {
             var listRequest = Service.Channels.List("snippet, statistics, contentDetails");
 
@@ -237,7 +237,7 @@ namespace wow2.Modules.YouTube
             return listResponse.Items[0];
         }
 
-        private static async Task<IList<PlaylistItem>> GetChannelUploadsAsync(Channel channel, long maxResults = 5)
+        public static async Task<IList<PlaylistItem>> GetChannelUploadsAsync(Channel channel, long maxResults = 5)
         {
             var listRequest = Service.PlaylistItems.List("snippet, contentDetails");
             listRequest.PlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
@@ -254,7 +254,7 @@ namespace wow2.Modules.YouTube
             }
         }
 
-        private static async Task<Video> GetVideoAsync(string id)
+        public static async Task<Video> GetVideoAsync(string id)
         {
             var listRequest = Service.Videos.List("snippet");
             listRequest.Id = id;
