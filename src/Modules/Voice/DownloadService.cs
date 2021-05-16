@@ -10,7 +10,7 @@ using wow2.Modules.YouTube;
 
 namespace wow2.Modules.Voice
 {
-    public static class YouTubeDl
+    public static class DownloadService
     {
         public static readonly string YouTubeDlPath = Environment.GetEnvironmentVariable("YOUTUBE_DL_PATH") ?? "youtube-dl";
         public static readonly string FFmpegPath = Environment.GetEnvironmentVariable("FFMPEG_PATH") ?? "ffmpeg";

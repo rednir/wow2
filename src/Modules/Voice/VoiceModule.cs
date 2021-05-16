@@ -59,7 +59,7 @@ namespace wow2.Modules.Voice
             VideoMetadata metadata;
             try
             {
-                metadata = await YouTubeDl.GetMetadataAsync(songRequest);
+                metadata = await DownloadService.GetMetadataAsync(songRequest);
             }
             catch (ArgumentException ex)
             {
@@ -414,7 +414,7 @@ namespace wow2.Modules.Voice
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            using (var ffmpeg = YouTubeDl.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
+            using (var ffmpeg = DownloadService.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
             using (var output = ffmpeg.StandardOutput.BaseStream)
             using (var discord = config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
             {
