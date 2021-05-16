@@ -297,6 +297,7 @@ namespace wow2.Modules.YouTube
                 });
             }
 
+            // TODO: truncate sub count in description.
             return new EmbedBuilder()
             {
                 Author = new EmbedAuthorBuilder()
@@ -306,7 +307,6 @@ namespace wow2.Modules.YouTube
                     Url = "https://www.youtube.com/channel/" + channel.Id,
                 },
                 Title = "Channel Overview",
-                // TODO: truncate sub count
                 Description = $"{channel.Statistics.SubscriberCount} subscribers • {channel.Statistics.VideoCount} uploads\n",
                 Fields = fieldBuilders,
                 Color = Color.LightGrey,

@@ -80,8 +80,7 @@ namespace wow2.Modules.Dev
         public static async Task VoiceTest(ICommandContext context)
         {
             // TODO: These Task.Delays are a bit of a hacky workaround.
-            //       Find some way to reliably wait until the command finishes with timeout.
-
+            // Find some way to reliably wait until the command finishes with timeout.
             var config = VoiceModule.GetConfigForGuild(context.Guild);
 
             await ExecuteAsync(context,

@@ -374,8 +374,8 @@ namespace wow2.Modules.Voice
             if (!CheckIfAudioClientDisconnected(config.AudioClient))
             {
                 // Uncomment below code to also check the voice channel the bot is in.
-                //IGuildUser clientUser = await Program.GetClientGuildUserAsync(Context.Channel);
-                //if (clientUser.VoiceChannel == channel)
+                /*IGuildUser clientUser = await Program.GetClientGuildUserAsync(Context.Channel);
+                if (clientUser.VoiceChannel == channel)*/
                 throw new ArgumentException("Already in voice channel.");
             }
 
