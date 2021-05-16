@@ -12,14 +12,9 @@ namespace wow2
     {
         public static readonly DateTime TimeStarted = DateTime.Now;
         public static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
-
         private const string ReleaseVersion = "v3.0";
-        private static bool IsDebugField;
 
-        public static bool IsDebug
-        {
-            get { return IsDebugField; }
-        }
+        public static bool IsDebug { get; private set; }
 
         public static string Version
         {
@@ -30,6 +25,10 @@ namespace wow2
         {
             get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); }
         }
+
+        [Conditional("DEBUG")]
+        private static void SetIsDebugField()
+            => IsDebug = true;
 
         private static void Main()
             => new Program().MainAsync().GetAwaiter().GetResult();
@@ -43,9 +42,5 @@ namespace wow2
 
             await Task.Delay(-1);
         }
-
-        [Conditional("DEBUG")]
-        private static void SetIsDebugField()
-            => IsDebugField = true;
     }
 }
