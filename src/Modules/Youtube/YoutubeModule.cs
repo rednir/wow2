@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
@@ -14,6 +13,7 @@ using Google.Apis.Services;
 using wow2.Verbose;
 using wow2.Verbose.Messages;
 using wow2.Data;
+using SearchResult = Google.Apis.YouTube.v3.Data.SearchResult;
 
 namespace wow2.Modules.YouTube
 {
@@ -21,7 +21,7 @@ namespace wow2.Modules.YouTube
     [Group("yt")]
     [Alias("youtube")]
     [Summary("Integrations with YouTube, like getting notified for new videos.")]
-    public class YouTube : Module
+    public class YouTubeModule : Module
     {
         private static DateTime TimeOfLastVideoCheck = DateTime.Now;
         private static readonly YouTubeService Service;
@@ -44,13 +44,13 @@ namespace wow2.Modules.YouTube
             }
         });
 
-        static YouTube()
+        static YouTubeModule()
         {
-            Service = new YouTubeService(new BaseClientService.Initializer()
+            Service = new(new BaseClientService.Initializer()
             {
                 // TODO: fix this if no file
                 ApiKey = DataManager.Secrets.GoogleApiKey,
-                ApplicationName = "wow2"
+                ApplicationName = "wow2-youtube"
             });
             YouTubePollingThread.Start();
         }
@@ -259,6 +259,20 @@ namespace wow2.Modules.YouTube
             var listRequest = Service.Videos.List("snippet");
             listRequest.Id = id;
             listRequest.MaxResults = 1;
+            var listResponse = await listRequest.ExecuteAsync();
+
+            if (listResponse.Items.Count == 0)
+                throw new ArgumentException("No videos found");
+
+            return listResponse.Items[0];
+        }
+
+        public static async Task<SearchResult> SearchForAsync(string term, string type)
+        {
+            var listRequest = Service.Search.List("snippet");
+            listRequest.Q = term;
+            listRequest.MaxResults = 1;
+            listRequest.Type = type;
             var listResponse = await listRequest.ExecuteAsync();
 
             if (listResponse.Items.Count == 0)
