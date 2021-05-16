@@ -68,6 +68,9 @@ namespace wow2.Modules.Osu
             RefreshAccessTokenTimer.Start();
         }
 
+        public static OsuModuleConfig GetConfigForGuild(IGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Osu;
+
         [Command("user")]
         [Alias("player")]
         [Summary("Get some infomation about a user.")]
@@ -309,8 +312,5 @@ namespace wow2.Modules.Osu
 
         private static string MakeReadableModsList(IEnumerable<string> mods)
             => $"{(mods.Any() ? "+" : null)}{string.Join(' ', mods)}";
-
-        public static OsuModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Osu;
     }
 }

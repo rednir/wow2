@@ -11,6 +11,9 @@ namespace wow2.Modules.Games.NumberMemory
 {
     public static class NumberMemoryGame
     {
+        public static NumberMemoryConfig GetConfigForGuild(IGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Games.NumberMemory;
+
         /// <returns>True if the message was related to the game.</returns>
         public static async Task<bool> CheckMessageAsync(SocketMessage receivedMessage)
         {
@@ -37,8 +40,5 @@ namespace wow2.Modules.Games.NumberMemory
         {
             config.IsGameStarted = false;
         }
-
-        public static NumberMemoryConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Games.NumberMemory;
     }
 }

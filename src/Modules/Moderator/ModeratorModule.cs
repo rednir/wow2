@@ -18,6 +18,9 @@ namespace wow2.Modules.Moderator
     [RequireUserPermission(GuildPermission.BanMembers)]
     public class ModeratorModule : Module
     {
+        public static ModeratorModuleConfig GetConfigForGuild(IGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Moderator;
+
         public static async Task CheckMessageWithAutoMod(SocketMessage message)
         {
             var config = GetConfigForGuild(message.GetGuild());
@@ -233,8 +236,5 @@ namespace wow2.Modules.Moderator
 
             return matchingRecord;
         }
-
-        public static ModeratorModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Moderator;
     }
 }

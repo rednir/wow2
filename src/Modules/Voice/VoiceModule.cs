@@ -19,6 +19,12 @@ namespace wow2.Modules.Voice
     [Summary("For playing YouTube or Twitch audio in a voice channel.")]
     public class VoiceModule : Module
     {
+        public static VoiceModuleConfig GetConfigForGuild(IGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Voice;
+
+        public static bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
+            => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;
+
         [Command("list")]
         [Alias("queue", "upnext")]
         [Summary("Show the song request queue.")]
@@ -369,6 +375,66 @@ namespace wow2.Modules.Voice
                 .SendAsync(Context.Channel);
         }
 
+        private static void StopPlaying(VoiceModuleConfig config)
+        {
+            config.ListOfUserIdsThatVoteSkipped.Clear();
+            config.CtsForAudioStreaming.Cancel();
+            config.CtsForAudioStreaming = new CancellationTokenSource();
+        }
+
+        private static PagedMessage BuildListOfSongsMessage(Queue<UserSongRequest> queue, int page = -1)
+        {
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+            int i = 0;
+            foreach (UserSongRequest songRequest in queue)
+            {
+                i++;
+
+                var fieldBuilderForSongRequest = new EmbedFieldBuilder()
+                {
+                    Name = $"{i}) {songRequest.VideoMetadata.title}",
+                    Value = $"{songRequest.VideoMetadata.webpage_url}\nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy?.Mention}",
+                };
+                listOfFieldBuilders.Add(fieldBuilderForSongRequest);
+            }
+
+            return new PagedMessage(
+                title: "🔉 Up Next",
+                fieldBuilders: listOfFieldBuilders,
+                page: page);
+        }
+
+        private static Embed BuildNowPlayingEmbed(UserSongRequest request)
+        {
+            const string youtubeIconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png";
+            const string twitchIconUrl = "https://www.net-aware.org.uk/siteassets/images-and-icons/application-icons/app-icons-twitch.png?w=585&scale=down";
+
+            // Don't display hours if less than 1 hour.
+            string formattedDuration = TimeSpan.FromSeconds(request.VideoMetadata.duration ?? 0)
+                .ToString((request.VideoMetadata.duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
+
+            var embedBuilder = new EmbedBuilder()
+            {
+                Author = new EmbedAuthorBuilder()
+                {
+                    Name = "Now Playing",
+                    IconUrl = request.VideoMetadata.extractor.StartsWith("twitch") ? twitchIconUrl : youtubeIconUrl,
+                    Url = request.VideoMetadata.webpage_url,
+                },
+                Footer = new EmbedFooterBuilder()
+                {
+                    Text = request.VideoMetadata.extractor.StartsWith("youtube") ?
+                        $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {formattedDuration}" : string.Empty,
+                },
+                Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
+                ThumbnailUrl = request.VideoMetadata.thumbnails.LastOrDefault()?.url,
+                Description = $"Requested at {request.TimeRequested:HH:mm} by {request.RequestedBy?.Mention}",
+                Color = Color.LightGrey,
+            };
+
+            return embedBuilder.Build();
+        }
+
         private async Task JoinVoiceChannelAsync(VoiceModuleConfig config, IVoiceChannel channel)
         {
             if (!CheckIfAudioClientDisconnected(config.AudioClient))
@@ -467,71 +533,5 @@ namespace wow2.Modules.Voice
                         .SendAsync(Context.Channel);
             }
         }
-
-        private static void StopPlaying(VoiceModuleConfig config)
-        {
-            config.ListOfUserIdsThatVoteSkipped.Clear();
-            config.CtsForAudioStreaming.Cancel();
-            config.CtsForAudioStreaming = new CancellationTokenSource();
-        }
-
-        private static PagedMessage BuildListOfSongsMessage(Queue<UserSongRequest> queue, int page = -1)
-        {
-            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-            int i = 0;
-            foreach (UserSongRequest songRequest in queue)
-            {
-                i++;
-
-                var fieldBuilderForSongRequest = new EmbedFieldBuilder()
-                {
-                    Name = $"{i}) {songRequest.VideoMetadata.title}",
-                    Value = $"{songRequest.VideoMetadata.webpage_url}\nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy?.Mention}",
-                };
-                listOfFieldBuilders.Add(fieldBuilderForSongRequest);
-            }
-
-            return new PagedMessage(
-                title: "🔉 Up Next",
-                fieldBuilders: listOfFieldBuilders,
-                page: page);
-        }
-
-        private static Embed BuildNowPlayingEmbed(UserSongRequest request)
-        {
-            const string youtubeIconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png";
-            const string twitchIconUrl = "https://www.net-aware.org.uk/siteassets/images-and-icons/application-icons/app-icons-twitch.png?w=585&scale=down";
-
-            // Don't display hours if less than 1 hour.
-            string formattedDuration = TimeSpan.FromSeconds(request.VideoMetadata.duration ?? 0)
-                .ToString((request.VideoMetadata.duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
-
-            var embedBuilder = new EmbedBuilder()
-            {
-                Author = new EmbedAuthorBuilder()
-                {
-                    Name = "Now Playing",
-                    IconUrl = request.VideoMetadata.extractor.StartsWith("twitch") ? twitchIconUrl : youtubeIconUrl,
-                    Url = request.VideoMetadata.webpage_url,
-                },
-                Footer = new EmbedFooterBuilder()
-                {
-                    Text = request.VideoMetadata.extractor.StartsWith("youtube") ?
-                        $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {formattedDuration}" : string.Empty,
-                },
-                Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
-                ThumbnailUrl = request.VideoMetadata.thumbnails.LastOrDefault()?.url,
-                Description = $"Requested at {request.TimeRequested:HH:mm} by {request.RequestedBy?.Mention}",
-                Color = Color.LightGrey,
-            };
-
-            return embedBuilder.Build();
-        }
-
-        public static bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
-            => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;
-
-        public static VoiceModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Voice;
     }
 }

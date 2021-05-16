@@ -14,6 +14,9 @@ namespace wow2.Modules.Games.VerbalMemory
         public const string SeenKeyword = "s";
         public const string NewKeyword = "n";
 
+        public static VerbalMemoryGameConfig GetConfigForGuild(IGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Games.VerbalMemory;
+
         /// <returns>True if the message was related to the game.</returns>
         public static async Task<bool> CheckMessageAsync(SocketMessage receivedMessage)
         {
@@ -124,8 +127,5 @@ namespace wow2.Modules.Games.VerbalMemory
 
             config.IsGameStarted = false;
         }
-
-        public static VerbalMemoryGameConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Games.VerbalMemory;
     }
 }

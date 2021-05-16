@@ -55,6 +55,82 @@ namespace wow2.Modules.YouTube
             YouTubePollingThread.Start();
         }
 
+        public static YouTubeModuleConfig GetConfigForGuild(IGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].YouTube;
+
+        public static async Task<Channel> GetChannelAsync(string channelIdOrUsername)
+        {
+            var listRequest = Service.Channels.List("snippet, statistics, contentDetails");
+
+            if (!channelIdOrUsername.StartsWith("UC") && channelIdOrUsername.Contains("/UC"))
+            {
+                // Get channel ID from assumed-to-be channel URL.
+                listRequest.Id = Array.Find(
+                    channelIdOrUsername.Split('/'), part => part.StartsWith("UC"));
+            }
+            else if (channelIdOrUsername.StartsWith("UC"))
+            {
+                // Assume input is channel ID.
+                listRequest.Id = channelIdOrUsername;
+            }
+            else
+            {
+                // Default to searching for username.
+                listRequest.ForUsername = channelIdOrUsername;
+            }
+
+            var listResponse = await listRequest.ExecuteAsync();
+
+            if (listResponse.Items == null)
+                throw new ArgumentException("No channels found");
+
+            return listResponse.Items[0];
+        }
+
+        public static async Task<IList<PlaylistItem>> GetChannelUploadsAsync(Channel channel, long maxResults = 5)
+        {
+            var listRequest = Service.PlaylistItems.List("snippet, contentDetails");
+            listRequest.PlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
+            listRequest.MaxResults = maxResults;
+            try
+            {
+                var listResponse = await listRequest.ExecuteAsync();
+                return listResponse.Items;
+            }
+            catch (GoogleApiException)
+            {
+                // Empty list, assume the channel has no uploads
+                return new List<PlaylistItem>();
+            }
+        }
+
+        public static async Task<Video> GetVideoAsync(string id)
+        {
+            var listRequest = Service.Videos.List("snippet, contentDetails, statistics");
+            listRequest.Id = id;
+            listRequest.MaxResults = 1;
+            var listResponse = await listRequest.ExecuteAsync();
+
+            if (listResponse.Items.Count == 0)
+                throw new ArgumentException("No videos found");
+
+            return listResponse.Items[0];
+        }
+
+        public static async Task<SearchResult> SearchForAsync(string term, string type)
+        {
+            var listRequest = Service.Search.List("snippet");
+            listRequest.Q = term;
+            listRequest.MaxResults = 1;
+            listRequest.Type = type;
+            var listResponse = await listRequest.ExecuteAsync();
+
+            if (listResponse.Items.Count == 0)
+                throw new ArgumentException("No videos found");
+
+            return listResponse.Items[0];
+        }
+
         [Command("channel")]
         [Summary("Shows some basic data about a channel.")]
         public async Task ChannelAsync([Name("CHANNEL")] params string[] userInputSplit)
@@ -210,79 +286,6 @@ namespace wow2.Modules.YouTube
                 $"**{video.Snippet.ChannelTitle}** just uploaded a new video! Check it out:\nhttps://www.youtube.com/watch?v={video.Id}");
         }
 
-        public static async Task<Channel> GetChannelAsync(string channelIdOrUsername)
-        {
-            var listRequest = Service.Channels.List("snippet, statistics, contentDetails");
-
-            if (!channelIdOrUsername.StartsWith("UC") && channelIdOrUsername.Contains("/UC"))
-            {
-                // Get channel ID from assumed-to-be channel URL.
-                listRequest.Id = Array.Find(
-                    channelIdOrUsername.Split('/'), part => part.StartsWith("UC"));
-            }
-            else if (channelIdOrUsername.StartsWith("UC"))
-            {
-                // Assume input is channel ID.
-                listRequest.Id = channelIdOrUsername;
-            }
-            else
-            {
-                // Default to searching for username.
-                listRequest.ForUsername = channelIdOrUsername;
-            }
-
-            var listResponse = await listRequest.ExecuteAsync();
-
-            if (listResponse.Items == null)
-                throw new ArgumentException("No channels found");
-
-            return listResponse.Items[0];
-        }
-
-        public static async Task<IList<PlaylistItem>> GetChannelUploadsAsync(Channel channel, long maxResults = 5)
-        {
-            var listRequest = Service.PlaylistItems.List("snippet, contentDetails");
-            listRequest.PlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
-            listRequest.MaxResults = maxResults;
-            try
-            {
-                var listResponse = await listRequest.ExecuteAsync();
-                return listResponse.Items;
-            }
-            catch (GoogleApiException)
-            {
-                // Empty list, assume the channel has no uploads
-                return new List<PlaylistItem>();
-            }
-        }
-
-        public static async Task<Video> GetVideoAsync(string id)
-        {
-            var listRequest = Service.Videos.List("snippet, contentDetails, statistics");
-            listRequest.Id = id;
-            listRequest.MaxResults = 1;
-            var listResponse = await listRequest.ExecuteAsync();
-
-            if (listResponse.Items.Count == 0)
-                throw new ArgumentException("No videos found");
-
-            return listResponse.Items[0];
-        }
-
-        public static async Task<SearchResult> SearchForAsync(string term, string type)
-        {
-            var listRequest = Service.Search.List("snippet");
-            listRequest.Q = term;
-            listRequest.MaxResults = 1;
-            listRequest.Type = type;
-            var listResponse = await listRequest.ExecuteAsync();
-
-            if (listResponse.Items.Count == 0)
-                throw new ArgumentException("No videos found");
-
-            return listResponse.Items[0];
-        }
-
         private static async Task<Embed> BuildChannelOverviewEmbedAsync(Channel channel)
         {
             var uploads = await GetChannelUploadsAsync(channel);
@@ -314,8 +317,5 @@ namespace wow2.Modules.YouTube
             }
             .Build();
         }
-
-        public static YouTubeModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].YouTube;
     }
 }

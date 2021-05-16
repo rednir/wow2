@@ -20,7 +20,7 @@ namespace wow2.Modules.Text
     public class TextModule : Module
     {
         /// <summary>Dictionary where the key is the name and the value is the image stream.</summary>
-        private readonly static Dictionary<string, Stream> QuoteTemplates;
+        private static readonly Dictionary<string, Stream> QuoteTemplates;
 
         static TextModule()
         {

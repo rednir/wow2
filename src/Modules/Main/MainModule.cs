@@ -15,6 +15,54 @@ namespace wow2.Modules.Main
     [Summary("Stuff to do with the bot.")]
     public class MainModule : Module
     {
+        public static MainModuleConfig GetConfigForGuild(IGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Main;
+
+        public static async Task SendAboutMessageToChannelAsync(SocketCommandContext context)
+        {
+            var commandPrefix = GetConfigForGuild(context.Guild).CommandPrefix;
+            var appInfo = Bot.ApplicationInfo;
+
+            var embedBuilder = new EmbedBuilder()
+            {
+                Title = $"{appInfo.Name}  •  in {Bot.Client.Guilds.Count} servers",
+                Description = (string.IsNullOrWhiteSpace(appInfo.Description) ? string.Empty : appInfo.Description) + "\n[Link to github](https://github.com/rednir/wow2)",
+                Color = Color.LightGrey,
+                Author = new EmbedAuthorBuilder()
+                {
+                    Name = $"Hosted by {appInfo.Owner}",
+                    IconUrl = appInfo.Owner.GetAvatarUrl(),
+                },
+                Footer = new EmbedFooterBuilder()
+                {
+                    Text = $" - To view a list of commands, type `{commandPrefix} help`",
+                },
+            };
+
+            await context.Channel.SendMessageAsync(embed: embedBuilder.Build());
+        }
+
+        public static async Task<bool> CheckForAliasAsync(SocketMessage message)
+        {
+            var config = GetConfigForGuild(message.GetGuild());
+
+            var aliasesFound = config.AliasesDictionary.Where(a => message.Content.StartsWithWord(a.Key));
+
+            if (aliasesFound.Any())
+            {
+                var context = new SocketCommandContext(Bot.Client, (SocketUserMessage)message);
+                var aliasToExecute = aliasesFound.First();
+
+                await Bot.ExecuteCommandAsync(
+                    context,
+                    aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, string.Empty, true, null));
+
+                return true;
+            }
+
+            return false;
+        }
+
         [Command("about")]
         [Summary("Shows some infomation about the bot.")]
         public async Task AboutAsync()
@@ -156,51 +204,6 @@ namespace wow2.Modules.Main
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
-        public static async Task SendAboutMessageToChannelAsync(SocketCommandContext context)
-        {
-            var commandPrefix = GetConfigForGuild(context.Guild).CommandPrefix;
-            var appInfo = Bot.ApplicationInfo;
-
-            var embedBuilder = new EmbedBuilder()
-            {
-                Title = $"{appInfo.Name}  •  in {Bot.Client.Guilds.Count} servers",
-                Description = (string.IsNullOrWhiteSpace(appInfo.Description) ? string.Empty : appInfo.Description) + "\n[Link to github](https://github.com/rednir/wow2)",
-                Color = Color.LightGrey,
-                Author = new EmbedAuthorBuilder()
-                {
-                    Name = $"Hosted by {appInfo.Owner}",
-                    IconUrl = appInfo.Owner.GetAvatarUrl(),
-                },
-                Footer = new EmbedFooterBuilder()
-                {
-                    Text = $" - To view a list of commands, type `{commandPrefix} help`",
-                },
-            };
-
-            await context.Channel.SendMessageAsync(embed: embedBuilder.Build());
-        }
-
-        public static async Task<bool> CheckForAliasAsync(SocketMessage message)
-        {
-            var config = GetConfigForGuild(message.GetGuild());
-
-            var aliasesFound = config.AliasesDictionary.Where(a => message.Content.StartsWithWord(a.Key));
-
-            if (aliasesFound.Any())
-            {
-                var context = new SocketCommandContext(Bot.Client, (SocketUserMessage)message);
-                var aliasToExecute = aliasesFound.First();
-
-                await Bot.ExecuteCommandAsync(
-                    context,
-                    aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, string.Empty, true, null));
-
-                return true;
-            }
-
-            return false;
-        }
-
         /// <summary>Builds embed fields for all command modules.</summary>
         private async Task<List<EmbedFieldBuilder>> ModuleInfoToEmbedFieldsAsync(string commandPrefix)
         {
@@ -266,8 +269,5 @@ namespace wow2.Modules.Main
 
             return listOfFieldBuilders;
         }
-
-        public static MainModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Main;
     }
 }

@@ -24,6 +24,9 @@ namespace wow2.Modules.Keywords
         private const int MaxNumberOfKeywords = 50;
         private const int MaxNumberOfValues = 20;
 
+        public static KeywordsModuleConfig GetConfigForGuild(IGuild guild)
+            => DataManager.DictionaryOfGuildData[guild.Id].Keywords;
+
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
         public static bool CheckMessageForKeyword(SocketMessage message)
         {
@@ -309,8 +312,5 @@ namespace wow2.Modules.Keywords
             await new SuccessMessage($"Like reaction is now `{(config.IsLikeReactionOn ? "on" : "off")}` for keyword responses.")
                 .SendAsync(Context.Channel);
         }
-
-        public static KeywordsModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Keywords;
     }
 }

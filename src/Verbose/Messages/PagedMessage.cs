@@ -13,11 +13,6 @@ namespace wow2.Verbose.Messages
         public static readonly IEmote StopEmote = new Emoji("🛑");
         public static readonly IEmote PageRightEmote = new Emoji("⏩");
 
-        public static List<PagedMessage> ListOfPagedMessages { get; protected set; } = new();
-
-        public List<EmbedFieldBuilder> AllFieldBuilders { get; protected set; }
-        public int Page { get; protected set; }
-
         public PagedMessage(List<EmbedFieldBuilder> fieldBuilders, string description = "", string title = "", int page = -1)
         {
             AllFieldBuilders = fieldBuilders;
@@ -31,24 +26,10 @@ namespace wow2.Verbose.Messages
             SetEmbedFields();
         }
 
-        public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
-        {
-            // TODO: Performance might still be slow. Maybe have a list for every guild?
-            if (ListOfPagedMessages.Count > 40)
-                ListOfPagedMessages.RemoveAt(40);
+        public static List<PagedMessage> ListOfPagedMessages { get; protected set; } = new();
 
-            IUserMessage message = await base.SendAsync(channel);
-
-            // A negative page number means the message does not use pages.
-            if (Page >= 0)
-            {
-                ListOfPagedMessages.Add(this);
-                await message.AddReactionsAsync(
-                    new IEmote[] { PageLeftEmote, PageRightEmote, StopEmote });
-            }
-
-            return message;
-        }
+        public List<EmbedFieldBuilder> AllFieldBuilders { get; protected set; }
+        public int Page { get; protected set; }
 
         /// <summary>If the message has pages and the emote is recognised, modifies the page of the message.</summary>
         public static async Task ActOnReactionAsync(SocketReaction reaction)
@@ -71,6 +52,25 @@ namespace wow2.Verbose.Messages
             {
                 await message.StopAsync();
             }
+        }
+
+        public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
+        {
+            // TODO: Performance might still be slow. Maybe have a list for every guild?
+            if (ListOfPagedMessages.Count > 40)
+                ListOfPagedMessages.RemoveAt(40);
+
+            IUserMessage message = await base.SendAsync(channel);
+
+            // A negative page number means the message does not use pages.
+            if (Page >= 0)
+            {
+                ListOfPagedMessages.Add(this);
+                await message.AddReactionsAsync(
+                    new IEmote[] { PageLeftEmote, PageRightEmote, StopEmote });
+            }
+
+            return message;
         }
 
         /// <summary>Modify the page and therefore the embed of this message.</summary>
