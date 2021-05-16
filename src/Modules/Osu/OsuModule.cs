@@ -30,14 +30,14 @@ namespace wow2.Modules.Osu
             { "S", Emote.Parse("<:osus:807023232116981801>") },
             { "SH", Emote.Parse("<:osush:807023257357123595>") },
             { "SS", Emote.Parse("<:osuss:807023277180583958>") },
-            { "SSH", Emote.Parse("<:osussh:807023289742262272>") }
+            { "SSH", Emote.Parse("<:osussh:807023289742262272>") },
         };
 
         private static readonly System.Timers.Timer RefreshAccessTokenTimer = new(18 * 3600000);
 
         private static readonly HttpClient HttpClient = new()
         {
-            BaseAddress = new Uri("https://osu.ppy.sh/")
+            BaseAddress = new Uri("https://osu.ppy.sh/"),
         };
 
         private static readonly Thread PollingThread = new(async () =>
@@ -89,7 +89,7 @@ namespace wow2.Modules.Osu
                 fieldBuildersForScores.Add(new EmbedFieldBuilder()
                 {
                     Name = MakeScoreTitle(score),
-                    Value = MakeScoreDescription(score)
+                    Value = MakeScoreDescription(score),
                 });
             }
 
@@ -99,16 +99,16 @@ namespace wow2.Modules.Osu
                 {
                     Name = $"{userData.username} | #{userData.statistics.global_rank}",
                     IconUrl = userData.avatar_url.StartsWith("http") ? userData.avatar_url : null,
-                    Url = $"https://osu.ppy.sh/users/{userData.id}"
+                    Url = $"https://osu.ppy.sh/users/{userData.id}",
                 },
                 Footer = new EmbedFooterBuilder()
                 {
-                    Text = $"Joined: {DateTime.Parse(userData.join_date)}"
+                    Text = $"Joined: {DateTime.Parse(userData.join_date)}",
                 },
                 Description = $"**Performance:** {userData.statistics.pp}pp\n**Accuracy:** {Math.Round(userData.statistics.hit_accuracy, 2)}%\n**Time Played:** {userData.statistics.play_time / 3600}h",
                 ImageUrl = userData.cover_url,
                 Fields = fieldBuildersForScores,
-                Color = Color.LightGrey
+                Color = Color.LightGrey,
             };
             await ReplyAsync(embed: embedBuilder.Build());
         }
@@ -166,7 +166,7 @@ namespace wow2.Modules.Osu
                 {
                     Name = $"{user.username} | #{user.statistics.global_rank}",
                     Value = $"[View profile](https://osu.ppy.sh/users/{user.id})",
-                    IsInline = true
+                    IsInline = true,
                 });
             }
 
@@ -211,7 +211,7 @@ namespace wow2.Modules.Osu
                 {"client_id", DataManager.Secrets.OsuClientId},
                 {"client_secret", DataManager.Secrets.OsuClientSecret},
                 {"grant_type", "client_credentials"},
-                {"scope", "public"}
+                {"scope", "public"},
             };
 
             Dictionary<string, object> tokenRequestResponse;
@@ -288,12 +288,12 @@ namespace wow2.Modules.Osu
                 {
                     Name = $"{userData.username} set a new top play!",
                     IconUrl = userData.avatar_url,
-                    Url = $"https://osu.ppy.sh/users/{userData.id}"
+                    Url = $"https://osu.ppy.sh/users/{userData.id}",
                 },
                 Title = MakeScoreTitle(score),
                 Description = MakeScoreDescription(score),
                 ImageUrl = score.beatmapSet.covers.cover,
-                Color = Color.LightGrey
+                Color = Color.LightGrey,
             };
             await channel.SendMessageAsync(embed: embedBuilder.Build());
         }

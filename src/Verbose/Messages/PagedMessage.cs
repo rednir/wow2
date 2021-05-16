@@ -110,7 +110,7 @@ namespace wow2.Verbose.Messages
                     EmbedBuilder.Footer = new EmbedFooterBuilder()
                     {
                         IconUrl = $"https://cdn.discordapp.com/emojis/{WarningEmoteId}.png",
-                        Text = $"{AllFieldBuilders.Count - maxFieldsPerPage} items were excluded"
+                        Text = $"{AllFieldBuilders.Count - maxFieldsPerPage} items were excluded",
                     };
                 }
                 else
@@ -121,7 +121,7 @@ namespace wow2.Verbose.Messages
                     EmbedBuilder.Footer = new EmbedFooterBuilder()
                     {
                         IconUrl = $"https://cdn.discordapp.com/emojis/{InfoEmoteId}.png",
-                        Text = $"Page {Page}/{totalNumberOfPages}"
+                        Text = $"Page {Page}/{totalNumberOfPages}",
                     };
                 }
 

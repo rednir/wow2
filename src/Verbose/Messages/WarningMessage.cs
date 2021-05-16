@@ -9,7 +9,7 @@ namespace wow2.Verbose.Messages
             EmbedBuilder = new EmbedBuilder()
             {
                 Description = $"{new Emoji($"<:wowwarning:{WarningEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
-                Color = Color.LightOrange
+                Color = Color.LightOrange,
             };
         }
     }

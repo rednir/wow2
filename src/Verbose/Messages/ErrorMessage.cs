@@ -10,7 +10,7 @@ namespace wow2.Verbose.Messages
             {
                 Title = $"{new Emoji($"<:wowerror:{ErrorEmoteId}>")} Something bad happened...",
                 Description = GetStatusMessageFormattedDescription(description, title),
-                Color = Color.Red
+                Color = Color.Red,
             };
         }
     }

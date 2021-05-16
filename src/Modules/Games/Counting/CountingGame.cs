@@ -94,7 +94,7 @@ namespace wow2.Modules.Games.Counting
                 {
                     Name = participant.Key.Username,
                     Value = $"{participant.Value} messages ({Math.Round((float)participant.Value / (float)dictionaryOfParticipants.Values.Sum() * 100f)}% helpful)",
-                    IsInline = true
+                    IsInline = true,
                 };
                 listOfFieldBuilders.Add(fieldBuilderForParticipant);
             }

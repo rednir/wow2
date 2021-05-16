@@ -54,7 +54,7 @@ namespace wow2
             var config = new CommandServiceConfig()
             {
                 LogLevel = LogSeverity.Verbose,
-                DefaultRunMode = RunMode.Async
+                DefaultRunMode = RunMode.Async,
             };
             CommandService = new CommandService(config);
             CommandService.Log += DiscordLogRecievedAsync;
@@ -307,7 +307,7 @@ namespace wow2
             {
                 Title = "👋 Hi there!",
                 Description = $"Thanks for adding me to your server!\nTo get started, type `{commandPrefix} help` to see the wide range of commands available.\n",
-                Color = Color.Gold
+                Color = Color.Gold,
             }
             .Build();
             foreach (SocketTextChannel channel in guild.TextChannels)

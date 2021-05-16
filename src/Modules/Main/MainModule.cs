@@ -109,7 +109,7 @@ namespace wow2.Modules.Main
                 {
                     Name = aliasPair.Key,
                     Value = $"`{config.CommandPrefix} {aliasPair.Value}`",
-                    IsInline = true
+                    IsInline = true,
                 };
                 listOfFieldBuilders.Add(fieldBuilderForAlias);
             }
@@ -174,8 +174,8 @@ namespace wow2.Modules.Main
                 },
                 Footer = new EmbedFooterBuilder()
                 {
-                    Text = $" - To view a list of commands, type `{commandPrefix} help`"
-                }
+                    Text = $" - To view a list of commands, type `{commandPrefix} help`",
+                },
             };
 
             await context.Channel.SendMessageAsync(embed: embedBuilder.Build());
@@ -219,10 +219,10 @@ namespace wow2.Modules.Main
                 {
                     var fieldBuilderForModule = new EmbedFieldBuilder()
                     {
-                        Name = $"• {module.Name} Module"
+                        Name = $"• {module.Name} Module",
                     };
 
-                    if (!String.IsNullOrWhiteSpace(module.Summary))
+                    if (!string.IsNullOrWhiteSpace(module.Summary))
                         fieldBuilderForModule.Value += $"*{module.Summary}*\n";
 
                     fieldBuilderForModule.Value += $"`{commandPrefix} help {module.Name.ToLower()}`";
@@ -262,7 +262,7 @@ namespace wow2.Modules.Main
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
                     Name = command.MakeFullCommandString(commandPrefix),
-                    Value = $"*{(string.IsNullOrWhiteSpace(command.Summary) ? "No description provided." : command.Summary)}*"
+                    Value = $"*{(string.IsNullOrWhiteSpace(command.Summary) ? "No description provided." : command.Summary)}*",
                 });
             }
             return listOfFieldBuilders;

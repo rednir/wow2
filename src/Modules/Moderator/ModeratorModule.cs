@@ -125,7 +125,7 @@ namespace wow2.Modules.Moderator
                 },
                 Title = "User record overview",
                 Description = $"{record.Warnings.Count} warnings, {record.Mutes.Count} mutes.",
-                Color = Color.LightGrey
+                Color = Color.LightGrey,
             };
 
             await ReplyAsync(embed: embedBuilder.Build());
@@ -176,7 +176,7 @@ namespace wow2.Modules.Moderator
             userRecord.Warnings.Add(new Warning()
             {
                 RequestedBy = requestedBy.Id,
-                DateTimeBinary = DateTime.Now.ToBinary()
+                DateTimeBinary = DateTime.Now.ToBinary(),
             });
 
             await DataManager.SaveGuildDataToFileAsync(requestedBy.Guild.Id);
@@ -222,7 +222,7 @@ namespace wow2.Modules.Moderator
             {
                 config.UserRecords.Add(new UserRecord()
                 {
-                    UserId = id
+                    UserId = id,
                 });
 
                 // Could potentially be unsafe?

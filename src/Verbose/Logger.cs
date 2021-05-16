@@ -16,7 +16,7 @@ namespace wow2.Verbose
 
         private static readonly HttpClient GithubHttpClient = new()
         {
-            BaseAddress = new Uri("https://api.github.com/")
+            BaseAddress = new Uri("https://api.github.com/"),
         };
 
         public static async Task LogInitialize()

@@ -78,7 +78,7 @@ namespace wow2.Modules.Keywords
                     description: chosenValue.Content,
                     title: chosenValue.Title)
                 {
-                    ReplyToMessageId = message.Id
+                    ReplyToMessageId = message.Id,
                 }
                 .SendAsync(message.Channel);
             }
@@ -154,7 +154,7 @@ namespace wow2.Modules.Keywords
                 Content = valueContent,
                 Title = valueTitle,
                 AddedByUserId = Context.User.Id,
-                DateTimeAddedBinary = DateTime.Now.ToBinary()
+                DateTimeAddedBinary = DateTime.Now.ToBinary(),
             });
 
             await new SuccessMessage($"Added a value to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.")
@@ -235,7 +235,7 @@ namespace wow2.Modules.Keywords
                 var fieldBuilderForKeyword = new EmbedFieldBuilder()
                 {
                     Name = nameToShow,
-                    Value = valueToShow
+                    Value = valueToShow,
                 };
                 listOfFieldBuilders.Add(fieldBuilderForKeyword);
             }
@@ -271,7 +271,7 @@ namespace wow2.Modules.Keywords
                     new EmbedFieldBuilder()
                     {
                         Name = $"Added by {user} at {date}",
-                        Value = $"```{value.Content}```"
+                        Value = $"```{value.Content}```",
                     }
                 );
             }

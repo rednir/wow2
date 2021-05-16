@@ -49,7 +49,7 @@ namespace wow2.Modules.Dev
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
                     Name = $"Field title {i}",
-                    Value = "This is some description text."
+                    Value = "This is some description text.",
                 });
             }
             await new PagedMessage(listOfFieldBuilders, "This is a response message with fields.", "Fields", 2)
@@ -67,7 +67,7 @@ namespace wow2.Modules.Dev
             await AssertAsync(context, new()
             {
                 { "key exists in dictionary", config.AliasesDictionary.ContainsKey(aliasName) },
-                { "check definition", config.AliasesDictionary[aliasName] == "help" }
+                { "check definition", config.AliasesDictionary[aliasName] == "help" },
             });
 
             await ExecuteAsync(context,
@@ -93,7 +93,7 @@ namespace wow2.Modules.Dev
             {
                 { "song request queue is empty", config.CurrentSongRequestQueue.Count == 0 },
                 { "nothing is playing", config.CurrentlyPlayingSongRequest == null },
-                { "audio client has connected", !VoiceModule.CheckIfAudioClientDisconnected(config.AudioClient) }
+                { "audio client has connected", !VoiceModule.CheckIfAudioClientDisconnected(config.AudioClient) },
             });
 
             await ExecuteAsync(context,
@@ -106,7 +106,7 @@ namespace wow2.Modules.Dev
             await AssertAsync(context, new()
             {
                 { "currently playing is not null", config.CurrentlyPlayingSongRequest != null },
-                { "song request queue is correct length", config.CurrentSongRequestQueue.Count == 2 }
+                { "song request queue is correct length", config.CurrentSongRequestQueue.Count == 2 },
             });
 
             var firstCurrentlyPlayingRequest = config.CurrentlyPlayingSongRequest;
@@ -115,7 +115,7 @@ namespace wow2.Modules.Dev
                 "vc skip");
             await AssertAsync(context, new()
             {
-                { "check next request is playing", config.CurrentlyPlayingSongRequest != firstCurrentlyPlayingRequest }
+                { "check next request is playing", config.CurrentlyPlayingSongRequest != firstCurrentlyPlayingRequest },
             });
 
             await ExecuteAsync(context,
@@ -141,7 +141,7 @@ namespace wow2.Modules.Dev
             await AssertAsync(context, new()
             {
                 { "testing queue does not exist", !config.SavedSongRequestQueues.ContainsKey(queueName) },
-                { "song request queue is empty", config.CurrentSongRequestQueue.Count == 0 }
+                { "song request queue is empty", config.CurrentSongRequestQueue.Count == 0 },
             });
 
             await ExecuteAsync(context,
@@ -156,7 +156,7 @@ namespace wow2.Modules.Dev
             await AssertAsync(context, new()
             {
                 { "testing queue exists in saved queues", config.SavedSongRequestQueues.ContainsKey(queueName) },
-                { "correct number of songs in testing queue", config.SavedSongRequestQueues[queueName].Count == 2 }
+                { "correct number of songs in testing queue", config.SavedSongRequestQueues[queueName].Count == 2 },
             });
 
             await ExecuteAsync(context,
@@ -164,7 +164,7 @@ namespace wow2.Modules.Dev
             await AssertAsync(context, new()
             {
                 { "song request queue is empty", config.CurrentSongRequestQueue.Count == 0 },
-                { "testing queue was unmodified", config.SavedSongRequestQueues[queueName].Count == 2 }
+                { "testing queue was unmodified", config.SavedSongRequestQueues[queueName].Count == 2 },
             });
 
             await ExecuteAsync(context,
@@ -172,7 +172,7 @@ namespace wow2.Modules.Dev
             await AssertAsync(context, new()
             {
                 { "testing queue does not exist", !config.SavedSongRequestQueues.ContainsKey(queueName) },
-                { "song request queue is correct length", config.CurrentSongRequestQueue.Count == 2 }
+                { "song request queue is correct length", config.CurrentSongRequestQueue.Count == 2 },
             });
 
             await ExecuteAsync(context,
@@ -197,7 +197,7 @@ namespace wow2.Modules.Dev
             {
                 { "keyword exists in dictionary", config.KeywordsDictionary.TryGetValue(keywordName, out List<KeywordValue> keywordValues) },
                 { "check value1", keywordValues[0].Content == "value1" },
-                { "check value2", keywordValues[1].Content == "value2 with title" && keywordValues[1].Title == "Title!" }
+                { "check value2", keywordValues[1].Content == "value2 with title" && keywordValues[1].Title == "Title!" },
             });
 
             await ExecuteAsync(context,

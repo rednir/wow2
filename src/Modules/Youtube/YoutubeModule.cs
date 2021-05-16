@@ -50,7 +50,7 @@ namespace wow2.Modules.YouTube
             {
                 // TODO: fix this if no file
                 ApiKey = DataManager.Secrets.GoogleApiKey,
-                ApplicationName = "wow2-youtube"
+                ApplicationName = "wow2-youtube",
             });
             YouTubePollingThread.Start();
         }
@@ -92,7 +92,7 @@ namespace wow2.Modules.YouTube
                 config.SubscribedChannels.Add(new SubscribedChannel()
                 {
                     Id = channel.Id,
-                    Name = channel.Snippet.Title
+                    Name = channel.Snippet.Title,
                 });
                 await new SuccessMessage(config.AnnouncementsChannelId == 0 ?
                     $"Once you use `set-announcements-channel`, you'll get notifications when {channel.Snippet.Title} uploads a new video." :
@@ -120,7 +120,7 @@ namespace wow2.Modules.YouTube
                 {
                     Name = channel.Name,
                     Value = $"[View channel](https://www.youtube.com/channel/{channel.Id})",
-                    IsInline = true
+                    IsInline = true,
                 });
             }
 
@@ -292,7 +292,7 @@ namespace wow2.Modules.YouTube
                 {
                     Name = upload.Snippet.Title,
                     Value = $"[{upload.Snippet.PublishedAt.Value:dd MMM yyyy}](https://www.youtube.com/watch?v={upload.Id})",
-                    IsInline = true
+                    IsInline = true,
                 });
             }
 
@@ -302,13 +302,13 @@ namespace wow2.Modules.YouTube
                 {
                     Name = channel.Snippet.Title,
                     IconUrl = channel.Snippet.Thumbnails.Default__.Url,
-                    Url = "https://www.youtube.com/channel/" + channel.Id
+                    Url = "https://www.youtube.com/channel/" + channel.Id,
                 },
                 Title = "Channel Overview",
                 // TODO: truncate sub count
                 Description = $"{channel.Statistics.SubscriberCount} subscribers • {channel.Statistics.VideoCount} uploads\n",
                 Fields = fieldBuilders,
-                Color = Color.LightGrey
+                Color = Color.LightGrey,
             }
             .Build();
         }
