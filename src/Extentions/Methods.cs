@@ -155,7 +155,7 @@ namespace wow2.Extentions
             return stringToSearchWithBoundaries.Contains($" {word} ");
         }
 
-        /// <returns>A memory stream containing the bytes of the string</returns>
+        /// <returns>A memory stream containing the bytes of the string.</returns>
         public static MemoryStream ToMemoryStream(this string inputString)
             => new(Encoding.ASCII.GetBytes(inputString));
 

@@ -129,7 +129,7 @@ namespace wow2.Modules.Games.Counting
             config.IsGameStarted = false;
         }
 
-        /// <returns>True if counting was ended, otherwise false</returns>
+        /// <returns>True if counting was ended, otherwise false.</returns>
         private static async Task<bool> EndGameIfNumberIsInvalidAsync(SocketMessage message, float? number)
         {
             if (number >= float.MaxValue || number <= float.MinValue)

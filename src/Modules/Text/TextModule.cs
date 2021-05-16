@@ -19,7 +19,7 @@ namespace wow2.Modules.Text
     [Summary("Change and manipulate text.")]
     public class TextModule : Module
     {
-        /// <summary>Dictionary where the key is the name and the value is the image stream</summary>
+        /// <summary>Dictionary where the key is the name and the value is the image stream.</summary>
         private readonly static Dictionary<string, Stream> QuoteTemplates;
 
         static TextModule()

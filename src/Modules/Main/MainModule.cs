@@ -240,7 +240,7 @@ namespace wow2.Modules.Main
             return listOfFieldBuilders;
         }
 
-        /// <summary>Builds embed fields for commands in a single module</summary>
+        /// <summary>Builds embed fields for commands in a single module.</summary>
         private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFieldsAsync(string specifiedModuleName, string commandPrefix)
         {
             // Find commands in module.
