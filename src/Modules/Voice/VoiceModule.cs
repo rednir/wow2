@@ -61,6 +61,10 @@ namespace wow2.Modules.Voice
             {
                 metadata = await YouTubeDl.GetMetadata(songRequest);
             }
+            catch (ArgumentException)
+            {
+                throw new CommandReturnException(Context, "Invalid input.");
+            }
             catch (Exception ex)
             {
                 Logger.LogException(ex, "Could not fetch video metadata");
