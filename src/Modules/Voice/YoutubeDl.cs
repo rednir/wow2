@@ -1,15 +1,11 @@
 using System;
 using System.Web;
-using System.Text.RegularExpressions;
+using System.Text.Json;
 using System.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Google;
-using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
-using Google.Apis.Services;
-using wow2.Data;
 using wow2.Modules.YouTube;
 
 namespace wow2.Modules.Voice
@@ -21,13 +17,17 @@ namespace wow2.Modules.Voice
 
         /// <summary>Looks up a URL or search term and gets the video metadata.</summary>
         /// <returns>Video metadata deserialized into <c>YouTubeVideoMetadata</c>.</returns>
-        public static async Task<VideoMetadata> GetMetadata(string searchOrUrl)
+        public static async Task<VideoMetadata> GetMetadataAsync(string searchOrUrl)
         {
             searchOrUrl = searchOrUrl.Trim('\"');
             Video video;
             if (TryGetVideoIdFromUrl(searchOrUrl, out string id))
             {
                 video = await YouTubeModule.GetVideoAsync(id);
+            }
+            else if (searchOrUrl.Contains("twitch.tv/"))
+            {
+                return await GetMetadataFromYoutubeDlAsync(searchOrUrl);
             }
             else
             {
@@ -51,6 +51,37 @@ namespace wow2.Modules.Voice
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
             });
+        }
+
+        private static async Task<VideoMetadata> GetMetadataFromYoutubeDlAsync(string input)
+        {
+            const string arguments = "-j -q";
+            bool isUrl = input.StartsWith("http://") || input.StartsWith("https://");
+            string standardOutput = "";
+            string standardError = "";
+
+            using (var process = new Process())
+            {
+                process.StartInfo.FileName = YouTubeDlPath;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.Arguments = isUrl ? $"\"{input}\" {arguments}" : $"ytsearch:\"{input}\" {arguments}";
+
+                process.OutputDataReceived += (sendingProcess, outline) => standardOutput += outline.Data + "\n";
+                process.ErrorDataReceived += (sendingProcess, outline) => standardError += outline.Data + "\n";
+
+                process.Start();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+
+                await process.WaitForExitAsync();
+            }
+
+            if (!string.IsNullOrWhiteSpace(standardError))
+                throw new ArgumentException(standardError);
+
+            return JsonSerializer.Deserialize<VideoMetadata>(standardOutput);
         }
 
         private static bool TryGetVideoIdFromUrl(string url, out string id)

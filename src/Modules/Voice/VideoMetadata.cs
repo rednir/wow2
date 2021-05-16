@@ -11,29 +11,34 @@ namespace wow2.Modules.Voice
 
         public VideoMetadata(Video video)
         {
-            Title = video.Snippet.Title;
-            Uploader = video.Snippet.ChannelTitle;
-            WebpageUrl = "https://www.youtube.com/watch?v=" + video.Id;
-            Description = video.Snippet.Description;
-            Extractor = "youtube";
-            Duration = 100; // TODO
-            ViewCount = video.Statistics.ViewCount;
-            LikeCount = video.Statistics.LikeCount;
-            DislikeCount = video.Statistics.DislikeCount;
-            ThumbnailUrl = video.Snippet.Thumbnails.Default__.Url;
+            title = video.Snippet.Title;
+            uploader = video.Snippet.ChannelTitle;
+            webpage_url = "https://www.youtube.com/watch?v=" + video.Id;
+            description = video.Snippet.Description;
+            extractor = "youtube";
+            duration = 100; // TODO
+            view_count = video.Statistics.ViewCount;
+            like_count = video.Statistics.LikeCount;
+            dislike_count = video.Statistics.DislikeCount;
+            thumbnails.Add(new() { url = video.Snippet.Thumbnails.Default__.Url });
         }
 
-        public string Title { get; set; }
-        public string Uploader { get; set; }
-        public string WebpageUrl { get; set; }
-        public string Description { get; set; }
-        public string Extractor { get; set; }
+        public string title { get; set; }
+        public string uploader { get; set; }
+        public string webpage_url { get; set; }
+        public string description { get; set; }
+        public string extractor { get; set; }
 
-        public float? Duration { get; set; }
-        public ulong? ViewCount { get; set; }
-        public ulong? LikeCount { get; set; }
-        public ulong? DislikeCount { get; set; }
+        public float? duration { get; set; }
+        public ulong? view_count { get; set; }
+        public ulong? like_count { get; set; }
+        public ulong? dislike_count { get; set; }
 
-        public string ThumbnailUrl { get; set; }
+        public List<VideoMetadataThumbnails> thumbnails { get; set; } = new();
+    }
+
+    public class VideoMetadataThumbnails
+    {
+        public string url { get; set; }
     }
 }
