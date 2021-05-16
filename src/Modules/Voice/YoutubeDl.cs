@@ -1,8 +1,13 @@
 using System;
-using System.Text.Json;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Google;
+using Google.Apis.YouTube.v3;
+using Google.Apis.YouTube.v3.Data;
+using Google.Apis.Services;
+using wow2.Data;
+using wow2.Modules.YouTube;
 
 namespace wow2.Modules.Voice
 {
@@ -16,33 +21,11 @@ namespace wow2.Modules.Voice
         public static async Task<VideoMetadata> GetMetadata(string searchOrUrl)
         {
             searchOrUrl = searchOrUrl.Trim('\"');
-            const string arguments = "-j -q";
-            bool isUrl = searchOrUrl.StartsWith("http://") || searchOrUrl.StartsWith("https://");
-            string standardOutput = "";
-            string standardError = "";
+            bool isUrl = searchOrUrl.StartsWith("http://") || searchOrUrl.StartsWith("https://"); // TODO
 
-            using (var process = new Process())
-            {
-                process.StartInfo.FileName = YouTubeDlPath;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.Arguments = isUrl ? $"\"{searchOrUrl}\" {arguments}" : $"ytsearch:\"{searchOrUrl}\" {arguments}";
-
-                process.OutputDataReceived += (sendingProcess, outline) => standardOutput += outline.Data + "\n";
-                process.ErrorDataReceived += (sendingProcess, outline) => standardError += outline.Data + "\n";
-
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-
-                await process.WaitForExitAsync();
-            }
-
-            if (!string.IsNullOrWhiteSpace(standardError))
-                throw new ArgumentException(standardError);
-
-            return JsonSerializer.Deserialize<VideoMetadata>(standardOutput);
+            SearchResult searchResult = await YouTubeModule.SearchForAsync(searchOrUrl, "video");
+            Video video = await YouTubeModule.GetVideoAsync(searchResult.Id.VideoId);
+            return new VideoMetadata(video);
         }
 
         /// <returns>The FFmpeg process.</returns>

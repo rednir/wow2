@@ -1,29 +1,39 @@
 using System.Collections.Generic;
+using Google.Apis.YouTube.v3.Data;
 
 namespace wow2.Modules.Voice
 {
     public class VideoMetadata
     {
-        public string title { get; set; }
-        public string uploader { get; set; }
-        public string webpage_url { get; set; }
-        public string description { get; set; }
-        public string extractor { get; set; }
+        public VideoMetadata()
+        {
+        }
 
-        public float? duration { get; set; }
-        public int? view_count { get; set; }
-        public int? like_count { get; set; }
-        public int? dislike_count { get; set; }
+        public VideoMetadata(Video video)
+        {
+            Title = video.Snippet.Title;
+            Uploader = video.Snippet.ChannelTitle;
+            WebpageUrl = "https://www.youtube.com/watch?v=" + video.Id;
+            Description = video.Snippet.Description;
+            Extractor = "youtube";
+            Duration = 100; // TODO
+            ViewCount = video.Statistics.ViewCount;
+            LikeCount = video.Statistics.LikeCount;
+            DislikeCount = video.Statistics.DislikeCount;
+            ThumbnailUrl = video.Snippet.Thumbnails.Default__.Url;
+        }
 
-        public List<VideoMetadataThumbnails> thumbnails { get; set; }
-    }
+        public string Title { get; set; }
+        public string Uploader { get; set; }
+        public string WebpageUrl { get; set; }
+        public string Description { get; set; }
+        public string Extractor { get; set; }
 
-    public class VideoMetadataThumbnails
-    {
-        public string url { get; set; }
-        public int width { get; set; }
-        public int height { get; set; }
-        public string resolution { get; set; }
-        public string id { get; set; }
+        public float? Duration { get; set; }
+        public ulong? ViewCount { get; set; }
+        public ulong? LikeCount { get; set; }
+        public ulong? DislikeCount { get; set; }
+
+        public string ThumbnailUrl { get; set; }
     }
 }

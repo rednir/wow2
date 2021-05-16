@@ -76,7 +76,7 @@ namespace wow2.Modules.Voice
                 RequestedBy = Context.User
             });
 
-            await new SuccessMessage($"Added song request to the number `{config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
+            await new SuccessMessage($"Added song request to the number `{config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.Title}**\n{metadata.WebpageUrl}")
                 .SendAsync(Context.Channel);
 
             if (config.IsAutoJoinOn)
@@ -399,7 +399,7 @@ namespace wow2.Modules.Voice
             }
             catch (Exception ex)
             {
-                string errorText = $"Displaying metadata failed for the following video:\n{request?.VideoMetadata?.webpage_url}";
+                string errorText = $"Displaying metadata failed for the following video:\n{request?.VideoMetadata?.WebpageUrl}";
                 Logger.LogException(ex, errorText);
                 await new ErrorMessage(errorText)
                     .SendAsync(Context.Channel);
@@ -410,7 +410,7 @@ namespace wow2.Modules.Voice
         {
             var config = GetConfigForGuild(Context.Guild);
 
-            using (var ffmpeg = YouTubeDl.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
+            using (var ffmpeg = YouTubeDl.CreateStreamFromVideoUrl(request.VideoMetadata.WebpageUrl))
             using (var output = ffmpeg.StandardOutput.BaseStream)
             using (var discord = config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
             {
@@ -481,8 +481,8 @@ namespace wow2.Modules.Voice
 
                 var fieldBuilderForSongRequest = new EmbedFieldBuilder()
                 {
-                    Name = $"{i}) {songRequest.VideoMetadata.title}",
-                    Value = $"{songRequest.VideoMetadata.webpage_url}\nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy?.Mention}"
+                    Name = $"{i}) {songRequest.VideoMetadata.Title}",
+                    Value = $"{songRequest.VideoMetadata.WebpageUrl}\nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy?.Mention}"
                 };
                 listOfFieldBuilders.Add(fieldBuilderForSongRequest);
             }
@@ -499,24 +499,24 @@ namespace wow2.Modules.Voice
             const string twitchIconUrl = "https://www.net-aware.org.uk/siteassets/images-and-icons/application-icons/app-icons-twitch.png?w=585&scale=down";
 
             // Don't display hours if less than 1 hour.
-            string formattedDuration = TimeSpan.FromSeconds(request.VideoMetadata.duration ?? 0)
-                .ToString((request.VideoMetadata.duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
+            string formattedDuration = TimeSpan.FromSeconds(request.VideoMetadata.Duration ?? 0)
+                .ToString((request.VideoMetadata.Duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
 
             var embedBuilder = new EmbedBuilder()
             {
                 Author = new EmbedAuthorBuilder()
                 {
                     Name = "Now Playing",
-                    IconUrl = request.VideoMetadata.extractor.StartsWith("twitch") ? twitchIconUrl : youtubeIconUrl,
-                    Url = request.VideoMetadata.webpage_url
+                    IconUrl = request.VideoMetadata.Extractor.StartsWith("twitch") ? twitchIconUrl : youtubeIconUrl,
+                    Url = request.VideoMetadata.WebpageUrl
                 },
                 Footer = new EmbedFooterBuilder()
                 {
-                    Text = request.VideoMetadata.extractor.StartsWith("youtube") ?
-                        $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {formattedDuration}" : ""
+                    Text = request.VideoMetadata.Extractor.StartsWith("youtube") ?
+                        $"👁️  {request.VideoMetadata.ViewCount ?? 0}      |      👍  {request.VideoMetadata.LikeCount ?? 0}      |      👎  {request.VideoMetadata.DislikeCount ?? 0}      |      🕓  {formattedDuration}" : ""
                 },
-                Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
-                ThumbnailUrl = request.VideoMetadata.thumbnails.Last().url,
+                Title = (request.VideoMetadata.Extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.Description}" : request.VideoMetadata.Title) + $" *({request.VideoMetadata.Uploader})*",
+                ThumbnailUrl = request.VideoMetadata.ThumbnailUrl,
                 Description = $"Requested at {request.TimeRequested:HH:mm} by {request.RequestedBy?.Mention}",
                 Color = Color.LightGrey
             };
