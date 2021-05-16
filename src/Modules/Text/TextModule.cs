@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
-using wow2.Verbose.Messages;
+using SixLabors.ImageSharp.Processing;
 using wow2.Extentions;
+using wow2.Verbose.Messages;
 
 namespace wow2.Modules.Text
 {

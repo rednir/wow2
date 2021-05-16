@@ -1,8 +1,7 @@
 using System.Text.Json.Serialization;
-using Discord.Commands;
-using wow2.Modules.Games.VerbalMemory;
 using wow2.Modules.Games.Counting;
 using wow2.Modules.Games.NumberMemory;
+using wow2.Modules.Games.VerbalMemory;
 
 namespace wow2.Modules.Games
 {

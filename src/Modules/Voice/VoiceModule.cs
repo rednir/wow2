@@ -1,13 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Discord;
-using Discord.WebSocket;
-using Discord.Net;
-using Discord.Commands;
 using Discord.Audio;
+using Discord.Commands;
+using Discord.Net;
 using wow2.Data;
 using wow2.Verbose;
 using wow2.Verbose.Messages;

@@ -1,9 +1,8 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using System.Threading.Tasks;
 
 namespace wow2.Verbose.Messages
 {

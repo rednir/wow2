@@ -1,13 +1,13 @@
 using System;
-using System.Reflection;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using wow2.Modules.Keywords;
 using wow2.Modules.Main;
 using wow2.Modules.Voice;
-using wow2.Modules.Keywords;
 using wow2.Verbose.Messages;
 
 namespace wow2.Modules.Dev

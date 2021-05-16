@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
-using wow2.Verbose;
 using wow2.Data;
+using wow2.Verbose;
 
 namespace wow2
 {

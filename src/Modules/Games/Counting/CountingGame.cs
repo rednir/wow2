@@ -1,13 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Discord;
-using Discord.WebSocket;
 using Discord.Commands;
-using wow2.Verbose.Messages;
-using wow2.Extentions;
+using Discord.WebSocket;
 using wow2.Data;
+using wow2.Extentions;
+using wow2.Verbose.Messages;
 
 namespace wow2.Modules.Games.Counting
 {
