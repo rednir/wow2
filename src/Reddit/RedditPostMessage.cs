@@ -1,5 +1,6 @@
 using Discord;
 using Reddit.Controllers;
+using wow2.Extentions;
 using wow2.Verbose.Messages;
 
 namespace wow2.Modules.Reddit
@@ -15,7 +16,7 @@ namespace wow2.Modules.Reddit
                     Name = $"r/{post.Subreddit} • u/{post.Author}",
                 },
                 Title = post.Title,
-                Description = post.Listing.SelfText,
+                Description = post.Listing.SelfText.Truncate(1024, true),
                 Color = Color.LightGrey,
             };
         }

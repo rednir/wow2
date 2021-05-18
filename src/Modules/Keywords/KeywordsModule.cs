@@ -236,7 +236,7 @@ namespace wow2.Modules.Keywords
             foreach (var keywordPair in keywordsDictionary)
             {
                 string nameToShow = (keywordPair.Value.Count > 1) ? $"{keywordPair.Key}:\t({keywordPair.Value.Count} values)" : $"{keywordPair.Key}:";
-                string valueToShow = (keywordPair.Value[0].Content.Length > 50) ? $"`{keywordPair.Value[0].Content.Substring(0, 47)}...`" : $"`{keywordPair.Value[0].Content}`";
+                string valueToShow = $"`{keywordPair.Value[0].Content.Truncate(50, true)}`";
 
                 var fieldBuilderForKeyword = new EmbedFieldBuilder()
                 {
