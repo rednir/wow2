@@ -10,8 +10,27 @@ namespace wow2.Modules
         public CommandReturnException(SocketCommandContext context, string description, string title = null)
             : base(title + description)
         {
+            EmbedTitle = title;
+            EmbedDescription = description;
             _ = new WarningMessage(description, title)
                 .SendAsync(context.Channel);
         }
+
+        public CommandReturnException(Exception innerException, string description, string title = null)
+            : base(title + description, innerException)
+        {
+            EmbedTitle = title;
+            EmbedDescription = description;
+        }
+
+        public CommandReturnException(string description, string title = null)
+            : base(title + description)
+        {
+            EmbedTitle = title;
+            EmbedDescription = description;
+        }
+
+        public string EmbedTitle { get; }
+        public string EmbedDescription { get; }
     }
 }

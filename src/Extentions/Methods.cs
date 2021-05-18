@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -81,7 +80,12 @@ namespace wow2.Extentions
             return stringBuilder.ToString();
         }
 
-        /// <summary>Check if a string starts with a given value, and also is not part of another word.</summary>
+        /// <summary>Checks if a string is longer than the maximum length allowed, and truncates it if so.</summary>
+        /// <returns>The string with no more characters than the maximum length.</returns>
+        public static string Truncate(this string originalString, int maxLength, bool addEllipses = false)
+            => originalString.Length > maxLength ? originalString.Substring(0, maxLength - 4) + (addEllipses ? "..." : null) : originalString;
+
+        /// <summary>Checks if a string starts with a given value, and also is not part of another word.</summary>
         public static bool StartsWithWord(this string stringToCheck, string word, bool ignoreCase = false) =>
 
             // The stringToCheck starts with word, and has a space directly after the word.
