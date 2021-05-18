@@ -9,14 +9,23 @@ namespace wow2.Modules.Reddit
     {
         public RedditPostMessage(Post post)
         {
+            // TODO: show subreddit icon.
             EmbedBuilder = new EmbedBuilder()
             {
-                Author = new EmbedAuthorBuilder()
+                Author = new()
                 {
                     Name = $"r/{post.Subreddit} • u/{post.Author}",
+                    Url = "https://www.reddit.com/r/" + post.Listing.Subreddit,
+                },
+                Footer = new()
+                {
+                    Text = $"{post.Score} points, {post.UpvoteRatio * 100}% upvoted",
                 },
                 Title = post.Title,
-                Description = post.Listing.SelfText.Truncate(1024, true),
+                Description = post.Listing.SelfText.Truncate(800, true) + $"\n\n**[See post on Reddit]({"https://www.reddit.com" + post.Listing.Permalink})**",
+                Url = post.Listing.URL,
+                ThumbnailUrl = post.Listing.Thumbnail == "self" ? null : post.Listing.Thumbnail,
+                Timestamp = post.Created,
                 Color = Color.LightGrey,
             };
         }
