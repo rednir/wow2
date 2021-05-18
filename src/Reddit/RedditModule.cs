@@ -1,7 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Discord;
 using Discord.Commands;
 using Reddit;
 using Reddit.Controllers;
@@ -45,8 +45,29 @@ namespace wow2.Modules.Reddit
         }
 
         [Command("top")]
-        [Summary("Gets the top post of a given subreddit.")]
-        public async Task TopAsync([Name("SUBREDDIT")] string subredditName)
+        [Summary("Gets the top post of all time from a given subreddit.")]
+        public async Task TopAsync([Name("SUBREDDIT")] string subredditName) =>
+            await GetSubredditCommandCommonAsync(subredditName, s => s.GetTop(limit: 1));
+
+        [Command("new")]
+        [Alias("newest")]
+        [Summary("Gets the newest post from a given subreddit.")]
+        public async Task NewAsync([Name("SUBREDDIT")] string subredditName) =>
+            await GetSubredditCommandCommonAsync(subredditName, s => s.GetNew(limit: 1));
+
+        [Command("hot")]
+        [Alias("best")]
+        [Summary("Gets the first post in hot from a given subreddit.")]
+        public async Task HotAsync([Name("SUBREDDIT")] string subredditName) =>
+            await GetSubredditCommandCommonAsync(subredditName, s => s.GetHot(limit: 1));
+
+        [Command("cont")]
+        [Alias("controversial")]
+        [Summary("Gets the most controversial of all time from given subreddit.")]
+        public async Task ControversialAsync([Name("SUBREDDIT")] string subredditName) =>
+            await GetSubredditCommandCommonAsync(subredditName, s => s.GetControversial(limit: 1));
+
+        public async Task GetSubredditCommandCommonAsync(string subredditName, Func<SubredditPosts, List<Post>> action)
         {
             Subreddit subreddit;
             try
@@ -58,7 +79,7 @@ namespace wow2.Modules.Reddit
                 throw new CommandReturnException(Context, ex.EmbedDescription, ex.EmbedTitle);
             }
 
-            await new RedditPostMessage(subreddit.Posts.GetTop(limit: 1).FirstOrDefault()
+            await new RedditPostMessage(action.Invoke(subreddit.Posts).FirstOrDefault()
                 ?? throw new CommandReturnException(Context, "Doesn't seem like there's any posts here..."))
                     .SendAsync(Context.Channel);
         }

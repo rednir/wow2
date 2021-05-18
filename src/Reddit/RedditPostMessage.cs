@@ -24,7 +24,7 @@ namespace wow2.Modules.Reddit
                 Title = post.Title,
                 Description = post.Listing.SelfText.Truncate(800, true) + $"\n\n**[See post on Reddit]({"https://www.reddit.com" + post.Listing.Permalink})**",
                 Url = post.Listing.URL,
-                ThumbnailUrl = post.Listing.Thumbnail == "self" ? null : post.Listing.Thumbnail,
+                ThumbnailUrl = post.Listing.Thumbnail.StartsWith("http") ? post.Listing.Thumbnail : null,
                 Timestamp = post.Created,
                 Color = Color.LightGrey,
             };
