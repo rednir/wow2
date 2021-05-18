@@ -11,13 +11,13 @@ namespace wow2.Verbose.Messages
         public const ulong WarningEmoteId = 804732632751407174;
         public const ulong ErrorEmoteId = 804732656721199144;
 
-        protected EmbedBuilder EmbedBuilder;
-
         public ulong ReplyToMessageId { get; set; }
         public IUserMessage SentMessage { get; protected set; }
         public Embed Embed => EmbedBuilder.Build();
         public MessageReference MessageReference =>
             ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null;
+
+        protected EmbedBuilder EmbedBuilder { get; set; }
 
         public virtual async Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
