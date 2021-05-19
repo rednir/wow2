@@ -14,7 +14,7 @@ namespace wow2.Modules.Dev
 {
     public static class Tests
     {
-        public static readonly Dictionary<string, Func<ICommandContext, Task>> TestList = new();
+        public static readonly Dictionary<string, Func<SocketCommandContext, Task>> TestList = new();
 
         /// <summary>The time in milliseconds between asserts/commands.</summary>
         private const int CommandDelay = 1000;
@@ -27,15 +27,15 @@ namespace wow2.Modules.Dev
 
             foreach (MethodInfo method in testMethods)
             {
-                var func = (Func<ICommandContext, Task>)Delegate.CreateDelegate(
-                    typeof(Func<ICommandContext, Task>), null, method);
+                var func = (Func<SocketCommandContext, Task>)Delegate.CreateDelegate(
+                    typeof(Func<SocketCommandContext, Task>), null, method);
                 var attribute = (TestAttribute)method.GetCustomAttribute(typeof(TestAttribute));
                 TestList.Add(attribute.Name, func);
             }
         }
 
         [Test("messages")]
-        public static async Task MessagesTest(ICommandContext context)
+        public static async Task MessagesTest(SocketCommandContext context)
         {
             await new SuccessMessage("This is a success message.", "Success").SendAsync(context.Channel);
             await new InfoMessage("This is an info message.", "Info").SendAsync(context.Channel);
@@ -58,7 +58,7 @@ namespace wow2.Modules.Dev
         }
 
         [Test("aliases")]
-        public static async Task AliasesTest(ICommandContext context)
+        public static async Task AliasesTest(SocketCommandContext context)
         {
             var config = MainModule.GetConfigForGuild(context.Guild);
             const string aliasName = "testing_alias";
@@ -78,7 +78,7 @@ namespace wow2.Modules.Dev
         }
 
         [Test("voice")]
-        public static async Task VoiceTest(ICommandContext context)
+        public static async Task VoiceTest(SocketCommandContext context)
         {
             // TODO: These Task.Delays are a bit of a hacky workaround.
             // Find some way to reliably wait until the command finishes with timeout.
@@ -130,7 +130,7 @@ namespace wow2.Modules.Dev
         }
 
         [Test("voice-queue")]
-        public static async Task VoiceQueueTest(ICommandContext context)
+        public static async Task VoiceQueueTest(SocketCommandContext context)
         {
             var config = VoiceModule.GetConfigForGuild(context.Guild);
             const string queueName = "testing-queue";
@@ -180,7 +180,7 @@ namespace wow2.Modules.Dev
         }
 
         [Test("keywords")]
-        public static async Task KeywordsTest(ICommandContext context)
+        public static async Task KeywordsTest(SocketCommandContext context)
         {
             var config = KeywordsModule.GetConfigForGuild(context.Guild);
             const string keywordName = "testing_keyword";
@@ -212,7 +212,7 @@ namespace wow2.Modules.Dev
         }
 
         [Test("quotes")]
-        public static async Task QuotesTest(ICommandContext context)
+        public static async Task QuotesTest(SocketCommandContext context)
         {
             // TODO: also test specified author
             string repeatedText = string.Concat(
@@ -222,7 +222,7 @@ namespace wow2.Modules.Dev
                 $"text quote \"{repeatedText}\"");
         }
 
-        private static async Task<List<IResult>> ExecuteAsync(ICommandContext context, params string[] commands)
+        private static async Task<List<IResult>> ExecuteAsync(SocketCommandContext context, params string[] commands)
         {
             string commandPrefix = MainModule.GetConfigForGuild(context.Guild).CommandPrefix;
             var results = new List<IResult>();
@@ -239,13 +239,13 @@ namespace wow2.Modules.Dev
             return results;
         }
 
-        private static async Task DelayAsync(ICommandContext context, int milliseconds)
+        private static async Task DelayAsync(SocketCommandContext context, int milliseconds)
         {
             await context.Channel.SendMessageAsync($"**⏸️ PAUSE:** {milliseconds}ms");
             await Task.Delay(milliseconds);
         }
 
-        private static async Task AssertAsync(ICommandContext context, string description, bool value)
+        private static async Task AssertAsync(SocketCommandContext context, string description, bool value)
         {
             if (!value)
                 throw new Exception($"Assert failure ({description})");
@@ -253,7 +253,7 @@ namespace wow2.Modules.Dev
             await Task.Delay(CommandDelay);
         }
 
-        private static async Task AssertAsync(ICommandContext context, Dictionary<string, bool> asserts)
+        private static async Task AssertAsync(SocketCommandContext context, Dictionary<string, bool> asserts)
         {
             foreach (var assert in asserts)
                 await AssertAsync(context, assert.Key, assert.Value);

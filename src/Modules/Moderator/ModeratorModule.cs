@@ -25,9 +25,6 @@ namespace wow2.Modules.Moderator
         {
             var config = GetConfigForGuild(message.GetGuild());
 
-            if (!config.IsAutoModOn)
-                return;
-
             UserRecord record;
             try
             {
@@ -39,6 +36,9 @@ namespace wow2.Modules.Moderator
                 // Message was from bot.
                 return;
             }
+
+            if (!config.IsAutoModOn)
+                return;
 
             string dueTo;
             string warningMessage;
@@ -74,6 +74,27 @@ namespace wow2.Modules.Moderator
 
             await new InfoMessage($"{message.Author.Mention} has been warned due to {dueTo}.")
                 .SendAsync(message.Channel);
+        }
+
+        /// <summary>Checks whether a user is abusing commands.</summary>
+        /// <returns>True if the user should be rate limited due to command abuse.</summary>
+        public static bool CheckForCommandAbuse(SocketCommandContext context)
+        {
+            const int numOfCommandsToCheck = 14;
+
+            UserRecord record = GetUserRecord(GetConfigForGuild(context.Guild), context.Message.Author.Id);
+            record.CommandExecutedDateTimes.Add(context.Message.Timestamp);
+            Console.WriteLine(record.CommandExecutedDateTimes.Count);
+
+            int length = record.CommandExecutedDateTimes.Count;
+            if (length < numOfCommandsToCheck)
+                return false;
+            if (length > numOfCommandsToCheck)
+                record.CommandExecutedDateTimes.RemoveAt(length - 1);
+
+            // Represents the time difference between a set number of commands (numOfCommandsToCheck).
+            TimeSpan difference = context.Message.Timestamp.Subtract(record.CommandExecutedDateTimes[numOfCommandsToCheck - 1]);
+            return difference < TimeSpan.FromSeconds(60);
         }
 
         [Command("warn")]

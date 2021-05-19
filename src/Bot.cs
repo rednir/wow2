@@ -217,9 +217,16 @@ namespace wow2
                 socketMessage.Content.MakeCommandInput(commandPrefix));
         }
 
-        public static async Task<IResult> ExecuteCommandAsync(ICommandContext context, string input)
+        public static async Task<IResult> ExecuteCommandAsync(SocketCommandContext context, string input)
         {
             using var _ = context.Channel.EnterTypingState();
+
+            if (ModeratorModule.CheckForCommandAbuse(context))
+            {
+                await new WarningMessage("Please don't spam commands, it's annoying.\nWait a minute or so before executing another command.", "Calm yourself.")
+                    .SendAsync(context.Channel);
+                return null;
+            }
 
             IResult result = await CommandService.ExecuteAsync(
                 context: context,
