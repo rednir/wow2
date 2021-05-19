@@ -18,30 +18,6 @@ namespace wow2.Modules.Main
         public static MainModuleConfig GetConfigForGuild(IGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Main;
 
-        public static async Task SendAboutMessageToChannelAsync(SocketCommandContext context)
-        {
-            var commandPrefix = GetConfigForGuild(context.Guild).CommandPrefix;
-            var appInfo = Bot.ApplicationInfo;
-
-            var embedBuilder = new EmbedBuilder()
-            {
-                Title = $"{appInfo.Name}  •  in {Bot.Client.Guilds.Count} servers",
-                Description = (string.IsNullOrWhiteSpace(appInfo.Description) ? string.Empty : appInfo.Description) + "\n[Link to github](https://github.com/rednir/wow2)",
-                Color = Color.LightGrey,
-                Author = new EmbedAuthorBuilder()
-                {
-                    Name = $"Hosted by {appInfo.Owner}",
-                    IconUrl = appInfo.Owner.GetAvatarUrl(),
-                },
-                Footer = new EmbedFooterBuilder()
-                {
-                    Text = $" - To view a list of commands, type `{commandPrefix} help`",
-                },
-            };
-
-            await context.Channel.SendMessageAsync(embed: embedBuilder.Build());
-        }
-
         public static async Task<bool> CheckForAliasAsync(SocketMessage message)
         {
             var config = GetConfigForGuild(message.GetGuild());
@@ -67,7 +43,8 @@ namespace wow2.Modules.Main
         [Summary("Shows some infomation about the bot.")]
         public async Task AboutAsync()
         {
-            await SendAboutMessageToChannelAsync(Context);
+            await new AboutMessage(GetConfigForGuild(Context.Guild).CommandPrefix)
+                .SendAsync(Context.Channel);
         }
 
         [Command("help")]

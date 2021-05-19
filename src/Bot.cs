@@ -209,7 +209,8 @@ namespace wow2
             string commandPrefix = MainModule.GetConfigForGuild(socketMessage.GetGuild()).CommandPrefix;
             if (socketMessage.Content == commandPrefix)
             {
-                await MainModule.SendAboutMessageToChannelAsync(context);
+                await new AboutMessage(MainModule.GetConfigForGuild(context.Guild).CommandPrefix)
+                    .SendAsync(context.Channel);
                 return;
             }
 
