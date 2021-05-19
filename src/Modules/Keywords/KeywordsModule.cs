@@ -294,7 +294,8 @@ namespace wow2.Modules.Keywords
                 // Don't use embed message if the value to send contains a link.
                 sentKeywordResponseMessage = await message.Channel.SendMessageAsync(
                     text: chosenValue.Content,
-                    messageReference: new MessageReference(message.Id));
+                    messageReference: new MessageReference(message.Id),
+                    allowedMentions: AllowedMentions.None);
             }
             else
             {
@@ -303,6 +304,7 @@ namespace wow2.Modules.Keywords
                     title: chosenValue.Title)
                 {
                     ReplyToMessageId = message.Id,
+                    AllowMentions = false,
                 }
                 .SendAsync(message.Channel);
             }

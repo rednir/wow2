@@ -161,7 +161,7 @@ namespace wow2.Extentions
         /// <returns>Whether the conversion was successful.</returns>
         public static bool TryConvertToTimeSpan(this string inputString, out TimeSpan timeSpan)
         {
-            string units = Regex.Replace(inputString, "[^.a-zA-z]", string.Empty);
+            string units = Regex.Replace(inputString, "[^a-zA-z]", string.Empty);
             float number;
             try
             {

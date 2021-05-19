@@ -12,7 +12,9 @@ namespace wow2.Verbose.Messages
         public const ulong ErrorEmoteId = 804732656721199144;
 
         public ulong ReplyToMessageId { get; set; }
+        public bool AllowMentions { get; set; }
         public IUserMessage SentMessage { get; protected set; }
+
         public Embed Embed => EmbedBuilder.Build();
         public MessageReference MessageReference =>
             ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null;
@@ -23,7 +25,7 @@ namespace wow2.Verbose.Messages
         {
             SentMessage = await channel.SendMessageAsync(
                 embed: EmbedBuilder.Build(),
-                allowedMentions: AllowedMentions.None,
+                allowedMentions: AllowMentions ? AllowedMentions.All : AllowedMentions.None,
                 messageReference: MessageReference);
             return SentMessage;
         }
