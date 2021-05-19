@@ -88,7 +88,6 @@ namespace wow2.Modules.Moderator
 
             UserRecord record = GetUserRecord(GetConfigForGuild(context.Guild), context.Message.Author.Id);
             record.CommandExecutedDateTimes.Add(context.Message.Timestamp);
-            Console.WriteLine(record.CommandExecutedDateTimes.Count);
 
             int length = record.CommandExecutedDateTimes.Count;
             if (length < numOfCommandsToCheck)
