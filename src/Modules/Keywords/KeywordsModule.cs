@@ -33,6 +33,9 @@ namespace wow2.Modules.Keywords
         {
             var config = GetConfigForGuild(messageToCheck.GetGuild());
 
+            if (!config.IsDeleteReactionOn)
+                return false;
+
             foreach (ulong id in config.ListOfResponsesId)
             {
                 if (id == messageToCheck.Id)
