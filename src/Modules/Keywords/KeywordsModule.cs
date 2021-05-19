@@ -15,7 +15,7 @@ namespace wow2.Modules.Keywords
     [Name("Keywords")]
     [Group("keywords")]
     [Alias("keyword", "k")]
-    [Summary("For automatically responding to keywords in user messages.")]
+    [Summary("Automatically respond to keywords in user messages.")]
     public class KeywordsModule : Module
     {
         public static readonly IEmote DeleteReactionEmote = new Emoji("🗑");

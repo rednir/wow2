@@ -13,7 +13,7 @@ namespace wow2.Modules.Reddit
     [Name("Reddit")]
     [Group("reddit")]
     [Alias("r")]
-    [Summary("Integrations with Reddit.")]
+    [Summary("View Reddit posts and other content.")]
     public class RedditModule : Module
     {
         private static readonly RedditClient RedditClient = new(DataManager.Secrets.RedditAppId, DataManager.Secrets.RedditRefreshToken);

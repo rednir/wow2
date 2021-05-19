@@ -14,7 +14,7 @@ namespace wow2.Modules.Moderator
     [Name("Moderator")]
     [Group("mod")]
     [Alias("moderator")]
-    [Summary("For using tools to manage the server. This is still very rudimentary and unfinished.  Requires the 'Ban Members' permission.")]
+    [Summary("Use tools to manage the server. This is still very rudimentary and unfinished.  Requires the 'Ban Members' permission.")]
     [RequireUserPermission(GuildPermission.BanMembers)]
     public class ModeratorModule : Module
     {

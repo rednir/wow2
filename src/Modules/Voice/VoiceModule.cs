@@ -16,7 +16,7 @@ namespace wow2.Modules.Voice
     [Name("Voice")]
     [Group("vc")]
     [Alias("voice")]
-    [Summary("For playing YouTube or Twitch audio in a voice channel.")]
+    [Summary("Play YouTube or Twitch audio in a voice channel.")]
     public class VoiceModule : Module
     {
         public static VoiceModuleConfig GetConfigForGuild(IGuild guild)
@@ -194,6 +194,7 @@ namespace wow2.Modules.Voice
         }
 
         [Command("leave")]
+        [Alias("disconnect", "stop")]
         [Summary("Leaves the voice channel.")]
         public async Task LeaveAsync()
         {
