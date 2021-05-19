@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -155,6 +156,35 @@ namespace wow2.Extentions
         /// <returns>A new instance of MemoryStream containing the bytes of the string.</returns>
         public static MemoryStream ToMemoryStream(this string inputString)
             => new(Encoding.ASCII.GetBytes(inputString));
+
+        /// <summary>Parses the string into a TimeSpan where the last character is the units.</summary>
+        /// <returns>Whether the conversion was successful.</returns>
+        public static bool TryConvertToTimeSpan(this string inputString, out TimeSpan timeSpan)
+        {
+            string units = Regex.Replace(inputString, "[^.a-zA-z]", string.Empty);
+            float number;
+            try
+            {
+                number = Convert.ToSingle(
+                    Regex.Replace(inputString, "[^.0-9]", string.Empty));
+            }
+            catch (FormatException)
+            {
+                timeSpan = TimeSpan.Zero;
+                return false;
+            }
+
+            timeSpan = units switch
+            {
+                "ms" => TimeSpan.FromMilliseconds(number),
+                "s" => TimeSpan.FromSeconds(number),
+                "m" => TimeSpan.FromMinutes(number),
+                "d" => TimeSpan.FromDays(number),
+                _ => TimeSpan.Zero,
+            };
+
+            return timeSpan == TimeSpan.Zero;
+        }
 
         /// <summary>Creates a string from a list of commands, with newlines placed between each command.</summary>
         /// <returns>A string representing the list of commands.</returns>
