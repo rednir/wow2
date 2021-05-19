@@ -81,48 +81,6 @@ namespace wow2.Modules.Keywords
             return true;
         }
 
-        private static async Task SendKeywordResponse(string foundKeyword, SocketMessage message)
-        {
-            var config = GetConfigForGuild(message.GetGuild());
-
-            // If the keyword has multiple values, the value will be chosen randomly.
-            int chosenValueIndex = new Random().Next(config.KeywordsDictionary[foundKeyword].Count);
-            KeywordValue chosenValue = config.KeywordsDictionary[foundKeyword][chosenValueIndex];
-
-            IUserMessage sentKeywordResponseMessage;
-            if (chosenValue.Content.Contains("http://") || chosenValue.Content.Contains("https://"))
-            {
-                // Don't use embed message if the value to send contains a link.
-                sentKeywordResponseMessage = await message.Channel.SendMessageAsync(
-                    text: chosenValue.Content,
-                    messageReference: new MessageReference(message.Id));
-            }
-            else
-            {
-                sentKeywordResponseMessage = await new GenericMessage(
-                    description: chosenValue.Content,
-                    title: chosenValue.Title)
-                {
-                    ReplyToMessageId = message.Id,
-                }
-                .SendAsync(message.Channel);
-            }
-
-            if (config.IsLikeReactionOn)
-                await sentKeywordResponseMessage.AddReactionAsync(LikeReactionEmote);
-            if (config.IsDeleteReactionOn)
-                await sentKeywordResponseMessage.AddReactionAsync(DeleteReactionEmote);
-
-            // Remember the messages that are actually keyword responses by adding them to a list.
-            config.ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
-
-            // Remove the oldest message if ListOfResponsesId has reached its max.
-            if (config.ListOfResponsesId.Count > MaxCountOfRememberedKeywordResponses)
-                config.ListOfResponsesId.RemoveAt(0);
-
-            await DataManager.SaveGuildDataToFileAsync(message.GetGuild().Id);
-        }
-
         [Command("add")]
         [Summary("Adds value(s) to a keyword, creating a new keyword if it doesn't exist.")]
         public async Task AddAsync(string keyword, [Name("value")][Remainder] string valueContent)
@@ -311,6 +269,48 @@ namespace wow2.Modules.Keywords
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"Like reaction is now `{(config.IsLikeReactionOn ? "on" : "off")}` for keyword responses.")
                 .SendAsync(Context.Channel);
+        }
+
+        private static async Task SendKeywordResponse(string foundKeyword, SocketMessage message)
+        {
+            var config = GetConfigForGuild(message.GetGuild());
+
+            // If the keyword has multiple values, the value will be chosen randomly.
+            int chosenValueIndex = new Random().Next(config.KeywordsDictionary[foundKeyword].Count);
+            KeywordValue chosenValue = config.KeywordsDictionary[foundKeyword][chosenValueIndex];
+
+            IUserMessage sentKeywordResponseMessage;
+            if (chosenValue.Content.Contains("http://") || chosenValue.Content.Contains("https://"))
+            {
+                // Don't use embed message if the value to send contains a link.
+                sentKeywordResponseMessage = await message.Channel.SendMessageAsync(
+                    text: chosenValue.Content,
+                    messageReference: new MessageReference(message.Id));
+            }
+            else
+            {
+                sentKeywordResponseMessage = await new GenericMessage(
+                    description: chosenValue.Content,
+                    title: chosenValue.Title)
+                {
+                    ReplyToMessageId = message.Id,
+                }
+                .SendAsync(message.Channel);
+            }
+
+            if (config.IsLikeReactionOn)
+                await sentKeywordResponseMessage.AddReactionAsync(LikeReactionEmote);
+            if (config.IsDeleteReactionOn)
+                await sentKeywordResponseMessage.AddReactionAsync(DeleteReactionEmote);
+
+            // Remember the messages that are actually keyword responses by adding them to a list.
+            config.ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
+
+            // Remove the oldest message if ListOfResponsesId has reached its max.
+            if (config.ListOfResponsesId.Count > MaxCountOfRememberedKeywordResponses)
+                config.ListOfResponsesId.RemoveAt(0);
+
+            await DataManager.SaveGuildDataToFileAsync(message.GetGuild().Id);
         }
     }
 }
