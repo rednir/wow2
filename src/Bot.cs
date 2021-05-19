@@ -64,7 +64,7 @@ namespace wow2
         public static async Task ReadyAsync()
         {
             await DataManager.InitializeAsync();
-            await Bot.InstallCommandsAsync();
+            await InstallCommandsAsync();
 
             await Client.SetGameAsync("!wow help");
         }
@@ -80,7 +80,8 @@ namespace wow2
                     .DateTimeJoinedBinary = DateTime.Now.ToBinary();
             }
 
-            await SendWelcomeMessageAsync(guild);
+            await new WelcomeMessage(guild)
+                .SendToBestChannelAsync();
         }
 
         public static async Task LeftGuildAsync(SocketGuild guild)
@@ -306,30 +307,6 @@ namespace wow2
             else
             {
                 return result.Commands.Select(c => c.Command);
-            }
-        }
-
-        private static async Task SendWelcomeMessageAsync(SocketGuild guild)
-        {
-            string commandPrefix = MainModule.GetConfigForGuild(guild).CommandPrefix;
-            Embed embed = new EmbedBuilder()
-            {
-                Title = "👋 Hi there!",
-                Description = $"Thanks for adding me to your server!\nTo get started, type `{commandPrefix} help` to see the wide range of commands available.\n",
-                Color = Color.Gold,
-            }
-            .Build();
-            foreach (SocketTextChannel channel in guild.TextChannels)
-            {
-                try
-                {
-                    await channel.SendMessageAsync(embed: embed);
-                    break;
-                }
-                catch (HttpException)
-                {
-                    // Most likely the bot does not have sufficient privileges.
-                }
             }
         }
     }
