@@ -25,6 +25,10 @@ namespace wow2.Modules.Voice
         public static bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
             => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;
 
+        // Doesn't display hours if less than 1 hour.
+        public static string DurationAsString(float? duration) =>
+            TimeSpan.FromSeconds(duration ?? 0).ToString((duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
+
         [Command("list")]
         [Alias("queue", "upnext")]
         [Summary("Show the song request queue.")]
@@ -405,37 +409,6 @@ namespace wow2.Modules.Voice
                 page: page);
         }
 
-        private static Embed BuildNowPlayingEmbed(UserSongRequest request)
-        {
-            const string youtubeIconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png";
-            const string twitchIconUrl = "https://www.net-aware.org.uk/siteassets/images-and-icons/application-icons/app-icons-twitch.png?w=585&scale=down";
-
-            var embedBuilder = new EmbedBuilder()
-            {
-                Author = new EmbedAuthorBuilder()
-                {
-                    Name = "Now Playing",
-                    IconUrl = request.VideoMetadata.extractor.StartsWith("twitch") ? twitchIconUrl : youtubeIconUrl,
-                    Url = request.VideoMetadata.webpage_url,
-                },
-                Footer = new EmbedFooterBuilder()
-                {
-                    Text = request.VideoMetadata.extractor.StartsWith("youtube") ?
-                        $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {DurationAsString(request.VideoMetadata.duration)}" : string.Empty,
-                },
-                Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
-                ThumbnailUrl = request.VideoMetadata.thumbnails.LastOrDefault()?.url,
-                Description = $"Requested at {request.TimeRequested:HH:mm} by {request.RequestedBy?.Mention}",
-                Color = Color.LightGrey,
-            };
-
-            return embedBuilder.Build();
-        }
-
-        // Doesn't display hours if less than 1 hour.
-        private static string DurationAsString(float? duration) =>
-            TimeSpan.FromSeconds(duration ?? 0).ToString((duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
-
         private async Task JoinVoiceChannelAsync(VoiceModuleConfig config, IVoiceChannel channel)
         {
             if (!CheckIfAudioClientDisconnected(config.AudioClient))
@@ -466,7 +439,8 @@ namespace wow2.Modules.Voice
 
             try
             {
-                await ReplyAsync(embed: BuildNowPlayingEmbed(request));
+                await new NowPlayingMessage(request)
+                    .SendAsync(Context.Channel);
             }
             catch (Exception ex)
             {
