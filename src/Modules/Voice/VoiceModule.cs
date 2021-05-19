@@ -35,7 +35,7 @@ namespace wow2.Modules.Voice
         public async Task ListAsync(int page = 1)
         {
             var config = GetConfigForGuild(Context.Guild);
-            PagedMessage message = BuildListOfSongsMessage(config.CurrentSongRequestQueue, page);
+            var message = new ListOfSongsMessage(config.CurrentSongRequestQueue, "Up next", page);
             if (message.Embed.Fields.Length == 0)
                 throw new CommandReturnException(Context, "There's nothing in the queue... how sad.");
             await message.SendAsync(Context.Channel);
@@ -266,7 +266,8 @@ namespace wow2.Modules.Voice
             if (!config.SavedSongRequestQueues.TryGetValue(name, out var queue))
                 throw new CommandReturnException(Context, "No queue with that name exists.");
 
-            await BuildListOfSongsMessage(queue, page).SendAsync(Context.Channel);
+            await new ListOfSongsMessage(queue, $"💾 Saved Queue: {name}", page)
+                .SendAsync(Context.Channel);
         }
 
         [Command("list-saved")]
@@ -384,29 +385,6 @@ namespace wow2.Modules.Voice
             config.ListOfUserIdsThatVoteSkipped.Clear();
             config.CtsForAudioStreaming.Cancel();
             config.CtsForAudioStreaming = new CancellationTokenSource();
-        }
-
-        private static PagedMessage BuildListOfSongsMessage(Queue<UserSongRequest> queue, int page = -1)
-        {
-            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-            float? totalDuration = 0;
-            int i = 0;
-            foreach (UserSongRequest songRequest in queue)
-            {
-                i++;
-                totalDuration += songRequest.VideoMetadata.duration;
-                var fieldBuilderForSongRequest = new EmbedFieldBuilder()
-                {
-                    Name = $"{i}) {songRequest.VideoMetadata.title}",
-                    Value = $"[More details]({songRequest.VideoMetadata.webpage_url}) • {DurationAsString(songRequest.VideoMetadata.duration)} \nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy?.Mention}",
-                };
-                listOfFieldBuilders.Add(fieldBuilderForSongRequest);
-            }
-
-            return new PagedMessage(
-                title: $"🔉 Up Next ({DurationAsString(totalDuration)})",
-                fieldBuilders: listOfFieldBuilders,
-                page: page);
         }
 
         private async Task JoinVoiceChannelAsync(VoiceModuleConfig config, IVoiceChannel channel)
