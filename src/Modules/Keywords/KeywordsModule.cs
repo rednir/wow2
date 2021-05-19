@@ -52,24 +52,9 @@ namespace wow2.Modules.Keywords
         {
             var config = GetConfigForGuild(message.GetGuild());
             string messageContent = message.Content.ToLower();
-            List<string> listOfFoundKeywords = new();
+            string[] listOfFoundKeywords = GetAllKeywordsInString(message.Content, config.KeywordsDictionary.Keys);
 
-            foreach (string keyword in config.KeywordsDictionary.Keys)
-            {
-                // No need to check with symbols removed.
-                if (!messageContent.Contains(keyword))
-                    continue;
-
-                // Replace unnecessary symbols with a whitespace.
-                var symbolsToReplace = "!.?;.'#\"_-\\".Where(c => !keyword.Contains(c)).ToArray();
-                string messageContentWithoutSymbols = messageContent.ReplaceAll(symbolsToReplace, ' ');
-
-                // Search for keyword with word boundaries, making sure that the keyword is not part of another word.
-                if (messageContentWithoutSymbols.ContainsWord(keyword))
-                    listOfFoundKeywords.Add(keyword);
-            }
-
-            if (listOfFoundKeywords.Count == 0)
+            if (listOfFoundKeywords.Length == 0)
                 return false;
 
             // Prioritize the longest keyword if multiple keywords have been found.
@@ -269,6 +254,27 @@ namespace wow2.Modules.Keywords
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"Like reaction is now `{(config.IsLikeReactionOn ? "on" : "off")}` for keyword responses.")
                 .SendAsync(Context.Channel);
+        }
+
+        private static string[] GetAllKeywordsInString(string content, IEnumerable<string> keywords)
+        {
+            var foundKeywords = new List<string>();
+            foreach (string keyword in keywords)
+            {
+                // No need to check with symbols removed.
+                if (!content.Contains(keyword))
+                    continue;
+
+                // Replace unnecessary symbols with a whitespace.
+                var symbolsToReplace = "!.?;.'#\"_-\\".Where(c => !keyword.Contains(c)).ToArray();
+                string contentWithoutSymbols = content.ReplaceAll(symbolsToReplace, ' ');
+
+                // Search for keyword with word boundaries, making sure that the keyword is not part of another word.
+                if (contentWithoutSymbols.ContainsWord(keyword))
+                    foundKeywords.Add(keyword);
+            }
+
+            return foundKeywords.ToArray();
         }
 
         private static async Task SendKeywordResponse(string foundKeyword, SocketMessage message)
