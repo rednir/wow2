@@ -144,6 +144,8 @@ namespace wow2
                 return;
 
             IUserMessage message = await cachedMessage.GetOrDownloadAsync();
+            if (message == null)
+                return;
 
             if (reaction.Emote.Name == KeywordsModule.DeleteReactionEmote.Name &&
                 await KeywordsModule.DeleteMessageIfKeywordResponse(message))
