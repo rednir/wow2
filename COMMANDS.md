@@ -1,4 +1,4 @@
-# List of commands (53 total)
+# List of commands (65 total)
 
 ## Main
 Stuff to do with the bot.
@@ -43,7 +43,7 @@ Integrations with YouTube, like getting notified for new videos.
      - Check for new videos.
 
 ## Voice
-For playing YouTube or Twitch audio in a voice channel.
+Play YouTube or Twitch audio in a voice channel.
 
  - `!wow vc list [optional:PAGE]`
      - Show the song request queue.
@@ -54,6 +54,12 @@ For playing YouTube or Twitch audio in a voice channel.
  - `!wow vc add [REQUEST]`
      - Adds REQUEST to the song request queue. REQUEST can be a video URL or a youtube search term.
 
+ - `!wow vc remove [NUMBER]`
+     - Removes a song request from the queue at the given index.
+
+ - `!wow vc remove-many [START] [END]`
+     - Removes all song requests from START to END inclusive.
+
  - `!wow vc skip`
      - Stops the currently playing request and starts the next request if it exists.
 
@@ -63,8 +69,26 @@ For playing YouTube or Twitch audio in a voice channel.
  - `!wow vc leave`
      - Leaves the voice channel.
 
+ - `!wow vc shuffle`
+     - Randomly shuffles the song request queue.
+
  - `!wow vc np`
      - Shows details about the currently playing song request.
+
+ - `!wow vc save-queue [NAME]`
+     - Saves the current song request queue with a name for later use.
+
+ - `!wow vc list-saved [NAME] [optional:PAGE]`
+     - Shows a list of songs in a saved queue.
+
+ - `!wow vc list-saved`
+     - Shows a list of saved queues.
+
+ - `!wow vc pop-queue [NAME]`
+     - Replaces the current song request queue with a saved queue. The saved queue will also be deleted.
+
+ - `!wow vc load-queue [NAME]`
+     - Replaces the current song request queue with a saved queue. The saved queue will also be deleted.
 
  - `!wow vc toggle-loop`
      - Toggles whether the current song request will keep looping.
@@ -90,6 +114,21 @@ Change and manipulate text.
  - `!wow text emojify [TEXT]`
      - Adds emojis to some text because its funny haha.
 
+## Reddit
+View Reddit posts and other content.
+
+ - `!wow reddit top [SUBREDDIT]`
+     - Gets the top post of all time from a given subreddit.
+
+ - `!wow reddit new [SUBREDDIT]`
+     - Gets the newest post from a given subreddit.
+
+ - `!wow reddit hot [SUBREDDIT]`
+     - Gets the first post in hot from a given subreddit.
+
+ - `!wow reddit cont [SUBREDDIT]`
+     - Gets the most controversial of all time from given subreddit.
+
 ## osu!
 Integrations with the osu!api
 
@@ -109,7 +148,7 @@ Integrations with the osu!api
      - Check for new user milestones.
 
 ## Moderator
-For using tools to manage the server. This is still very rudimentary and unfinished.  Requires the 'Ban Members' permission.
+Use tools to manage the server. This is still very rudimentary and unfinished.  Requires the 'Ban Members' permission.
 
  - `!wow mod warn [MENTION] [optional:MESSAGE]`
      - Sends a warning to a user with an optional message.
@@ -127,7 +166,7 @@ For using tools to manage the server. This is still very rudimentary and unfinis
      - Toggles whether the bot give warnings to users, for example if spam is detected.
 
 ## Keywords
-For automatically responding to keywords in user messages.
+Automatically respond to keywords in user messages.
 
  - `!wow keywords add [KEYWORD] [VALUE]`
      - Adds value(s) to a keyword, creating a new keyword if it doesn't exist.
@@ -174,7 +213,7 @@ Boring stuff for developers.
  - `!wow dev set-status [MESSAGE] [STATUS]`
      - Sets the 'playing' text and the status of the bot user.
 
- - `!wow dev run-test [optional:GROUP]`
+ - `!wow dev run-test [GROUPS]`
      - Runs a list of commands.
 
  - `!wow dev commands-list`
