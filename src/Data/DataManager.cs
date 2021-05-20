@@ -58,7 +58,7 @@ namespace wow2.Data
                 Environment.Exit(-1);
             }
 
-            Secrets = JsonSerializer.Deserialize<Secrets>(File.ReadAllText(fullPath));
+            Secrets = JsonSerializer.Deserialize<Secrets>(File.ReadAllText(fullPath), SerializerOptions);
 
             // Always rewrite file, just in case there are new properties.
             await File.WriteAllTextAsync(fullPath, JsonSerializer.Serialize(Secrets, SerializerOptions));
@@ -94,7 +94,7 @@ namespace wow2.Data
             try
             {
                 string guildDataJson = await File.ReadAllTextAsync($"{AppDataDirPath}/GuildData/{guildId}.json");
-                DictionaryOfGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson);
+                DictionaryOfGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson, SerializerOptions);
                 Logger.Log($"Loaded guild data for {DictionaryOfGuildData[guildId].NameOfGuild} ({guildId})", LogSeverity.Verbose);
             }
             catch (Exception ex)
