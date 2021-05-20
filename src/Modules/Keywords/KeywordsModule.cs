@@ -166,7 +166,7 @@ namespace wow2.Modules.Keywords
                 var fieldBuilderForKeyword = new EmbedFieldBuilder()
                 {
                     Name = nameToShow,
-                    Value = valueToShow,
+                    Value = $"{keywordPair.Value.Sum(v => v.TimesLiked)} times liked, {keywordPair.Value.Sum(v => v.TimesDeleted)} times deleted.\n" + valueToShow,
                 };
                 listOfFieldBuilders.Add(fieldBuilderForKeyword);
             }
@@ -202,7 +202,7 @@ namespace wow2.Modules.Keywords
                     new EmbedFieldBuilder()
                     {
                         Name = $"Added by {user} at {date}",
-                        Value = $"```{value.Content}```",
+                        Value = $"{value.TimesLiked} times liked, {value.TimesDeleted} times deleted.\n```{value.Content}```",
                     });
             }
 
