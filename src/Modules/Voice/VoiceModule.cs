@@ -35,7 +35,7 @@ namespace wow2.Modules.Voice
         public async Task ListAsync(int page = 1)
         {
             var config = GetConfigForGuild(Context.Guild);
-            var message = new ListOfSongsMessage(config.CurrentSongRequestQueue, "Up next", page);
+            var message = new ListOfSongsMessage(config.CurrentSongRequestQueue, "🔊 Up next", page);
             if (message.Embed.Fields.Length == 0)
                 throw new CommandReturnException(Context, "There's nothing in the queue... how sad.");
             await message.SendAsync(Context.Channel);
