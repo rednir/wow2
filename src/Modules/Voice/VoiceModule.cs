@@ -106,6 +106,8 @@ namespace wow2.Modules.Voice
             // Play song if nothing else is playing.
             if (!CheckIfAudioClientDisconnected(config.AudioClient) && config.CurrentlyPlayingSongRequest == null)
                 _ = ContinueAsync();
+
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("remove")]
