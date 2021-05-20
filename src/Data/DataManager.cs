@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Discord;
 using wow2.Verbose;
@@ -12,7 +13,11 @@ namespace wow2.Data
     public static class DataManager
     {
         public static readonly string AppDataDirPath = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
-        private static readonly JsonSerializerOptions SerializerOptions = new() { WriteIndented = true };
+        private static readonly JsonSerializerOptions SerializerOptions = new()
+        {
+            WriteIndented = true,
+            ReferenceHandler = ReferenceHandler.Preserve,
+        };
 
         public static Dictionary<ulong, GuildData> DictionaryOfGuildData { get; set; } = new Dictionary<ulong, GuildData>();
         public static Secrets Secrets { get; set; } = new Secrets();
