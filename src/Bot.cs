@@ -147,15 +147,8 @@ namespace wow2
             if (message == null)
                 return;
 
-            if (reaction.Emote.Name == ResponseMessage.DeleteReactionEmote.Name &&
-                await KeywordsModule.DeleteMessageIfKeywordResponse(message))
-            {
-                Logger.Log($"Message was deleted in channel `{channel.Name}` due to reaction added by `{reaction.User}` ({reaction.UserId})", LogSeverity.Verbose);
-            }
-            else
-            {
-                await PagedMessage.ActOnReactionAsync(reaction);
-            }
+            if (!await PagedMessage.ActOnReactionAsync(reaction))
+                await ResponseMessage.ActOnReactionAsync(reaction, message);
         }
 
         public static Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)

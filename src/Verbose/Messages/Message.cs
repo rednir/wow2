@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Discord;
 
@@ -13,12 +14,18 @@ namespace wow2.Verbose.Messages
 
         public ulong ReplyToMessageId { get; set; }
         public bool AllowMentions { get; set; }
+
+        [JsonIgnore]
         public IUserMessage SentMessage { get; protected set; }
 
+        [JsonIgnore]
         public Embed Embed => EmbedBuilder.Build();
+
+        [JsonIgnore]
         public MessageReference MessageReference =>
             ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null;
 
+        [JsonIgnore]
         protected EmbedBuilder EmbedBuilder { get; set; }
 
         public virtual async Task<IUserMessage> SendAsync(IMessageChannel channel)

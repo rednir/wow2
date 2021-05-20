@@ -24,29 +24,6 @@ namespace wow2.Modules.Keywords
         public static KeywordsModuleConfig GetConfigForGuild(IGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Keywords;
 
-        /// <summary>Checks if a message was a keyword response sent by the bot, deleting the message if so.</summary>
-        /// <returns>True if the message was deleted, otherwise false.</returns>
-        public static async Task<bool> DeleteMessageIfKeywordResponse(IUserMessage messageToCheck)
-        {
-            var config = GetConfigForGuild(messageToCheck.GetGuild());
-
-            if (!config.IsDeleteReactionOn)
-                return false;
-
-            foreach (ulong id in config.ListOfResponsesId)
-            {
-                if (id == messageToCheck.Id)
-                {
-                    await messageToCheck.DeleteAsync();
-                    config.ListOfResponsesId.Remove(id);
-                    await DataManager.SaveGuildDataToFileAsync(messageToCheck.GetGuild().Id);
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
         public static bool CheckMessageForKeyword(SocketMessage message)
         {
@@ -189,7 +166,7 @@ namespace wow2.Modules.Keywords
                 var fieldBuilderForKeyword = new EmbedFieldBuilder()
                 {
                     Name = nameToShow,
-                    Value = valueToShow,
+                    Value = $"{keywordPair.Value.Sum(v => v.TimesLiked)} times liked, {keywordPair.Value.Sum(v => v.TimesDeleted)} times deleted.\n" + valueToShow,
                 };
                 listOfFieldBuilders.Add(fieldBuilderForKeyword);
             }
@@ -225,7 +202,7 @@ namespace wow2.Modules.Keywords
                     new EmbedFieldBuilder()
                     {
                         Name = $"Added by {user} at {date}",
-                        Value = $"```{value.Content}```",
+                        Value = $"{value.TimesLiked} times liked, {value.TimesDeleted} times deleted.\n```{value.Content}```",
                     });
             }
 

@@ -1,4 +1,5 @@
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -27,6 +28,42 @@ namespace wow2.Modules.Keywords
 
         public KeywordValue KeywordValue { get; }
 
+        /// <summary>Gets a list of IDs of users who have previously given a like to the KeywordValue via this message.</summary>
+        private List<ulong> UsersLikedIds { get; } = new();
+
+        /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the reaction if so.</summary>
+        public static async Task<bool> ActOnReactionAsync(SocketReaction reaction, IUserMessage message)
+        {
+            var config = KeywordsModule.GetConfigForGuild(message.GetGuild());
+
+            ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
+                m => m.SentMessage?.Id == message.Id);
+            if (responseMessage == null)
+                return false;
+
+            if (reaction.Emote.Name == DeleteReactionEmote.Name && config.IsDeleteReactionOn)
+            {
+                responseMessage.KeywordValue.TimesDeleted++;
+                config.ListOfResponseMessages.Remove(responseMessage);
+                await responseMessage.SentMessage.DeleteAsync();
+            }
+            else if (reaction.Emote.Name == LikeReactionEmote.Name && config.IsLikeReactionOn)
+            {
+                if (!responseMessage.UsersLikedIds.Contains(reaction.UserId))
+                {
+                    responseMessage.UsersLikedIds.Add(reaction.UserId);
+                    responseMessage.KeywordValue.TimesLiked++;
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            await DataManager.SaveGuildDataToFileAsync(responseMessage.SentMessage.GetGuild().Id);
+            return true;
+        }
+
         public async Task<IUserMessage> RespondToMessageAsync(SocketMessage message)
         {
             IGuild guild = message.GetGuild();
@@ -49,11 +86,11 @@ namespace wow2.Modules.Keywords
                 await SentMessage.AddReactionAsync(DeleteReactionEmote);
 
             // Remember the messages that are actually keyword responses by adding them to a list.
-            config.ListOfResponsesId.Add(SentMessage.Id);
+            config.ListOfResponseMessages.Add(this);
 
             // Remove the oldest message if ListOfResponsesId has reached its max.
-            if (config.ListOfResponsesId.Count > MaxCountOfRememberedKeywordResponses)
-                config.ListOfResponsesId.RemoveAt(0);
+            if (config.ListOfResponseMessages.Count > MaxCountOfRememberedKeywordResponses)
+                config.ListOfResponseMessages.RemoveAt(0);
 
             await DataManager.SaveGuildDataToFileAsync(guild.Id);
             return SentMessage;
