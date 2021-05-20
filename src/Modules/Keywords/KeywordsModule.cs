@@ -18,9 +18,6 @@ namespace wow2.Modules.Keywords
     [Summary("Automatically respond to keywords in user messages.")]
     public class KeywordsModule : Module
     {
-        public static readonly IEmote DeleteReactionEmote = new Emoji("🗑");
-        public static readonly IEmote LikeReactionEmote = new Emoji("👍");
-        private const int MaxCountOfRememberedKeywordResponses = 50;
         private const int MaxNumberOfKeywords = 50;
         private const int MaxNumberOfValues = 20;
 
@@ -63,8 +60,13 @@ namespace wow2.Modules.Keywords
             // Prioritize the longest keyword if multiple keywords have been found.
             string foundKeyword = listOfFoundKeywords.OrderByDescending(s => s.Length).First();
 
-            // Don't await this, as it can block the gateway task.
-            _ = SendKeywordResponse(foundKeyword, message);
+            // If the keyword has multiple values, the value will be chosen randomly.
+            int chosenValueIndex = new Random().Next(config.KeywordsDictionary[foundKeyword].Count);
+            KeywordValue keywordValue = config.KeywordsDictionary[foundKeyword][chosenValueIndex];
+
+            // Don't await this to avoid blocking gateway task.
+            _ = new ResponseMessage(keywordValue)
+                .RespondToMessageAsync(message);
 
             return true;
         }
@@ -278,50 +280,6 @@ namespace wow2.Modules.Keywords
             }
 
             return foundKeywords.ToArray();
-        }
-
-        private static async Task SendKeywordResponse(string foundKeyword, SocketMessage message)
-        {
-            var config = GetConfigForGuild(message.GetGuild());
-
-            // If the keyword has multiple values, the value will be chosen randomly.
-            int chosenValueIndex = new Random().Next(config.KeywordsDictionary[foundKeyword].Count);
-            KeywordValue chosenValue = config.KeywordsDictionary[foundKeyword][chosenValueIndex];
-
-            IUserMessage sentKeywordResponseMessage;
-            if (chosenValue.Content.Contains("http://") || chosenValue.Content.Contains("https://"))
-            {
-                // Don't use embed message if the value to send contains a link.
-                sentKeywordResponseMessage = await message.Channel.SendMessageAsync(
-                    text: chosenValue.Content,
-                    messageReference: new MessageReference(message.Id),
-                    allowedMentions: AllowedMentions.None);
-            }
-            else
-            {
-                sentKeywordResponseMessage = await new GenericMessage(
-                    description: chosenValue.Content,
-                    title: chosenValue.Title)
-                {
-                    ReplyToMessageId = message.Id,
-                    AllowMentions = false,
-                }
-                .SendAsync(message.Channel);
-            }
-
-            if (config.IsLikeReactionOn)
-                await sentKeywordResponseMessage.AddReactionAsync(LikeReactionEmote);
-            if (config.IsDeleteReactionOn)
-                await sentKeywordResponseMessage.AddReactionAsync(DeleteReactionEmote);
-
-            // Remember the messages that are actually keyword responses by adding them to a list.
-            config.ListOfResponsesId.Add(sentKeywordResponseMessage.Id);
-
-            // Remove the oldest message if ListOfResponsesId has reached its max.
-            if (config.ListOfResponsesId.Count > MaxCountOfRememberedKeywordResponses)
-                config.ListOfResponsesId.RemoveAt(0);
-
-            await DataManager.SaveGuildDataToFileAsync(message.GetGuild().Id);
         }
     }
 }

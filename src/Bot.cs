@@ -147,7 +147,7 @@ namespace wow2
             if (message == null)
                 return;
 
-            if (reaction.Emote.Name == KeywordsModule.DeleteReactionEmote.Name &&
+            if (reaction.Emote.Name == ResponseMessage.DeleteReactionEmote.Name &&
                 await KeywordsModule.DeleteMessageIfKeywordResponse(message))
             {
                 Logger.Log($"Message was deleted in channel `{channel.Name}` due to reaction added by `{reaction.User}` ({reaction.UserId})", LogSeverity.Verbose);
