@@ -39,7 +39,7 @@ namespace wow2.Modules.Moderator
 
             // Conserve memory.
             if (record.Messages.Count > 15)
-                record.Messages.RemoveAt(15);
+                record.Messages.RemoveAt(0);
 
             if (!config.IsAutoModOn)
                 return;
