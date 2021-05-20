@@ -1,4 +1,4 @@
-using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -27,6 +27,32 @@ namespace wow2.Modules.Keywords
 
         public KeywordValue KeywordValue { get; }
 
+        /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the reaction if so.</summary>
+        public static async Task ActOnReactionAsync(SocketReaction reaction)
+        {
+            SocketMessage socketMessage = reaction.Message.GetValueOrDefault();
+            if (socketMessage == null)
+                return;
+
+            var config = KeywordsModule.GetConfigForGuild(socketMessage.GetGuild());
+
+            ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
+                m => m.SentMessage.Id == socketMessage.Id);
+            if (responseMessage == null)
+                return;
+
+            if (reaction.Emote.Name == DeleteReactionEmote.Name && config.IsDeleteReactionOn)
+            {
+                config.ListOfResponseMessages.Remove(responseMessage);
+                await socketMessage.DeleteAsync();
+                await DataManager.SaveGuildDataToFileAsync(socketMessage.GetGuild().Id);
+            }
+            else if (reaction.Emote.Name == LikeReactionEmote.Name && config.IsLikeReactionOn)
+            {
+                // Record like.
+            }
+        }
+
         public async Task<IUserMessage> RespondToMessageAsync(SocketMessage message)
         {
             IGuild guild = message.GetGuild();
@@ -49,11 +75,11 @@ namespace wow2.Modules.Keywords
                 await SentMessage.AddReactionAsync(DeleteReactionEmote);
 
             // Remember the messages that are actually keyword responses by adding them to a list.
-            config.ListOfResponsesId.Add(SentMessage.Id);
+            config.ListOfResponseMessages.Add(this);
 
             // Remove the oldest message if ListOfResponsesId has reached its max.
-            if (config.ListOfResponsesId.Count > MaxCountOfRememberedKeywordResponses)
-                config.ListOfResponsesId.RemoveAt(0);
+            if (config.ListOfResponseMessages.Count > MaxCountOfRememberedKeywordResponses)
+                config.ListOfResponseMessages.RemoveAt(0);
 
             await DataManager.SaveGuildDataToFileAsync(guild.Id);
             return SentMessage;
