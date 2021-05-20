@@ -117,33 +117,6 @@ namespace wow2.Modules.Dev
             await Context.Channel.SendFileAsync(logs.ToMemoryStream(), "wow2.log");
         }
 
-        [Command("timer")]
-        [Alias("countdown", "count", "time")]
-        [Summary("Start a timer that will send a message when elapsed.")]
-        public async Task TimerAsync(string time)
-        {
-            if (time.TryConvertToTimeSpan(out TimeSpan timeSpan))
-                throw new CommandReturnException(Context, "Try something like `5m` or `30s`", "Invalid time.");
-            if (timeSpan > TimeSpan.FromDays(30) || timeSpan < TimeSpan.FromSeconds(1))
-                throw new CommandReturnException(Context, "Be sensible.");
-
-            var timer = new Timer(timeSpan.TotalMilliseconds);
-            timer.Elapsed += async (source, e) =>
-            {
-                timer.Dispose();
-                await new SuccessMessage("Time up!")
-                {
-                    ReplyToMessageId = Context.Message.Id,
-                    AllowMentions = true,
-                }
-                .SendAsync(Context.Channel);
-            };
-
-            timer.Start();
-            await new InfoMessage("Timer started.")
-                .SendAsync(Context.Channel);
-        }
-
         [Command("throw")]
         [Summary("Throws an unhandled exception.")]
         public Task Throw()

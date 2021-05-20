@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -12,7 +13,7 @@ using wow2.Verbose.Messages;
 namespace wow2.Modules.Main
 {
     [Name("Main")]
-    [Summary("Stuff to do with the bot.")]
+    [Summary("Stuff to do with the bot an other random stuff.")]
     public class MainModule : Module
     {
         public static MainModuleConfig GetConfigForGuild(IGuild guild)
@@ -158,7 +159,35 @@ namespace wow2.Modules.Main
                 => message.Embed = new SuccessMessage($"That was about `{pongTimeSpan.Milliseconds}ms`", "Pong!").Embed);
         }
 
+        [Command("timer")]
+        [Alias("countdown", "count", "time", "remind")]
+        [Summary("Start a timer that will send a message when elapsed.")]
+        public async Task TimerAsync(string time)
+        {
+            if (time.TryConvertToTimeSpan(out TimeSpan timeSpan))
+                throw new CommandReturnException(Context, "Try something like `5m` or `30s`", "Invalid time.");
+            if (timeSpan > TimeSpan.FromDays(30) || timeSpan < TimeSpan.FromSeconds(1))
+                throw new CommandReturnException(Context, "Be sensible.");
+
+            var timer = new Timer(timeSpan.TotalMilliseconds);
+            timer.Elapsed += async (source, e) =>
+            {
+                timer.Dispose();
+                await new SuccessMessage("Time up!")
+                {
+                    ReplyToMessageId = Context.Message.Id,
+                    AllowMentions = true,
+                }
+                .SendAsync(Context.Channel);
+            };
+
+            timer.Start();
+            await new InfoMessage("Timer started.")
+                .SendAsync(Context.Channel);
+        }
+
         [Command("upload-raw-data")]
+        [Alias("raw-data", "upload-raw")]
         [Summary("Uploads a file containing all the data the bot stores about this server.")]
         public async Task UploadRawGuildDataAsync()
         {
@@ -167,6 +196,7 @@ namespace wow2.Modules.Main
         }
 
         [Command("set-command-prefix")]
+        [Alias("set-prefix", "setprefix")]
         [Summary("Change the prefix used to identify commands. '!wow' is the default.")]
         public async Task SetCommandPrefixAsync(string prefix)
         {
