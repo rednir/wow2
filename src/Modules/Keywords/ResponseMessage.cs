@@ -28,18 +28,18 @@ namespace wow2.Modules.Keywords
         public KeywordValue KeywordValue { get; }
 
         /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the reaction if so.</summary>
-        public static async Task ActOnReactionAsync(SocketReaction reaction)
+        public static async Task<bool> ActOnReactionAsync(SocketReaction reaction)
         {
             SocketMessage socketMessage = reaction.Message.GetValueOrDefault();
             if (socketMessage == null)
-                return;
+                return false;
 
             var config = KeywordsModule.GetConfigForGuild(socketMessage.GetGuild());
 
             ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
                 m => m.SentMessage.Id == socketMessage.Id);
             if (responseMessage == null)
-                return;
+                return false;
 
             if (reaction.Emote.Name == DeleteReactionEmote.Name && config.IsDeleteReactionOn)
             {
@@ -51,6 +51,12 @@ namespace wow2.Modules.Keywords
             {
                 // Record like.
             }
+            else
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public async Task<IUserMessage> RespondToMessageAsync(SocketMessage message)

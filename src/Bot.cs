@@ -143,7 +143,8 @@ namespace wow2
             if (reaction.UserId == Client.CurrentUser.Id)
                 return;
 
-            await PagedMessage.ActOnReactionAsync(reaction);
+            if (!await PagedMessage.ActOnReactionAsync(reaction))
+                await ResponseMessage.ActOnReactionAsync(reaction);
         }
 
         public static Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)

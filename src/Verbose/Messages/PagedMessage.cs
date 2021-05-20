@@ -32,11 +32,11 @@ namespace wow2.Verbose.Messages
         public int Page { get; protected set; }
 
         /// <summary>If the message has pages and the emote is recognised, modifies the page of the message.</summary>
-        public static async Task ActOnReactionAsync(SocketReaction reaction)
+        public static async Task<bool> ActOnReactionAsync(SocketReaction reaction)
         {
             PagedMessage message = ListOfPagedMessages.Find(m => m.SentMessage?.Id == reaction.MessageId);
             if (message == null)
-                return;
+                return false;
 
             if (reaction.Emote.Name == PageLeftEmote.Name)
             {
@@ -52,6 +52,12 @@ namespace wow2.Verbose.Messages
             {
                 await message.StopAsync();
             }
+            else
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
