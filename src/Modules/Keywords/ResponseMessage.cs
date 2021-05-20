@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -27,6 +28,9 @@ namespace wow2.Modules.Keywords
 
         public KeywordValue KeywordValue { get; }
 
+        /// <summary>Gets a list of IDs of users who have previously given a like to the KeywordValue via this message.</summary>
+        private List<ulong> UsersLikedIds { get; } = new();
+
         /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the reaction if so.</summary>
         public static async Task<bool> ActOnReactionAsync(SocketReaction reaction, IUserMessage message)
         {
@@ -39,19 +43,24 @@ namespace wow2.Modules.Keywords
 
             if (reaction.Emote.Name == DeleteReactionEmote.Name && config.IsDeleteReactionOn)
             {
+                responseMessage.KeywordValue.TimesDeleted++;
                 config.ListOfResponseMessages.Remove(responseMessage);
                 await responseMessage.SentMessage.DeleteAsync();
-                await DataManager.SaveGuildDataToFileAsync(responseMessage.SentMessage.GetGuild().Id);
             }
             else if (reaction.Emote.Name == LikeReactionEmote.Name && config.IsLikeReactionOn)
             {
-                // Record like.
+                if (!responseMessage.UsersLikedIds.Contains(reaction.UserId))
+                {
+                    responseMessage.UsersLikedIds.Add(reaction.UserId);
+                    responseMessage.KeywordValue.TimesLiked++;
+                }
             }
             else
             {
                 return false;
             }
 
+            await DataManager.SaveGuildDataToFileAsync(responseMessage.SentMessage.GetGuild().Id);
             return true;
         }
 
