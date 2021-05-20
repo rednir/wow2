@@ -33,6 +33,7 @@ namespace wow2.Modules.Games.Counting
                 .SendAsync(context.Channel);
         }
 
+        /// <summary>Checks whether a user message is part of the counting game, and acts on it if so.</summary>
         /// <returns>True if the message was related to the game.</returns>
         public static async Task<bool> CheckMessageAsync(SocketMessage receivedMessage)
         {

@@ -17,6 +17,7 @@ namespace wow2.Modules.Games.VerbalMemory
         public static VerbalMemoryGameConfig GetConfigForGuild(IGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Games.VerbalMemory;
 
+        /// <summary>Checks whether a user message is part of the verbal memory game, and acts on it if so.</summary>
         /// <returns>True if the message was related to the game.</returns>
         public static async Task<bool> CheckMessageAsync(SocketMessage receivedMessage)
         {
