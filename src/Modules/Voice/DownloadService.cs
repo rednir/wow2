@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -15,11 +16,17 @@ namespace wow2.Modules.Voice
         public static readonly string YouTubeDlPath = Environment.GetEnvironmentVariable("YOUTUBE_DL_PATH") ?? "youtube-dl";
         public static readonly string FFmpegPath = Environment.GetEnvironmentVariable("FFMPEG_PATH") ?? "ffmpeg";
 
+        public static Cache<VideoMetadata> VideoMetadataCache { get; } = new(120);
+
         /// <summary>Looks up a URL or search term and gets the video metadata.</summary>
         /// <returns>Video metadata deserialized into <c>YouTubeVideoMetadata</c>.</returns>
         public static async Task<VideoMetadata> GetMetadataAsync(string searchOrUrl)
         {
             searchOrUrl = searchOrUrl.Trim('\"');
+
+            if (VideoMetadataCache.TryFetch(searchOrUrl, out var metadataFromCache))
+                return metadataFromCache;
+
             Video video;
             if (TryGetVideoIdFromUrl(searchOrUrl, out string id))
             {
@@ -35,7 +42,9 @@ namespace wow2.Modules.Voice
                 video = await YouTubeModule.GetVideoAsync(searchResult.Id.VideoId);
             }
 
-            return new VideoMetadata(video);
+            var videoMetadata = new VideoMetadata(video);
+            VideoMetadataCache.Add(searchOrUrl, videoMetadata);
+            return videoMetadata;
         }
 
         /// <summary>Creates a new FFmpeg process that creates an audio stream from youtube-dl.</summary>
