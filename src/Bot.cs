@@ -246,8 +246,8 @@ namespace wow2
         {
             string commandPrefix = MainModule.GetConfigForGuild((SocketGuild)context.Guild).CommandPrefix;
 
-            var matchingCommands = await SearchCommandsAsync(context,
-                context.Message.Content.MakeCommandInput(commandPrefix));
+            var matchingCommands = await SearchCommandsAsync(
+                context, context.Message.Content.MakeCommandInput(commandPrefix));
             var bestMatchingCommandString = $"``{matchingCommands.FirstOrDefault()?.MakeFullCommandString(commandPrefix)}``";
 
             switch (commandError)

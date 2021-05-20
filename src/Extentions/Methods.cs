@@ -126,7 +126,12 @@ namespace wow2.Extentions
         /// <summary>Changes command input to one without the command prefix, also discarding unnecessary whitespaces.</summary>
         /// <returns>The string without the command prefix.</return>
         public static string MakeCommandInput(this string messageContent, string commandPrefix)
-            => messageContent.RemoveUnnecessaryWhiteSpace()[(commandPrefix.Length + 1)..];
+        {
+            if (!messageContent.StartsWith(commandPrefix))
+                return messageContent;
+
+            return messageContent.RemoveUnnecessaryWhiteSpace()[(commandPrefix.Length + 1)..];
+        }
 
         /// <summary>Replaces all instances of some characters with a new character.</summary>
         /// <returns>The string with the list of characters removed.</returns>
