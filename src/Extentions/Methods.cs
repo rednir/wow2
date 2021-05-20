@@ -184,6 +184,7 @@ namespace wow2.Extentions
                 "ms" => TimeSpan.FromMilliseconds(number),
                 "s" => TimeSpan.FromSeconds(number),
                 "m" => TimeSpan.FromMinutes(number),
+                "h" => TimeSpan.FromHours(number),
                 "d" => TimeSpan.FromDays(number),
                 _ => TimeSpan.Zero,
             };
