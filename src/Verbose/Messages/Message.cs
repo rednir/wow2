@@ -30,6 +30,15 @@ namespace wow2.Verbose.Messages
             return SentMessage;
         }
 
+        public virtual async Task<IUserMessage> SendAsPlainTextAsync(IMessageChannel channel)
+        {
+            SentMessage = await channel.SendMessageAsync(
+                text: (!string.IsNullOrWhiteSpace(EmbedBuilder.Title) ? $"**{EmbedBuilder.Title}**\n\n" : null) + EmbedBuilder.Description,
+                allowedMentions: AllowMentions ? AllowedMentions.All : AllowedMentions.None,
+                messageReference: MessageReference);
+            return SentMessage;
+        }
+
         protected static string GetStatusMessageFormattedDescription(string description, string title)
             => (title == null ? null : $"**{title}**\n") + description;
     }
