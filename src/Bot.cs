@@ -26,7 +26,11 @@ namespace wow2
 {
     public static class Bot
     {
-        public static DiscordSocketClient Client { get; set; } = new DiscordSocketClient();
+        public static DiscordSocketClient Client { get; set; } = new(new DiscordSocketConfig()
+        {
+            ExclusiveBulkDelete = false,
+        });
+
         public static RestApplication ApplicationInfo { get; set; }
         public static CommandService CommandService { get; set; }
 
@@ -53,6 +57,7 @@ namespace wow2
         {
             var config = new CommandServiceConfig()
             {
+                IgnoreExtraArgs = true,
                 LogLevel = LogSeverity.Verbose,
                 DefaultRunMode = RunMode.Async,
             };
