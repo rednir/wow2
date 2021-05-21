@@ -21,13 +21,12 @@ namespace wow2.Modules.Keywords
         private const int MaxNumberOfKeywords = 50;
         private const int MaxNumberOfValues = 20;
 
-        public static KeywordsModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Keywords;
+        private KeywordsModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].Keywords;
 
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
         public static bool CheckMessageForKeyword(SocketMessage message)
         {
-            var config = GetConfigForGuild(message.GetGuild());
+            var config = DataManager.DictionaryOfGuildData[message.GetGuild().Id].Keywords;
             string messageContent = message.Content.ToLower();
             string[] listOfFoundKeywords = GetAllKeywordsInString(message.Content, config.KeywordsDictionary.Keys);
 
@@ -52,7 +51,7 @@ namespace wow2.Modules.Keywords
         [Summary("Adds value(s) to a keyword, creating a new keyword if it doesn't exist.")]
         public async Task AddAsync(string keyword, [Name("value")][Remainder] string valueContent)
         {
-            var keywordsDictionary = GetConfigForGuild(Context.Guild).KeywordsDictionary;
+            var keywordsDictionary = Config.KeywordsDictionary;
             const int maxValueLength = 1024;
             valueContent = valueContent.Trim('\"');
             keyword = keyword.ToLower();
@@ -97,7 +96,7 @@ namespace wow2.Modules.Keywords
         [Summary("Removes value(s) from a keyword, or if none are specified, removes all values and the keyword.")]
         public async Task RemoveAsync(string keyword, [Name("value")][Remainder] string valueContent = null)
         {
-            var keywordsDictionary = GetConfigForGuild(Context.Guild).KeywordsDictionary;
+            var keywordsDictionary = Config.KeywordsDictionary;
             keyword = keyword.ToLower();
 
             if (!keywordsDictionary.ContainsKey(keyword))
@@ -133,7 +132,7 @@ namespace wow2.Modules.Keywords
         [Summary("Renames a keyword, leaving its values unchanged.")]
         public async Task RenameAsync(string oldKeyword, [Remainder] string newKeyword)
         {
-            var keywordsDictionary = GetConfigForGuild(Context.Guild).KeywordsDictionary;
+            var keywordsDictionary = Config.KeywordsDictionary;
 
             if (!keywordsDictionary.ContainsKey(oldKeyword))
                 throw new CommandReturnException(Context, "Can't rename a keyword that doesn't exist. Did you make a typo?", "No such keyword");
@@ -152,7 +151,7 @@ namespace wow2.Modules.Keywords
         [Summary("Shows a list of all keywords, and a preview of their values.")]
         public async Task ListAsync(int page = 1)
         {
-            var keywordsDictionary = GetConfigForGuild(Context.Guild).KeywordsDictionary;
+            var keywordsDictionary = Config.KeywordsDictionary;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
 
             if (keywordsDictionary.Count == 0)
@@ -184,7 +183,7 @@ namespace wow2.Modules.Keywords
         [Summary("Shows a list of values for a keyword.")]
         public async Task ListKeywordValuesAsync([Name("keyword")] string keyword, int page = 1)
         {
-            var keywordsDictionary = GetConfigForGuild(Context.Guild).KeywordsDictionary;
+            var keywordsDictionary = Config.KeywordsDictionary;
             keyword = keyword.ToLower();
 
             if (!keywordsDictionary.TryGetValue(keyword, out List<KeywordValue> values))
@@ -218,11 +217,9 @@ namespace wow2.Modules.Keywords
         [Summary("Toggles whether bot responses to keywords should have a wastebasket reaction, allowing a user to delete the message.")]
         public async Task ToggleDeleteReactionAsync()
         {
-            var config = GetConfigForGuild(Context.Guild);
-
-            config.IsDeleteReactionOn = !config.IsDeleteReactionOn;
+            Config.IsDeleteReactionOn = !Config.IsDeleteReactionOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Delete reaction is now `{(config.IsDeleteReactionOn ? "on" : "off")}` for keyword responses.")
+            await new SuccessMessage($"Delete reaction is now `{(Config.IsDeleteReactionOn ? "on" : "off")}` for keyword responses.")
                 .SendAsync(Context.Channel);
         }
 
@@ -230,11 +227,9 @@ namespace wow2.Modules.Keywords
         [Summary("Toggles whether bot responses to keywords should have a thumbs up reaction.")]
         public async Task ToggleLikeReactionAsync()
         {
-            var config = GetConfigForGuild(Context.Guild);
-
-            config.IsLikeReactionOn = !GetConfigForGuild(Context.Guild).IsLikeReactionOn;
+            Config.IsLikeReactionOn = !Config.IsLikeReactionOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Like reaction is now `{(config.IsLikeReactionOn ? "on" : "off")}` for keyword responses.")
+            await new SuccessMessage($"Like reaction is now `{(Config.IsLikeReactionOn ? "on" : "off")}` for keyword responses.")
                 .SendAsync(Context.Channel);
         }
 

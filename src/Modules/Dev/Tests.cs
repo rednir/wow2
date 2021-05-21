@@ -9,6 +9,7 @@ using wow2.Modules.Keywords;
 using wow2.Modules.Main;
 using wow2.Modules.Voice;
 using wow2.Verbose.Messages;
+using wow2.Data;
 
 namespace wow2.Modules.Dev
 {
@@ -182,7 +183,7 @@ namespace wow2.Modules.Dev
         [Test("keywords")]
         public static async Task KeywordsTest(SocketCommandContext context)
         {
-            var config = KeywordsModule.GetConfigForGuild(context.Guild);
+            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Keywords;
             const string keywordName = "testing_keyword";
 
             await ExecuteAsync(context,

@@ -34,7 +34,7 @@ namespace wow2.Modules.Keywords
         /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the reaction if so.</summary>
         public static async Task<bool> ActOnReactionAsync(SocketReaction reaction, IUserMessage message)
         {
-            var config = KeywordsModule.GetConfigForGuild(message.GetGuild());
+            var config = DataManager.DictionaryOfGuildData[message.GetGuild().Id].Keywords;
 
             ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
                 m => m.SentMessage?.Id == message.Id);
@@ -67,7 +67,7 @@ namespace wow2.Modules.Keywords
         public async Task<IUserMessage> RespondToMessageAsync(SocketMessage message)
         {
             IGuild guild = message.GetGuild();
-            var config = KeywordsModule.GetConfigForGuild(guild);
+            var config = DataManager.DictionaryOfGuildData[message.GetGuild().Id].Keywords;
             ReplyToMessageId = message.Id;
 
             // Don't use embed message if the value to send contains a link.
