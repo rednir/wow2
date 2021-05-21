@@ -16,12 +16,11 @@ namespace wow2.Modules.Main
     [Summary("Stuff to do with the bot an other random stuff.")]
     public class MainModule : Module
     {
-        public static MainModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Main;
+        public MainModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].Main;
 
         public static async Task<bool> CheckForAliasAsync(SocketMessage message)
         {
-            var config = GetConfigForGuild(message.GetGuild());
+            var config = DataManager.DictionaryOfGuildData[message.GetGuild().Id].Main;
 
             var aliasesFound = config.AliasesDictionary.Where(a => message.Content.StartsWithWord(a.Key));
 
@@ -44,7 +43,7 @@ namespace wow2.Modules.Main
         [Summary("Shows some infomation about the bot.")]
         public async Task AboutAsync()
         {
-            await new AboutMessage(GetConfigForGuild(Context.Guild).CommandPrefix)
+            await new AboutMessage(Config.CommandPrefix)
                 .SendAsync(Context.Channel);
         }
 
@@ -59,7 +58,7 @@ namespace wow2.Modules.Main
                 group = null;
             }
 
-            var commandPrefix = GetConfigForGuild(Context.Guild).CommandPrefix;
+            var commandPrefix = Config.CommandPrefix;
             if (string.IsNullOrWhiteSpace(group))
             {
                 await new PagedMessage(
@@ -84,25 +83,24 @@ namespace wow2.Modules.Main
         [Summary("Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to blank to remove it.")]
         public async Task AliasAsync(string name, [Name("DEFINITION")] params string[] definitionSplit)
         {
-            var config = GetConfigForGuild(Context.Guild);
-            string removeAliasText = $"To remove the alias, type `{config.CommandPrefix} alias \"{name}\"`";
+            string removeAliasText = $"To remove the alias, type `{Config.CommandPrefix} alias \"{name}\"`";
             string definition = string.Join(" ", definitionSplit);
 
             // Remove command prefix from user input as it might cause confusion.
-            if (definition.StartsWithWord(config.CommandPrefix, true))
-                definition = definition.MakeCommandInput(config.CommandPrefix);
+            if (definition.StartsWithWord(Config.CommandPrefix, true))
+                definition = definition.MakeCommandInput(Config.CommandPrefix);
 
-            if (config.AliasesDictionary.ContainsKey(name))
+            if (Config.AliasesDictionary.ContainsKey(name))
             {
                 if (!string.IsNullOrWhiteSpace(definition))
                 {
                     // Assume the user wants to change the existing alias' definition.
-                    config.AliasesDictionary[name] = definition;
+                    Config.AliasesDictionary[name] = definition;
                 }
                 else
                 {
                     // Assume the user wants to remove the existing alias.
-                    config.AliasesDictionary.Remove(name);
+                    Config.AliasesDictionary.Remove(name);
                     await new SuccessMessage($"The alias `{name}` was removed.")
                         .SendAsync(Context.Channel);
                     return;
@@ -113,10 +111,10 @@ namespace wow2.Modules.Main
                 if (string.IsNullOrWhiteSpace(definition))
                     throw new CommandReturnException(Context, "An alias should have a definition that isn't blank.");
 
-                config.AliasesDictionary.Add(name, definition);
+                Config.AliasesDictionary.Add(name, definition);
             }
 
-            await new SuccessMessage($"Typing `{name}` will now execute `{config.CommandPrefix} {definition}`\n{removeAliasText}")
+            await new SuccessMessage($"Typing `{name}` will now execute `{Config.CommandPrefix} {definition}`\n{removeAliasText}")
                 .SendAsync(Context.Channel);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
@@ -126,15 +124,13 @@ namespace wow2.Modules.Main
         [Summary("Displays a list of aliases.")]
         public async Task AliasListAsync()
         {
-            var config = GetConfigForGuild(Context.Guild);
-
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-            foreach (var aliasPair in config.AliasesDictionary)
+            foreach (var aliasPair in Config.AliasesDictionary)
             {
                 var fieldBuilderForAlias = new EmbedFieldBuilder()
                 {
                     Name = aliasPair.Key,
-                    Value = $"`{config.CommandPrefix} {aliasPair.Value}`",
+                    Value = $"`{Config.CommandPrefix} {aliasPair.Value}`",
                     IsInline = true,
                 };
                 listOfFieldBuilders.Add(fieldBuilderForAlias);
@@ -173,12 +169,10 @@ namespace wow2.Modules.Main
         [Summary("Change the prefix used to identify commands. '!wow' is the default.")]
         public async Task SetCommandPrefixAsync(string prefix)
         {
-            var config = GetConfigForGuild(Context.Guild);
-
             if (prefix.Contains(' ') || string.IsNullOrWhiteSpace(prefix))
                 throw new CommandReturnException(Context, "The command prefix must not contain spaces.");
 
-            config.CommandPrefix = prefix;
+            Config.CommandPrefix = prefix;
             await new SuccessMessage($"Changed command prefix to `{prefix}`")
                 .SendAsync(Context.Channel);
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);

@@ -5,11 +5,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using wow2.Data;
 using wow2.Modules.Keywords;
 using wow2.Modules.Main;
 using wow2.Modules.Voice;
 using wow2.Verbose.Messages;
-using wow2.Data;
 
 namespace wow2.Modules.Dev
 {
@@ -61,7 +61,7 @@ namespace wow2.Modules.Dev
         [Test("aliases")]
         public static async Task AliasesTest(SocketCommandContext context)
         {
-            var config = MainModule.GetConfigForGuild(context.Guild);
+            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Main;
             const string aliasName = "testing_alias";
 
             await ExecuteAsync(context,
@@ -225,12 +225,11 @@ namespace wow2.Modules.Dev
 
         private static async Task<List<IResult>> ExecuteAsync(SocketCommandContext context, params string[] commands)
         {
-            string commandPrefix = MainModule.GetConfigForGuild(context.Guild).CommandPrefix;
             var results = new List<IResult>();
 
             foreach (string command in commands)
             {
-                await context.Channel.SendMessageAsync($"`{commandPrefix} {command}`");
+                await context.Channel.SendMessageAsync($"`{context.Guild} {command}`");
 
                 await Task.Delay(CommandDelay);
                 results.Add(await Bot.ExecuteCommandAsync(context, command));

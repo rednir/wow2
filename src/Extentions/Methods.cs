@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using wow2.Data;
 
 namespace wow2.Extentions
 {
@@ -16,6 +17,9 @@ namespace wow2.Extentions
             => ((SocketGuildChannel)socketMessage.Channel).Guild;
         public static SocketGuild GetGuild(this IUserMessage socketMessage)
             => ((SocketGuildChannel)socketMessage.Channel).Guild;
+
+        public static string GetCommandPrefix(this IGuild guild) =>
+            DataManager.DictionaryOfGuildData[guild.Id].Main.CommandPrefix;
 
         public static string TextBetween(this string stringToSearch, string separator)
         {
