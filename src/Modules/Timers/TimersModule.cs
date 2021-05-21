@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Timers;
 using Discord.Commands;
+using wow2.Data;
 using wow2.Extentions;
 using wow2.Verbose.Messages;
 
@@ -13,6 +14,8 @@ namespace wow2.Modules.Timers
     [Summary("Create and manage timers and reminders.")]
     public class TimersModule : Module
     {
+        public TimersModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].Timers;
+
         [Command("start")]
         [Alias("new", "create")]
         [Summary("Starts a timer that will send a message when elapsed.")]

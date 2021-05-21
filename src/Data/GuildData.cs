@@ -3,6 +3,7 @@ using wow2.Modules.Keywords;
 using wow2.Modules.Main;
 using wow2.Modules.Moderator;
 using wow2.Modules.Osu;
+using wow2.Modules.Timers;
 using wow2.Modules.Voice;
 using wow2.Modules.YouTube;
 
@@ -15,12 +16,13 @@ namespace wow2.Data
         public long DateTimeJoinedBinary { get; set; }
 
         // TODO: this doesnt seem too good.
-        public MainModuleConfig Main { get; set; } = new MainModuleConfig();
-        public KeywordsModuleConfig Keywords { get; set; } = new KeywordsModuleConfig();
-        public GamesModuleConfig Games { get; set; } = new GamesModuleConfig();
-        public VoiceModuleConfig Voice { get; set; } = new VoiceModuleConfig();
-        public ModeratorModuleConfig Moderator { get; set; } = new ModeratorModuleConfig();
-        public OsuModuleConfig Osu { get; set; } = new OsuModuleConfig();
-        public YouTubeModuleConfig YouTube { get; set; } = new YouTubeModuleConfig();
+        public MainModuleConfig Main { get; set; } = new();
+        public KeywordsModuleConfig Keywords { get; set; } = new();
+        public GamesModuleConfig Games { get; set; } = new();
+        public VoiceModuleConfig Voice { get; set; } = new();
+        public ModeratorModuleConfig Moderator { get; set; } = new();
+        public OsuModuleConfig Osu { get; set; } = new();
+        public YouTubeModuleConfig YouTube { get; set; } = new();
+        public TimersModuleConfig Timers { get; set; } = new();
     }
 }
