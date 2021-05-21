@@ -1,5 +1,6 @@
 using System.Timers;
 using Discord.Commands;
+using wow2.Data;
 using wow2.Verbose.Messages;
 
 namespace wow2.Modules.Timers
@@ -10,10 +11,14 @@ namespace wow2.Modules.Timers
         public UserTimer(double time, SocketCommandContext context)
             : base(time)
         {
+            Config = DataManager.DictionaryOfGuildData[context.Guild.Id].Timers;
             AutoReset = false;
+            Config.UserTimers.Add(this);
+            Start();
+
             Elapsed += async (source, e) =>
             {
-                Dispose();
+                Remove();
                 await new InfoMessage("Time up!")
                 {
                     ReplyToMessageId = context.Message.Id,
@@ -21,7 +26,15 @@ namespace wow2.Modules.Timers
                 }
                 .SendAsync(context.Channel);
             };
-            Start();
+        }
+
+        private TimersModuleConfig Config { get; }
+
+        /// <summary>Disposes of the timer and removes it from the guild's config.</summary>
+        public void Remove()
+        {
+            Dispose();
+            Config.UserTimers.Remove(this);
         }
     }
 }

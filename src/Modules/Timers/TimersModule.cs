@@ -27,15 +27,13 @@ namespace wow2.Modules.Timers
             if (timeSpan > TimeSpan.FromDays(90) || timeSpan < TimeSpan.FromSeconds(1))
                 throw new CommandReturnException(Context, "Be sensible.");
 
-            var timer = new UserTimer(timeSpan.TotalMilliseconds, Context);
-            Config.UserTimers.Add(timer);
-
-            await new SuccessMessage("Started a new timer.")
+            _ = new UserTimer(timeSpan.TotalMilliseconds, Context);
+            await new SuccessMessage($"There are now `{Config.UserTimers.Count}` active timer(s)", "Started a new timer.")
                 .SendAsync(Context.Channel);
         }
 
         [Command("stop")]
-        [Alias("cancel")]
+        [Alias("cancel", "remove", "delete")]
         [Summary("Stops the most recently created timer.")]
         public async Task StopAsync()
         {
@@ -43,8 +41,7 @@ namespace wow2.Modules.Timers
                 throw new CommandReturnException(Context, "There are no active timers to remove.");
 
             int index = Config.UserTimers.Count - 1;
-            Config.UserTimers[index].Dispose();
-            Config.UserTimers.RemoveAt(index);
+            Config.UserTimers[index].Remove();
 
             await new SuccessMessage("Removed timer.")
                 .SendAsync(Context.Channel);
