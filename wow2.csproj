@@ -5,7 +5,7 @@
     <CodeAnalysisRuleSet>wow2.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="2.3.0"/>
+    <PackageReference Include="Discord.Net" Version="2.3.1"/>
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3"/>
     <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta0013"/>
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta11"/>
