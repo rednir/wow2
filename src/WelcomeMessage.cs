@@ -2,10 +2,9 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;
-using wow2.Modules.Main;
+using wow2.Extentions;
 using wow2.Verbose;
 using wow2.Verbose.Messages;
-using wow2.Extentions;
 
 namespace wow2
 {
