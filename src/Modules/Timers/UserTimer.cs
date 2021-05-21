@@ -8,7 +8,7 @@ namespace wow2.Modules.Timers
     public class UserTimer : Timer
     {
         /// <summary>Initializes a new instance of the <see cref="UserTimer"/> class, starting the timer.</summary>
-        public UserTimer(double time, SocketCommandContext context)
+        public UserTimer(SocketCommandContext context, double time, string message)
             : base(time)
         {
             Context = context;
@@ -21,7 +21,7 @@ namespace wow2.Modules.Timers
             Elapsed += async (source, e) =>
             {
                 Remove();
-                await new InfoMessage("Time up!")
+                await new InfoMessage(message, "Time up!")
                 {
                     ReplyToMessageId = Context.Message.Id,
                     AllowMentions = true,
@@ -30,6 +30,7 @@ namespace wow2.Modules.Timers
             };
         }
 
+        public string Message { get; }
         public SocketCommandContext Context { get; }
         private TimersModuleConfig Config { get; }
 

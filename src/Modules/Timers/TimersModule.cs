@@ -20,14 +20,14 @@ namespace wow2.Modules.Timers
         [Command("start")]
         [Alias("new", "create")]
         [Summary("Starts a timer that will send a message when elapsed.")]
-        public async Task StartAsync(string time)
+        public async Task StartAsync(string time, [Remainder] string message = null)
         {
             if (time.TryConvertToTimeSpan(out TimeSpan timeSpan))
                 throw new CommandReturnException(Context, "Try something like `5m` or `30s`", "Invalid time.");
             if (timeSpan > TimeSpan.FromDays(90) || timeSpan < TimeSpan.FromSeconds(1))
                 throw new CommandReturnException(Context, "Be sensible.");
 
-            _ = new UserTimer(timeSpan.TotalMilliseconds, Context);
+            _ = new UserTimer(Context, timeSpan.TotalMilliseconds, message);
             await new SuccessMessage($"There are now `{Config.UserTimers.Count}` active timer(s)", "Started a new timer.")
                 .SendAsync(Context.Channel);
         }
