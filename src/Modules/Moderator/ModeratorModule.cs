@@ -84,7 +84,7 @@ namespace wow2.Modules.Moderator
         /// <returns>True if the user should be rate limited due to command abuse.</summary>
         public static bool CheckForCommandAbuse(SocketCommandContext context)
         {
-            const int numOfCommandsToCheck = 14;
+            const int numOfCommandsToCheck = 12;
 
             UserRecord record = GetUserRecord(GetConfigForGuild(context.Guild), context.Message.Author.Id);
             record.CommandExecutedDateTimes.Add(context.Message.Timestamp);
@@ -93,11 +93,12 @@ namespace wow2.Modules.Moderator
             if (length < numOfCommandsToCheck)
                 return false;
             if (length > numOfCommandsToCheck)
-                record.CommandExecutedDateTimes.RemoveAt(length - 1);
+                record.CommandExecutedDateTimes.RemoveAt(0);
 
             // Represents the time difference between a set number of commands (numOfCommandsToCheck).
-            TimeSpan difference = context.Message.Timestamp.Subtract(record.CommandExecutedDateTimes[numOfCommandsToCheck - 1]);
-            return difference < TimeSpan.FromSeconds(60);
+            TimeSpan difference = context.Message.Timestamp.Subtract(record.CommandExecutedDateTimes[0]);
+            Console.WriteLine(difference);
+            return difference < TimeSpan.FromSeconds(30);
         }
 
         [Command("warn")]
