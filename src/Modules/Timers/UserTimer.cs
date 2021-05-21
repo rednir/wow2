@@ -12,7 +12,7 @@ namespace wow2.Modules.Timers
             : base(time)
         {
             Context = context;
-            Config = DataManager.DictionaryOfGuildData[Context.Guild.Id].Timers;
+            Config = DataManager.AllGuildData[Context.Guild.Id].Timers;
             AutoReset = false;
 
             Config.UserTimers.Add(this);

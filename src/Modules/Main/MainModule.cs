@@ -16,11 +16,11 @@ namespace wow2.Modules.Main
     [Summary("Stuff to do with the bot an other random stuff.")]
     public class MainModule : Module
     {
-        public MainModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].Main;
+        public MainModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Main;
 
         public static async Task<bool> CheckForAliasAsync(SocketMessage message)
         {
-            var config = DataManager.DictionaryOfGuildData[message.GetGuild().Id].Main;
+            var config = DataManager.AllGuildData[message.GetGuild().Id].Main;
 
             var aliasesFound = config.AliasesDictionary.Where(a => message.Content.StartsWithWord(a.Key));
 

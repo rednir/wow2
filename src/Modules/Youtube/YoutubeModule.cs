@@ -55,7 +55,7 @@ namespace wow2.Modules.YouTube
             YouTubePollingThread.Start();
         }
 
-        public YouTubeModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].YouTube;
+        public YouTubeModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].YouTube;
 
         public static async Task<Channel> GetChannelAsync(string channelIdOrUsername)
         {
@@ -233,7 +233,7 @@ namespace wow2.Modules.YouTube
             // value is a list of ID's of the text channels to notify.
             var newVideosDictionary = new Dictionary<string, List<ulong>>();
 
-            foreach (GuildData guildData in DataManager.DictionaryOfGuildData.Values)
+            foreach (GuildData guildData in DataManager.AllGuildData.Values)
             {
                 // Guild hasn't set a announcements channel, so ignore it.
                 if (guildData.YouTube.AnnouncementsChannelId == 0)

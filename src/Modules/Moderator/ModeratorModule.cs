@@ -18,11 +18,11 @@ namespace wow2.Modules.Moderator
     [RequireUserPermission(GuildPermission.BanMembers)]
     public class ModeratorModule : Module
     {
-        public ModeratorModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].Moderator;
+        public ModeratorModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Moderator;
 
         public static async Task CheckMessageWithAutoMod(SocketMessage message)
         {
-            var config = DataManager.DictionaryOfGuildData[message.GetGuild().Id].Moderator;
+            var config = DataManager.AllGuildData[message.GetGuild().Id].Moderator;
 
             UserRecord record;
             try
@@ -86,7 +86,7 @@ namespace wow2.Modules.Moderator
             const int numOfCommandsToCheck = 12;
 
             UserRecord record = GetUserRecord(
-                DataManager.DictionaryOfGuildData[context.Guild.Id].Moderator,
+                DataManager.AllGuildData[context.Guild.Id].Moderator,
                 context.Message.Author.Id);
             record.CommandExecutedDateTimes.Add(context.Message.Timestamp);
 

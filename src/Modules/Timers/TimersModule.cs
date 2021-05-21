@@ -13,7 +13,7 @@ namespace wow2.Modules.Timers
     [Summary("Create and manage timers and reminders.")]
     public class TimersModule : Module
     {
-        public TimersModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].Timers;
+        public TimersModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Timers;
 
         [Command("start")]
         [Alias("new", "create")]

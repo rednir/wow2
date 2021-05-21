@@ -15,7 +15,7 @@ namespace wow2.Modules.Games.VerbalMemory
         public const string NewKeyword = "n";
 
         public static VerbalMemoryGameConfig GetConfig(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Games.VerbalMemory;
+            => DataManager.AllGuildData[guild.Id].Games.VerbalMemory;
 
         /// <summary>Checks whether a user message is part of the verbal memory game, and acts on it if so.</summary>
         /// <returns>True if the message was related to the game.</returns>

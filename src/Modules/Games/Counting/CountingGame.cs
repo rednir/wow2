@@ -14,7 +14,7 @@ namespace wow2.Modules.Games.Counting
     public static class CountingGame
     {
         public static CountingGameConfig GetConfig(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Games.Counting;
+            => DataManager.AllGuildData[guild.Id].Games.Counting;
 
         public static async Task StartGame(SocketCommandContext context, float increment)
         {

@@ -19,7 +19,7 @@ namespace wow2.Modules.Voice
     [Summary("Play YouTube or Twitch audio in a voice channel.")]
     public class VoiceModule : Module
     {
-        public VoiceModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].Voice;
+        public VoiceModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Voice;
 
         public static bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
             => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;

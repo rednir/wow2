@@ -76,7 +76,7 @@ namespace wow2
             // Only set if it's the first time the bot has joined this guild.
             if (guildData.DateTimeJoinedBinary == 0)
             {
-                DataManager.DictionaryOfGuildData[guild.Id]
+                DataManager.AllGuildData[guild.Id]
                     .DateTimeJoinedBinary = DateTime.Now.ToBinary();
             }
 

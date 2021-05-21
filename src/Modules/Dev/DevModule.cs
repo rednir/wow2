@@ -24,7 +24,7 @@ namespace wow2.Modules.Dev
         public async Task LoadGuildDataAsync()
         {
             await DataManager.LoadGuildDataFromFileAsync();
-            await new SuccessMessage($"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data loaded.")
+            await new SuccessMessage($"`{DataManager.AllGuildData.Count}` guilds has their data loaded.")
                 .SendAsync(Context.Channel);
         }
 
@@ -34,7 +34,7 @@ namespace wow2.Modules.Dev
         public async Task SaveGuildDataAsync(bool alsoExit = false)
         {
             await DataManager.SaveGuildDataToFileAsync();
-            await new SuccessMessage($"`{DataManager.DictionaryOfGuildData.Count}` guilds has their data saved.")
+            await new SuccessMessage($"`{DataManager.AllGuildData.Count}` guilds has their data saved.")
                 .SendAsync(Context.Channel);
             if (alsoExit)
                 Environment.Exit(0);

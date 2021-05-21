@@ -68,7 +68,7 @@ namespace wow2.Modules.Osu
             RefreshAccessTokenTimer.Start();
         }
 
-        public OsuModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].Osu;
+        public OsuModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Osu;
 
         [Command("user")]
         [Alias("player")]
@@ -250,7 +250,7 @@ namespace wow2.Modules.Osu
 
         private static async Task CheckForUserMilestonesAsync()
         {
-            foreach (var pair in DataManager.DictionaryOfGuildData)
+            foreach (var pair in DataManager.AllGuildData)
             {
                 var config = pair.Value.Osu;
 

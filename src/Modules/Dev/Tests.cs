@@ -61,7 +61,7 @@ namespace wow2.Modules.Dev
         [Test("aliases")]
         public static async Task AliasesTest(SocketCommandContext context)
         {
-            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Main;
+            var config = DataManager.AllGuildData[context.Guild.Id].Main;
             const string aliasName = "testing_alias";
 
             await ExecuteAsync(context,
@@ -83,7 +83,7 @@ namespace wow2.Modules.Dev
         {
             // TODO: These Task.Delays are a bit of a hacky workaround.
             // Find some way to reliably wait until the command finishes with timeout.
-            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Voice;
+            var config = DataManager.AllGuildData[context.Guild.Id].Voice;
 
             await ExecuteAsync(context,
                 "vc clear",
@@ -133,7 +133,7 @@ namespace wow2.Modules.Dev
         [Test("voice-queue")]
         public static async Task VoiceQueueTest(SocketCommandContext context)
         {
-            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Voice;
+            var config = DataManager.AllGuildData[context.Guild.Id].Voice;
             const string queueName = "testing-queue";
 
             await ExecuteAsync(context,
@@ -183,7 +183,7 @@ namespace wow2.Modules.Dev
         [Test("keywords")]
         public static async Task KeywordsTest(SocketCommandContext context)
         {
-            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Keywords;
+            var config = DataManager.AllGuildData[context.Guild.Id].Keywords;
             const string keywordName = "testing_keyword";
 
             await ExecuteAsync(context,

@@ -21,12 +21,12 @@ namespace wow2.Modules.Keywords
         private const int MaxNumberOfKeywords = 50;
         private const int MaxNumberOfValues = 20;
 
-        private KeywordsModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].Keywords;
+        private KeywordsModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Keywords;
 
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
         public static bool CheckMessageForKeyword(SocketMessage message)
         {
-            var config = DataManager.DictionaryOfGuildData[message.GetGuild().Id].Keywords;
+            var config = DataManager.AllGuildData[message.GetGuild().Id].Keywords;
             string messageContent = message.Content.ToLower();
             string[] listOfFoundKeywords = GetAllKeywordsInString(message.Content, config.KeywordsDictionary.Keys);
 

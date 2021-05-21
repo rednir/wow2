@@ -19,7 +19,7 @@ namespace wow2.Data
             ReferenceHandler = ReferenceHandler.Preserve,
         };
 
-        public static Dictionary<ulong, GuildData> DictionaryOfGuildData { get; set; } = new Dictionary<ulong, GuildData>();
+        public static Dictionary<ulong, GuildData> AllGuildData { get; set; } = new Dictionary<ulong, GuildData>();
         public static Secrets Secrets { get; set; } = new Secrets();
 
         public static string GuildDataDirPath => $"{AppDataDirPath}/GuildData";
@@ -94,8 +94,8 @@ namespace wow2.Data
             try
             {
                 string guildDataJson = await File.ReadAllTextAsync($"{AppDataDirPath}/GuildData/{guildId}.json");
-                DictionaryOfGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson, SerializerOptions);
-                Logger.Log($"Loaded guild data for {DictionaryOfGuildData[guildId].NameOfGuild} ({guildId})", LogSeverity.Verbose);
+                AllGuildData[guildId] = JsonSerializer.Deserialize<GuildData>(guildDataJson, SerializerOptions);
+                Logger.Log($"Loaded guild data for {AllGuildData[guildId].NameOfGuild} ({guildId})", LogSeverity.Verbose);
             }
             catch (Exception ex)
             {
@@ -107,7 +107,7 @@ namespace wow2.Data
         public static async Task SaveGuildDataToFileAsync()
         {
             Logger.Log("About to save all guild data.", LogSeverity.Verbose);
-            foreach (ulong guildId in DictionaryOfGuildData.Keys)
+            foreach (ulong guildId in AllGuildData.Keys)
             {
                 try
                 {
@@ -123,13 +123,13 @@ namespace wow2.Data
         /// <summary>Write guild data to file for a specific guild.</summary>
         public static async Task SaveGuildDataToFileAsync(ulong guildId)
         {
-            if (!DictionaryOfGuildData.TryGetValue(guildId, out GuildData guildData))
+            if (!AllGuildData.TryGetValue(guildId, out GuildData guildData))
                 throw new KeyNotFoundException($"The guild ID {guildId} was not found in the dictionary");
 
             EnsureGuildNameExists(guildId);
             await File.WriteAllTextAsync(
                 $"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(guildData, SerializerOptions));
-            Logger.Log($"Saved guild data for {DictionaryOfGuildData[guildId]?.NameOfGuild} ({guildId})", LogSeverity.Verbose);
+            Logger.Log($"Saved guild data for {AllGuildData[guildId]?.NameOfGuild} ({guildId})", LogSeverity.Verbose);
         }
 
         /// <summary>If the GuildData for the specified guild does not exist, one will be created.</summary>
@@ -139,30 +139,30 @@ namespace wow2.Data
             if (File.Exists($"{GuildDataDirPath}/{guildId}.json"))
             {
                 // If not already loaded in memory, do so.
-                if (!DictionaryOfGuildData.ContainsKey(guildId))
+                if (!AllGuildData.ContainsKey(guildId))
                     await LoadGuildDataFromFileAsync(guildId);
             }
             else
             {
                 // Ensure guild data file exists.
-                DictionaryOfGuildData.TryAdd(guildId, new GuildData());
+                AllGuildData.TryAdd(guildId, new GuildData());
                 await SaveGuildDataToFileAsync(guildId);
             }
 
-            var guildData = DictionaryOfGuildData[guildId];
+            var guildData = AllGuildData[guildId];
             return guildData;
         }
 
         public static async Task UnloadGuildDataAsync(ulong guildId)
         {
             await SaveGuildDataToFileAsync(guildId);
-            DictionaryOfGuildData.Remove(guildId);
+            AllGuildData.Remove(guildId);
             Logger.Log($"Unloaded guild data for {guildId}", LogSeverity.Verbose);
         }
 
         public static void EnsureGuildNameExists(ulong guildId)
         {
-            var guildData = DictionaryOfGuildData[guildId];
+            var guildData = AllGuildData[guildId];
             if (guildData?.NameOfGuild == null)
             {
                 try
