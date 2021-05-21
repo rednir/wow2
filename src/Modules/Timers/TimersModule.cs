@@ -32,5 +32,22 @@ namespace wow2.Modules.Timers
             await new SuccessMessage("Started a new timer.")
                 .SendAsync(Context.Channel);
         }
+
+        [Command("stop")]
+        [Alias("cancel")]
+        [Summary("Stops a timer. The ID is its place in the list as a number.")]
+        public async Task Stop(int id)
+        {
+            int index = id - 1;
+
+            if (index < 0 || index >= Config.UserTimers.Count)
+                throw new CommandReturnException(Context, "That timer doesn't exist.");
+
+            Config.UserTimers[index].Dispose();
+            Config.UserTimers.RemoveAt(index);
+
+            await new SuccessMessage("Removed timer.")
+                .SendAsync(Context.Channel);
+        }
     }
 }
