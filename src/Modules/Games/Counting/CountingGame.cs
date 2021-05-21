@@ -6,7 +6,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using wow2.Data;
-using wow2.Extentions;
+using wow2.Extensions;
 using wow2.Verbose.Messages;
 
 namespace wow2.Modules.Games.Counting

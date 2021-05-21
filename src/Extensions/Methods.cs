@@ -9,7 +9,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using wow2.Data;
 
-namespace wow2.Extentions
+namespace wow2.Extensions
 {
     public static class Methods
     {

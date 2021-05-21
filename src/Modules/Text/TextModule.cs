@@ -9,7 +9,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
-using wow2.Extentions;
+using wow2.Extensions;
 using wow2.Verbose.Messages;
 
 namespace wow2.Modules.Text

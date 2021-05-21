@@ -6,7 +6,7 @@ using System.Timers;
 using Discord;
 using Discord.Commands;
 using wow2.Data;
-using wow2.Extentions;
+using wow2.Extensions;
 using wow2.Verbose;
 using wow2.Verbose.Messages;
 

@@ -1,7 +1,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Discord;
-using wow2.Extentions;
+using wow2.Extensions;
 
 namespace wow2.Verbose.Messages
 {

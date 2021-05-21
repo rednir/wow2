@@ -11,7 +11,7 @@ using Discord.Net;
 using Discord.Rest;
 using Discord.WebSocket;
 using wow2.Data;
-using wow2.Extentions;
+using wow2.Extensions;
 using wow2.Modules;
 using wow2.Modules.Games.Counting;
 using wow2.Modules.Games.NumberMemory;
