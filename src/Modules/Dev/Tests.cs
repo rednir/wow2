@@ -83,7 +83,7 @@ namespace wow2.Modules.Dev
         {
             // TODO: These Task.Delays are a bit of a hacky workaround.
             // Find some way to reliably wait until the command finishes with timeout.
-            var config = VoiceModule.GetConfigForGuild(context.Guild);
+            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Voice;
 
             await ExecuteAsync(context,
                 "vc clear",
@@ -133,7 +133,7 @@ namespace wow2.Modules.Dev
         [Test("voice-queue")]
         public static async Task VoiceQueueTest(SocketCommandContext context)
         {
-            var config = VoiceModule.GetConfigForGuild(context.Guild);
+            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Voice;
             const string queueName = "testing-queue";
 
             await ExecuteAsync(context,
