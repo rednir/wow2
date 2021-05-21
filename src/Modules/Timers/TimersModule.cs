@@ -26,20 +26,10 @@ namespace wow2.Modules.Timers
             if (timeSpan > TimeSpan.FromDays(90) || timeSpan < TimeSpan.FromSeconds(1))
                 throw new CommandReturnException(Context, "Be sensible.");
 
-            var timer = new Timer(timeSpan.TotalMilliseconds);
-            timer.Elapsed += async (source, e) =>
-            {
-                timer.Dispose();
-                await new SuccessMessage("Time up!")
-                {
-                    ReplyToMessageId = Context.Message.Id,
-                    AllowMentions = true,
-                }
-                .SendAsync(Context.Channel);
-            };
+            var timer = new UserTimer(timeSpan.TotalMilliseconds, Context);
+            Config.UserTimers.Add(timer);
 
-            timer.Start();
-            await new InfoMessage("Timer started.")
+            await new SuccessMessage("Started a new timer.")
                 .SendAsync(Context.Channel);
         }
     }
