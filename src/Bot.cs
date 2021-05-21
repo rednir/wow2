@@ -166,6 +166,8 @@ namespace wow2
 
         public static async Task MessageRecievedAsync(SocketMessage receivedMessage)
         {
+            if (CommandService == null)
+                return;
             if (receivedMessage.Author.Id == Client.CurrentUser.Id)
                 return;
             if (receivedMessage.Channel is SocketDMChannel)
