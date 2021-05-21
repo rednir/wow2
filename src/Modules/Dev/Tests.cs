@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using wow2.Data;
 using wow2.Modules.Keywords;
 using wow2.Modules.Main;
 using wow2.Modules.Voice;
@@ -60,7 +61,7 @@ namespace wow2.Modules.Dev
         [Test("aliases")]
         public static async Task AliasesTest(SocketCommandContext context)
         {
-            var config = MainModule.GetConfigForGuild(context.Guild);
+            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Main;
             const string aliasName = "testing_alias";
 
             await ExecuteAsync(context,
@@ -82,7 +83,7 @@ namespace wow2.Modules.Dev
         {
             // TODO: These Task.Delays are a bit of a hacky workaround.
             // Find some way to reliably wait until the command finishes with timeout.
-            var config = VoiceModule.GetConfigForGuild(context.Guild);
+            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Voice;
 
             await ExecuteAsync(context,
                 "vc clear",
@@ -132,7 +133,7 @@ namespace wow2.Modules.Dev
         [Test("voice-queue")]
         public static async Task VoiceQueueTest(SocketCommandContext context)
         {
-            var config = VoiceModule.GetConfigForGuild(context.Guild);
+            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Voice;
             const string queueName = "testing-queue";
 
             await ExecuteAsync(context,
@@ -182,7 +183,7 @@ namespace wow2.Modules.Dev
         [Test("keywords")]
         public static async Task KeywordsTest(SocketCommandContext context)
         {
-            var config = KeywordsModule.GetConfigForGuild(context.Guild);
+            var config = DataManager.DictionaryOfGuildData[context.Guild.Id].Keywords;
             const string keywordName = "testing_keyword";
 
             await ExecuteAsync(context,
@@ -224,12 +225,11 @@ namespace wow2.Modules.Dev
 
         private static async Task<List<IResult>> ExecuteAsync(SocketCommandContext context, params string[] commands)
         {
-            string commandPrefix = MainModule.GetConfigForGuild(context.Guild).CommandPrefix;
             var results = new List<IResult>();
 
             foreach (string command in commands)
             {
-                await context.Channel.SendMessageAsync($"`{commandPrefix} {command}`");
+                await context.Channel.SendMessageAsync($"`{context.Guild} {command}`");
 
                 await Task.Delay(CommandDelay);
                 results.Add(await Bot.ExecuteCommandAsync(context, command));

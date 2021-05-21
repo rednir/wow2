@@ -68,8 +68,7 @@ namespace wow2.Modules.Osu
             RefreshAccessTokenTimer.Start();
         }
 
-        public static OsuModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Osu;
+        public OsuModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].Osu;
 
         [Command("user")]
         [Alias("player")]
@@ -121,7 +120,6 @@ namespace wow2.Modules.Osu
         [Summary("Toggle whether your server will get notified about USER.")]
         public async Task SubscribeAsync([Name("USER")] params string[] userSplit)
         {
-            var config = GetConfigForGuild(Context.Guild);
             UserData userData;
             try
             {
@@ -132,19 +130,19 @@ namespace wow2.Modules.Osu
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            if (config.SubscribedUsers.RemoveAll(u => u.id == userData.id) != 0)
+            if (Config.SubscribedUsers.RemoveAll(u => u.id == userData.id) != 0)
             {
                 await new SuccessMessage($"You'll no longer get notifications about `{userData.username}`")
                     .SendAsync(Context.Channel);
             }
             else
             {
-                if (config.SubscribedUsers.Count > 15)
+                if (Config.SubscribedUsers.Count > 15)
                     throw new CommandReturnException(Context, "Remove some users before adding more.", "Too many subscribers");
 
-                config.SubscribedUsers.Add(userData);
+                Config.SubscribedUsers.Add(userData);
 
-                await new SuccessMessage(config.AnnouncementsChannelId == 0 ?
+                await new SuccessMessage(Config.AnnouncementsChannelId == 0 ?
                     $"Once you use `set-announcements-channel`, you'll get notifications about `{userData.username}`" :
                     $"You'll get notifications about `{userData.username}`.")
                         .SendAsync(Context.Channel);
@@ -158,13 +156,11 @@ namespace wow2.Modules.Osu
         [Summary("Lists the users your server will get notified about.")]
         public async Task ListSubsAsync(int page = 1)
         {
-            var config = GetConfigForGuild(Context.Guild);
-
-            if (config.SubscribedUsers.Count == 0)
+            if (Config.SubscribedUsers.Count == 0)
                 throw new CommandReturnException(Context, "Add some users to the subscriber list first.", "Nothing to show");
 
             var fieldBuilders = new List<EmbedFieldBuilder>();
-            foreach (UserData user in config.SubscribedUsers)
+            foreach (UserData user in Config.SubscribedUsers)
             {
                 fieldBuilders.Add(new EmbedFieldBuilder()
                 {
@@ -186,9 +182,7 @@ namespace wow2.Modules.Osu
         [Summary("Sets the channel where notifications about users will be sent.")]
         public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
         {
-            var config = GetConfigForGuild(Context.Guild);
-
-            config.AnnouncementsChannelId = channel.Id;
+            Config.AnnouncementsChannelId = channel.Id;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
 
             await new SuccessMessage($"You'll get osu! announcements in {channel.Mention}")

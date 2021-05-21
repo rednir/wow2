@@ -18,12 +18,11 @@ namespace wow2.Modules.Moderator
     [RequireUserPermission(GuildPermission.BanMembers)]
     public class ModeratorModule : Module
     {
-        public static ModeratorModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].Moderator;
+        public ModeratorModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].Moderator;
 
         public static async Task CheckMessageWithAutoMod(SocketMessage message)
         {
-            var config = GetConfigForGuild(message.GetGuild());
+            var config = DataManager.DictionaryOfGuildData[message.GetGuild().Id].Moderator;
 
             UserRecord record;
             try
@@ -86,7 +85,9 @@ namespace wow2.Modules.Moderator
         {
             const int numOfCommandsToCheck = 12;
 
-            UserRecord record = GetUserRecord(GetConfigForGuild(context.Guild), context.Message.Author.Id);
+            UserRecord record = GetUserRecord(
+                DataManager.DictionaryOfGuildData[context.Guild.Id].Moderator,
+                context.Message.Author.Id);
             record.CommandExecutedDateTimes.Add(context.Message.Timestamp);
 
             int length = record.CommandExecutedDateTimes.Count;
@@ -105,11 +106,9 @@ namespace wow2.Modules.Moderator
         [Summary("Sends a warning to a user with an optional message.")]
         public async Task WarnAsync([Name("MENTION")] SocketGuildUser user, [Name("MESSAGE")][Remainder] string message = null)
         {
-            var config = GetConfigForGuild(Context.Guild);
-
             try
             {
-                await WarnOrBanUserAsync(config, user, (SocketGuildUser)Context.User, message);
+                await WarnOrBanUserAsync(Config, user, (SocketGuildUser)Context.User, message);
             }
             catch (ArgumentException)
             {
@@ -133,12 +132,10 @@ namespace wow2.Modules.Moderator
         [Summary("Gets a user record.")]
         public async Task UserAsync([Name("MENTION")] SocketGuildUser user)
         {
-            var config = GetConfigForGuild(Context.Guild);
-
             UserRecord record;
             try
             {
-                record = GetUserRecord(config, user.Id);
+                record = GetUserRecord(Config, user.Id);
             }
             catch (ArgumentException)
             {
@@ -164,10 +161,9 @@ namespace wow2.Modules.Moderator
         [Summary("Sets the number of warnings required before a user is automatically banned. Set NUMBER to -1 to disable this.")]
         public async Task SetWarningsUntilBan(int number)
         {
-            var config = GetConfigForGuild(Context.Guild);
             if (number == -1)
             {
-                config.WarningsUntilBan = number;
+                Config.WarningsUntilBan = number;
                 await new SuccessMessage("A user will no longer get automatically banned from too many warnings.")
                     .SendAsync(Context.Channel);
             }
@@ -176,7 +172,7 @@ namespace wow2.Modules.Moderator
                 if (number < 2)
                     throw new CommandReturnException(Context, "Number is too small.");
 
-                config.WarningsUntilBan = number;
+                Config.WarningsUntilBan = number;
                 await new SuccessMessage($"{number} warnings will result in a ban.")
                     .SendAsync(Context.Channel);
             }
@@ -188,11 +184,9 @@ namespace wow2.Modules.Moderator
         [Summary("Toggles whether the bot give warnings to users, for example if spam is detected.")]
         public async Task ToggleAutoMod()
         {
-            var config = GetConfigForGuild(Context.Guild);
-
-            config.IsAutoModOn = !config.IsAutoModOn;
+            Config.IsAutoModOn = !Config.IsAutoModOn;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Auto mod is now `{(config.IsAutoModOn ? "on" : "off")}`")
+            await new SuccessMessage($"Auto mod is now `{(Config.IsAutoModOn ? "on" : "off")}`")
                 .SendAsync(Context.Channel);
         }
 

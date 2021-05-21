@@ -176,8 +176,7 @@ namespace wow2
                 await ModeratorModule.CheckMessageWithAutoMod(receivedMessage);
             }
 
-            string commandPrefix = MainModule.GetConfigForGuild(receivedMessage.GetGuild()).CommandPrefix;
-            if (receivedMessage.Content.StartsWithWord(commandPrefix, true))
+            if (receivedMessage.Content.StartsWithWord(receivedMessage.GetGuild().GetCommandPrefix(), true))
             {
                 // The message starts with the command prefix and the prefix is not part of another word.
                 await CommandRecievedAsync(receivedMessage);
@@ -200,11 +199,11 @@ namespace wow2
                 return;
 
             var context = new SocketCommandContext(Client, socketUserMessage);
+            string commandPrefix = context.Guild.GetCommandPrefix();
 
-            string commandPrefix = MainModule.GetConfigForGuild(socketMessage.GetGuild()).CommandPrefix;
             if (socketMessage.Content == commandPrefix)
             {
-                await new AboutMessage(MainModule.GetConfigForGuild(context.Guild).CommandPrefix)
+                await new AboutMessage(commandPrefix)
                     .SendAsync(context.Channel);
                 return;
             }
@@ -237,7 +236,7 @@ namespace wow2
 
         public static async Task SendErrorMessageToChannel(CommandError? commandError, ICommandContext context)
         {
-            string commandPrefix = MainModule.GetConfigForGuild((SocketGuild)context.Guild).CommandPrefix;
+            string commandPrefix = context.Guild.GetCommandPrefix();
 
             var matchingCommands = await SearchCommandsAsync(
                 context, context.Message.Content.MakeCommandInput(commandPrefix));

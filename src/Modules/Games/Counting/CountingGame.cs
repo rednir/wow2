@@ -13,12 +13,12 @@ namespace wow2.Modules.Games.Counting
 {
     public static class CountingGame
     {
-        public static CountingGameConfig GetConfigForGuild(IGuild guild)
+        public static CountingGameConfig GetConfig(IGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Games.Counting;
 
         public static async Task StartGame(SocketCommandContext context, float increment)
         {
-            var config = GetConfigForGuild(context.Guild);
+            var config = GetConfig(context.Guild);
 
             config.InitalContext = context;
             config.Increment = increment;
@@ -37,7 +37,7 @@ namespace wow2.Modules.Games.Counting
         /// <returns>True if the message was related to the game.</returns>
         public static async Task<bool> CheckMessageAsync(SocketMessage receivedMessage)
         {
-            var config = GetConfigForGuild(receivedMessage.GetGuild());
+            var config = GetConfig(receivedMessage.GetGuild());
             float userNumber;
 
             if (receivedMessage.Author.IsBot ||
@@ -140,7 +140,7 @@ namespace wow2.Modules.Games.Counting
             {
                 await new WarningMessage("Woah, that's a big number.\nHate to be a killjoy, but even a computer has its limits.")
                     .SendAsync(message.Channel);
-                await EndGameAsync(GetConfigForGuild(message.GetGuild()));
+                await EndGameAsync(GetConfig(message.GetGuild()));
                 return true;
             }
 
