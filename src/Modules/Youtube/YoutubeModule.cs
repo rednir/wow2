@@ -55,8 +55,7 @@ namespace wow2.Modules.YouTube
             YouTubePollingThread.Start();
         }
 
-        public static YouTubeModuleConfig GetConfigForGuild(IGuild guild)
-            => DataManager.DictionaryOfGuildData[guild.Id].YouTube;
+        public YouTubeModuleConfig Config => DataManager.DictionaryOfGuildData[Context.Guild.Id].YouTube;
 
         public static async Task<Channel> GetChannelAsync(string channelIdOrUsername)
         {
@@ -132,6 +131,7 @@ namespace wow2.Modules.YouTube
         }
 
         [Command("channel")]
+        [Alias("user")]
         [Summary("Shows some basic data about a channel.")]
         public async Task ChannelAsync([Name("CHANNEL")] params string[] userInputSplit)
         {
@@ -153,25 +153,24 @@ namespace wow2.Modules.YouTube
         [Summary("Toggle whether your server will get notified when CHANNEL uploads a new video.")]
         public async Task SubscribeAsync([Name("CHANNEL")] params string[] userInputSplit)
         {
-            var config = GetConfigForGuild(Context.Guild);
             var channel = await GetChannelAsync(string.Join(' ', userInputSplit));
 
-            if (config.SubscribedChannels.RemoveAll(ch => ch.Id == channel.Id) != 0)
+            if (Config.SubscribedChannels.RemoveAll(ch => ch.Id == channel.Id) != 0)
             {
                 await new SuccessMessage($"You'll no longer get notifications from `{channel.Snippet.Title}`.")
                     .SendAsync(Context.Channel);
             }
             else
             {
-                if (config.SubscribedChannels.Count > 20)
+                if (Config.SubscribedChannels.Count > 20)
                     throw new CommandReturnException(Context, "Remove some channels before adding more.", "Too many subscribers");
 
-                config.SubscribedChannels.Add(new SubscribedChannel()
+                Config.SubscribedChannels.Add(new SubscribedChannel()
                 {
                     Id = channel.Id,
                     Name = channel.Snippet.Title,
                 });
-                await new SuccessMessage(config.AnnouncementsChannelId == 0 ?
+                await new SuccessMessage(Config.AnnouncementsChannelId == 0 ?
                     $"Once you use `set-announcements-channel`, you'll get notifications when {channel.Snippet.Title} uploads a new video." :
                     $"You'll get notifications when `{channel.Snippet.Title}` uploads a new video.")
                         .SendAsync(Context.Channel);
@@ -185,13 +184,11 @@ namespace wow2.Modules.YouTube
         [Summary("Lists the channels your server will get notified about.")]
         public async Task ListSubsAsync(int page = 1)
         {
-            var config = GetConfigForGuild(Context.Guild);
-
-            if (config.SubscribedChannels.Count == 0)
+            if (Config.SubscribedChannels.Count == 0)
                 throw new CommandReturnException(Context, "Add some channels to the subscriber list first.", "Nothing to show");
 
             var fieldBuilders = new List<EmbedFieldBuilder>();
-            foreach (SubscribedChannel channel in config.SubscribedChannels)
+            foreach (SubscribedChannel channel in Config.SubscribedChannels)
             {
                 fieldBuilders.Add(new EmbedFieldBuilder()
                 {
@@ -213,9 +210,7 @@ namespace wow2.Modules.YouTube
         [Summary("Sets the channel where notifications about new videos will be sent.")]
         public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
         {
-            var config = GetConfigForGuild(Context.Guild);
-
-            config.AnnouncementsChannelId = channel.Id;
+            Config.AnnouncementsChannelId = channel.Id;
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
 
             await new SuccessMessage($"You'll get YouTube announcements in {channel.Mention}")
