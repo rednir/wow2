@@ -14,14 +14,14 @@ namespace wow2.Modules.Games.VerbalMemory
         public const string SeenKeyword = "s";
         public const string NewKeyword = "n";
 
-        public static VerbalMemoryGameConfig GetConfigForGuild(IGuild guild)
+        public static VerbalMemoryGameConfig GetConfig(IGuild guild)
             => DataManager.DictionaryOfGuildData[guild.Id].Games.VerbalMemory;
 
         /// <summary>Checks whether a user message is part of the verbal memory game, and acts on it if so.</summary>
         /// <returns>True if the message was related to the game.</returns>
         public static async Task<bool> CheckMessageAsync(SocketMessage receivedMessage)
         {
-            var config = GetConfigForGuild(receivedMessage.GetGuild());
+            var config = GetConfig(receivedMessage.GetGuild());
 
             if (!config.IsGameStarted)
                 return false;
@@ -79,7 +79,7 @@ namespace wow2.Modules.Games.VerbalMemory
 
         public static async Task StartGame(SocketCommandContext context)
         {
-            var config = GetConfigForGuild(context.Guild);
+            var config = GetConfig(context.Guild);
 
             // TODO: need to find a better way of doing this
             var defaultConfig = new VerbalMemoryGameConfig();
