@@ -16,6 +16,11 @@ namespace wow2.Modules.Keywords
 
         private const int MaxCountOfRememberedKeywordResponses = 50;
 
+        public ResponseMessage()
+            : base(string.Empty)
+        {
+        }
+
         public ResponseMessage(KeywordValue keywordValue)
              : base(string.Empty)
         {
