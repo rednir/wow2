@@ -10,6 +10,7 @@ namespace wow2.Modules.Timers
         public UserTimer(double time, SocketCommandContext context)
             : base(time)
         {
+            AutoReset = false;
             Elapsed += async (source, e) =>
             {
                 Dispose();

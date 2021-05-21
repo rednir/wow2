@@ -1,6 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Timers;
+using Discord;
 using Discord.Commands;
 using wow2.Data;
 using wow2.Extentions;
@@ -35,14 +36,13 @@ namespace wow2.Modules.Timers
 
         [Command("stop")]
         [Alias("cancel")]
-        [Summary("Stops a timer. The ID is its place in the list as a number.")]
-        public async Task Stop(int id)
+        [Summary("Stops the most recently created timer.")]
+        public async Task StopAsync()
         {
-            int index = id - 1;
+            if (Config.UserTimers.Count == 0)
+                throw new CommandReturnException(Context, "There are no active timers to remove.");
 
-            if (index < 0 || index >= Config.UserTimers.Count)
-                throw new CommandReturnException(Context, "That timer doesn't exist.");
-
+            int index = Config.UserTimers.Count - 1;
             Config.UserTimers[index].Dispose();
             Config.UserTimers.RemoveAt(index);
 
