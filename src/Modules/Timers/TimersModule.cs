@@ -41,10 +41,15 @@ namespace wow2.Modules.Timers
                 throw new CommandReturnException(Context, "There are no active timers to remove.");
 
             int index = Config.UserTimers.Count - 1;
-            Config.UserTimers[index].Remove();
+            UserTimer timer = Config.UserTimers[index];
 
-            await new SuccessMessage("Removed timer.")
-                .SendAsync(Context.Channel);
+            await new SuccessMessage("Removed this timer.")
+            {
+                ReplyToMessageId = timer.Context.Message.Id,
+            }
+            .SendAsync(Context.Channel);
+
+            timer.Remove();
         }
     }
 }

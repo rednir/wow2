@@ -11,8 +11,10 @@ namespace wow2.Modules.Timers
         public UserTimer(double time, SocketCommandContext context)
             : base(time)
         {
-            Config = DataManager.DictionaryOfGuildData[context.Guild.Id].Timers;
+            Context = context;
+            Config = DataManager.DictionaryOfGuildData[Context.Guild.Id].Timers;
             AutoReset = false;
+
             Config.UserTimers.Add(this);
             Start();
 
@@ -21,13 +23,14 @@ namespace wow2.Modules.Timers
                 Remove();
                 await new InfoMessage("Time up!")
                 {
-                    ReplyToMessageId = context.Message.Id,
+                    ReplyToMessageId = Context.Message.Id,
                     AllowMentions = true,
                 }
-                .SendAsync(context.Channel);
+                .SendAsync(Context.Channel);
             };
         }
 
+        public SocketCommandContext Context { get; }
         private TimersModuleConfig Config { get; }
 
         /// <summary>Disposes of the timer and removes it from the guild's config.</summary>
