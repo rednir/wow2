@@ -14,7 +14,7 @@ namespace wow2.Modules.Keywords
         public static readonly IEmote DeleteReactionEmote = new Emoji("🗑");
         public static readonly IEmote LikeReactionEmote = new Emoji("👍");
 
-        private const int MaxCountOfRememberedKeywordResponses = 50;
+        private const int MaxCountOfRememberedKeywordResponses = 100;
 
         public ResponseMessage()
             : base(string.Empty)
