@@ -104,7 +104,7 @@ namespace wow2
 
                 if (logMessage.Exception is CommandException commandException)
                 {
-                    string errorMessageText = $"An unhandled exception was thrown and was automatically reported.\n```{commandException.InnerException.Message}\n```";
+                    string errorMessageText = $"An unhandled exception was thrown.\nWant to let the developer know? [Create an issue on Github.](https://github.com/rednir/wow2/issues/new)\n```{commandException.InnerException.Message}\n```";
                     switch (commandException.InnerException)
                     {
                         case NotImplementedException:

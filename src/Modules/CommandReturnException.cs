@@ -1,5 +1,7 @@
 using System;
+using Discord;
 using Discord.Commands;
+using wow2.Verbose;
 using wow2.Verbose.Messages;
 
 namespace wow2.Modules

@@ -49,7 +49,7 @@ namespace wow2.Verbose
         {
             Output($"{DateTime.Now} [Exception] {message}\n------ START OF EXCEPTION ------\n\n{exception}\n\n------ END OF EXCEPTION ------");
             if (notifyOwner)
-                _ = Bot.ApplicationInfo.Owner.SendMessageAsync($"```\n{exception}\n```");
+                _ = Bot.ApplicationInfo.Owner.SendMessageAsync($"{message}\n```\n{exception}\n```");
         }
 
         public static async Task<string> GetLogsForSessionAsync()
