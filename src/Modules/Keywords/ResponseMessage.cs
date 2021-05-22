@@ -118,7 +118,6 @@ namespace wow2.Modules.Keywords
             if (config.ListOfResponseMessages.Count > MaxCountOfRememberedKeywordResponses)
                 config.ListOfResponseMessages.RemoveAt(0);
 
-            await DataManager.SaveGuildDataToFileAsync(guild.Id);
             return SentMessage;
         }
     }
