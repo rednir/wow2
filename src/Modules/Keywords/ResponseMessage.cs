@@ -70,7 +70,7 @@ namespace wow2.Modules.Keywords
         }
 
         /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the removed reaction if so.</summary>
-        public static async Task<bool> ActOnReactionRemovedAsync(SocketReaction reaction, IUserMessage message)
+        public static bool ActOnReactionRemoved(SocketReaction reaction, IUserMessage message)
         {
             var config = DataManager.AllGuildData[message.GetGuild().Id].Keywords;
 
