@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Discord.Commands;
 using wow2.Modules.Games.Counting;
-using wow2.Modules.Games.NumberMemory;
 using wow2.Modules.Games.VerbalMemory;
 
 namespace wow2.Modules.Games
@@ -26,14 +25,6 @@ namespace wow2.Modules.Games
         public async Task VerbalMemoryAsync()
         {
             await VerbalMemoryGame.StartGame(Context);
-        }
-
-        [Command("number-memory")]
-        [Alias("number")]
-        [Summary("Try remember the largest number possible.")]
-        public async Task NumberMemory()
-        {
-            await NumberMemoryGame.StartGame(Context);
         }
     }
 }

@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using wow2.Modules.Games.Counting;
-using wow2.Modules.Games.NumberMemory;
 using wow2.Modules.Games.VerbalMemory;
 
 namespace wow2.Modules.Games
@@ -12,8 +11,5 @@ namespace wow2.Modules.Games
 
         [JsonIgnore]
         public VerbalMemoryGameConfig VerbalMemory { get; set; } = new VerbalMemoryGameConfig();
-
-        [JsonIgnore]
-        public NumberMemoryConfig NumberMemory { get; set; } = new NumberMemoryConfig();
     }
 }
