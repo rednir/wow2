@@ -24,7 +24,7 @@ namespace wow2.Modules.YouTube
     public class YouTubeModule : Module
     {
         private static readonly YouTubeService Service;
-        private static DateTime TimeOfLastVideoCheck = DateTime.Parse("01/01/2001");
+        private static DateTime TimeOfLastVideoCheck = DateTime.Now;
 
         static YouTubeModule()
         {
