@@ -42,6 +42,7 @@ namespace wow2
             Client.Ready += ReadyAsync;
             Client.Log += DiscordLogRecievedAsync;
             Client.ReactionAdded += ReactionAddedAsync;
+            Client.ReactionRemoved += ReactionRemovedAsync;
             Client.MessageReceived += MessageRecievedAsync;
             Client.MessageDeleted += MessageDeletedAsync;
             Client.JoinedGuild += JoinedGuildAsync;
@@ -153,7 +154,19 @@ namespace wow2
                 return;
 
             if (!await PagedMessage.ActOnReactionAsync(reaction))
-                await ResponseMessage.ActOnReactionAsync(reaction, message);
+                await ResponseMessage.ActOnReactionAddedAsync(reaction, message);
+        }
+
+        public static async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
+        {
+            if (reaction.UserId == Client.CurrentUser.Id)
+                return;
+
+            IUserMessage message = await cachedMessage.GetOrDownloadAsync();
+            if (message == null)
+                return;
+
+            await ResponseMessage.ActOnReactionRemovedAsync(reaction, message);
         }
 
         public static Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)

@@ -37,7 +37,7 @@ namespace wow2.Modules.Keywords
         private List<ulong> UsersLikedIds { get; } = new();
 
         /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the reaction if so.</summary>
-        public static async Task<bool> ActOnReactionAsync(SocketReaction reaction, IUserMessage message)
+        public static async Task<bool> ActOnReactionAddedAsync(SocketReaction reaction, IUserMessage message)
         {
             var config = DataManager.AllGuildData[message.GetGuild().Id].Keywords;
 
@@ -67,6 +67,14 @@ namespace wow2.Modules.Keywords
 
             await DataManager.SaveGuildDataToFileAsync(responseMessage.SentMessage.GetGuild().Id);
             return true;
+        }
+
+        /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the removed reaction if so.</summary>
+        public static async Task<bool> ActOnReactionRemovedAsync(SocketReaction reaction, IUserMessage message)
+        {
+            var config = DataManager.AllGuildData[message.GetGuild().Id].Keywords;
+
+            return false;
         }
 
         public async Task<IUserMessage> RespondToMessageAsync(SocketMessage message)
