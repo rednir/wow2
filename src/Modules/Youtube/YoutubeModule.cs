@@ -34,7 +34,7 @@ namespace wow2.Modules.YouTube
                 ApiKey = DataManager.Secrets.GoogleApiKey,
                 ApplicationName = "wow2-youtube",
             });
-            PollingService.CreateService(CheckForNewVideosAsync, 1);
+            PollingService.CreateService(CheckForNewVideosAsync, 12);
         }
 
         public YouTubeModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].YouTube;
