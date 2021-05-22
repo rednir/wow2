@@ -85,10 +85,21 @@ namespace wow2.Extensions
             return stringBuilder.ToString();
         }
 
-        /// <summary>Checks if a string is longer than the maximum length allowed, and truncates it if so.</summary>
+        /// <summary>Checks if a string is longer than the maximum length allowed and truncates it if so.</summary>
         /// <returns>The string with no more characters than the maximum length.</returns>
         public static string Truncate(this string originalString, int maxLength, bool addEllipses = false)
             => originalString.Length > maxLength ? originalString.Substring(0, maxLength - 4) + (addEllipses ? "..." : null) : originalString;
+
+        /// <summary>Checks if a list is longer than the maximum length allowed and truncates it if so, removing elements from the start.</summary>
+        /// <returns>The number of items removed.</returns>
+        public static int Truncate<T>(this IList<T> list, int maxLength)
+        {
+            int elementsToRemove = Math.Max(list.Count - maxLength, 0);
+            for (int i = 0; i < elementsToRemove; i++)
+                list.RemoveAt(0);
+
+            return elementsToRemove;
+        }
 
         /// <summary>Checks if a string starts with a given value, and also is not part of another word.</summary>
         public static bool StartsWithWord(this string stringToCheck, string word, bool ignoreCase = false) =>
