@@ -292,7 +292,7 @@ namespace wow2
             // Only auto mod message if not related to a game.
             if (!await CountingGame.CheckMessageAsync(context) &&
                 !await VerbalMemoryGame.CheckMessageAsync(context) &&
-                !await NumberMemoryGame.CheckMessageAsync(message))
+                !await NumberMemoryGame.CheckMessageAsync(context))
             {
                 await ModeratorModule.CheckMessageWithAutoMod(message);
             }
