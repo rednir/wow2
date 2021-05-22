@@ -74,6 +74,19 @@ namespace wow2.Modules.Keywords
         {
             var config = DataManager.AllGuildData[message.GetGuild().Id].Keywords;
 
+            ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
+                m => m.SentMessage?.Id == message.Id);
+            if (responseMessage == null)
+                return false;
+
+            if (reaction.Emote.Name == LikeReactionEmote.Name
+                && config.IsLikeReactionOn
+                && responseMessage.UsersLikedIds.Remove(reaction.UserId))
+            {
+                responseMessage.KeywordValue.TimesLiked--;
+                return true;
+            }
+
             return false;
         }
 
