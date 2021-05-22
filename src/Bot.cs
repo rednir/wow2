@@ -290,7 +290,7 @@ namespace wow2
             SocketUserMessage message = context.Message;
 
             // Only auto mod message if not related to a game.
-            if (!await CountingGame.CheckMessageAsync(message) &&
+            if (!await CountingGame.CheckMessageAsync(context) &&
                 !await VerbalMemoryGame.CheckMessageAsync(message) &&
                 !await NumberMemoryGame.CheckMessageAsync(message))
             {
