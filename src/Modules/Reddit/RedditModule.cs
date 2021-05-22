@@ -59,7 +59,7 @@ namespace wow2.Modules.Reddit
         [Alias("best")]
         [Summary("Gets the first post in hot from a given subreddit.")]
         public async Task HotAsync([Name("SUBREDDIT")] string subredditName) =>
-            await GetSubredditCommandCommonAsync(subredditName, s => s.GetHot(limit: 1));
+            await GetSubredditCommandCommonAsync(subredditName, s => s.GetHot(limit: 4));
 
         [Command("cont")]
         [Alias("controversial")]
@@ -79,7 +79,7 @@ namespace wow2.Modules.Reddit
                 throw new CommandReturnException(Context, ex.EmbedDescription, ex.EmbedTitle);
             }
 
-            await new RedditPostMessage(action.Invoke(subreddit.Posts).FirstOrDefault()
+            await new RedditPostMessage(action.Invoke(subreddit.Posts).Find(p => !p.Listing.Pinned)
                 ?? throw new CommandReturnException(Context, "Doesn't seem like there's any posts here..."))
                     .SendAsync(Context.Channel);
         }
