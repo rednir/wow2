@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -396,9 +398,9 @@ namespace wow2.Modules.Voice
 
         private async Task PlayRequestAsync(UserSongRequest request, CancellationToken cancellationToken)
         {
-            using (var ffmpeg = DownloadService.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
-            using (var output = ffmpeg.StandardOutput.BaseStream)
-            using (var discord = Config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
+            using (Process ffmpeg = DownloadService.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
+            using (Stream output = ffmpeg.StandardOutput.BaseStream)
+            using (AudioOutStream discord = Config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
             {
                 try
                 {
