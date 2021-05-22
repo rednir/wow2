@@ -24,11 +24,11 @@ namespace wow2.Modules.Keywords
         private KeywordsModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Keywords;
 
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
-        public static bool CheckMessageForKeyword(SocketMessage message)
+        public static bool CheckMessageForKeyword(SocketCommandContext context)
         {
-            var config = DataManager.AllGuildData[message.GetGuild().Id].Keywords;
-            string messageContent = message.Content.ToLower();
-            string[] listOfFoundKeywords = GetAllKeywordsInString(message.Content, config.KeywordsDictionary.Keys);
+            var config = DataManager.AllGuildData[context.Guild.Id].Keywords;
+            string messageContent = context.Message.Content.ToLower();
+            string[] listOfFoundKeywords = GetAllKeywordsInString(messageContent, config.KeywordsDictionary.Keys);
 
             if (listOfFoundKeywords.Length == 0)
                 return false;
@@ -42,7 +42,7 @@ namespace wow2.Modules.Keywords
 
             // Don't await this to avoid blocking gateway task.
             _ = new ResponseMessage(keywordValue)
-                .RespondToMessageAsync(message);
+                .RespondToMessageAsync(context.Message);
 
             return true;
         }

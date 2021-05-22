@@ -19,21 +19,21 @@ namespace wow2.Modules.Games.VerbalMemory
 
         /// <summary>Checks whether a user message is part of the verbal memory game, and acts on it if so.</summary>
         /// <returns>True if the message was related to the game.</returns>
-        public static async Task<bool> CheckMessageAsync(SocketMessage receivedMessage)
+        public static async Task<bool> CheckMessageAsync(SocketCommandContext context)
         {
-            var config = GetConfig(receivedMessage.GetGuild());
+            var config = GetConfig(context.Guild);
 
             if (!config.IsGameStarted)
                 return false;
 
-            if (receivedMessage.Channel != config.InitalContext.Channel
-                || receivedMessage.Author != config.InitalContext.User)
+            if (context.Channel != config.InitalContext.Channel
+                || context.User != config.InitalContext.User)
             {
                 return false;
             }
 
             string currentWord = config.CurrentWordMessage.Content;
-            switch (receivedMessage.Content)
+            switch (context.Message.Content)
             {
                 case NewKeyword:
                     if (config.SeenWords.Contains(currentWord))
@@ -73,7 +73,7 @@ namespace wow2.Modules.Games.VerbalMemory
 
             config.Turns++;
             await NextWordAsync(config);
-            await receivedMessage.DeleteAsync();
+            await context.Message.DeleteAsync();
             return true;
         }
 

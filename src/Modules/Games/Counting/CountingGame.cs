@@ -26,7 +26,7 @@ namespace wow2.Modules.Games.Counting
             config.ListOfMessages = new List<SocketMessage>();
             config.IsGameStarted = true;
 
-            if (await EndGameIfNumberIsInvalidAsync(context.Message, increment))
+            if (await EndGameIfNumberIsInvalidAsync(context, increment))
                 return;
 
             await new InfoMessage($"Counting has started.\nTo start off, type the number `{config.NextNumber}` in this channel.")
@@ -35,21 +35,21 @@ namespace wow2.Modules.Games.Counting
 
         /// <summary>Checks whether a user message is part of the counting game, and acts on it if so.</summary>
         /// <returns>True if the message was related to the game.</returns>
-        public static async Task<bool> CheckMessageAsync(SocketMessage receivedMessage)
+        public static async Task<bool> CheckMessageAsync(SocketCommandContext context)
         {
-            var config = GetConfig(receivedMessage.GetGuild());
+            var config = GetConfig(context.Guild);
             float userNumber;
 
-            if (receivedMessage.Author.IsBot ||
+            if (context.User.IsBot ||
                 !config.IsGameStarted ||
-                config.InitalContext.Channel != receivedMessage.Channel)
+                config.InitalContext.Channel != context.Channel)
             {
                 return false;
             }
 
             try
             {
-                userNumber = Convert.ToSingle(receivedMessage.Content);
+                userNumber = Convert.ToSingle(context.Message.Content);
             }
             catch
             {
@@ -59,26 +59,26 @@ namespace wow2.Modules.Games.Counting
             // If this is the first counting message, there is no need to check if a user counts twice in a row.
             if (config.ListOfMessages.Count != 0)
             {
-                if (receivedMessage.Author == config.ListOfMessages.Last().Author)
+                if (context.User == config.ListOfMessages.Last().Author)
                 {
                     await new WarningMessage("Counting twice in a row is no fun.")
-                        .SendAsync(receivedMessage.Channel);
+                        .SendAsync(context.Channel);
                     return true;
                 }
             }
 
-            config.ListOfMessages.Add(receivedMessage);
+            config.ListOfMessages.Add(context.Message);
             if (userNumber == config.NextNumber)
             {
                 config.NextNumber += config.Increment;
-                await receivedMessage.AddReactionAsync(new Emoji("✅"));
-                await EndGameIfNumberIsInvalidAsync(receivedMessage, config.NextNumber);
+                await context.Message.AddReactionAsync(new Emoji("✅"));
+                await EndGameIfNumberIsInvalidAsync(context, config.NextNumber);
             }
             else
             {
-                await receivedMessage.AddReactionAsync(new Emoji("❎"));
-                await new InfoMessage($"Counting was ruined by {receivedMessage.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`")
-                    .SendAsync(receivedMessage.Channel);
+                await context.Message.AddReactionAsync(new Emoji("❎"));
+                await new InfoMessage($"Counting was ruined by {context.Message.Author.Mention}. Nice one.\nThe next number should have been `{config.NextNumber}`")
+                    .SendAsync(context.Channel);
                 await EndGameAsync(config);
             }
 
@@ -134,13 +134,13 @@ namespace wow2.Modules.Games.Counting
         }
 
         /// <returns>True if counting was ended, otherwise false.</returns>
-        private static async Task<bool> EndGameIfNumberIsInvalidAsync(SocketMessage message, float? number)
+        private static async Task<bool> EndGameIfNumberIsInvalidAsync(SocketCommandContext context, float? number)
         {
             if (number >= float.MaxValue || number <= float.MinValue)
             {
                 await new WarningMessage("Woah, that's a big number.\nHate to be a killjoy, but even a computer has its limits.")
-                    .SendAsync(message.Channel);
-                await EndGameAsync(GetConfig(message.GetGuild()));
+                    .SendAsync(context.Channel);
+                await EndGameAsync(GetConfig(context.Guild));
                 return true;
             }
 
