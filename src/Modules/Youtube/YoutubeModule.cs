@@ -24,25 +24,7 @@ namespace wow2.Modules.YouTube
     public class YouTubeModule : Module
     {
         private static readonly YouTubeService Service;
-        private static readonly Thread YouTubePollingThread = new(async () =>
-        {
-            const int delayMins = 10;
-            while (true)
-            {
-                try
-                {
-                    await Task.Delay(delayMins * 60000);
-                    await CheckForNewVideosAsync();
-                    Logger.Log("Successfully checked for new Youtube videos.", LogSeverity.Debug);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogException(ex, "Failure to check for new YouTube videos.");
-                    await Task.Delay(delayMins * 60000);
-                }
-            }
-        });
-        private static DateTime TimeOfLastVideoCheck = DateTime.Now;
+        private static DateTime TimeOfLastVideoCheck = DateTime.Parse("01/01/2001");
 
         static YouTubeModule()
         {
@@ -52,7 +34,7 @@ namespace wow2.Modules.YouTube
                 ApiKey = DataManager.Secrets.GoogleApiKey,
                 ApplicationName = "wow2-youtube",
             });
-            YouTubePollingThread.Start();
+            PollingService.CreateService(CheckForNewVideosAsync, 1);
         }
 
         public YouTubeModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].YouTube;
@@ -243,9 +225,12 @@ namespace wow2.Modules.YouTube
                 foreach (string id in subscribedChannelIds.Select(c => c.Id))
                 {
                     // TODO: proper error handling.
-                    var latestUpload = (await GetChannelUploadsAsync(await GetChannelAsync(id), 1))[0];
-                    string latestUploadVideoId = latestUpload.ContentDetails.VideoId;
+                    var uploads = await GetChannelUploadsAsync(await GetChannelAsync(id), 1);
+                    if (uploads.Count == 0)
+                        continue;
 
+                    var latestUpload = uploads[0];
+                    string latestUploadVideoId = latestUpload.ContentDetails.VideoId;
                     if (latestUpload.Snippet.PublishedAt.Value > TimeOfLastVideoCheck)
                     {
                         // Add to dictionary if video is new.
