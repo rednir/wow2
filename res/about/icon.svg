@@ -14,8 +14,8 @@
    version="1.1"
    id="svg8"
    inkscape:version="1.0.2 (e86c870879, 2021-01-15, custom)"
-   sodipodi:docname="wow2.svg"
-   inkscape:export-filename="/home/davran/Documents/Code/Discord/wow2/res/about/wow2.png"
+   sodipodi:docname="icon.svg"
+   inkscape:export-filename="/home/davran/Documents/Code/Discord/wow2/res/about/icon.png"
    inkscape:export-xdpi="192.00002"
    inkscape:export-ydpi="192.00002">
   <defs
@@ -403,20 +403,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.1767767"
-     inkscape:cx="182.99482"
-     inkscape:cy="20.517108"
+     inkscape:zoom="0.7071068"
+     inkscape:cx="243.74647"
+     inkscape:cy="98.44871"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
      showgrid="false"
      units="px"
      showguides="false"
-     inkscape:window-width="1411"
-     inkscape:window-height="890"
-     inkscape:window-x="163"
-     inkscape:window-y="99"
-     inkscape:window-maximized="0" />
+     inkscape:window-width="1920"
+     inkscape:window-height="1048"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -425,7 +425,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -494,7 +494,8 @@
     <g
        id="path1269"
        style="opacity:0.99;fill:#9b9bad;fill-opacity:1;stroke:#8e8e9f;stroke-width:5.25992;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter1323)"
-       transform="translate(0.07278237,4.4555319)">
+       transform="translate(0.07278237,4.4555319)"
+       clip-path="none">
       <path
          style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#9b9bad;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:5.25992;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate;stop-color:#000000;stop-opacity:1"
          d="m 20.928492,19.508261 h 25.73076 v 19.806068 h -25.73076 z"
@@ -533,31 +534,39 @@
          id="path1311" />
     </g>
     <g
-       id="g910"
-       transform="translate(-0.20318394)"
-       style="opacity:1;filter:url(#filter2454)">
+       id="g993">
+      <g
+         id="g910"
+         transform="translate(-0.20318394)"
+         style="opacity:1;filter:url(#filter2454)"
+         clip-path="none" />
+    </g>
+    <g
+       id="g1153"
+       transform="translate(-0.8116276)"
+       style="fill:#535366;fill-opacity:0.99215686">
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.3722px;line-height:1.25;font-family:'Corporate Rounded';-inkscape-font-specification:'Corporate Rounded';fill:#5a5a6b;fill-opacity:1;stroke:none;stroke-width:0.484307"
-         x="24.105959"
-         y="35.933357"
-         id="text1036"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:19.3413px;line-height:1.25;font-family:'Corporate Rounded';-inkscape-font-specification:'Corporate Rounded';fill:#535366;fill-opacity:0.99215686;stroke:none;stroke-width:0.483531"
+         x="24.521288"
+         y="36.475178"
+         id="text1097"><tspan
            sodipodi:role="line"
-           id="tspan1034"
-           x="24.105959"
-           y="35.933357"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Corporate Rounded';-inkscape-font-specification:'Corporate Rounded';fill:#5a5a6b;fill-opacity:1;stroke-width:0.484307">v</tspan></text>
+           id="tspan1095"
+           x="24.521288"
+           y="36.475178"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Corporate Rounded';-inkscape-font-specification:'Corporate Rounded Bold';fill:#535366;fill-opacity:0.99215686;stroke-width:0.483531">v</tspan></text>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32.104px;line-height:1.25;font-family:'Corporate Rounded';-inkscape-font-specification:'Corporate Rounded';fill:#5a5a6b;fill-opacity:1;stroke:none;stroke-width:0.8026"
-         x="30.388992"
-         y="42.544113"
-         id="text1036-1"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:30.4752px;line-height:1.25;font-family:'Corporate Rounded';-inkscape-font-specification:'Corporate Rounded';fill:#535366;fill-opacity:0.99215686;stroke:none;stroke-width:0.761878"
+         x="30.714272"
+         y="42.078033"
+         id="text1097-9"><tspan
            sodipodi:role="line"
-           id="tspan1034-5"
-           x="30.388992"
-           y="42.544113"
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Corporate Rounded';-inkscape-font-specification:'Corporate Rounded';fill:#5a5a6b;fill-opacity:1;stroke-width:0.8026">v</tspan></text>
+           id="tspan1095-4"
+           x="30.714272"
+           y="42.078033"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Corporate Rounded';-inkscape-font-specification:'Corporate Rounded Bold';fill:#535366;fill-opacity:0.99215686;stroke-width:0.761878">v</tspan></text>
     </g>
   </g>
 </svg>
