@@ -18,20 +18,21 @@ namespace wow2.Modules.Main
     {
         public MainModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Main;
 
-        public static async Task<bool> CheckForAliasAsync(SocketMessage message)
+        public static async Task<bool> TryExecuteAliasAsync(SocketCommandContext context)
         {
-            var config = DataManager.AllGuildData[message.GetGuild().Id].Main;
+            var config = DataManager.AllGuildData[context.Guild.Id].Main;
+            string messageContent = context.Message.Content;
 
-            var aliasesFound = config.AliasesDictionary.Where(a => message.Content.StartsWithWord(a.Key));
+            var aliasesFound = config.AliasesDictionary.Where(a =>
+                messageContent.StartsWithWord(a.Key));
 
             if (aliasesFound.Any())
             {
-                var context = new SocketCommandContext(Bot.Client, (SocketUserMessage)message);
                 var aliasToExecute = aliasesFound.First();
 
                 await Bot.ExecuteCommandAsync(
                     context,
-                    aliasToExecute.Value + message.Content.Replace(aliasToExecute.Key, string.Empty, true, null));
+                    aliasToExecute.Value + messageContent.Replace(aliasToExecute.Key, string.Empty, true, null));
 
                 return true;
             }

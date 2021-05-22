@@ -304,7 +304,7 @@ namespace wow2
                 await ActOnMessageAsCommandAsync(context);
                 return;
             }
-            else if (!await MainModule.CheckForAliasAsync(message))
+            else if (!await MainModule.TryExecuteAliasAsync(context))
             {
                 // Only check for keyword when the message is not an alias/command.
                 KeywordsModule.CheckMessageForKeyword(message);
