@@ -30,7 +30,6 @@ namespace wow2.Modules.YouTube
         {
             Service = new(new BaseClientService.Initializer()
             {
-                // TODO: fix this if no file
                 ApiKey = DataManager.Secrets.GoogleApiKey,
                 ApplicationName = "wow2-youtube",
             });
