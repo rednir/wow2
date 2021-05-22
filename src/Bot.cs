@@ -307,7 +307,7 @@ namespace wow2
             else if (!await MainModule.TryExecuteAliasAsync(context))
             {
                 // Only check for keyword when the message is not an alias/command.
-                KeywordsModule.CheckMessageForKeyword(message);
+                KeywordsModule.CheckMessageForKeyword(context);
                 return;
             }
         }
