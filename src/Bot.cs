@@ -294,7 +294,7 @@ namespace wow2
                 !await VerbalMemoryGame.CheckMessageAsync(context) &&
                 !await NumberMemoryGame.CheckMessageAsync(context))
             {
-                await ModeratorModule.CheckMessageWithAutoMod(message);
+                await ModeratorModule.CheckMessageWithAutoMod(context);
             }
 
             if (message.Content.StartsWithWord(

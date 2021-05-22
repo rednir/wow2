@@ -20,15 +20,15 @@ namespace wow2.Modules.Moderator
     {
         public ModeratorModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Moderator;
 
-        public static async Task CheckMessageWithAutoMod(SocketMessage message)
+        public static async Task CheckMessageWithAutoMod(SocketCommandContext context)
         {
-            var config = DataManager.AllGuildData[message.GetGuild().Id].Moderator;
+            var config = DataManager.AllGuildData[context.Guild.Id].Moderator;
 
             UserRecord record;
             try
             {
-                record = GetUserRecord(config, message.Author.Id);
-                record.Messages.Add(message);
+                record = GetUserRecord(config, context.User.Id);
+                record.Messages.Add(context.Message);
             }
             catch (ArgumentException)
             {
@@ -71,12 +71,12 @@ namespace wow2.Modules.Moderator
 
             await WarnOrBanUserAsync(
                 config: config,
-                victim: (SocketGuildUser)message.Author,
-                requestedBy: await Bot.GetClientGuildUserAsync(message.Channel),
+                victim: (SocketGuildUser)context.User,
+                requestedBy: await Bot.GetClientGuildUserAsync(context.Channel),
                 message: warningMessage);
 
-            await new InfoMessage($"{message.Author.Mention} has been warned due to {dueTo}.")
-                .SendAsync(message.Channel);
+            await new InfoMessage($"{context.User.Mention} has been warned due to {dueTo}.")
+                .SendAsync(context.Channel);
         }
 
         /// <summary>Checks whether a user is abusing commands.</summary>
