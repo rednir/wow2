@@ -14,7 +14,6 @@ using wow2.Data;
 using wow2.Extensions;
 using wow2.Modules;
 using wow2.Modules.Games.Counting;
-using wow2.Modules.Games.NumberMemory;
 using wow2.Modules.Games.VerbalMemory;
 using wow2.Modules.Keywords;
 using wow2.Modules.Main;
@@ -289,9 +288,8 @@ namespace wow2
             SocketUserMessage message = context.Message;
 
             // Only auto mod message if not related to a game.
-            if (!await CountingGame.CheckMessageAsync(context) &&
-                !await VerbalMemoryGame.CheckMessageAsync(context) &&
-                !await NumberMemoryGame.CheckMessageAsync(context))
+            if (!await CountingGame.CheckMessageAsync(context)
+                && !await VerbalMemoryGame.CheckMessageAsync(context))
             {
                 await ModeratorModule.CheckMessageWithAutoMod(context);
             }
