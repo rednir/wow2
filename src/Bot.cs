@@ -177,60 +177,20 @@ namespace wow2
             return Task.CompletedTask;
         }
 
-        public static async Task MessageRecievedAsync(SocketMessage receivedMessage)
+        public static async Task MessageRecievedAsync(SocketMessage socketMessage)
         {
             if (CommandService == null)
                 return;
-            if (receivedMessage.Author.Id == Client.CurrentUser.Id)
+            if (socketMessage.Author.Id == Client.CurrentUser.Id)
                 return;
-            if (receivedMessage.Channel is SocketDMChannel)
+            if (socketMessage.Channel is SocketDMChannel)
                 return;
-
-            await DataManager.EnsureGuildDataExistsAsync(receivedMessage.GetGuild().Id);
-
-            // Only auto mod message if not related to a game.
-            if (!await CountingGame.CheckMessageAsync(receivedMessage) &&
-                !await VerbalMemoryGame.CheckMessageAsync(receivedMessage) &&
-                !await NumberMemoryGame.CheckMessageAsync(receivedMessage))
-            {
-                await ModeratorModule.CheckMessageWithAutoMod(receivedMessage);
-            }
-
-            if (receivedMessage.Content.StartsWithWord(receivedMessage.GetGuild().GetCommandPrefix(), true))
-            {
-                // The message starts with the command prefix and the prefix is not part of another word.
-                await CommandRecievedAsync(receivedMessage);
-                return;
-            }
-            else if (!await MainModule.CheckForAliasAsync(receivedMessage))
-            {
-                // Only check for keyword when the message is not an alias/command.
-                KeywordsModule.CheckMessageForKeyword(receivedMessage);
-                return;
-            }
-        }
-
-        public static async Task CommandRecievedAsync(SocketMessage socketMessage)
-        {
-            var socketUserMessage = (SocketUserMessage)socketMessage;
-
-            // Return if the message is not a user message.
-            if (socketMessage == null)
+            if (socketMessage is not SocketUserMessage socketUserMessage)
                 return;
 
             var context = new SocketCommandContext(Client, socketUserMessage);
-            string commandPrefix = context.Guild.GetCommandPrefix();
-
-            if (socketMessage.Content == commandPrefix)
-            {
-                await new AboutMessage(commandPrefix)
-                    .SendAsync(context.Channel);
-                return;
-            }
-
-            await ExecuteCommandAsync(
-                context,
-                socketMessage.Content.MakeCommandInput(commandPrefix));
+            await DataManager.EnsureGuildDataExistsAsync(context.Guild.Id);
+            await ActOnMessageAsync(context);
         }
 
         public static async Task<IResult> ExecuteCommandAsync(SocketCommandContext context, string input)
@@ -323,6 +283,49 @@ namespace wow2
             {
                 return result.Commands.Select(c => c.Command);
             }
+        }
+
+        private static async Task ActOnMessageAsync(SocketCommandContext context)
+        {
+            SocketUserMessage message = context.Message;
+
+            // Only auto mod message if not related to a game.
+            if (!await CountingGame.CheckMessageAsync(message) &&
+                !await VerbalMemoryGame.CheckMessageAsync(message) &&
+                !await NumberMemoryGame.CheckMessageAsync(message))
+            {
+                await ModeratorModule.CheckMessageWithAutoMod(message);
+            }
+
+            if (message.Content.StartsWithWord(
+                context.Guild.GetCommandPrefix(), true))
+            {
+                // The message starts with the command prefix and the prefix is not part of another word.
+                await ActOnMessageAsCommandAsync(context);
+                return;
+            }
+            else if (!await MainModule.CheckForAliasAsync(message))
+            {
+                // Only check for keyword when the message is not an alias/command.
+                KeywordsModule.CheckMessageForKeyword(message);
+                return;
+            }
+        }
+
+        private static async Task ActOnMessageAsCommandAsync(SocketCommandContext context)
+        {
+            string commandPrefix = context.Guild.GetCommandPrefix();
+
+            if (context.Message.Content == commandPrefix)
+            {
+                await new AboutMessage(commandPrefix)
+                    .SendAsync(context.Channel);
+                return;
+            }
+
+            await ExecuteCommandAsync(
+                context,
+                context.Message.Content.MakeCommandInput(commandPrefix));
         }
     }
 }
