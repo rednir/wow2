@@ -1,3 +1,4 @@
+using System;
 using Discord;
 
 namespace wow2.Verbose.Messages
@@ -10,6 +11,7 @@ namespace wow2.Verbose.Messages
             {
                 Title = $"{new Emoji($"<:wowerror:{ErrorEmoteId}>")} Something bad happened...",
                 Description = GetStatusMessageFormattedDescription(description, title),
+                Timestamp = DateTime.Now,
                 Color = Color.Red,
             };
         }
