@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Discord;
+using wow2.Extensions;
 using wow2.Verbose;
 
 namespace wow2
@@ -52,10 +53,8 @@ namespace wow2
         public void Add(string identifier, T value)
         {
             List.Add(new(identifier, value));
+            List.Truncate(MaxAmountOfCachedObjects);
             Logger.Log($"Added new cached {typeof(T)} object with identifier '{identifier}'", LogSeverity.Debug);
-
-            if (List.Count > MaxAmountOfCachedObjects)
-                List.RemoveAt(0);
         }
     }
 }

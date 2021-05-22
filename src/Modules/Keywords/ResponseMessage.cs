@@ -115,8 +115,7 @@ namespace wow2.Modules.Keywords
             config.ListOfResponseMessages.Add(this);
 
             // Remove the oldest message if ListOfResponsesId has reached its max.
-            if (config.ListOfResponseMessages.Count > MaxCountOfRememberedKeywordResponses)
-                config.ListOfResponseMessages.RemoveAt(0);
+            config.ListOfResponseMessages.Truncate(MaxCountOfRememberedKeywordResponses);
 
             return SentMessage;
         }

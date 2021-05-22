@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using wow2.Extensions;
 
 namespace wow2.Verbose.Messages
 {
@@ -63,8 +64,7 @@ namespace wow2.Verbose.Messages
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             // TODO: Performance might still be slow. Maybe have a list for every guild?
-            if (ListOfPagedMessages.Count > 40)
-                ListOfPagedMessages.RemoveAt(40);
+            ListOfPagedMessages.Truncate(100);
 
             IUserMessage message = await base.SendAsync(channel);
 

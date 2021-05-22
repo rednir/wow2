@@ -37,8 +37,7 @@ namespace wow2.Modules.Moderator
             }
 
             // Conserve memory.
-            if (record.Messages.Count > 15)
-                record.Messages.RemoveAt(0);
+            record.Messages.Truncate(15);
 
             if (!config.IsAutoModOn)
                 return;
@@ -90,11 +89,9 @@ namespace wow2.Modules.Moderator
                 context.Message.Author.Id);
             record.CommandExecutedDateTimes.Add(context.Message.Timestamp);
 
-            int length = record.CommandExecutedDateTimes.Count;
-            if (length < numOfCommandsToCheck)
+            if (record.CommandExecutedDateTimes.Count < numOfCommandsToCheck)
                 return false;
-            if (length > numOfCommandsToCheck)
-                record.CommandExecutedDateTimes.RemoveAt(0);
+            record.CommandExecutedDateTimes.Truncate(numOfCommandsToCheck);
 
             // Represents the time difference between a set number of commands (numOfCommandsToCheck).
             TimeSpan difference = context.Message.Timestamp.Subtract(record.CommandExecutedDateTimes[0]);
