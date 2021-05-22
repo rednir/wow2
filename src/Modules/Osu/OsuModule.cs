@@ -40,28 +40,9 @@ namespace wow2.Modules.Osu
             BaseAddress = new Uri("https://osu.ppy.sh/"),
         };
 
-        private static readonly Thread PollingThread = new(async () =>
-        {
-            const int delayMins = 15;
-            while (true)
-            {
-                try
-                {
-                    await Task.Delay(delayMins * 60000);
-                    await CheckForUserMilestonesAsync();
-                    Logger.Log("Successfully checked osu! user milestones", LogSeverity.Debug);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogException(ex, "Failure to check for new osu! user milestones.");
-                    await Task.Delay(delayMins * 60000);
-                }
-            }
-        });
-
         static OsuModule()
         {
-            PollingThread.Start();
+            PollingService.CreateService(CheckForUserMilestonesAsync, 15);
 
             _ = AuthenticateHttpClient();
             RefreshAccessTokenTimer.Elapsed += OnRefreshAccessTokenTimerElapsed;
