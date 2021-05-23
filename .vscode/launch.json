@@ -14,7 +14,7 @@
             "env": {
                 "WOW2_APPDATA_FOLDER": "./DebugAppdata"
             },
-            "args": [],
+            "args": ["--commands"],
             "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",

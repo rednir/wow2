@@ -1,7 +1,7 @@
-# List of commands (65 total)
+# List of commands (66 total)
 
 ## Main
-Stuff to do with the bot.
+Stuff to do with the bot an other random stuff.
 
  - `!wow about`
      - Shows some infomation about the bot.
@@ -102,6 +102,15 @@ Play YouTube or Twitch audio in a voice channel.
  - `!wow vc set-vote-skips-needed [NUMBER]`
      - Sets the number of votes needed to skip a song request to NUMBER.
 
+## Timers
+Create and manage timers and reminders.
+
+ - `!wow timer start [TIME] [optional:MESSAGE]`
+     - Starts a timer that will send a message when elapsed.
+
+ - `!wow timer stop`
+     - Stops the most recently created timer.
+
 ## Text
 Change and manipulate text.
 
@@ -197,9 +206,6 @@ For having a bit of fun.
 
  - `!wow games verbal-memory`
      - Try remember as many words as you can.
-
- - `!wow games number-memory`
-     - Try remember the largest number possible.
 
 ## Developer
 Boring stuff for developers.
