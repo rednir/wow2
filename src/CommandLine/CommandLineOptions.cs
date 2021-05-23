@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -25,7 +26,7 @@ namespace wow2.CommandLine
                 var attribute = GetOptionAttribute(method);
                 if (args[0] == "--" + attribute.LongName || args[0] == "-" + attribute.ShortName)
                 {
-                    Logger.Log($"Found option '{attribute.LongName}'", LogSeverity.Debug);
+                    Logger.Log($"Found option '{attribute.LongName}'", LogSeverity.Verbose);
                     var action = (Action)Delegate.CreateDelegate(typeof(Action), null, method);
                     action.Invoke();
                     return true;
@@ -36,7 +37,7 @@ namespace wow2.CommandLine
             return true;
         }
 
-        [Option("help", 'h')]
+        [Option("help", 'h', Description = "Displays a list of options.")]
         public void Help()
         {
             var stringBuilder = new StringBuilder("\nApplication options:\n");
@@ -53,6 +54,14 @@ namespace wow2.CommandLine
             }
 
             Console.WriteLine(stringBuilder.ToString());
+        }
+
+        [Option("commands", 'c', Description = "Writes a list of commands to a markdown file.")]
+        public void Commands()
+        {
+            string md = Bot.MakeCommandsMarkdown();
+            File.WriteAllText("COMMANDS.md", md);
+            Logger.Log($"Wrote to {Path.GetFullPath("COMMANDS.md")}", LogSeverity.Info);
         }
 
         private static OptionAttribute GetOptionAttribute(MethodInfo method) =>

@@ -68,7 +68,7 @@ namespace wow2
             await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), null);
         }
 
-        public static string MakeCommandsMarkdownFile()
+        public static string MakeCommandsMarkdown()
         {
             var commandsGroupedByModule = CommandService.Commands
                 .GroupBy(c => c.Module);
@@ -93,8 +93,6 @@ namespace wow2
         public static async Task ReadyAsync()
         {
             await DataManager.InitializeAsync();
-            await InstallCommandsAsync();
-
             await Client.SetGameAsync("!wow help");
         }
 

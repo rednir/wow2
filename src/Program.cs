@@ -31,11 +31,13 @@ namespace wow2
         {
             SetIsDebugField();
             await Logger.LogInitialize();
+            await DataManager.LoadSecretsFromFileAsync();
+
+            await Bot.InstallCommandsAsync();
 
             if (CommandLineOptions.ParseArgs(args))
                 return;
 
-            await DataManager.LoadSecretsFromFileAsync();
             await Bot.InitializeAndStartClientAsync();
 
             await Task.Delay(-1);

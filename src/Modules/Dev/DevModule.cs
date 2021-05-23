@@ -87,7 +87,7 @@ namespace wow2.Modules.Dev
         [Summary("Creates a COMMANDS.md file with a list of all commands.")]
         public async Task CommandsListAsync()
         {
-            string md = Bot.MakeCommandsMarkdownFile();
+            string md = Bot.MakeCommandsMarkdown();
             await Context.Channel.SendFileAsync(md.ToMemoryStream(), "COMMANDS.md");
         }
 
