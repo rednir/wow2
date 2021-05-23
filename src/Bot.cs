@@ -26,11 +26,7 @@ namespace wow2
 {
     public static class Bot
     {
-        public static DiscordSocketClient Client { get; set; } = new(new DiscordSocketConfig()
-        {
-            ExclusiveBulkDelete = false,
-            AlwaysDownloadUsers = true,
-        });
+        public static DiscordSocketClient Client { get; set; }
 
         public static RestApplication ApplicationInfo { get; set; }
         public static CommandService CommandService { get; set; }
@@ -40,6 +36,12 @@ namespace wow2
 
         public static async Task InitializeAndStartClientAsync()
         {
+            Client = new DiscordSocketClient(new DiscordSocketConfig()
+            {
+                ExclusiveBulkDelete = false,
+                AlwaysDownloadUsers = true,
+            });
+
             Client.Ready += ReadyAsync;
             Client.Log += DiscordLogRecievedAsync;
             Client.ReactionAdded += ReactionAddedAsync;
@@ -99,6 +101,7 @@ namespace wow2
         public static async Task ReadyAsync()
         {
             await DataManager.InitializeAsync();
+            await Client.SetStatusAsync(UserStatus.Online);
             await Client.SetGameAsync("!wow help");
         }
 

@@ -1,8 +1,5 @@
 using System;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
 using Discord;
 using Discord.Commands;
 using wow2.Data;
@@ -31,13 +28,11 @@ namespace wow2.Modules.Dev
         [Command("save-guild-data")]
         [Alias("save")]
         [Summary("Save guild data from memory to file, optionally stopping the bot.")]
-        public async Task SaveGuildDataAsync(bool alsoExit = false)
+        public async Task SaveGuildDataAsync()
         {
             await DataManager.SaveGuildDataToFileAsync();
             await new SuccessMessage($"`{DataManager.AllGuildData.Count}` guilds has their data saved.")
                 .SendAsync(Context.Channel);
-            if (alsoExit)
-                Environment.Exit(0);
         }
 
         [Command("set-status")]
@@ -98,6 +93,43 @@ namespace wow2.Modules.Dev
         {
             string logs = await Logger.GetLogsForSessionAsync();
             await Context.Channel.SendFileAsync(logs.ToMemoryStream(), "wow2.log");
+        }
+
+        [Command("panic")]
+        [Summary("Uninstalls all user commands and changes the bot's Discord status.")]
+        public async Task PanicAsync()
+        {
+            await Bot.Client.SetGameAsync("under maintenance");
+            await Bot.Client.SetStatusAsync(UserStatus.DoNotDisturb);
+            foreach (ModuleInfo module in Bot.CommandService.Modules)
+            {
+                // TODO: Get attribute from this class.
+                if (module.Name != "Developer")
+                    await Bot.CommandService.RemoveModuleAsync(module);
+            }
+
+            await new SuccessMessage("Done.")
+                .SendAsync(Context.Channel);
+        }
+
+        [Command("unpanic")]
+        [Summary("Installs all commands and reconnects the bot, reloading save data from file.")]
+        public async Task UnpanicAsync()
+        {
+            await Bot.Client.StopAsync();
+            await Bot.InstallCommandsAsync();
+            await Bot.InitializeAndStartClientAsync();
+
+            await new SuccessMessage("Reconnected.")
+                .SendAsync(Context.Channel);
+        }
+
+        [Command("stop-program")]
+        [Summary("Stops the program.")]
+        public Task StopProgramAsync()
+        {
+            Environment.Exit(0);
+            return Task.CompletedTask;
         }
 
         [Command("throw")]

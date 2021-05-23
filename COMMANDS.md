@@ -1,4 +1,4 @@
-# List of commands (66 total)
+# List of commands (69 total)
 
 ## Main
 Stuff to do with the bot an other random stuff.
@@ -213,7 +213,7 @@ Boring stuff for developers.
  - `!wow dev load-guild-data`
      - Loads guild data from file to memory, discarding any unsaved changes.
 
- - `!wow dev save-guild-data [optional:ALSOEXIT]`
+ - `!wow dev save-guild-data`
      - Save guild data from memory to file, optionally stopping the bot.
 
  - `!wow dev set-status [MESSAGE] [STATUS]`
@@ -227,6 +227,15 @@ Boring stuff for developers.
 
  - `!wow dev get-logs`
      - Sends the log file for this session.
+
+ - `!wow dev panic`
+     - Uninstalls all user commands and changes the bot's Discord status.
+
+ - `!wow dev unpanic`
+     - Installs all commands and reconnects the bot, reloading save data from file.
+
+ - `!wow dev stop-program`
+     - Stops the program.
 
  - `!wow dev throw`
      - Throws an unhandled exception.
