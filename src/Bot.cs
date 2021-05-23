@@ -28,6 +28,7 @@ namespace wow2
         public static DiscordSocketClient Client { get; set; } = new(new DiscordSocketConfig()
         {
             ExclusiveBulkDelete = false,
+            AlwaysDownloadUsers = true,
         });
 
         public static RestApplication ApplicationInfo { get; set; }
