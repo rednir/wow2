@@ -138,19 +138,8 @@ namespace wow2.Modules.Moderator
                 throw new CommandReturnException(Context, "Bots don't have records!");
             }
 
-            var embedBuilder = new EmbedBuilder()
-            {
-                Author = new EmbedAuthorBuilder()
-                {
-                    Name = user.ToString(),
-                    IconUrl = user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl(),
-                },
-                Title = "User record overview",
-                Description = $"{record.Warnings.Count} warnings, {record.Mutes.Count} mutes.",
-                Color = Color.LightGrey,
-            };
-
-            await ReplyAsync(embed: embedBuilder.Build());
+            await new UserRecordMessage(user, record)
+                .SendAsync(Context.Channel);
         }
 
         [Command("set-warnings-until-ban")]
