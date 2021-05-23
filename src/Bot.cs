@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -67,11 +68,31 @@ namespace wow2
             await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), null);
         }
 
+        public static string MakeCommandsMarkdown()
+        {
+            var commandsGroupedByModule = CommandService.Commands
+                .GroupBy(c => c.Module);
+
+            var stringBuilder = new StringBuilder($"# List of commands ({CommandService.Commands.Count()} total)\n\n");
+            foreach (var module in commandsGroupedByModule)
+            {
+                stringBuilder.AppendLine(
+                    $"## {module.Key.Name}\n{module.First().Module.Summary}\n");
+
+                foreach (var command in module)
+                {
+                    string summary = command.Summary == null ? null : $"\n     - {command.Summary}";
+                    stringBuilder.AppendLine(
+                        $" - {command.MakeFullCommandString("!wow")}{summary}\n");
+                }
+            }
+
+            return stringBuilder.ToString();
+        }
+
         public static async Task ReadyAsync()
         {
             await DataManager.InitializeAsync();
-            await InstallCommandsAsync();
-
             await Client.SetGameAsync("!wow help");
         }
 

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using wow2.CommandLine;
 using wow2.Data;
 using wow2.Verbose;
 
@@ -23,14 +24,20 @@ namespace wow2
         private static void SetIsDebugField()
             => IsDebug = true;
 
-        private static void Main()
-            => new Program().MainAsync().GetAwaiter().GetResult();
+        private static void Main(string[] args)
+            => new Program().MainAsync(args).GetAwaiter().GetResult();
 
-        private async Task MainAsync()
+        private async Task MainAsync(string[] args)
         {
             SetIsDebugField();
             await Logger.LogInitialize();
             await DataManager.LoadSecretsFromFileAsync();
+
+            await Bot.InstallCommandsAsync();
+
+            if (CommandLineOptions.ParseArgs(args))
+                return;
+
             await Bot.InitializeAndStartClientAsync();
 
             await Task.Delay(-1);

@@ -87,25 +87,8 @@ namespace wow2.Modules.Dev
         [Summary("Creates a COMMANDS.md file with a list of all commands.")]
         public async Task CommandsListAsync()
         {
-            var commandsGroupedByModule = Bot.CommandService.Commands
-                .GroupBy(c => c.Module);
-
-            var stringBuilder = new StringBuilder($"# List of commands ({Bot.CommandService.Commands.Count()} total)\n\n");
-            foreach (var module in commandsGroupedByModule)
-            {
-                stringBuilder.AppendLine(
-                    $"## {module.Key.Name}\n{module.First().Module.Summary}\n");
-
-                foreach (var command in module)
-                {
-                    string summary = command.Summary == null ? null : $"\n     - {command.Summary}";
-                    stringBuilder.AppendLine(
-                        $" - {command.MakeFullCommandString("!wow")}{summary}\n");
-                }
-            }
-
-            await Context.Channel.SendFileAsync(
-                stringBuilder.ToString().ToMemoryStream(), "COMMANDS.md");
+            string md = Bot.MakeCommandsMarkdown();
+            await Context.Channel.SendFileAsync(md.ToMemoryStream(), "COMMANDS.md");
         }
 
         [Command("get-logs")]

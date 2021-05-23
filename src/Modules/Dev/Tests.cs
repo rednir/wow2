@@ -22,7 +22,6 @@ namespace wow2.Modules.Dev
 
         static Tests()
         {
-            var a = typeof(Tests).GetMethods();
             var testMethods = typeof(Tests).GetMethods().Where(
                 m => m.GetCustomAttributes(typeof(TestAttribute), false).Length > 0);
 
