@@ -51,6 +51,15 @@ namespace wow2.Modules.Osu
 
         public OsuModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Osu;
 
+        public static string MakeScoreTitle(Score score) =>
+            $"{RankingEmotes[score.rank]} {score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
+
+        public static string MakeScoreDescription(Score score) =>
+            $"[More details](https://osu.ppy.sh/scores/osu/{score.id}) | {Math.Round(score.pp, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
+
+        public static string MakeReadableModsList(IEnumerable<string> mods) =>
+            (mods.Any() ? "+" : null) + string.Join(' ', mods);
+
         [Command("user")]
         [Alias("player")]
         [Summary("Get some infomation about a user.")]
@@ -66,34 +75,8 @@ namespace wow2.Modules.Osu
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            var fieldBuildersForScores = new List<EmbedFieldBuilder>();
-            foreach (Score score in userData.BestScores)
-            {
-                fieldBuildersForScores.Add(new EmbedFieldBuilder()
-                {
-                    Name = MakeScoreTitle(score),
-                    Value = MakeScoreDescription(score),
-                });
-            }
-
-            var embedBuilder = new EmbedBuilder()
-            {
-                Author = new EmbedAuthorBuilder()
-                {
-                    Name = $"{userData.username} | #{userData.statistics.global_rank}",
-                    IconUrl = userData.avatar_url.StartsWith("http") ? userData.avatar_url : null,
-                    Url = $"https://osu.ppy.sh/users/{userData.id}",
-                },
-                Footer = new EmbedFooterBuilder()
-                {
-                    Text = $"Joined: {DateTime.Parse(userData.join_date)}",
-                },
-                Description = $"**Performance:** {userData.statistics.pp}pp\n**Accuracy:** {Math.Round(userData.statistics.hit_accuracy, 2)}%\n**Time Played:** {userData.statistics.play_time / 3600}h",
-                ImageUrl = userData.cover_url,
-                Fields = fieldBuildersForScores,
-                Color = Color.LightGrey,
-            };
-            await ReplyAsync(embed: embedBuilder.Build());
+            await new UserInfoMessage(userData)
+                .SendAsync(Context.Channel);
         }
 
         [Command("subscribe")]
@@ -272,14 +255,5 @@ namespace wow2.Modules.Osu
             };
             await channel.SendMessageAsync(embed: embedBuilder.Build());
         }
-
-        private static string MakeScoreTitle(Score score)
-            => $"{RankingEmotes[score.rank]} {score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
-
-        private static string MakeScoreDescription(Score score)
-            => $"[More details](https://osu.ppy.sh/scores/osu/{score.id}) | {Math.Round(score.pp, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
-
-        private static string MakeReadableModsList(IEnumerable<string> mods)
-            => $"{(mods.Any() ? "+" : null)}{string.Join(' ', mods)}";
     }
 }
