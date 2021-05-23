@@ -9,7 +9,7 @@ namespace wow2.Modules.Voice
         public ListOfSongsMessage(Queue<UserSongRequest> queue, string title = "List of songs", int page = -1)
             : base(new List<EmbedFieldBuilder>(), string.Empty, title)
         {
-            float? totalDuration = 0;
+            double totalDuration = 0;
             int i = 0;
             foreach (UserSongRequest songRequest in queue)
             {

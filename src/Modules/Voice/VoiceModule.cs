@@ -27,7 +27,7 @@ namespace wow2.Modules.Voice
             => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;
 
         // Doesn't display hours if less than 1 hour.
-        public static string DurationAsString(float? duration) =>
+        public static string DurationAsString(double? duration) =>
             TimeSpan.FromSeconds(duration ?? 0).ToString((duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
 
         [Command("list")]
