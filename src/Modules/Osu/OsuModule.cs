@@ -227,33 +227,13 @@ namespace wow2.Modules.Osu
                         .Equals(updatedUserData.BestScores.FirstOrDefault()) ?? false)
                     {
                         config.SubscribedUsers[i] = updatedUserData;
-                        await NotifyGuildForNewTopPlayAsync(
-                            userData: updatedUserData,
-                            channel: (SocketTextChannel)Bot.Client.GetChannel(config.AnnouncementsChannelId));
+                        await new NewTopPlayMessage(updatedUserData, updatedUserData.BestScores[0])
+                            .SendAsync(Bot.Client.GetChannel(config.AnnouncementsChannelId) as SocketTextChannel);
                     }
 
                     await Task.Delay(2000);
                 }
             }
-        }
-
-        private static async Task NotifyGuildForNewTopPlayAsync(UserData userData, SocketTextChannel channel)
-        {
-            Score score = userData.BestScores[0];
-            var embedBuilder = new EmbedBuilder()
-            {
-                Author = new EmbedAuthorBuilder()
-                {
-                    Name = $"{userData.username} set a new top play!",
-                    IconUrl = userData.avatar_url,
-                    Url = $"https://osu.ppy.sh/users/{userData.id}",
-                },
-                Title = MakeScoreTitle(score),
-                Description = MakeScoreDescription(score),
-                ImageUrl = score.beatmapSet.covers.cover,
-                Color = Color.LightGrey,
-            };
-            await channel.SendMessageAsync(embed: embedBuilder.Build());
         }
     }
 }
