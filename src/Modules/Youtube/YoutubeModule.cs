@@ -214,7 +214,7 @@ namespace wow2.Modules.YouTube
             // value is a list of ID's of the text channels to notify.
             var newVideosDictionary = new Dictionary<string, List<ulong>>();
 
-            foreach (var config in DataManager.AllGuildData.Select(g => g.Value.YouTube))
+            foreach (var config in DataManager.AllGuildData.Select(g => g.Value.YouTube).ToArray())
             {
                 // Guild hasn't set a announcements channel, so ignore it.
                 if (config.AnnouncementsChannelId == 0)

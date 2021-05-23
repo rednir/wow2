@@ -228,7 +228,7 @@ namespace wow2.Modules.Osu
 
         private static async Task CheckForUserMilestonesAsync()
         {
-            foreach (var config in DataManager.AllGuildData.Select(g => g.Value.Osu))
+            foreach (var config in DataManager.AllGuildData.Select(g => g.Value.Osu).ToArray())
             {
                 // Guild hasn't set a announcements channel, so ignore it.
                 if (config.AnnouncementsChannelId == 0)
