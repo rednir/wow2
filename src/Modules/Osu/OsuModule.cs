@@ -45,7 +45,7 @@ namespace wow2.Modules.Osu
             PollingService.CreateService(CheckForUserMilestonesAsync, 15);
 
             _ = AuthenticateHttpClient();
-            RefreshAccessTokenTimer.Elapsed += OnRefreshAccessTokenTimerElapsed;
+            RefreshAccessTokenTimer.Elapsed += (sender, e) => _ = AuthenticateHttpClient();
             RefreshAccessTokenTimer.Start();
         }
 
@@ -179,9 +179,6 @@ namespace wow2.Modules.Osu
             await new SuccessMessage("Done!")
                 .SendAsync(Context.Channel);
         }
-
-        private static void OnRefreshAccessTokenTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
-            => _ = AuthenticateHttpClient();
 
         private static async Task AuthenticateHttpClient()
         {
