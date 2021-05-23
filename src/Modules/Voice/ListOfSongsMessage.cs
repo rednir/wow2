@@ -7,7 +7,7 @@ namespace wow2.Modules.Voice
     public class ListOfSongsMessage : PagedMessage
     {
         public ListOfSongsMessage(Queue<UserSongRequest> queue, string title = "List of songs", int page = -1)
-            : base(new List<EmbedFieldBuilder>(), string.Empty, title, page)
+            : base(new List<EmbedFieldBuilder>(), string.Empty, title)
         {
             float? totalDuration = 0;
             int i = 0;
@@ -22,6 +22,9 @@ namespace wow2.Modules.Voice
                 };
                 AllFieldBuilders.Add(fieldBuilderForSongRequest);
             }
+
+            Page = page;
+            SetEmbedFields();
         }
     }
 }

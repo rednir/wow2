@@ -108,7 +108,7 @@ namespace wow2.Verbose.Messages
             Logger.Log($"PagedMessage {SentMessage.Id} was disposed.", LogSeverity.Debug);
         }
 
-        private void SetEmbedFields()
+        protected void SetEmbedFields()
         {
             const int maxFieldsPerPage = 8;
 
