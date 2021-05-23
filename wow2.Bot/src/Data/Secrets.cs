@@ -1,4 +1,4 @@
-namespace wow2.Data
+namespace wow2.Bot.Data
 {
     /// <summary>The contents of the secrets.json file.</summary>
     public class Secrets

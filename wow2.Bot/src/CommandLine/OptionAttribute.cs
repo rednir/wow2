@@ -1,6 +1,6 @@
 using System;
 
-namespace wow2
+namespace wow2.Bot
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class OptionAttribute : Attribute

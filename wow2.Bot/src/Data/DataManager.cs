@@ -6,9 +6,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Discord;
-using wow2.Verbose;
+using wow2.Bot.Verbose;
 
-namespace wow2.Data
+namespace wow2.Bot.Data
 {
     public static class DataManager
     {

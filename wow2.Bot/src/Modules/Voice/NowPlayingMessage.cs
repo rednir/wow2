@@ -1,8 +1,8 @@
 using System.Linq;
 using Discord;
-using wow2.Verbose.Messages;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2.Modules.Voice
+namespace wow2.Bot.Modules.Voice
 {
     public class NowPlayingMessage : Message
     {

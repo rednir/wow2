@@ -1,6 +1,6 @@
 using Discord.Commands;
 
-namespace wow2.Modules.Games
+namespace wow2.Bot.Modules.Games
 {
     public abstract class GameConfig
     {

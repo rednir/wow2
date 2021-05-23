@@ -9,11 +9,11 @@ using Discord;
 using Discord.Audio;
 using Discord.Commands;
 using Discord.Net;
-using wow2.Data;
-using wow2.Verbose;
-using wow2.Verbose.Messages;
+using wow2.Bot.Data;
+using wow2.Bot.Verbose;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2.Modules.Voice
+namespace wow2.Bot.Modules.Voice
 {
     [Name("Voice")]
     [Group("vc")]

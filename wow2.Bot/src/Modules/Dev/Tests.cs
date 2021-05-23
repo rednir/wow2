@@ -5,13 +5,13 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using wow2.Data;
-using wow2.Modules.Keywords;
-using wow2.Modules.Main;
-using wow2.Modules.Voice;
-using wow2.Verbose.Messages;
+using wow2.Bot.Data;
+using wow2.Bot.Modules.Keywords;
+using wow2.Bot.Modules.Main;
+using wow2.Bot.Modules.Voice;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2.Modules.Dev
+namespace wow2.Bot.Modules.Dev
 {
     public static class Tests
     {

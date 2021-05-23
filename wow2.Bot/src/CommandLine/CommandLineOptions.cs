@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Discord;
-using wow2.Verbose;
+using wow2.Bot.Verbose;
 
-namespace wow2.CommandLine
+namespace wow2.Bot.CommandLine
 {
     public class CommandLineOptions
     {

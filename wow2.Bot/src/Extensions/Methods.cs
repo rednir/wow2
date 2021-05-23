@@ -7,9 +7,9 @@ using System.Text.RegularExpressions;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using wow2.Data;
+using wow2.Bot.Data;
 
-namespace wow2.Extensions
+namespace wow2.Bot.Extensions
 {
     public static class Methods
     {

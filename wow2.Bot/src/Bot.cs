@@ -11,18 +11,18 @@ using Discord.Commands;
 using Discord.Net;
 using Discord.Rest;
 using Discord.WebSocket;
-using wow2.Data;
-using wow2.Extensions;
-using wow2.Modules;
-using wow2.Modules.Games.Counting;
-using wow2.Modules.Games.VerbalMemory;
-using wow2.Modules.Keywords;
-using wow2.Modules.Main;
-using wow2.Modules.Moderator;
-using wow2.Verbose;
-using wow2.Verbose.Messages;
+using wow2.Bot.Data;
+using wow2.Bot.Extensions;
+using wow2.Bot.Modules;
+using wow2.Bot.Modules.Games.Counting;
+using wow2.Bot.Modules.Games.VerbalMemory;
+using wow2.Bot.Modules.Keywords;
+using wow2.Bot.Modules.Main;
+using wow2.Bot.Modules.Moderator;
+using wow2.Bot.Verbose;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2
+namespace wow2.Bot
 {
     public static class Bot
     {

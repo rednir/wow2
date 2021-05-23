@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using wow2.Extensions;
+using wow2.Bot.Extensions;
 
-namespace wow2.Verbose.Messages
+namespace wow2.Bot.Verbose.Messages
 {
     /// <summary>Class for sending and building embeds with pages of fields.</summary>
     public class PagedMessage : Message, IDisposable

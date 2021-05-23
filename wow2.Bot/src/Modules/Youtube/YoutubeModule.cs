@@ -10,12 +10,12 @@ using Google;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
-using wow2.Data;
-using wow2.Verbose;
-using wow2.Verbose.Messages;
+using wow2.Bot.Data;
+using wow2.Bot.Verbose;
+using wow2.Bot.Verbose.Messages;
 using SearchResult = Google.Apis.YouTube.v3.Data.SearchResult;
 
-namespace wow2.Modules.YouTube
+namespace wow2.Bot.Modules.YouTube
 {
     [Name("YouTube")]
     [Group("yt")]

@@ -1,9 +1,9 @@
 using System.IO;
 using System.Threading.Tasks;
 using Discord;
-using wow2.Extensions;
+using wow2.Bot.Extensions;
 
-namespace wow2.Verbose.Messages
+namespace wow2.Bot.Verbose.Messages
 {
     /// <summary>Basic message, nothing special.</summary>
     public class GenericMessage : Message

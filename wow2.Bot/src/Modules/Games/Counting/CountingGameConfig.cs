@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Discord.WebSocket;
 
-namespace wow2.Modules.Games.Counting
+namespace wow2.Bot.Modules.Games.Counting
 {
     public class CountingGameConfig : GameConfig
     {

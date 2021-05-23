@@ -1,6 +1,6 @@
 using System;
 
-namespace wow2.Modules.Dev
+namespace wow2.Bot.Modules.Dev
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class TestAttribute : Attribute

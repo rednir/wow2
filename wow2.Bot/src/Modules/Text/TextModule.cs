@@ -9,10 +9,10 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
-using wow2.Extensions;
-using wow2.Verbose.Messages;
+using wow2.Bot.Extensions;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2.Modules.Text
+namespace wow2.Bot.Modules.Text
 {
     [Name("Text")]
     [Group("text")]

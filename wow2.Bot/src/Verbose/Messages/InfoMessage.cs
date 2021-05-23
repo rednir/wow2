@@ -1,6 +1,6 @@
 using Discord;
 
-namespace wow2.Verbose.Messages
+namespace wow2.Bot.Verbose.Messages
 {
     public class InfoMessage : Message
     {

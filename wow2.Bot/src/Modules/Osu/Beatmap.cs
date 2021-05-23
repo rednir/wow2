@@ -1,4 +1,4 @@
-namespace wow2.Modules.Osu
+namespace wow2.Bot.Modules.Osu
 {
     public class Beatmap
     {

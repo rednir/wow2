@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using Google.Apis.YouTube.v3.Data;
 
-namespace wow2.Modules.Voice
+namespace wow2.Bot.Modules.Voice
 {
     public class VideoMetadata
     {

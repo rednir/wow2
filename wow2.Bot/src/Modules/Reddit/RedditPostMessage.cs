@@ -1,9 +1,9 @@
 using Discord;
 using Reddit.Controllers;
-using wow2.Extensions;
-using wow2.Verbose.Messages;
+using wow2.Bot.Extensions;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2.Modules.Reddit
+namespace wow2.Bot.Modules.Reddit
 {
     public class RedditPostMessage : Message
     {

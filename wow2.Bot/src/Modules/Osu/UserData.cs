@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace wow2.Modules.Osu
+namespace wow2.Bot.Modules.Osu
 {
     /// <summary>What the user HTTP request will be deserialized into.</summary>
     public class UserData

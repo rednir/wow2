@@ -1,13 +1,13 @@
-using wow2.Modules.Games;
-using wow2.Modules.Keywords;
-using wow2.Modules.Main;
-using wow2.Modules.Moderator;
-using wow2.Modules.Osu;
-using wow2.Modules.Timers;
-using wow2.Modules.Voice;
-using wow2.Modules.YouTube;
+using wow2.Bot.Modules.Games;
+using wow2.Bot.Modules.Keywords;
+using wow2.Bot.Modules.Main;
+using wow2.Bot.Modules.Moderator;
+using wow2.Bot.Modules.Osu;
+using wow2.Bot.Modules.Timers;
+using wow2.Bot.Modules.Voice;
+using wow2.Bot.Modules.YouTube;
 
-namespace wow2.Data
+namespace wow2.Bot.Data
 {
     /// <summary>Contains all the data stored for a guild.</summary>
     public class GuildData

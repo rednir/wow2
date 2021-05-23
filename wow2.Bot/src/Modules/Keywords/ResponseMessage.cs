@@ -3,11 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using wow2.Data;
-using wow2.Extensions;
-using wow2.Verbose.Messages;
+using wow2.Bot.Data;
+using wow2.Bot.Extensions;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2.Modules.Keywords
+namespace wow2.Bot.Modules.Keywords
 {
     public class ResponseMessage : GenericMessage
     {

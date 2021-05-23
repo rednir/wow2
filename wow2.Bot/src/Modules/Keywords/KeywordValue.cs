@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace wow2.Modules.Keywords
+namespace wow2.Bot.Modules.Keywords
 {
     public class KeywordValue
     {

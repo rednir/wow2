@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace wow2.Modules.YouTube
+namespace wow2.Bot.Modules.YouTube
 {
     public class YouTubeModuleConfig
     {

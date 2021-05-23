@@ -3,11 +3,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using wow2.CommandLine;
-using wow2.Data;
-using wow2.Verbose;
+using wow2.Bot.CommandLine;
+using wow2.Bot.Data;
+using wow2.Bot.Verbose;
 
-namespace wow2
+namespace wow2.Bot
 {
     public class Program
     {

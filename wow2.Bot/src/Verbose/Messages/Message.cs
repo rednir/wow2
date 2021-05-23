@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Discord;
 
-namespace wow2.Verbose.Messages
+namespace wow2.Bot.Verbose.Messages
 {
     /// <summary>Base class for sending and building embed messages.</summary>
     public abstract class Message

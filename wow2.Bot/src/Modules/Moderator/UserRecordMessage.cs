@@ -1,8 +1,8 @@
 using Discord;
 using Discord.WebSocket;
-using wow2.Verbose.Messages;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2.Modules.Moderator
+namespace wow2.Bot.Modules.Moderator
 {
     public class UserRecordMessage : Message
     {

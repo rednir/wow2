@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace wow2.Modules.Moderator
+namespace wow2.Bot.Modules.Moderator
 {
     public class ModeratorModuleConfig
     {

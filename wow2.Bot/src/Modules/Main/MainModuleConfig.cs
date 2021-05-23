@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace wow2.Modules.Main
+namespace wow2.Bot.Modules.Main
 {
     public class MainModuleConfig
     {

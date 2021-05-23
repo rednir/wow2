@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using Discord.Commands;
-using wow2.Modules.Games.Counting;
-using wow2.Modules.Games.VerbalMemory;
+using wow2.Bot.Modules.Games.Counting;
+using wow2.Bot.Modules.Games.VerbalMemory;
 
-namespace wow2.Modules.Games
+namespace wow2.Bot.Modules.Games
 {
     [Name("Games")]
     [Group("games")]

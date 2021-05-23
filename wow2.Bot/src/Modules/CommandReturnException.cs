@@ -1,10 +1,10 @@
 using System;
 using Discord;
 using Discord.Commands;
-using wow2.Verbose;
-using wow2.Verbose.Messages;
+using wow2.Bot.Verbose;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2.Modules
+namespace wow2.Bot.Modules
 {
     /// <summary>The exception that is thrown when a command returns with a warning message. Usually isn't fatal, only used to quickly return out of a command with a reply.</summary>
     public class CommandReturnException : Exception

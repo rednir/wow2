@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace wow2.Modules.Timers
+namespace wow2.Bot.Modules.Timers
 {
     public class TimersModuleConfig
     {

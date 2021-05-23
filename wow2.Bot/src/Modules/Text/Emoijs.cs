@@ -1,4 +1,4 @@
-namespace wow2.Modules.Text
+namespace wow2.Bot.Modules.Text
 {
     public static class Emoijs
     {

@@ -5,9 +5,9 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Discord;
-using wow2.Data;
+using wow2.Bot.Data;
 
-namespace wow2.Verbose
+namespace wow2.Bot.Verbose
 {
     /// <summary>Contains methods used for writing to a log file and the standard output stream.</summary>
     public static class Logger

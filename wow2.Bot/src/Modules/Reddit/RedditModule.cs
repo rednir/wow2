@@ -6,9 +6,9 @@ using Discord.Commands;
 using Reddit;
 using Reddit.Controllers;
 using Reddit.Exceptions;
-using wow2.Data;
+using wow2.Bot.Data;
 
-namespace wow2.Modules.Reddit
+namespace wow2.Bot.Modules.Reddit
 {
     [Name("Reddit")]
     [Group("reddit")]

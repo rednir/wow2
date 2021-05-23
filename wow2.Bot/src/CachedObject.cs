@@ -1,6 +1,6 @@
 using System;
 
-namespace wow2
+namespace wow2.Bot
 {
     public class CachedObject<T>
     {

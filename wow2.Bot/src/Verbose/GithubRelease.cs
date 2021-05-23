@@ -1,4 +1,4 @@
-namespace wow2.Verbose
+namespace wow2.Bot.Verbose
 {
     /// <summary>What the Github GET request content for checking for a new release will be deserialized into.</summary>
     public class GithubRelease

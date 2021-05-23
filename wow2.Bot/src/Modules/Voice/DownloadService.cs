@@ -7,9 +7,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using Google.Apis.YouTube.v3.Data;
-using wow2.Modules.YouTube;
+using wow2.Bot.Modules.YouTube;
 
-namespace wow2.Modules.Voice
+namespace wow2.Bot.Modules.Voice
 {
     public static class DownloadService
     {

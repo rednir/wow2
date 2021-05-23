@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Discord.WebSocket;
 
-namespace wow2.Modules.Moderator
+namespace wow2.Bot.Modules.Moderator
 {
     public static class AutoModMethods
     {

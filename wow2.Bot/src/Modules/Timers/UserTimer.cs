@@ -1,9 +1,9 @@
 using System.Timers;
 using Discord.Commands;
-using wow2.Data;
-using wow2.Verbose.Messages;
+using wow2.Bot.Data;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2.Modules.Timers
+namespace wow2.Bot.Modules.Timers
 {
     public class UserTimer : Timer
     {

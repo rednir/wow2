@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Discord;
-using wow2.Extensions;
-using wow2.Verbose;
+using wow2.Bot.Extensions;
+using wow2.Bot.Verbose;
 
-namespace wow2
+namespace wow2.Bot
 {
     /// <summary>Represents a collection of recently accessed objects.</summary>
     public class Cache<T>

@@ -1,6 +1,6 @@
 using SixLabors.Fonts;
 
-namespace wow2.Modules.Text
+namespace wow2.Bot.Modules.Text
 {
     // Rethink this
     public static class Fonts

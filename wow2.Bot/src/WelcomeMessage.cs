@@ -2,11 +2,11 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Net;
 using Discord.WebSocket;
-using wow2.Extensions;
-using wow2.Verbose;
-using wow2.Verbose.Messages;
+using wow2.Bot.Extensions;
+using wow2.Bot.Verbose;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2
+namespace wow2.Bot
 {
     public class WelcomeMessage : Message
     {

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Discord;
-using wow2.Verbose.Messages;
+using wow2.Bot.Verbose.Messages;
 
-namespace wow2.Modules.Osu
+namespace wow2.Bot.Modules.Osu
 {
     public class UserInfoMessage : Message
     {

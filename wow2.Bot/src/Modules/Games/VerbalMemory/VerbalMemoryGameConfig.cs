@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Discord;
 
-namespace wow2.Modules.Games.VerbalMemory
+namespace wow2.Bot.Modules.Games.VerbalMemory
 {
     public class VerbalMemoryGameConfig : GameConfig
     {

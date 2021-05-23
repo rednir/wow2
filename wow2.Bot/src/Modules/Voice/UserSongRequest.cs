@@ -2,7 +2,7 @@ using System;
 using System.Text.Json.Serialization;
 using Discord.WebSocket;
 
-namespace wow2.Modules.Voice
+namespace wow2.Bot.Modules.Voice
 {
     public class UserSongRequest
     {

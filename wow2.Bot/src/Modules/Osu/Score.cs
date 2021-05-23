@@ -1,4 +1,4 @@
-namespace wow2.Modules.Osu
+namespace wow2.Bot.Modules.Osu
 {
     /// <summary>What the score HTTP request will be deserialized into.</summary>
     public class Score
