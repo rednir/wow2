@@ -16,6 +16,8 @@ namespace wow2
             ShortName = shortName;
         }
 
+        public string Description { get; set; } = "No description provided.";
+
         public string LongName { get; }
         public char ShortName { get; }
     }

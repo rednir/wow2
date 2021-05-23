@@ -43,7 +43,13 @@ namespace wow2.CommandLine
             foreach (MethodInfo method in OptionMethods)
             {
                 var attribute = GetOptionAttribute(method);
-                stringBuilder.AppendLine($"  --{attribute.LongName}");
+                stringBuilder
+                    .Append("  ")
+                    .Append(attribute.ShortName == default ? string.Empty : $"-{attribute.ShortName}, ")
+                    .Append("--")
+                    .Append(attribute.LongName)
+                    .Append("\t\t\t")
+                    .AppendLine(attribute.Description);
             }
 
             Console.WriteLine(stringBuilder.ToString());
