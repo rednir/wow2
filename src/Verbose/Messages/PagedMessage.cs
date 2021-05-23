@@ -35,7 +35,7 @@ namespace wow2.Verbose.Messages
         /// <summary>If the message has pages and the emote is recognised, modifies the page of the message.</summary>
         public static async Task<bool> ActOnReactionAsync(SocketReaction reaction)
         {
-            PagedMessage message = ListOfPagedMessages.Find(m => m.SentMessage?.Id == reaction.MessageId);
+            PagedMessage message = FromMessageId(reaction.MessageId);
             if (message == null)
                 return false;
 
@@ -61,10 +61,15 @@ namespace wow2.Verbose.Messages
             return true;
         }
 
+        /// <summary>Finds the <see cref="PagedMessage"/> with the matching message ID.</summary>
+        /// <returns>The <see cref="PagedMessage"/> respresenting the message ID, or null if a match was not found.</returns>
+        public static PagedMessage FromMessageId(ulong id) =>
+            ListOfPagedMessages.Find(m => m.SentMessage.Id == id);
+
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
-            // TODO: Performance might still be slow. Maybe have a list for every guild?
-            ListOfPagedMessages.Truncate(100);
+            // TODO: Maybe have a list for every guild?
+            ListOfPagedMessages.Truncate(128);
 
             IUserMessage message = await base.SendAsync(channel);
 
