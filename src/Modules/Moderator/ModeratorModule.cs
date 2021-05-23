@@ -95,7 +95,6 @@ namespace wow2.Modules.Moderator
 
             // Represents the time difference between a set number of commands (numOfCommandsToCheck).
             TimeSpan difference = context.Message.Timestamp.Subtract(record.CommandExecutedDateTimes[0]);
-            Console.WriteLine(difference);
             return difference < TimeSpan.FromSeconds(30);
         }
 
