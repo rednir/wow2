@@ -73,6 +73,12 @@ namespace wow2
             var commandsGroupedByModule = CommandService.Commands
                 .GroupBy(c => c.Module);
 
+            // TODO: This is hacky, will break if the module name "Main" changes.
+            var mainGroup = commandsGroupedByModule.First(g => g.Key.Name == "Main");
+            commandsGroupedByModule = commandsGroupedByModule
+                .Where(g => g.Key.Name != "Main")
+                .Prepend(mainGroup);
+
             var stringBuilder = new StringBuilder($"# List of commands ({CommandService.Commands.Count()} total)\n\n");
             foreach (var module in commandsGroupedByModule)
             {
