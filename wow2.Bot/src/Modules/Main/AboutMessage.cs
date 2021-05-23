@@ -7,10 +7,10 @@ namespace wow2.Bot.Modules.Main
     {
         public AboutMessage(string commandPrefix = "!wow")
         {
-            var appInfo = Bot.ApplicationInfo;
+            var appInfo = BotService.ApplicationInfo;
             EmbedBuilder = new EmbedBuilder()
             {
-                Title = $"{appInfo.Name}  •  in {Bot.Client.Guilds.Count} servers",
+                Title = $"{appInfo.Name}  •  in {BotService.Client.Guilds.Count} servers",
                 Description = (string.IsNullOrWhiteSpace(appInfo.Description) ? null : appInfo.Description) + "\n[Link to github](https://github.com/rednir/wow2)",
                 Color = Color.LightGrey,
                 Author = new EmbedAuthorBuilder()

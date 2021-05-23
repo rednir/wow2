@@ -59,7 +59,7 @@ namespace wow2.Bot.CommandLine
         [Option("commands", 'c', Description = "Writes a list of commands to a markdown file.")]
         public void Commands()
         {
-            string md = Bot.MakeCommandsMarkdown();
+            string md = BotService.MakeCommandsMarkdown();
             File.WriteAllText("COMMANDS.md", md);
             Logger.Log($"Wrote to {Path.GetFullPath("COMMANDS.md")}", LogSeverity.Info);
         }

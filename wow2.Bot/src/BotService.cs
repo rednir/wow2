@@ -24,12 +24,14 @@ using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot
 {
-    public static class Bot
+    public static class BotService
     {
-        public static DiscordSocketClient Client { get; set; }
+        public static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
 
-        public static RestApplication ApplicationInfo { get; set; }
+        public static DiscordSocketClient Client { get; set; }
         public static CommandService CommandService { get; set; }
+        public static RestApplication ApplicationInfo { get; set; }
+        public static LogSeverity LogSeverity { get; set; } = LogSeverity.Verbose;
 
         public static async Task<SocketGuildUser> GetClientGuildUserAsync(ISocketMessageChannel channel)
             => (SocketGuildUser)await channel.GetUserAsync(Client.CurrentUser.Id);
@@ -156,7 +158,7 @@ namespace wow2.Bot
 
                 if ((logMessage.Exception is GatewayReconnectException
                     || logMessage.Exception.InnerException is WebSocketClosedException or WebSocketException)
-                    && !Program.IsDebug)
+                    && LogSeverity != LogSeverity.Debug)
                 {
                     // Client reconnects after these exceptions, so no need to dm bot owner.
                     Logger.LogException(logMessage.Exception, notifyOwner: false);

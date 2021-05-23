@@ -12,36 +12,32 @@ namespace wow2.Bot.Verbose
     /// <summary>Contains methods used for writing to a log file and the standard output stream.</summary>
     public static class Logger
     {
-        public static readonly string LogFilePath = $"{DataManager.LogsDirPath}/{Program.TimeStarted:yyyy-MM-dd_HH-mm-ss}.log";
+        public static event EventHandler<LogEventArgs> LogRequested;
 
-        private static readonly HttpClient GithubHttpClient = new()
+        private static HttpClient GithubHttpClient { get; } = new()
         {
             BaseAddress = new Uri("https://api.github.com/"),
         };
 
-        public static async Task LogInitialize()
-        {
-            Output($"wow2 {Program.Version}\nhttps://github.com/rednir/wow2\n-----------------\nRuntime version: {Environment.Version}\n{RuntimeInformation.OSDescription}\n-----------------\n");
-
-            // TODO: parse the tag name in a smarter way.
-            GithubRelease latestRelease = await GetLatestReleaseAsync();
-            if (latestRelease.tag_name != Program.Version && Program.Version.StartsWith("v"))
-            {
-                Log($"You are not running the latest release! Click here to download: {latestRelease.html_url}", LogSeverity.Warning);
-            }
-        }
-
         public static void Log(object message, LogSeverity severity = LogSeverity.Debug)
         {
-            if (severity == LogSeverity.Debug && !Program.IsDebug)
+            if (severity == LogSeverity.Debug
+                && BotService.LogSeverity != LogSeverity.Debug)
+            {
                 return;
+            }
+
             Output($"{DateTime.Now} [{severity}] {message}");
         }
 
         public static void Log(LogMessage logMessage)
         {
-            if (logMessage.Severity == LogSeverity.Debug && !Program.IsDebug)
+            if (logMessage.Severity == LogSeverity.Debug
+                && BotService.LogSeverity != LogSeverity.Debug)
+            {
                 return;
+            }
+
             Output($"{DateTime.Now} [{logMessage.Severity}] {logMessage.Source}: {logMessage.Message}");
         }
 
@@ -49,25 +45,17 @@ namespace wow2.Bot.Verbose
         {
             Output($"{DateTime.Now} [Exception] {message}\n------ START OF EXCEPTION ------\n\n{exception}\n\n------ END OF EXCEPTION ------");
             if (notifyOwner)
-                _ = Bot.ApplicationInfo.Owner.SendMessageAsync($"{message}\n```\n{exception}\n```");
+                _ = BotService.ApplicationInfo.Owner.SendMessageAsync($"{message}\n```\n{exception}\n```");
         }
 
-        public static async Task<string> GetLogsForSessionAsync()
-            => await File.ReadAllTextAsync(LogFilePath);
+        public static async Task<string> GetLogsForSessionAsync() =>
+            throw new NotImplementedException();
+            //await File.ReadAllTextAsync(LogFilePath);
 
         private static void Output(string message)
         {
-            try
-            {
-                File.AppendAllText(LogFilePath, message + "\n");
-            }
-            catch
-            {
-            }
-            finally
-            {
-                Console.WriteLine(message);
-            }
+            // Need to make this class instance in BotService.
+            LogRequested(null, new LogEventArgs(message));
         }
 
         private static async Task<GithubRelease> GetLatestReleaseAsync()

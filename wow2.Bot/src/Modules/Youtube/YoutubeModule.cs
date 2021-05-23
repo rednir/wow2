@@ -247,7 +247,7 @@ namespace wow2.Bot.Modules.YouTube
                     {
                         await NotifyGuildForNewVideoAsync(
                             video: await GetVideoAsync(pair.Key),
-                            channel: (SocketTextChannel)Bot.Client.GetChannel(channelId));
+                            channel: (SocketTextChannel)BotService.Client.GetChannel(channelId));
                     }
                     catch (Exception ex)
                     {

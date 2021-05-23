@@ -1,8 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\wow2.Bot\wow2.Bot.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <CodeAnalysisRuleSet>../wow2.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
 </Project>

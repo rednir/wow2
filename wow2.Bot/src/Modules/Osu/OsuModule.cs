@@ -228,7 +228,7 @@ namespace wow2.Bot.Modules.Osu
                     {
                         config.SubscribedUsers[i] = updatedUserData;
                         await new NewTopPlayMessage(updatedUserData, updatedUserData.BestScores[0])
-                            .SendAsync(Bot.Client.GetChannel(config.AnnouncementsChannelId) as SocketTextChannel);
+                            .SendAsync(BotService.Client.GetChannel(config.AnnouncementsChannelId) as SocketTextChannel);
                     }
 
                     await Task.Delay(2000);

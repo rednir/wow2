@@ -12,7 +12,6 @@ namespace wow2.Bot.Data
 {
     public static class DataManager
     {
-        public static readonly string AppDataDirPath = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
         private static readonly JsonSerializerOptions SerializerOptions = new()
         {
             WriteIndented = true,
@@ -20,10 +19,11 @@ namespace wow2.Bot.Data
         };
 
         public static Dictionary<ulong, GuildData> AllGuildData { get; set; } = new Dictionary<ulong, GuildData>();
+
+        public static string AppDataDirPath { get; set; }
         public static Secrets Secrets { get; set; } = new Secrets();
 
         public static string GuildDataDirPath => $"{AppDataDirPath}/GuildData";
-        public static string LogsDirPath => $"{AppDataDirPath}/Logs";
 
         /// <summary>Creates required directories if necessary and loads all guild data.</summary>
         public static async Task InitializeAsync()
@@ -31,9 +31,7 @@ namespace wow2.Bot.Data
             try
             {
                 Directory.CreateDirectory(AppDataDirPath);
-
                 Directory.CreateDirectory(GuildDataDirPath);
-                Directory.CreateDirectory(LogsDirPath);
                 await LoadSecretsFromFileAsync();
             }
             catch (Exception ex)
@@ -73,7 +71,7 @@ namespace wow2.Bot.Data
                 try
                 {
                     ulong guildId = Convert.ToUInt64(Path.GetFileNameWithoutExtension(fileInfo.FullName));
-                    if (!Bot.Client.Guilds.Select(g => g.Id).Contains(guildId))
+                    if (!BotService.Client.Guilds.Select(g => g.Id).Contains(guildId))
                     {
                         Logger.Log($"Not loading guild data for {guildId}, as the bot is not connected to it.", LogSeverity.Info);
                         continue;
@@ -167,7 +165,7 @@ namespace wow2.Bot.Data
             {
                 try
                 {
-                    guildData.NameOfGuild = Bot.Client.GetGuild(guildId).Name;
+                    guildData.NameOfGuild = BotService.Client.GetGuild(guildId).Name;
                 }
                 catch
                 {

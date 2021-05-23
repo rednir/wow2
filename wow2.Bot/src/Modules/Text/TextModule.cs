@@ -140,7 +140,7 @@ namespace wow2.Bot.Modules.Text
         {
             const string parentFolder = "quotetemplates.";
             var result = new Dictionary<string, Stream>();
-            foreach (var resourceName in Program.Assembly.GetManifestResourceNames())
+            foreach (var resourceName in BotService.Assembly.GetManifestResourceNames())
             {
                 if (resourceName.Contains(parentFolder))
                 {
@@ -148,7 +148,7 @@ namespace wow2.Bot.Modules.Text
                     int startIndex = resourceName.LastIndexOf(parentFolder) + parentFolder.Length;
                     string readableName = Path
                         .GetFileNameWithoutExtension(resourceName)[startIndex..];
-                    result.Add(readableName, Program.Assembly.GetManifestResourceStream(resourceName));
+                    result.Add(readableName, BotService.Assembly.GetManifestResourceStream(resourceName));
                 }
             }
 
