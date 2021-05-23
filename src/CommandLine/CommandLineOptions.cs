@@ -15,7 +15,7 @@ namespace wow2.CommandLine
             .Where(m => m.GetCustomAttributes(typeof(OptionAttribute), false).Length > 0);
 
         /// <summary>Executes a method with a matching attribute.</summary>
-        /// <returns>True if the user specified an option.</summary>
+        /// <returns>True if the program should halt.</summary>
         public static bool ParseArgs(string[] args)
         {
             if (args.Length == 0)
@@ -29,7 +29,7 @@ namespace wow2.CommandLine
                     Logger.Log($"Found option '{attribute.LongName}'", LogSeverity.Verbose);
                     var action = (Action)Delegate.CreateDelegate(typeof(Action), null, method);
                     action.Invoke();
-                    return true;
+                    return false;
                 }
             }
 
