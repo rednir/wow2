@@ -228,10 +228,8 @@ namespace wow2.Modules.Osu
 
         private static async Task CheckForUserMilestonesAsync()
         {
-            foreach (var pair in DataManager.AllGuildData)
+            foreach (var config in DataManager.AllGuildData.Select(g => g.Value.Osu))
             {
-                var config = pair.Value.Osu;
-
                 // Guild hasn't set a announcements channel, so ignore it.
                 if (config.AnnouncementsChannelId == 0)
                     continue;
@@ -249,7 +247,6 @@ namespace wow2.Modules.Osu
                         await NotifyGuildForNewTopPlayAsync(
                             userData: updatedUserData,
                             channel: (SocketTextChannel)Bot.Client.GetChannel(config.AnnouncementsChannelId));
-                        await DataManager.SaveGuildDataToFileAsync(pair.Key);
                     }
 
                     await Task.Delay(2000);

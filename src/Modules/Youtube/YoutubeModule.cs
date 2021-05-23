@@ -214,13 +214,13 @@ namespace wow2.Modules.YouTube
             // value is a list of ID's of the text channels to notify.
             var newVideosDictionary = new Dictionary<string, List<ulong>>();
 
-            foreach (GuildData guildData in DataManager.AllGuildData.Values)
+            foreach (var config in DataManager.AllGuildData.Select(g => g.Value.YouTube))
             {
                 // Guild hasn't set a announcements channel, so ignore it.
-                if (guildData.YouTube.AnnouncementsChannelId == 0)
+                if (config.AnnouncementsChannelId == 0)
                     continue;
 
-                var subscribedChannelIds = guildData.YouTube.SubscribedChannels;
+                var subscribedChannelIds = config.SubscribedChannels;
                 foreach (string id in subscribedChannelIds.Select(c => c.Id))
                 {
                     // TODO: proper error handling.
@@ -234,7 +234,7 @@ namespace wow2.Modules.YouTube
                     {
                         // Add to dictionary if video is new.
                         newVideosDictionary.TryAdd(latestUploadVideoId, new List<ulong>());
-                        newVideosDictionary[latestUploadVideoId].Add(guildData.YouTube.AnnouncementsChannelId);
+                        newVideosDictionary[latestUploadVideoId].Add(config.AnnouncementsChannelId);
                     }
                 }
             }
