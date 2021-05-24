@@ -30,13 +30,13 @@ namespace wow2.Bot.Modules.YouTube
         {
             Service = new(new BaseClientService.Initializer()
             {
-                ApiKey = DataManager.Secrets.GoogleApiKey,
+                ApiKey = BotService.Data.Secrets.GoogleApiKey,
                 ApplicationName = "wow2-youtube",
             });
             PollingService.CreateService(CheckForNewVideosAsync, 12);
         }
 
-        public YouTubeModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].YouTube;
+        public YouTubeModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].YouTube;
 
         public static async Task<Channel> GetChannelAsync(string channelIdOrUsername)
         {
@@ -157,7 +157,7 @@ namespace wow2.Bot.Modules.YouTube
                         .SendAsync(Context.Channel);
             }
 
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("list-subs")]
@@ -192,7 +192,7 @@ namespace wow2.Bot.Modules.YouTube
         public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
         {
             Config.AnnouncementsChannelId = channel.Id;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
 
             await new SuccessMessage($"You'll get YouTube announcements in {channel.Mention}")
                 .SendAsync(Context.Channel);
@@ -214,7 +214,7 @@ namespace wow2.Bot.Modules.YouTube
             // value is a list of ID's of the text channels to notify.
             var newVideosDictionary = new Dictionary<string, List<ulong>>();
 
-            foreach (var config in DataManager.AllGuildData.Select(g => g.Value.YouTube).ToArray())
+            foreach (var config in BotService.Data.AllGuildData.Select(g => g.Value.YouTube).ToArray())
             {
                 // Guild hasn't set a announcements channel, so ignore it.
                 if (config.AnnouncementsChannelId == 0)

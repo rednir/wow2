@@ -49,7 +49,11 @@ namespace wow2.Bot.Modules.Osu
             RefreshAccessTokenTimer.Start();
         }
 
-        public OsuModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Osu;
+        public OsuModule(BotService botService) : base(botService)
+        {
+        }
+
+        public OsuModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Osu;
 
         public static string MakeScoreTitle(Score score) =>
             $"{RankingEmotes[score.rank]} {score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
@@ -112,7 +116,7 @@ namespace wow2.Bot.Modules.Osu
                         .SendAsync(Context.Channel);
             }
 
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("list-subs")]
@@ -147,7 +151,7 @@ namespace wow2.Bot.Modules.Osu
         public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
         {
             Config.AnnouncementsChannelId = channel.Id;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
 
             await new SuccessMessage($"You'll get osu! announcements in {channel.Mention}")
                 .SendAsync(Context.Channel);
@@ -167,8 +171,8 @@ namespace wow2.Bot.Modules.Osu
         {
             var tokenRequestParams = new Dictionary<string, string>()
             {
-                { "client_id", DataManager.Secrets.OsuClientId },
-                { "client_secret", DataManager.Secrets.OsuClientSecret },
+                { "client_id", BotService.Secrets.OsuClientId },
+                { "client_secret", BotService.Secrets.OsuClientSecret },
                 { "grant_type", "client_credentials" },
                 { "scope", "public" },
             };
@@ -182,7 +186,7 @@ namespace wow2.Bot.Modules.Osu
             }
             catch (Exception ex)
             {
-                Logger.LogException(ex, "Exception thrown when attempting to get an osu!api access token.");
+                BotService.LogException(ex, "Exception thrown when attempting to get an osu!api access token.");
                 return;
             }
 
@@ -211,7 +215,7 @@ namespace wow2.Bot.Modules.Osu
 
         private static async Task CheckForUserMilestonesAsync()
         {
-            foreach (var config in DataManager.AllGuildData.Select(g => g.Value.Osu).ToArray())
+            foreach (var config in BotService.Data.AllGuildData.Select(g => g.Value.Osu).ToArray())
             {
                 // Guild hasn't set a announcements channel, so ignore it.
                 if (config.AnnouncementsChannelId == 0)

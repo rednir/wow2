@@ -16,11 +16,16 @@ namespace wow2.Bot.Modules.Main
     [Summary("Stuff to do with the bot an other random stuff.")]
     public class MainModule : Module
     {
-        public MainModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Main;
-
-        public static async Task<bool> TryExecuteAliasAsync(SocketCommandContext context)
+        public MainModule(BotService botService)
+            : base(botService)
         {
-            var config = DataManager.AllGuildData[context.Guild.Id].Main;
+        }
+
+        public MainModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Main;
+
+        public static async Task<bool> TryExecuteAliasAsync(SocketCommandContext context, BotService botService)
+        {
+            var config = botService.Data.AllGuildData[context.Guild.Id].Main;
             string messageContent = context.Message.Content;
 
             var aliasesFound = config.AliasesDictionary.Where(a =>
@@ -30,7 +35,7 @@ namespace wow2.Bot.Modules.Main
             {
                 var aliasToExecute = aliasesFound.First();
 
-                await BotService.ExecuteCommandAsync(
+                await botService.ExecuteCommandAsync(
                     context,
                     aliasToExecute.Value + messageContent.Replace(aliasToExecute.Key, string.Empty, true, null));
 
@@ -44,8 +49,11 @@ namespace wow2.Bot.Modules.Main
         [Summary("Shows some infomation about the bot.")]
         public async Task AboutAsync()
         {
-            await new AboutMessage(Config.CommandPrefix)
-                .SendAsync(Context.Channel);
+            await new AboutMessage(
+                commandPrefix: Config.CommandPrefix,
+                appInfo: BotService.ApplicationInfo,
+                guildCount: BotService.Client.Guilds.Count)
+                    .SendAsync(Context.Channel);
         }
 
         [Command("help")]
@@ -117,7 +125,7 @@ namespace wow2.Bot.Modules.Main
 
             await new SuccessMessage($"Typing `{name}` will now execute `{Config.CommandPrefix} {definition}`\n{removeAliasText}")
                 .SendAsync(Context.Channel);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("alias-list")]
@@ -162,7 +170,7 @@ namespace wow2.Bot.Modules.Main
         public async Task UploadRawGuildDataAsync()
         {
             await Context.Channel.SendFileAsync(
-                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json");
+                filePath: $"{BotService.Data.GuildDataDirPath}/{Context.Guild.Id}.json");
         }
 
         [Command("set-command-prefix")]
@@ -176,7 +184,7 @@ namespace wow2.Bot.Modules.Main
             Config.CommandPrefix = prefix;
             await new SuccessMessage($"Changed command prefix to `{prefix}`")
                 .SendAsync(Context.Channel);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         /// <summary>Builds embed fields for all command modules.</summary>

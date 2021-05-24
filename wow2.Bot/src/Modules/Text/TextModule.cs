@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
@@ -25,6 +26,11 @@ namespace wow2.Bot.Modules.Text
         static TextModule()
         {
             QuoteTemplates = GetQuoteTemplateImages();
+        }
+
+        public TextModule(BotService botService)
+            : base(botService)
+        {
         }
 
         [Command("quote")]
@@ -139,8 +145,10 @@ namespace wow2.Bot.Modules.Text
         private static Dictionary<string, Stream> GetQuoteTemplateImages()
         {
             const string parentFolder = "quotetemplates.";
+
+            var assembly = Assembly.GetExecutingAssembly();
             var result = new Dictionary<string, Stream>();
-            foreach (var resourceName in BotService.Assembly.GetManifestResourceNames())
+            foreach (var resourceName in assembly.GetManifestResourceNames())
             {
                 if (resourceName.Contains(parentFolder))
                 {
@@ -148,7 +156,7 @@ namespace wow2.Bot.Modules.Text
                     int startIndex = resourceName.LastIndexOf(parentFolder) + parentFolder.Length;
                     string readableName = Path
                         .GetFileNameWithoutExtension(resourceName)[startIndex..];
-                    result.Add(readableName, BotService.Assembly.GetManifestResourceStream(resourceName));
+                    result.Add(readableName, assembly.GetManifestResourceStream(resourceName));
                 }
             }
 

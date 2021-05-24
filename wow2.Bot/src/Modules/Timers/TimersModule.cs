@@ -13,7 +13,12 @@ namespace wow2.Bot.Modules.Timers
     [Summary("Create and manage timers and reminders.")]
     public class TimersModule : Module
     {
-        public TimersModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Timers;
+        public TimersModule(BotService botService)
+            : base(botService)
+        {
+        }
+
+        public TimersModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Timers;
 
         [Command("start")]
         [Alias("new", "create")]
@@ -25,7 +30,7 @@ namespace wow2.Bot.Modules.Timers
             if (timeSpan > TimeSpan.FromDays(90) || timeSpan < TimeSpan.FromSeconds(1))
                 throw new CommandReturnException(Context, "Be sensible.");
 
-            _ = new UserTimer(Context, timeSpan.TotalMilliseconds, message);
+            _ = new UserTimer(Context, Config.UserTimers, timeSpan.TotalMilliseconds, message);
             await new SuccessMessage($"There are now `{Config.UserTimers.Count}` active timer(s)", "Started a new timer.")
                 .SendAsync(Context.Channel);
         }

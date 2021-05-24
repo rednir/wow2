@@ -4,7 +4,6 @@ using Discord;
 using Discord.Commands;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
-using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Dev
@@ -15,13 +14,18 @@ namespace wow2.Bot.Modules.Dev
     [Summary("Boring stuff for developers.")]
     public class DevModule : Module
     {
+        public DevModule(BotService botService)
+            : base(botService)
+        {
+        }
+
         [Command("load-guild-data")]
         [Alias("load")]
         [Summary("Loads guild data from file to memory, discarding any unsaved changes.")]
         public async Task LoadGuildDataAsync()
         {
-            await DataManager.LoadGuildDataFromFileAsync();
-            await new SuccessMessage($"`{DataManager.AllGuildData.Count}` guilds has their data loaded.")
+            await BotService.Data.LoadGuildDataFromFileAsync();
+            await new SuccessMessage($"`{BotService.Data.AllGuildData.Count}` guilds has their data loaded.")
                 .SendAsync(Context.Channel);
         }
 
@@ -30,8 +34,8 @@ namespace wow2.Bot.Modules.Dev
         [Summary("Save guild data from memory to file, optionally stopping the bot.")]
         public async Task SaveGuildDataAsync()
         {
-            await DataManager.SaveGuildDataToFileAsync();
-            await new SuccessMessage($"`{DataManager.AllGuildData.Count}` guilds has their data saved.")
+            await BotService.Data.SaveGuildDataToFileAsync();
+            await new SuccessMessage($"`{BotService.Data.AllGuildData.Count}` guilds has their data saved.")
                 .SendAsync(Context.Channel);
         }
 
@@ -91,8 +95,9 @@ namespace wow2.Bot.Modules.Dev
         [Summary("Sends the log file for this session.")]
         public async Task GetLogsAsync()
         {
-            string logs = await Logger.GetLogsForSessionAsync();
-            await Context.Channel.SendFileAsync(logs.ToMemoryStream(), "wow2.log");
+            throw new NotImplementedException();
+            /*string logs = await Logger.GetLogsForSessionAsync();
+            await Context.Channel.SendFileAsync(logs.ToMemoryStream(), "wow2.log");*/
         }
 
         [Command("panic")]

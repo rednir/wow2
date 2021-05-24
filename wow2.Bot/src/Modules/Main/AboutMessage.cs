@@ -1,16 +1,16 @@
 using Discord;
+using Discord.Rest;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Main
 {
     public class AboutMessage : Message
     {
-        public AboutMessage(string commandPrefix = "!wow")
+        public AboutMessage(string commandPrefix, RestApplication appInfo, int guildCount)
         {
-            var appInfo = BotService.ApplicationInfo;
             EmbedBuilder = new EmbedBuilder()
             {
-                Title = $"{appInfo.Name}  •  in {BotService.Client.Guilds.Count} servers",
+                Title = $"{appInfo.Name}  •  in {guildCount} servers",
                 Description = (string.IsNullOrWhiteSpace(appInfo.Description) ? null : appInfo.Description) + "\n[Link to github](https://github.com/rednir/wow2)",
                 Color = Color.LightGrey,
                 Author = new EmbedAuthorBuilder()

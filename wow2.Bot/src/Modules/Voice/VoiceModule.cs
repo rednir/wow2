@@ -21,7 +21,12 @@ namespace wow2.Bot.Modules.Voice
     [Summary("Play YouTube or Twitch audio in a voice channel.")]
     public class VoiceModule : Module
     {
-        public VoiceModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Voice;
+        public VoiceModule(BotService botService)
+            : base(botService)
+        {
+        }
+
+        public VoiceModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Voice;
 
         public static bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
             => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;
@@ -72,7 +77,7 @@ namespace wow2.Bot.Modules.Voice
             }
             catch (Exception ex)
             {
-                Logger.LogException(ex, "Could not fetch video metadata");
+                BotService.LogException(ex, "Could not fetch video metadata");
                 await new ErrorMessage("One or more errors were returned.", "Could not fetch video metadata")
                     .SendAsync(Context.Channel);
                 return;
@@ -103,7 +108,7 @@ namespace wow2.Bot.Modules.Voice
             if (!CheckIfAudioClientDisconnected(Config.AudioClient) && Config.CurrentlyPlayingSongRequest == null)
                 _ = ContinueAsync();
 
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("remove")]
@@ -233,7 +238,7 @@ namespace wow2.Bot.Modules.Voice
                 throw new CommandReturnException(Context, "You already have a saved queue with that name.");
 
             Config.SavedSongRequestQueues.Add(name, new(Config.CurrentSongRequestQueue));
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
 
             await new SuccessMessage("You can load this queue anytime you want.", "Saved queue")
                 .SendAsync(Context.Channel);
@@ -284,7 +289,7 @@ namespace wow2.Bot.Modules.Voice
 
             Config.CurrentSongRequestQueue = loadedQueue;
             Config.SavedSongRequestQueues.Remove(name);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
 
             await new SuccessMessage("Also deleted queue from the saved queue list.", "Loaded queue")
                 .SendAsync(Context.Channel);
@@ -299,7 +304,7 @@ namespace wow2.Bot.Modules.Voice
                 throw new CommandReturnException(Context, "No queue with that name exists.");
 
             Config.CurrentSongRequestQueue = new(loadedQueue);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
 
             await new SuccessMessage("You can safely delete this queue from the saved queue list if you want.", "Loaded queue")
                 .SendAsync(Context.Channel);
@@ -320,7 +325,7 @@ namespace wow2.Bot.Modules.Voice
         public async Task ToggleAutoNpAsync()
         {
             Config.IsAutoNpOn = !Config.IsAutoNpOn;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"Auto execution of `vc np` is turned `{(Config.IsAutoNpOn ? "on" : "off")}`")
                 .SendAsync(Context.Channel);
         }
@@ -330,7 +335,7 @@ namespace wow2.Bot.Modules.Voice
         public async Task ToggleAutoJoinAsync()
         {
             Config.IsAutoJoinOn = !Config.IsAutoJoinOn;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"Auto joining when a new song is added is turned `{(Config.IsAutoJoinOn ? "on" : "off")}`")
                 .SendAsync(Context.Channel);
         }
@@ -344,7 +349,7 @@ namespace wow2.Bot.Modules.Voice
 
             newNumberOfSkips = Math.Max(newNumberOfSkips, 1);
             Config.VoteSkipsNeeded = newNumberOfSkips;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"`{newNumberOfSkips}` votes are now required to skip a song request.")
                 .SendAsync(Context.Channel);
         }
@@ -390,7 +395,7 @@ namespace wow2.Bot.Modules.Voice
             catch (Exception ex)
             {
                 string errorText = $"Displaying metadata failed for the following video:\n{Config.CurrentlyPlayingSongRequest?.VideoMetadata?.webpage_url}";
-                Logger.LogException(ex, errorText);
+                BotService.LogException(ex, errorText);
                 await new ErrorMessage(errorText)
                     .SendAsync(Context.Channel);
             }

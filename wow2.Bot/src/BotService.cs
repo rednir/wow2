@@ -11,6 +11,7 @@ using Discord.Commands;
 using Discord.Net;
 using Discord.Rest;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 using wow2.Bot.Modules;
@@ -24,19 +25,36 @@ using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot
 {
-    public static class BotService
+    public class BotService
     {
-        public static Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
+        public BotService(Secrets secrets, string guildDataDirPath)
+        {
+            Data = new BotDataManager(this, guildDataDirPath);
+            Secrets = secrets;
+        }
 
-        public static DiscordSocketClient Client { get; set; }
-        public static CommandService CommandService { get; set; }
-        public static RestApplication ApplicationInfo { get; set; }
-        public static LogSeverity LogSeverity { get; set; } = LogSeverity.Verbose;
+        public event EventHandler<LogEventArgs> LogRequested;
 
-        public static async Task<SocketGuildUser> GetClientGuildUserAsync(ISocketMessageChannel channel)
+        public Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
+
+        public DiscordSocketClient Client { get; set; }
+
+        public IServiceProvider Services { get; set; }
+
+        public LogSeverity LogSeverity { get; set; } = LogSeverity.Verbose;
+
+        public CommandService CommandService { get; set; }
+
+        public RestApplication ApplicationInfo { get; set; }
+
+        public BotDataManager Data { get; set; }
+
+        public Secrets Secrets { get; set; } = new Secrets();
+
+        public async Task<SocketGuildUser> GetClientGuildUserAsync(ISocketMessageChannel channel)
             => (SocketGuildUser)await channel.GetUserAsync(Client.CurrentUser.Id);
 
-        public static async Task InitializeAndStartClientAsync()
+        public async Task InitializeAndStartClientAsync()
         {
             Client = new DiscordSocketClient(new DiscordSocketConfig()
             {
@@ -53,26 +71,31 @@ namespace wow2.Bot
             Client.JoinedGuild += JoinedGuildAsync;
             Client.LeftGuild += LeftGuildAsync;
 
-            await Client.LoginAsync(TokenType.Bot, DataManager.Secrets.DiscordBotToken);
+            await Client.LoginAsync(TokenType.Bot, Secrets.DiscordBotToken);
             await Client.StartAsync();
 
             ApplicationInfo = await Client.GetApplicationInfoAsync();
         }
 
-        public static async Task InstallCommandsAsync()
+        public async Task InstallCommandsAsync()
         {
+            Services = new ServiceCollection()
+                .AddSingleton(this)
+                .BuildServiceProvider();
+
             var config = new CommandServiceConfig()
             {
                 IgnoreExtraArgs = true,
                 LogLevel = LogSeverity.Verbose,
                 DefaultRunMode = RunMode.Async,
             };
+
             CommandService = new CommandService(config);
             CommandService.Log += DiscordLogRecievedAsync;
-            await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), null);
+            await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), Services);
         }
 
-        public static string MakeCommandsMarkdown()
+        public string MakeCommandsMarkdown()
         {
             var commandsGroupedByModule = CommandService.Commands
                 .GroupBy(c => c.Module);
@@ -100,21 +123,45 @@ namespace wow2.Bot
             return stringBuilder.ToString();
         }
 
-        public static async Task ReadyAsync()
+        public void Log(object message, LogSeverity severity = LogSeverity.Debug)
         {
-            await DataManager.InitializeAsync();
+            if (severity == LogSeverity.Debug
+                && LogSeverity != LogSeverity.Debug)
+            {
+                return;
+            }
+
+            LogRequested(this, new LogEventArgs(
+                $"{DateTime.Now} [{severity}] {message}"));
+        }
+
+        public void Log(LogMessage logMessage)
+            => Log($"{logMessage.Source}: {logMessage.Message}", logMessage.Severity);
+
+        public void LogException(Exception exception, string message = "Exception was thrown:", bool notifyOwner = true)
+        {
+            LogRequested(this, new LogEventArgs(
+                $"{DateTime.Now} [Exception] {message}\n------ START OF EXCEPTION ------\n\n{exception}\n\n------ END OF EXCEPTION ------"));
+
+            if (notifyOwner)
+                _ = ApplicationInfo.Owner.SendMessageAsync($"{message}\n```\n{exception}\n```");
+        }
+
+        public async Task ReadyAsync()
+        {
+            await Data.InitializeAsync();
             await Client.SetStatusAsync(UserStatus.Online);
             await Client.SetGameAsync("!wow help");
         }
 
-        public static async Task JoinedGuildAsync(SocketGuild guild)
+        public async Task JoinedGuildAsync(SocketGuild guild)
         {
-            var guildData = await DataManager.EnsureGuildDataExistsAsync(guild.Id);
+            var guildData = await Data.EnsureGuildDataExistsAsync(guild.Id);
 
             // Only set if it's the first time the bot has joined this guild.
             if (guildData.DateTimeJoinedBinary == 0)
             {
-                DataManager.AllGuildData[guild.Id]
+                Data.AllGuildData[guild.Id]
                     .DateTimeJoinedBinary = DateTime.Now.ToBinary();
             }
 
@@ -122,12 +169,12 @@ namespace wow2.Bot
                 .SendToBestChannelAsync();
         }
 
-        public static async Task LeftGuildAsync(SocketGuild guild)
+        public async Task LeftGuildAsync(SocketGuild guild)
         {
-            await DataManager.UnloadGuildDataAsync(guild.Id);
+            await Data.UnloadGuildDataAsync(guild.Id);
         }
 
-        public static async Task DiscordLogRecievedAsync(LogMessage logMessage)
+        public async Task DiscordLogRecievedAsync(LogMessage logMessage)
         {
             if (logMessage.Exception is Exception)
             {
@@ -161,20 +208,20 @@ namespace wow2.Bot
                     && LogSeverity != LogSeverity.Debug)
                 {
                     // Client reconnects after these exceptions, so no need to dm bot owner.
-                    Logger.LogException(logMessage.Exception, notifyOwner: false);
+                    LogException(logMessage.Exception, notifyOwner: false);
                 }
                 else
                 {
-                    Logger.LogException(logMessage.Exception, notifyOwner: true);
+                    LogException(logMessage.Exception, notifyOwner: true);
                 }
             }
             else
             {
-                Logger.Log(logMessage);
+                Log(logMessage);
             }
         }
 
-        public static async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
+        public async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
         {
             if (reaction.UserId == Client.CurrentUser.Id)
                 return;
@@ -187,7 +234,7 @@ namespace wow2.Bot
                 await ResponseMessage.ActOnReactionAddedAsync(reaction, message);
         }
 
-        public static async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
+        public async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
         {
             if (reaction.UserId == Client.CurrentUser.Id)
                 return;
@@ -199,13 +246,13 @@ namespace wow2.Bot
             ResponseMessage.ActOnReactionRemoved(reaction, message);
         }
 
-        public static Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)
+        public Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)
         {
             PagedMessage.FromMessageId(cachedMessage.Id)?.Dispose();
             return Task.CompletedTask;
         }
 
-        public static async Task MessageRecievedAsync(SocketMessage socketMessage)
+        public async Task MessageRecievedAsync(SocketMessage socketMessage)
         {
             if (CommandService == null)
                 return;
@@ -217,15 +264,15 @@ namespace wow2.Bot
                 return;
 
             var context = new SocketCommandContext(Client, socketUserMessage);
-            await DataManager.EnsureGuildDataExistsAsync(context.Guild.Id);
+            await Data.EnsureGuildDataExistsAsync(context.Guild.Id);
             await ActOnMessageAsync(context);
         }
 
-        public static async Task<IResult> ExecuteCommandAsync(SocketCommandContext context, string input)
+        public async Task<IResult> ExecuteCommandAsync(SocketCommandContext context, string input)
         {
             using var _ = context.Channel.EnterTypingState();
 
-            if (ModeratorModule.CheckForCommandAbuse(context))
+            if (ModeratorModule.CheckForCommandAbuse(context, this))
             {
                 await new WarningMessage("Please don't spam commands, it's annoying.\nWait a minute or so before executing another command.", "Calm yourself.")
                     .SendAsync(context.Channel);
@@ -235,14 +282,14 @@ namespace wow2.Bot
             IResult result = await CommandService.ExecuteAsync(
                 context: context,
                 input: input,
-                services: null);
+                services: Services);
 
             if (result.Error.HasValue)
                 await SendErrorMessageToChannel(result.Error, context);
             return result;
         }
 
-        public static async Task SendErrorMessageToChannel(CommandError? commandError, SocketCommandContext context)
+        public async Task SendErrorMessageToChannel(CommandError? commandError, SocketCommandContext context)
         {
             string commandPrefix = context.Guild.GetCommandPrefix();
 
@@ -287,7 +334,7 @@ namespace wow2.Bot
             }
         }
 
-        private static async Task<IEnumerable<CommandInfo>> SearchCommandsAsync(SocketCommandContext context, string term)
+        private async Task<IEnumerable<CommandInfo>> SearchCommandsAsync(SocketCommandContext context, string term)
         {
             if (term.Length < 2)
                 return Array.Empty<CommandInfo>();
@@ -312,15 +359,15 @@ namespace wow2.Bot
             }
         }
 
-        private static async Task ActOnMessageAsync(SocketCommandContext context)
+        private async Task ActOnMessageAsync(SocketCommandContext context)
         {
             SocketUserMessage message = context.Message;
 
             // Only auto mod message if not related to a game.
-            if (!await CountingGame.CheckMessageAsync(context)
-                && !await VerbalMemoryGame.CheckMessageAsync(context))
+            if (!await CountingGame.CheckMessageAsync(context, this)
+                && !await VerbalMemoryGame.CheckMessageAsync(context, this))
             {
-                await ModeratorModule.CheckMessageWithAutoMod(context);
+                await ModeratorModule.CheckMessageWithAutoMod(context, this);
             }
 
             if (message.Content.StartsWithWord(
@@ -330,7 +377,7 @@ namespace wow2.Bot
                 await ActOnMessageAsCommandAsync(context);
                 return;
             }
-            else if (!await MainModule.TryExecuteAliasAsync(context))
+            else if (!await MainModule.TryExecuteAliasAsync(context, this))
             {
                 // Only check for keyword when the message is not an alias/command.
                 KeywordsModule.CheckMessageForKeyword(context);
@@ -338,13 +385,13 @@ namespace wow2.Bot
             }
         }
 
-        private static async Task ActOnMessageAsCommandAsync(SocketCommandContext context)
+        private async Task ActOnMessageAsCommandAsync(SocketCommandContext context)
         {
             string commandPrefix = context.Guild.GetCommandPrefix();
 
             if (context.Message.Content == commandPrefix)
             {
-                await new AboutMessage(commandPrefix)
+                await new AboutMessage(commandPrefix, ApplicationInfo, Client.Guilds.Count)
                     .SendAsync(context.Channel);
                 return;
             }

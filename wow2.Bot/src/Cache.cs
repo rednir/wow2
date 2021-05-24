@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Discord;
 using wow2.Bot.Extensions;
-using wow2.Bot.Verbose;
 
 namespace wow2.Bot
 {
@@ -45,7 +43,6 @@ namespace wow2.Bot
                 List.Add(result);
 
                 obj = result.Value;
-                Logger.Log($"Fetched cached {typeof(T)} object with identifier '{identifier}'", LogSeverity.Debug);
                 return true;
             }
         }
@@ -54,7 +51,6 @@ namespace wow2.Bot
         {
             List.Add(new(identifier, value));
             List.Truncate(MaxAmountOfCachedObjects);
-            Logger.Log($"Added new cached {typeof(T)} object with identifier '{identifier}'", LogSeverity.Debug);
         }
     }
 }

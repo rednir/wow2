@@ -18,16 +18,21 @@ namespace wow2.Bot.Modules.Moderator
     [RequireUserPermission(GuildPermission.BanMembers)]
     public class ModeratorModule : Module
     {
-        public ModeratorModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Moderator;
-
-        public static async Task CheckMessageWithAutoMod(SocketCommandContext context)
+        public ModeratorModule(BotService botService)
+            : base(botService)
         {
-            var config = DataManager.AllGuildData[context.Guild.Id].Moderator;
+        }
+
+        public ModeratorModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Moderator;
+
+        public static async Task CheckMessageWithAutoMod(SocketCommandContext context, BotService botService)
+        {
+            var config = botService.Data.AllGuildData[context.Guild.Id].Moderator;
 
             UserRecord record;
             try
             {
-                record = GetUserRecord(config, context.User.Id);
+                record = GetUserRecord(config, botService, context.User.Id);
                 record.Messages.Add(context.Message);
             }
             catch (ArgumentException)
@@ -70,8 +75,9 @@ namespace wow2.Bot.Modules.Moderator
 
             await WarnOrBanUserAsync(
                 config: config,
+                botService: botService,
                 victim: (SocketGuildUser)context.User,
-                requestedBy: await BotService.GetClientGuildUserAsync(context.Channel),
+                requestedBy: await botService.GetClientGuildUserAsync(context.Channel),
                 message: warningMessage);
 
             await new InfoMessage($"{context.User.Mention} has been warned due to {dueTo}.")
@@ -80,17 +86,20 @@ namespace wow2.Bot.Modules.Moderator
 
         /// <summary>Checks whether a user is abusing commands.</summary>
         /// <returns>True if the user should be rate limited due to command abuse.</summary>
-        public static bool CheckForCommandAbuse(SocketCommandContext context)
+        public static bool CheckForCommandAbuse(SocketCommandContext context, BotService botService)
         {
             const int numOfCommandsToCheck = 12;
 
             UserRecord record = GetUserRecord(
-                DataManager.AllGuildData[context.Guild.Id].Moderator,
-                context.Message.Author.Id);
+                config: botService.Data.AllGuildData[context.Guild.Id].Moderator,
+                botService: botService,
+                id: context.Message.Author.Id);
+
             record.CommandExecutedDateTimes.Add(context.Message.Timestamp);
 
             if (record.CommandExecutedDateTimes.Count < numOfCommandsToCheck)
                 return false;
+
             record.CommandExecutedDateTimes.Truncate(numOfCommandsToCheck);
 
             // Represents the time difference between a set number of commands (numOfCommandsToCheck).
@@ -104,7 +113,12 @@ namespace wow2.Bot.Modules.Moderator
         {
             try
             {
-                await WarnOrBanUserAsync(Config, user, (SocketGuildUser)Context.User, message);
+                await WarnOrBanUserAsync(
+                    config: Config,
+                    botService: BotService,
+                    victim: user,
+                    requestedBy: (SocketGuildUser)Context.User,
+                    message: message);
             }
             catch (ArgumentException)
             {
@@ -131,7 +145,7 @@ namespace wow2.Bot.Modules.Moderator
             UserRecord record;
             try
             {
-                record = GetUserRecord(Config, user.Id);
+                record = GetUserRecord(Config, BotService, user.Id);
             }
             catch (ArgumentException)
             {
@@ -162,7 +176,7 @@ namespace wow2.Bot.Modules.Moderator
                     .SendAsync(Context.Channel);
             }
 
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("toggle-auto-mod")]
@@ -170,14 +184,14 @@ namespace wow2.Bot.Modules.Moderator
         public async Task ToggleAutoMod()
         {
             Config.IsAutoModOn = !Config.IsAutoModOn;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"Auto mod is now `{(Config.IsAutoModOn ? "on" : "off")}`")
                 .SendAsync(Context.Channel);
         }
 
-        private static async Task WarnOrBanUserAsync(ModeratorModuleConfig config, SocketGuildUser victim, SocketGuildUser requestedBy, string message)
+        private static async Task WarnOrBanUserAsync(ModeratorModuleConfig config, BotService botService, SocketGuildUser victim, SocketGuildUser requestedBy, string message)
         {
-            var userRecord = GetUserRecord(config, victim.Id);
+            var userRecord = GetUserRecord(config, botService, victim.Id);
             message = string.IsNullOrWhiteSpace(message) ?
                 "No reason was provided by the moderator." : $"Reason: {message}";
 
@@ -187,7 +201,7 @@ namespace wow2.Bot.Modules.Moderator
                 DateTimeBinary = DateTime.Now.ToBinary(),
             });
 
-            await DataManager.SaveGuildDataToFileAsync(requestedBy.Guild.Id);
+            await botService.Data.SaveGuildDataToFileAsync(requestedBy.Guild.Id);
 
             IDMChannel dmChannel = await victim.GetOrCreateDMChannelAsync();
             if (userRecord.Warnings.Count >= config.WarningsUntilBan &&
@@ -215,9 +229,9 @@ namespace wow2.Bot.Modules.Moderator
                     .SendAsync(dmChannel);
         }
 
-        private static UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
+        private static UserRecord GetUserRecord(ModeratorModuleConfig config, BotService botService, ulong id)
         {
-            SocketUser user = BotService.Client.GetUser(id);
+            SocketUser user = botService.Client.GetUser(id);
             if (user == null)
                 throw new ArgumentException("User was not found.");
             if (user.IsBot)

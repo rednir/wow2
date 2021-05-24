@@ -39,7 +39,7 @@ namespace wow2.Bot.Modules.Keywords
         /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the reaction if so.</summary>
         public static async Task<bool> ActOnReactionAddedAsync(SocketReaction reaction, IUserMessage message)
         {
-            var config = DataManager.AllGuildData[message.GetGuild().Id].Keywords;
+            var config = BotService.Data.AllGuildData[message.GetGuild().Id].Keywords;
 
             ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
                 m => m.SentMessage?.Id == message.Id);
@@ -65,14 +65,14 @@ namespace wow2.Bot.Modules.Keywords
                 return false;
             }
 
-            await DataManager.SaveGuildDataToFileAsync(responseMessage.SentMessage.GetGuild().Id);
+            await BotService.Data.SaveGuildDataToFileAsync(responseMessage.SentMessage.GetGuild().Id);
             return true;
         }
 
         /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the removed reaction if so.</summary>
         public static bool ActOnReactionRemoved(SocketReaction reaction, IUserMessage message)
         {
-            var config = DataManager.AllGuildData[message.GetGuild().Id].Keywords;
+            var config = BotService.Data.AllGuildData[message.GetGuild().Id].Keywords;
 
             ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
                 m => m.SentMessage?.Id == message.Id);
@@ -93,7 +93,7 @@ namespace wow2.Bot.Modules.Keywords
         public async Task<IUserMessage> RespondToMessageAsync(SocketMessage message)
         {
             IGuild guild = message.GetGuild();
-            var config = DataManager.AllGuildData[message.GetGuild().Id].Keywords;
+            var config = BotService.Data.AllGuildData[message.GetGuild().Id].Keywords;
             ReplyToMessageId = message.Id;
 
             // Don't use embed message if the value to send contains a link.

@@ -19,7 +19,7 @@ namespace wow2.Bot.Extensions
             => ((SocketGuildChannel)socketMessage.Channel).Guild;
 
         public static string GetCommandPrefix(this IGuild guild) =>
-            DataManager.AllGuildData[guild.Id].Main.CommandPrefix;
+            BotService.Data.AllGuildData[guild.Id].Main.CommandPrefix;
 
         public static string TextBetween(this string stringToSearch, string separator)
         {

@@ -16,7 +16,12 @@ namespace wow2.Bot.Modules.Reddit
     [Summary("View Reddit posts and other content.")]
     public class RedditModule : Module
     {
-        private static readonly RedditClient RedditClient = new(DataManager.Secrets.RedditAppId, DataManager.Secrets.RedditRefreshToken);
+        private static readonly RedditClient RedditClient = new(BotService.Data.Secrets.RedditAppId, BotService.Data.Secrets.RedditRefreshToken);
+
+        public RedditModule(BotService botService)
+            : base(botService)
+        {
+        }
 
         public static Subreddit GetSubreddit(string subredditName)
         {

@@ -21,12 +21,12 @@ namespace wow2.Bot.Modules.Keywords
         private const int MaxNumberOfKeywords = 50;
         private const int MaxNumberOfValues = 20;
 
-        private KeywordsModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Keywords;
+        private KeywordsModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Keywords;
 
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
         public static bool CheckMessageForKeyword(SocketCommandContext context)
         {
-            var config = DataManager.AllGuildData[context.Guild.Id].Keywords;
+            var config = BotService.Data.AllGuildData[context.Guild.Id].Keywords;
             string messageContent = context.Message.Content.ToLower();
             string[] listOfFoundKeywords = GetAllKeywordsInString(messageContent, config.KeywordsDictionary.Keys);
 
@@ -88,7 +88,7 @@ namespace wow2.Bot.Modules.Keywords
 
             await new SuccessMessage($"Added a value to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.")
                 .SendAsync(Context.Channel);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("remove")]
@@ -124,7 +124,7 @@ namespace wow2.Bot.Modules.Keywords
                     .SendAsync(Context.Channel);
             }
 
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("rename")]
@@ -143,7 +143,7 @@ namespace wow2.Bot.Modules.Keywords
 
             await new SuccessMessage($"Renamed `{oldKeyword}` to `{newKeyword}`.")
                 .SendAsync(Context.Channel);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("list")]
@@ -218,7 +218,7 @@ namespace wow2.Bot.Modules.Keywords
         public async Task ToggleDeleteReactionAsync()
         {
             Config.IsDeleteReactionOn = !Config.IsDeleteReactionOn;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"Delete reaction is now `{(Config.IsDeleteReactionOn ? "on" : "off")}` for keyword responses.")
                 .SendAsync(Context.Channel);
         }
@@ -228,7 +228,7 @@ namespace wow2.Bot.Modules.Keywords
         public async Task ToggleLikeReactionAsync()
         {
             Config.IsLikeReactionOn = !Config.IsLikeReactionOn;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
+            await BotService.Data.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"Like reaction is now `{(Config.IsLikeReactionOn ? "on" : "off")}` for keyword responses.")
                 .SendAsync(Context.Channel);
         }

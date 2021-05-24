@@ -1,18 +1,27 @@
+using System.Reflection;
 using SixLabors.Fonts;
 
 namespace wow2.Bot.Modules.Text
 {
-    // Rethink this
     public static class Fonts
     {
-        private static readonly FontCollection FontCollection = new();
+        static Fonts()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
 
-        private static readonly FontFamily RegularFontFamily = FontCollection.Install(
-            BotService.Assembly.GetManifestResourceStream("wow2.res.ClearSans-Medium.ttf"));
-
-        private static readonly FontFamily LightFontFamily = FontCollection.Install(
-            BotService.Assembly.GetManifestResourceStream("wow2.res.Cantarell-Light.ttf"));
+            LightFontFamily = FontCollection.Install(
+                assembly.GetManifestResourceStream("wow2.res.Cantarell-Light.ttf"));
+            RegularFontFamily = FontCollection.Install(
+                assembly.GetManifestResourceStream("wow2.res.ClearSans-Medium.ttf"));
+        }
 
         public static Font QuoteTextFont => LightFontFamily.CreateFont(32, FontStyle.Regular);
+
+        private static FontCollection FontCollection { get; } = new();
+
+        private static FontFamily RegularFontFamily { get; }
+
+        private static FontFamily LightFontFamily { get; }
+
     }
 }
