@@ -34,7 +34,7 @@ namespace wow2.Bot.Modules.Dev
             }
         }
 
-        [Test("messages")]
+        /*[Test("messages")]
         public static async Task MessagesTest(SocketCommandContext context)
         {
             await new SuccessMessage("This is a success message.", "Success").SendAsync(context.Channel);
@@ -236,7 +236,7 @@ namespace wow2.Bot.Modules.Dev
             }
 
             return results;
-        }
+        }*/
 
         private static async Task DelayAsync(SocketCommandContext context, int milliseconds)
         {

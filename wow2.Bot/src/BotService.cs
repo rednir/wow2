@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Net.WebSockets;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using Discord;
 using Discord.Commands;
 using Discord.Net;
@@ -35,8 +37,6 @@ namespace wow2.Bot
 
         public event EventHandler<LogEventArgs> LogRequested;
 
-        public Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
-
         public DiscordSocketClient Client { get; set; }
 
         public IServiceProvider Services { get; set; }
@@ -62,6 +62,23 @@ namespace wow2.Bot
                 AlwaysDownloadUsers = true,
             });
 
+            MethodInfo[] pollTasks = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .SelectMany(t => t.GetMethods())
+                .Where(m => m.GetCustomAttributes(typeof(PollTaskAttribute), false).Length > 0)
+                .ToArray();
+
+            // Start polling tasks.
+            foreach (MethodInfo method in pollTasks)
+            {
+                StartPollTask(
+                    func: (Func<BotService, Task>)Delegate
+                        .CreateDelegate(typeof(Func<BotService, Task>), null, method),
+                    intervalMinutes: ((PollTaskAttribute)method
+                        .GetCustomAttribute(typeof(PollTaskAttribute))).IntervalMinutes);
+            }
+
+            // Add event handlers.
             Client.Ready += ReadyAsync;
             Client.Log += DiscordLogRecievedAsync;
             Client.ReactionAdded += ReactionAddedAsync;
@@ -71,6 +88,7 @@ namespace wow2.Bot
             Client.JoinedGuild += JoinedGuildAsync;
             Client.LeftGuild += LeftGuildAsync;
 
+            // Start the Discord client.
             await Client.LoginAsync(TokenType.Bot, Secrets.DiscordBotToken);
             await Client.StartAsync();
 
@@ -165,8 +183,8 @@ namespace wow2.Bot
                     .DateTimeJoinedBinary = DateTime.Now.ToBinary();
             }
 
-            await new WelcomeMessage(guild)
-                .SendToBestChannelAsync();
+            await new WelcomeMessage(guild.GetCommandPrefix(this))
+                .SendToBestChannelAsync(guild);
         }
 
         public async Task LeftGuildAsync(SocketGuild guild)
@@ -231,7 +249,7 @@ namespace wow2.Bot
                 return;
 
             if (!await PagedMessage.ActOnReactionAsync(reaction))
-                await ResponseMessage.ActOnReactionAddedAsync(reaction, message);
+                await ResponseMessage.ActOnReactionAddedAsync(this, reaction, message);
         }
 
         public async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
@@ -243,7 +261,7 @@ namespace wow2.Bot
             if (message == null)
                 return;
 
-            ResponseMessage.ActOnReactionRemoved(reaction, message);
+            ResponseMessage.ActOnReactionRemoved(this, reaction, message);
         }
 
         public Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)
@@ -291,7 +309,7 @@ namespace wow2.Bot
 
         public async Task SendErrorMessageToChannel(CommandError? commandError, SocketCommandContext context)
         {
-            string commandPrefix = context.Guild.GetCommandPrefix();
+            string commandPrefix = context.Guild.GetCommandPrefix(this);
 
             var matchingCommands = await SearchCommandsAsync(
                 context, context.Message.Content.MakeCommandInput(commandPrefix));
@@ -371,7 +389,7 @@ namespace wow2.Bot
             }
 
             if (message.Content.StartsWithWord(
-                context.Guild.GetCommandPrefix(), true))
+                context.Guild.GetCommandPrefix(this), true))
             {
                 // The message starts with the command prefix and the prefix is not part of another word.
                 await ActOnMessageAsCommandAsync(context);
@@ -380,14 +398,14 @@ namespace wow2.Bot
             else if (!await MainModule.TryExecuteAliasAsync(context, this))
             {
                 // Only check for keyword when the message is not an alias/command.
-                KeywordsModule.CheckMessageForKeyword(context);
+                KeywordsModule.CheckMessageForKeyword(context, this);
                 return;
             }
         }
 
         private async Task ActOnMessageAsCommandAsync(SocketCommandContext context)
         {
-            string commandPrefix = context.Guild.GetCommandPrefix();
+            string commandPrefix = context.Guild.GetCommandPrefix(this);
 
             if (context.Message.Content == commandPrefix)
             {
@@ -399,6 +417,26 @@ namespace wow2.Bot
             await ExecuteCommandAsync(
                 context,
                 context.Message.Content.MakeCommandInput(commandPrefix));
+        }
+
+        private void StartPollTask(Func<BotService, Task> func, int intervalMinutes)
+        {
+            var timer = new Timer(intervalMinutes * 60000) { AutoReset = true };
+            timer.Elapsed += async (source, e) =>
+            {
+                try
+                {
+                    await func.Invoke(this);
+                    Log($"Finished running polling service '{func.Method.Name}'.", LogSeverity.Debug);
+                }
+                catch (Exception ex)
+                {
+                    LogException(ex, $"Exception thrown when running polling service '{func.Method.Name}'");
+                }
+            };
+
+            timer.Start();
+            Log($"Started polling service '{func.Method.Name}', set to run every {intervalMinutes} minutes.", LogSeverity.Debug);
         }
     }
 }

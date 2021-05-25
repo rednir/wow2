@@ -23,24 +23,26 @@ namespace wow2.Bot.Modules.YouTube
     [Summary("Integrations with YouTube, like getting notified for new videos.")]
     public class YouTubeModule : Module
     {
-        private static readonly YouTubeService Service;
-        private static DateTime TimeOfLastVideoCheck = DateTime.Now;
-
-        static YouTubeModule()
+        public YouTubeModule()
         {
-            Service = new(new BaseClientService.Initializer()
+            YoutubeService = new(new BaseClientService.Initializer()
             {
-                ApiKey = BotService.Data.Secrets.GoogleApiKey,
+                ApiKey = BotService.Secrets.GoogleApiKey,
                 ApplicationName = "wow2-youtube",
             });
-            PollingService.CreateService(CheckForNewVideosAsync, 12);
         }
+
+        public BotService BotService { get; set; }
 
         public YouTubeModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].YouTube;
 
-        public static async Task<Channel> GetChannelAsync(string channelIdOrUsername)
+        private YouTubeService YoutubeService { get; }
+
+        private DateTime TimeOfLastVideoCheck { get; set; } = DateTime.Now;
+
+        public static async Task<Channel> GetChannelAsync(YouTubeService service, string channelIdOrUsername)
         {
-            var listRequest = Service.Channels.List("snippet, statistics, contentDetails");
+            var listRequest = service.Channels.List("snippet, statistics, contentDetails");
 
             if (!channelIdOrUsername.StartsWith("UC") && channelIdOrUsername.Contains("/UC"))
             {
@@ -67,9 +69,9 @@ namespace wow2.Bot.Modules.YouTube
             return listResponse.Items[0];
         }
 
-        public static async Task<IList<PlaylistItem>> GetChannelUploadsAsync(Channel channel, long maxResults = 5)
+        public static async Task<IList<PlaylistItem>> GetChannelUploadsAsync(YouTubeService service, Channel channel, long maxResults = 5)
         {
-            var listRequest = Service.PlaylistItems.List("snippet, contentDetails");
+            var listRequest = service.PlaylistItems.List("snippet, contentDetails");
             listRequest.PlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
             listRequest.MaxResults = maxResults;
             try
@@ -84,9 +86,9 @@ namespace wow2.Bot.Modules.YouTube
             }
         }
 
-        public static async Task<Video> GetVideoAsync(string id)
+        public static async Task<Video> GetVideoAsync(YouTubeService service, string id)
         {
-            var listRequest = Service.Videos.List("snippet, contentDetails, statistics");
+            var listRequest = service.Videos.List("snippet, contentDetails, statistics");
             listRequest.Id = id;
             listRequest.MaxResults = 1;
             var listResponse = await listRequest.ExecuteAsync();
@@ -97,9 +99,9 @@ namespace wow2.Bot.Modules.YouTube
             return listResponse.Items[0];
         }
 
-        public static async Task<SearchResult> SearchForAsync(string term, string type)
+        public static async Task<SearchResult> SearchForAsync(YouTubeService service, string term, string type)
         {
-            var listRequest = Service.Search.List("snippet");
+            var listRequest = service.Search.List("snippet");
             listRequest.Q = term;
             listRequest.MaxResults = 1;
             listRequest.Type = type;
@@ -119,14 +121,15 @@ namespace wow2.Bot.Modules.YouTube
             Channel channel;
             try
             {
-                channel = await GetChannelAsync(string.Join(' ', userInputSplit));
+                channel = await GetChannelAsync(YoutubeService, string.Join(' ', userInputSplit));
             }
             catch (ArgumentException)
             {
                 throw new CommandReturnException(Context, "That channel doesn't exist.");
             }
 
-            await ReplyAsync(embed: await BuildChannelOverviewEmbedAsync(channel));
+            // TODO: make this inherit from class message.
+            await ReplyAsync(embed: await BuildChannelOverviewEmbedAsync(YoutubeService, channel));
         }
 
         [Command("subscribe")]
@@ -134,7 +137,7 @@ namespace wow2.Bot.Modules.YouTube
         [Summary("Toggle whether your server will get notified when CHANNEL uploads a new video.")]
         public async Task SubscribeAsync([Name("CHANNEL")] params string[] userInputSplit)
         {
-            var channel = await GetChannelAsync(string.Join(' ', userInputSplit));
+            var channel = await GetChannelAsync(YoutubeService, string.Join(' ', userInputSplit));
 
             if (Config.SubscribedChannels.RemoveAll(ch => ch.Id == channel.Id) != 0)
             {
@@ -203,18 +206,19 @@ namespace wow2.Bot.Modules.YouTube
         [Summary("Check for new videos.")]
         public async Task TestPollAsync()
         {
-            await CheckForNewVideosAsync();
+            await CheckForNewVideosAsync(BotService);
             await new SuccessMessage("Done!")
                 .SendAsync(Context.Channel);
         }
 
-        private static async Task CheckForNewVideosAsync()
+        [PollTask(12)]
+        private async Task CheckForNewVideosAsync(BotService botService)
         {
             // Dictionary where the key is the video ID, and the
             // value is a list of ID's of the text channels to notify.
             var newVideosDictionary = new Dictionary<string, List<ulong>>();
 
-            foreach (var config in BotService.Data.AllGuildData.Select(g => g.Value.YouTube).ToArray())
+            foreach (var config in botService.Data.AllGuildData.Select(g => g.Value.YouTube).ToArray())
             {
                 // Guild hasn't set a announcements channel, so ignore it.
                 if (config.AnnouncementsChannelId == 0)
@@ -224,7 +228,7 @@ namespace wow2.Bot.Modules.YouTube
                 foreach (string id in subscribedChannelIds.Select(c => c.Id))
                 {
                     // TODO: proper error handling.
-                    var uploads = await GetChannelUploadsAsync(await GetChannelAsync(id), 1);
+                    var uploads = await GetChannelUploadsAsync(YoutubeService, await GetChannelAsync(YoutubeService, id), 1);
                     if (uploads.Count == 0)
                         continue;
 
@@ -246,12 +250,12 @@ namespace wow2.Bot.Modules.YouTube
                     try
                     {
                         await NotifyGuildForNewVideoAsync(
-                            video: await GetVideoAsync(pair.Key),
-                            channel: (SocketTextChannel)BotService.Client.GetChannel(channelId));
+                            video: await GetVideoAsync(YoutubeService, pair.Key),
+                            channel: (SocketTextChannel)botService.Client.GetChannel(channelId));
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogException(ex, "Exception thrown when notifying guild for new YouTube video.");
+                        botService.LogException(ex, "Exception thrown when notifying guild for new YouTube video.");
                     }
                 }
             }
@@ -265,9 +269,9 @@ namespace wow2.Bot.Modules.YouTube
                 $"**{video.Snippet.ChannelTitle}** just uploaded a new video! Check it out:\nhttps://www.youtube.com/watch?v={video.Id}");
         }
 
-        private static async Task<Embed> BuildChannelOverviewEmbedAsync(Channel channel)
+        private static async Task<Embed> BuildChannelOverviewEmbedAsync(YouTubeService service, Channel channel)
         {
-            var uploads = await GetChannelUploadsAsync(channel);
+            var uploads = await GetChannelUploadsAsync(service, channel);
 
             var fieldBuilders = new List<EmbedFieldBuilder>();
             foreach (var upload in uploads)

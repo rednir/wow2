@@ -37,9 +37,9 @@ namespace wow2.Bot.Modules.Keywords
         private List<ulong> UsersLikedIds { get; } = new();
 
         /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the reaction if so.</summary>
-        public static async Task<bool> ActOnReactionAddedAsync(SocketReaction reaction, IUserMessage message)
+        public static async Task<bool> ActOnReactionAddedAsync(BotService botService, SocketReaction reaction, IUserMessage message)
         {
-            var config = BotService.Data.AllGuildData[message.GetGuild().Id].Keywords;
+            var config = botService.Data.AllGuildData[message.GetGuild().Id].Keywords;
 
             ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
                 m => m.SentMessage?.Id == message.Id);
@@ -65,14 +65,14 @@ namespace wow2.Bot.Modules.Keywords
                 return false;
             }
 
-            await BotService.Data.SaveGuildDataToFileAsync(responseMessage.SentMessage.GetGuild().Id);
+            await botService.Data.SaveGuildDataToFileAsync(responseMessage.SentMessage.GetGuild().Id);
             return true;
         }
 
         /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the removed reaction if so.</summary>
-        public static bool ActOnReactionRemoved(SocketReaction reaction, IUserMessage message)
+        public static bool ActOnReactionRemoved(BotService botService, SocketReaction reaction, IUserMessage message)
         {
-            var config = BotService.Data.AllGuildData[message.GetGuild().Id].Keywords;
+            var config = botService.Data.AllGuildData[message.GetGuild().Id].Keywords;
 
             ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
                 m => m.SentMessage?.Id == message.Id);
@@ -90,10 +90,9 @@ namespace wow2.Bot.Modules.Keywords
             return false;
         }
 
-        public async Task<IUserMessage> RespondToMessageAsync(SocketMessage message)
+        public async Task<IUserMessage> RespondToMessageAsync(BotService botService, SocketMessage message)
         {
-            IGuild guild = message.GetGuild();
-            var config = BotService.Data.AllGuildData[message.GetGuild().Id].Keywords;
+            var config = botService.Data.AllGuildData[message.GetGuild().Id].Keywords;
             ReplyToMessageId = message.Id;
 
             // Don't use embed message if the value to send contains a link.

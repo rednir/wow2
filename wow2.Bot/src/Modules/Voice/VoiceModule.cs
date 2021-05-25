@@ -66,7 +66,8 @@ namespace wow2.Bot.Modules.Voice
             VideoMetadata metadata;
             try
             {
-                metadata = await DownloadService.GetMetadataAsync(songRequest);
+                throw new NotImplementedException();
+                //metadata = await DownloadService.GetMetadataAsync(YouTubeService, songRequest);
             }
             catch (ArgumentException ex)
             {

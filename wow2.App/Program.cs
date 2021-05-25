@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using wow2.Bot;
-using wow2.Bot.CommandLine;
 using wow2.Bot.Data;
 using wow2.Bot.Verbose;
 

@@ -16,11 +16,17 @@ namespace wow2.Bot.Modules.Reddit
     [Summary("View Reddit posts and other content.")]
     public class RedditModule : Module
     {
+        public RedditModule()
+        {
+            RedditClient = new RedditClient(
+                BotService.Secrets.RedditAppId, BotService.Secrets.RedditRefreshToken);
+        }
+
         public BotService BotService { get; set; }
 
-        private static readonly RedditClient RedditClient = new(BotService.Data.Secrets.RedditAppId, BotService.Data.Secrets.RedditRefreshToken);
+        private RedditClient RedditClient { get; }
 
-        public static Subreddit GetSubreddit(string subredditName)
+        public static Subreddit GetSubreddit(RedditClient client, string subredditName)
         {
             if (subredditName.StartsWith("r/", StringComparison.OrdinalIgnoreCase))
                 subredditName = subredditName.Remove(0, 2);
@@ -28,7 +34,7 @@ namespace wow2.Bot.Modules.Reddit
             Subreddit subreddit;
             try
             {
-                subreddit = RedditClient.Subreddit(subredditName).About();
+                subreddit = client.Subreddit(subredditName).About();
             }
             catch (RedditNotFoundException ex)
             {
@@ -74,7 +80,7 @@ namespace wow2.Bot.Modules.Reddit
             Subreddit subreddit;
             try
             {
-                subreddit = GetSubreddit(subredditName);
+                subreddit = GetSubreddit(RedditClient, subredditName);
             }
             catch (CommandReturnException ex)
             {

@@ -6,46 +6,19 @@ using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
+using Google.Apis.Services;
+using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using wow2.Bot.Modules.YouTube;
 
 namespace wow2.Bot.Modules.Voice
 {
-    public static class DownloadService
+    public class DownloadService
     {
-        public static readonly string YouTubeDlPath = Environment.GetEnvironmentVariable("YOUTUBE_DL_PATH") ?? "youtube-dl";
-        public static readonly string FFmpegPath = Environment.GetEnvironmentVariable("FFMPEG_PATH") ?? "ffmpeg";
+        public static string YouTubeDlPath { get; } = Environment.GetEnvironmentVariable("YOUTUBE_DL_PATH") ?? "youtube-dl";
+        public static string FFmpegPath { get; } = Environment.GetEnvironmentVariable("FFMPEG_PATH") ?? "ffmpeg";
 
-        public static Cache<VideoMetadata> VideoMetadataCache { get; } = new(120);
-
-        /// <summary>Looks up a URL or search term and gets the video metadata.</summary>
-        /// <returns>Video metadata deserialized into <c>YouTubeVideoMetadata</c>.</returns>
-        public static async Task<VideoMetadata> GetMetadataAsync(string searchOrUrl)
-        {
-            searchOrUrl = searchOrUrl.Trim('\"');
-
-            if (VideoMetadataCache.TryFetch(searchOrUrl, out var metadataFromCache))
-                return metadataFromCache;
-
-            Video video;
-            if (TryGetVideoIdFromUrl(searchOrUrl, out string id))
-            {
-                video = await YouTubeModule.GetVideoAsync(id);
-            }
-            else if (searchOrUrl.Contains("twitch.tv/"))
-            {
-                return await GetMetadataFromYoutubeDlAsync(searchOrUrl);
-            }
-            else
-            {
-                SearchResult searchResult = await YouTubeModule.SearchForAsync(searchOrUrl, "video");
-                video = await YouTubeModule.GetVideoAsync(searchResult.Id.VideoId);
-            }
-
-            var videoMetadata = new VideoMetadata(video);
-            VideoMetadataCache.Add(searchOrUrl, videoMetadata);
-            return videoMetadata;
-        }
+        private static Cache<VideoMetadata> VideoMetadataCache { get; } = new(120);
 
         /// <summary>Creates a new FFmpeg process that creates an audio stream from youtube-dl.</summary>
         /// <returns>The FFmpeg process.</returns>
@@ -93,6 +66,35 @@ namespace wow2.Bot.Modules.Voice
                 throw new ArgumentException(standardError);
 
             return JsonSerializer.Deserialize<VideoMetadata>(standardOutput);
+        }
+
+        /// <summary>Looks up a URL or search term and gets the video metadata.</summary>
+        /// <returns>Video metadata deserialized into <c>YouTubeVideoMetadata</c>.</returns>
+        public async Task<VideoMetadata> GetMetadataAsync(YouTubeService youTubeService, string searchOrUrl)
+        {
+            searchOrUrl = searchOrUrl.Trim('\"');
+
+            if (VideoMetadataCache.TryFetch(searchOrUrl, out var metadataFromCache))
+                return metadataFromCache;
+
+            Video video;
+            if (TryGetVideoIdFromUrl(searchOrUrl, out string id))
+            {
+                video = await YouTubeModule.GetVideoAsync(youTubeService, id);
+            }
+            else if (searchOrUrl.Contains("twitch.tv/"))
+            {
+                return await GetMetadataFromYoutubeDlAsync(searchOrUrl);
+            }
+            else
+            {
+                SearchResult searchResult = await YouTubeModule.SearchForAsync(youTubeService, searchOrUrl, "video");
+                video = await YouTubeModule.GetVideoAsync(youTubeService, searchResult.Id.VideoId);
+            }
+
+            var videoMetadata = new VideoMetadata(video);
+            VideoMetadataCache.Add(searchOrUrl, videoMetadata);
+            return videoMetadata;
         }
 
         private static bool TryGetVideoIdFromUrl(string url, out string id)

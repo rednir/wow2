@@ -18,8 +18,8 @@ namespace wow2.Bot.Extensions
         public static SocketGuild GetGuild(this IUserMessage socketMessage)
             => ((SocketGuildChannel)socketMessage.Channel).Guild;
 
-        public static string GetCommandPrefix(this IGuild guild) =>
-            BotService.Data.AllGuildData[guild.Id].Main.CommandPrefix;
+        public static string GetCommandPrefix(this IGuild guild, BotService botService) =>
+            botService.Data.AllGuildData[guild.Id].Main.CommandPrefix;
 
         public static string TextBetween(this string stringToSearch, string separator)
         {

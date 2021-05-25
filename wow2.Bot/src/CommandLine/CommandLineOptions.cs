@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -67,4 +67,4 @@ namespace wow2.Bot.CommandLine
         private static OptionAttribute GetOptionAttribute(MethodInfo method) =>
             (OptionAttribute)method.GetCustomAttribute(typeof(OptionAttribute));
     }
-}
+}*/

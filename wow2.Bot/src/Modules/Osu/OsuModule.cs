@@ -33,21 +33,10 @@ namespace wow2.Bot.Modules.Osu
             { "SSH", Emote.Parse("<:osussh:807023289742262272>") },
         };
 
-        private static readonly System.Timers.Timer RefreshAccessTokenTimer = new(18 * 3600000);
-
         private static readonly HttpClient HttpClient = new()
         {
             BaseAddress = new Uri("https://osu.ppy.sh/"),
         };
-
-        static OsuModule()
-        {
-            PollingService.CreateService(CheckForUserMilestonesAsync, 15);
-
-            _ = AuthenticateHttpClient();
-            RefreshAccessTokenTimer.Elapsed += (sender, e) => _ = AuthenticateHttpClient();
-            RefreshAccessTokenTimer.Start();
-        }
 
         public BotService BotService { get; set; }
 
@@ -160,17 +149,18 @@ namespace wow2.Bot.Modules.Osu
         [Summary("Check for new user milestones.")]
         public async Task TestPollAsync()
         {
-            await CheckForUserMilestonesAsync();
+            await CheckForUserMilestonesAsync(BotService);
             await new SuccessMessage("Done!")
                 .SendAsync(Context.Channel);
         }
 
-        private static async Task AuthenticateHttpClient()
+        [PollTask(23 * 60, true)]
+        private static async Task AuthenticateHttpClient(BotService botService)
         {
             var tokenRequestParams = new Dictionary<string, string>()
             {
-                { "client_id", BotService.Secrets.OsuClientId },
-                { "client_secret", BotService.Secrets.OsuClientSecret },
+                { "client_id", botService.Secrets.OsuClientId },
+                { "client_secret", botService.Secrets.OsuClientSecret },
                 { "grant_type", "client_credentials" },
                 { "scope", "public" },
             };
@@ -184,7 +174,7 @@ namespace wow2.Bot.Modules.Osu
             }
             catch (Exception ex)
             {
-                BotService.LogException(ex, "Exception thrown when attempting to get an osu!api access token.");
+                botService.LogException(ex, "Exception thrown when attempting to get an osu!api access token.");
                 return;
             }
 
@@ -211,9 +201,10 @@ namespace wow2.Bot.Modules.Osu
             return userData;
         }
 
-        private static async Task CheckForUserMilestonesAsync()
+        [PollTask(15)]
+        private static async Task CheckForUserMilestonesAsync(BotService botService)
         {
-            foreach (var config in BotService.Data.AllGuildData.Select(g => g.Value.Osu).ToArray())
+            foreach (var config in botService.Data.AllGuildData.Select(g => g.Value.Osu).ToArray())
             {
                 // Guild hasn't set a announcements channel, so ignore it.
                 if (config.AnnouncementsChannelId == 0)
@@ -230,7 +221,7 @@ namespace wow2.Bot.Modules.Osu
                     {
                         config.SubscribedUsers[i] = updatedUserData;
                         await new NewTopPlayMessage(updatedUserData, updatedUserData.BestScores[0])
-                            .SendAsync(BotService.Client.GetChannel(config.AnnouncementsChannelId) as SocketTextChannel);
+                            .SendAsync(botService.Client.GetChannel(config.AnnouncementsChannelId) as SocketTextChannel);
                     }
 
                     await Task.Delay(2000);

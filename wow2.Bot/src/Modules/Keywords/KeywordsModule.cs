@@ -21,12 +21,14 @@ namespace wow2.Bot.Modules.Keywords
         private const int MaxNumberOfKeywords = 50;
         private const int MaxNumberOfValues = 20;
 
+        public BotService BotService { get; set; }
+
         private KeywordsModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Keywords;
 
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
-        public static bool CheckMessageForKeyword(SocketCommandContext context)
+        public static bool CheckMessageForKeyword(SocketCommandContext context, BotService botService)
         {
-            var config = BotService.Data.AllGuildData[context.Guild.Id].Keywords;
+            var config = botService.Data.AllGuildData[context.Guild.Id].Keywords;
             string messageContent = context.Message.Content.ToLower();
             string[] listOfFoundKeywords = GetAllKeywordsInString(messageContent, config.KeywordsDictionary.Keys);
 
@@ -42,7 +44,7 @@ namespace wow2.Bot.Modules.Keywords
 
             // Don't await this to avoid blocking gateway task.
             _ = new ResponseMessage(keywordValue)
-                .RespondToMessageAsync(context.Message);
+                .RespondToMessageAsync(botService, context.Message);
 
             return true;
         }
