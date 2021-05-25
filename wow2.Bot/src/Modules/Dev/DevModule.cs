@@ -14,10 +14,7 @@ namespace wow2.Bot.Modules.Dev
     [Summary("Boring stuff for developers.")]
     public class DevModule : Module
     {
-        public DevModule(BotService botService)
-            : base(botService)
-        {
-        }
+        public BotService BotService { get; set; }
 
         [Command("load-guild-data")]
         [Alias("load")]

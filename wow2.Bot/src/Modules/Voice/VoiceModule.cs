@@ -21,10 +21,7 @@ namespace wow2.Bot.Modules.Voice
     [Summary("Play YouTube or Twitch audio in a voice channel.")]
     public class VoiceModule : Module
     {
-        public VoiceModule(BotService botService)
-            : base(botService)
-        {
-        }
+        public BotService BotService { get; set; }
 
         public VoiceModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Voice;
 

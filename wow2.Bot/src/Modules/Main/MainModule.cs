@@ -16,10 +16,7 @@ namespace wow2.Bot.Modules.Main
     [Summary("Stuff to do with the bot an other random stuff.")]
     public class MainModule : Module
     {
-        public MainModule(BotService botService)
-            : base(botService)
-        {
-        }
+        public BotService BotService { get; set; }
 
         public MainModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Main;
 

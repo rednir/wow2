@@ -91,7 +91,6 @@ namespace wow2.Bot.Verbose.Messages
             SetEmbedFields();
             await SentMessage.ModifyAsync(
                 message => message.Embed = EmbedBuilder.Build());
-            Logger.Log($"PagedMessage {SentMessage.Id} was changed to page {Page}.", LogSeverity.Debug);
         }
 
         /// <summary>Removes reactions, and stops ability to scroll through pages for this message.</summary>
@@ -105,7 +104,6 @@ namespace wow2.Bot.Verbose.Messages
         {
             ListOfPagedMessages.Remove(this);
             GC.SuppressFinalize(this);
-            Logger.Log($"PagedMessage {SentMessage.Id} was disposed.", LogSeverity.Debug);
         }
 
         protected void SetEmbedFields()

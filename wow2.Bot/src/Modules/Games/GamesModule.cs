@@ -11,10 +11,7 @@ namespace wow2.Bot.Modules.Games
     [Summary("For having a bit of fun.")]
     public class GamesModule : Module
     {
-        public GamesModule(BotService botService)
-            : base(botService)
-        {
-        }
+        public BotService BotService { get; set; }
 
         [Command("counting")]
         [Alias("count")]

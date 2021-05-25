@@ -49,9 +49,7 @@ namespace wow2.Bot.Modules.Osu
             RefreshAccessTokenTimer.Start();
         }
 
-        public OsuModule(BotService botService) : base(botService)
-        {
-        }
+        public BotService BotService { get; set; }
 
         public OsuModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Osu;
 
