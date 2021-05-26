@@ -1,12 +1,13 @@
 namespace wow2.Modules.Games.VerbalMemory
 {
-    public class VerbalMemoryLeaderboardEntry
+    public class VerbalMemoryLeaderboardEntry : LeaderboardEntry
     {
         public VerbalMemoryLeaderboardEntry()
         {
         }
 
         public VerbalMemoryLeaderboardEntry(VerbalMemoryGameConfig gameConfig)
+            : base(gameConfig.InitalContext.User)
         {
             Points = gameConfig.Turns;
             UniqueWords = gameConfig.SeenWords.Count;

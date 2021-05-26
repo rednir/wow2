@@ -1,12 +1,13 @@
 namespace wow2.Modules.Games.Counting
 {
-    public class CountingLeaderboardEntry
+    public class CountingLeaderboardEntry : LeaderboardEntry
     {
         public CountingLeaderboardEntry()
         {
         }
 
         public CountingLeaderboardEntry(CountingGameConfig gameConfig)
+            : base(gameConfig.InitalContext.User)
         {
             Increment = gameConfig.Increment;
             FinalNumber = gameConfig.NextNumber - gameConfig.Increment;

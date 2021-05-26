@@ -14,7 +14,7 @@ namespace wow2.Modules.Games.Counting
 
         [JsonIgnore]
         public float NextNumber { get; set; }
-        
+
         public List<CountingLeaderboardEntry> LeaderboardEntries { get; } = new();
     }
 }
