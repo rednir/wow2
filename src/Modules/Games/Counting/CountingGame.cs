@@ -103,27 +103,13 @@ namespace wow2.Modules.Games.Counting
                 var fieldBuilderForParticipant = new EmbedFieldBuilder()
                 {
                     Name = participant.Key.Username,
-                    Value = $"{participant.Value} messages ({Math.Round((float)participant.Value / (float)dictionaryOfParticipants.Values.Sum() * 100f)}% helpful)",
+                    Value = $"{participant.Value} messages ({Math.Round((float)participant.Value / dictionaryOfParticipants.Values.Sum() * 100f)}% helpful)",
                     IsInline = true,
                 };
                 listOfFieldBuilders.Add(fieldBuilderForParticipant);
             }
 
-            string commentOnFinalNumber;
-            float absNextNumber = Math.Abs((float)config.NextNumber);
-            float absIncrement = Math.Abs((float)config.Increment);
-
-            if (absNextNumber < 3 * absIncrement)
-                commentOnFinalNumber = "Pathetic.";
-            else if (absNextNumber < 25 * absIncrement)
-                commentOnFinalNumber = "There's plenty room for improvement.";
-            else if (absNextNumber < 75 * absIncrement)
-                commentOnFinalNumber = "Not bad!";
-            else if (absNextNumber >= 75 * absIncrement)
-                commentOnFinalNumber = "Amazing!";
-            else
-                commentOnFinalNumber = string.Empty;
-
+            string commentOnFinalNumber = MakeComment(config.NextNumber, config.Increment);
             await new PagedMessage(
                 fieldBuilders: listOfFieldBuilders,
                 title: "📈 Final Stats",
@@ -131,6 +117,27 @@ namespace wow2.Modules.Games.Counting
                     .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
 
             config.IsGameStarted = false;
+            config.LeaderboardEntries.Add(
+                new CountingLeaderboardEntry(config));
+
+            await DataManager.SaveGuildDataToFileAsync(config.InitalContext.Guild.Id);
+        }
+
+        private static string MakeComment(float nextNumber, float increment)
+        {
+            float absNextNumber = Math.Abs((float)nextNumber);
+            float absIncrement = Math.Abs((float)increment);
+
+            if (absNextNumber < 3 * absIncrement)
+                return "Pathetic.";
+            else if (absNextNumber < 25 * absIncrement)
+                return "There's plenty room for improvement.";
+            else if (absNextNumber < 75 * absIncrement)
+                return "Not bad!";
+            else if (absNextNumber >= 75 * absIncrement)
+                return "Amazing!";
+            else
+                return string.Empty;
         }
 
         /// <returns>True if counting was ended, otherwise false.</returns>

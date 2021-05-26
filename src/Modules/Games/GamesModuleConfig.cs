@@ -6,10 +6,7 @@ namespace wow2.Modules.Games
 {
     public class GamesModuleConfig
     {
-        [JsonIgnore]
         public CountingGameConfig Counting { get; set; } = new CountingGameConfig();
-
-        [JsonIgnore]
         public VerbalMemoryGameConfig VerbalMemory { get; set; } = new VerbalMemoryGameConfig();
     }
 }
