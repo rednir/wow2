@@ -13,7 +13,10 @@ namespace wow2.Bot.Modules.Timers
     [Summary("Create and manage timers and reminders.")]
     public class TimersModule : Module
     {
-        public BotService BotService { get; set; }
+        protected TimersModule(BotService botService)
+            : base(botService)
+        {
+        }
 
         public TimersModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Timers;
 

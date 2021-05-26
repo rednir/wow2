@@ -21,7 +21,10 @@ namespace wow2.Bot.Modules.Keywords
         private const int MaxNumberOfKeywords = 50;
         private const int MaxNumberOfValues = 20;
 
-        public BotService BotService { get; set; }
+        protected KeywordsModule(BotService botService) 
+            : base(botService)
+        {
+        }
 
         private KeywordsModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Keywords;
 

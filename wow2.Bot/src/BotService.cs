@@ -91,6 +91,7 @@ namespace wow2.Bot
             // Start the Discord client.
             await Client.LoginAsync(TokenType.Bot, Secrets.DiscordBotToken);
             await Client.StartAsync();
+            await InstallCommandsAsync();
 
             ApplicationInfo = await Client.GetApplicationInfoAsync();
         }
@@ -110,7 +111,7 @@ namespace wow2.Bot
 
             CommandService = new CommandService(config);
             CommandService.Log += DiscordLogRecievedAsync;
-            await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), Services);
+            await CommandService.AddModulesAsync(Assembly.GetExecutingAssembly(), Services);
         }
 
         public string MakeCommandsMarkdown()

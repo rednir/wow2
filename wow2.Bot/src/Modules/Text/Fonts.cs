@@ -15,7 +15,7 @@ namespace wow2.Bot.Modules.Text
                 assembly.GetManifestResourceStream("wow2.res.ClearSans-Medium.ttf"));
         }
 
-        public static Font QuoteTextFont => LightFontFamily.CreateFont(32, FontStyle.Regular);
+        public static Font QuoteTextFont => LightFontFamily?.CreateFont(32, FontStyle.Regular);
 
         private static FontCollection FontCollection { get; } = new();
 

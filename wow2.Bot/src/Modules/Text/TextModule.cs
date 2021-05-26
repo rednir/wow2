@@ -20,14 +20,17 @@ namespace wow2.Bot.Modules.Text
     [Summary("Change and manipulate text.")]
     public class TextModule : Module
     {
-        public BotService BotService { get; set; }
-
         /// <summary>Gets a dictionary where the key is the name and the value is the image stream.</summary>
         private static Dictionary<string, Stream> QuoteTemplates { get; }
 
         static TextModule()
         {
             QuoteTemplates = GetQuoteTemplateImages();
+        }
+
+        protected TextModule(BotService botService)
+            : base(botService)
+        {
         }
 
         [Command("quote")]

@@ -23,7 +23,8 @@ namespace wow2.Bot.Modules.YouTube
     [Summary("Integrations with YouTube, like getting notified for new videos.")]
     public class YouTubeModule : Module
     {
-        public YouTubeModule()
+        public YouTubeModule(BotService botService)
+            : base(botService)
         {
             YoutubeService = new(new BaseClientService.Initializer()
             {
@@ -31,8 +32,6 @@ namespace wow2.Bot.Modules.YouTube
                 ApplicationName = "wow2-youtube",
             });
         }
-
-        public BotService BotService { get; set; }
 
         public YouTubeModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].YouTube;
 

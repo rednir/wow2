@@ -18,7 +18,10 @@ namespace wow2.Bot.Modules.Moderator
     [RequireUserPermission(GuildPermission.BanMembers)]
     public class ModeratorModule : Module
     {
-        public BotService BotService { get; set; }
+        protected ModeratorModule(BotService botService)
+            : base(botService)
+        {
+        }
 
         public ModeratorModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Moderator;
 

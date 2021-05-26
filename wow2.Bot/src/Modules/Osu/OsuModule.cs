@@ -38,7 +38,10 @@ namespace wow2.Bot.Modules.Osu
             BaseAddress = new Uri("https://osu.ppy.sh/"),
         };
 
-        public BotService BotService { get; set; }
+        protected OsuModule(BotService botService)
+            : base(botService)
+        {
+        }
 
         public OsuModuleConfig Config => BotService.Data.AllGuildData[Context.Guild.Id].Osu;
 
