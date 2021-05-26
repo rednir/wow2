@@ -39,8 +39,8 @@ namespace wow2.Modules.Dev
         [Summary("Sets the 'playing' text and the status of the bot user.")]
         public async Task SetStatus(string message, UserStatus status)
         {
-            await Bot.Client.SetGameAsync(message);
-            await Bot.Client.SetStatusAsync(status);
+            await BotService.Client.SetGameAsync(message);
+            await BotService.Client.SetStatusAsync(status);
             await new SuccessMessage("Set status.")
                 .SendAsync(Context.Channel);
         }
@@ -82,7 +82,7 @@ namespace wow2.Modules.Dev
         [Summary("Creates a COMMANDS.md file with a list of all commands.")]
         public async Task CommandsListAsync()
         {
-            string md = Bot.MakeCommandsMarkdown();
+            string md = BotService.MakeCommandsMarkdown();
             await Context.Channel.SendFileAsync(md.ToMemoryStream(), "COMMANDS.md");
         }
 
@@ -99,13 +99,13 @@ namespace wow2.Modules.Dev
         [Summary("Uninstalls all user commands and changes the bot's Discord status.")]
         public async Task PanicAsync()
         {
-            await Bot.Client.SetGameAsync("under maintenance");
-            await Bot.Client.SetStatusAsync(UserStatus.DoNotDisturb);
-            foreach (ModuleInfo module in Bot.CommandService.Modules)
+            await BotService.Client.SetGameAsync("under maintenance");
+            await BotService.Client.SetStatusAsync(UserStatus.DoNotDisturb);
+            foreach (ModuleInfo module in BotService.CommandService.Modules)
             {
                 // TODO: Get attribute from this class.
                 if (module.Name != "Developer")
-                    await Bot.CommandService.RemoveModuleAsync(module);
+                    await BotService.CommandService.RemoveModuleAsync(module);
             }
 
             await new SuccessMessage("Done.")
@@ -116,9 +116,9 @@ namespace wow2.Modules.Dev
         [Summary("Installs all commands and reconnects the bot, reloading save data from file.")]
         public async Task UnpanicAsync()
         {
-            await Bot.Client.StopAsync();
-            await Bot.InstallCommandsAsync();
-            await Bot.InitializeAndStartClientAsync();
+            await BotService.Client.StopAsync();
+            await BotService.InstallCommandsAsync();
+            await BotService.InitializeAndStartClientAsync();
 
             await new SuccessMessage("Reconnected.")
                 .SendAsync(Context.Channel);

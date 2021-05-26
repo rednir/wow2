@@ -24,7 +24,7 @@ using wow2.Verbose.Messages;
 
 namespace wow2
 {
-    public static class Bot
+    public static class BotService
     {
         public static DiscordSocketClient Client { get; set; }
 

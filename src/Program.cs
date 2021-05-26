@@ -33,12 +33,12 @@ namespace wow2
             await Logger.LogInitialize();
             await DataManager.LoadSecretsFromFileAsync();
 
-            await Bot.InstallCommandsAsync();
+            await BotService.InstallCommandsAsync();
 
             if (CommandLineOptions.ParseArgs(args))
                 return;
 
-            await Bot.InitializeAndStartClientAsync();
+            await BotService.InitializeAndStartClientAsync();
 
             await Task.Delay(-1);
         }

@@ -231,7 +231,7 @@ namespace wow2.Modules.Dev
                 await context.Channel.SendMessageAsync($"`{context.Guild} {command}`");
 
                 await Task.Delay(CommandDelay);
-                results.Add(await Bot.ExecuteCommandAsync(context, command));
+                results.Add(await BotService.ExecuteCommandAsync(context, command));
                 await Task.Delay(CommandDelay);
             }
 

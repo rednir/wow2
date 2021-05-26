@@ -30,7 +30,7 @@ namespace wow2.Modules.Main
             {
                 var aliasToExecute = aliasesFound.First();
 
-                await Bot.ExecuteCommandAsync(
+                await BotService.ExecuteCommandAsync(
                     context,
                     aliasToExecute.Value + messageContent.Replace(aliasToExecute.Key, string.Empty, true, null));
 
@@ -64,7 +64,7 @@ namespace wow2.Modules.Main
             {
                 await new PagedMessage(
                     fieldBuilders: await ModuleInfoToEmbedFieldsAsync(commandPrefix),
-                    description: $"There's {Bot.CommandService.Commands.Count()} total commands for you to play around with.",
+                    description: $"There's {BotService.CommandService.Commands.Count()} total commands for you to play around with.",
                     title: "📃 Help",
                     page: page)
                         .SendAsync(Context.Channel);
@@ -182,7 +182,7 @@ namespace wow2.Modules.Main
         /// <summary>Builds embed fields for all command modules.</summary>
         private async Task<List<EmbedFieldBuilder>> ModuleInfoToEmbedFieldsAsync(string commandPrefix)
         {
-            var listOfModules = (await Bot.CommandService.GetExecutableCommandsAsync(Context, null))
+            var listOfModules = (await BotService.CommandService.GetExecutableCommandsAsync(Context, null))
                 .Select(command => command.Module)
 
                 // Remove duplicate modules.
@@ -223,7 +223,7 @@ namespace wow2.Modules.Main
         private async Task<List<EmbedFieldBuilder>> CommandInfoToEmbedFieldsAsync(string specifiedModuleName, string commandPrefix)
         {
             // Find commands in module.
-            var listOfCommandInfo = (await Bot.CommandService.GetExecutableCommandsAsync(
+            var listOfCommandInfo = (await BotService.CommandService.GetExecutableCommandsAsync(
                 new CommandContext(Context.Client, Context.Message), null))
             .Where(c =>
                 c.Module.Name.Equals(specifiedModuleName, StringComparison.CurrentCultureIgnoreCase)

@@ -71,7 +71,7 @@ namespace wow2.Modules.Moderator
             await WarnOrBanUserAsync(
                 config: config,
                 victim: (SocketGuildUser)context.User,
-                requestedBy: await Bot.GetClientGuildUserAsync(context.Channel),
+                requestedBy: await BotService.GetClientGuildUserAsync(context.Channel),
                 message: warningMessage);
 
             await new InfoMessage($"{context.User.Mention} has been warned due to {dueTo}.")
@@ -217,7 +217,7 @@ namespace wow2.Modules.Moderator
 
         private static UserRecord GetUserRecord(ModeratorModuleConfig config, ulong id)
         {
-            SocketUser user = Bot.Client.GetUser(id);
+            SocketUser user = BotService.Client.GetUser(id);
             if (user == null)
                 throw new ArgumentException("User was not found.");
             if (user.IsBot)
