@@ -1,7 +1,4 @@
-using System;
-using wow2.Modules.Games.Counting;
-
-namespace wow2.Modules.Games
+namespace wow2.Modules.Games.Counting
 {
     public class CountingLeaderboardEntry
     {

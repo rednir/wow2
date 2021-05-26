@@ -18,5 +18,7 @@ namespace wow2.Modules.Games.VerbalMemory
         /// <summary>Gets or sets the message with the current word.</summary>
         [JsonIgnore]
         public IUserMessage CurrentWordMessage { get; set; }
+
+        public List<VerbalMemoryLeaderboardEntry> LeaderboardEntries { get; } = new();
     }
 }

@@ -122,11 +122,15 @@ namespace wow2.Modules.Games.VerbalMemory
         private static async Task EndGameAsync(VerbalMemoryGameConfig config)
         {
             await new GenericMessage(
-                description: $"You got `{config.Turns}` points, with `{config.SeenWords.Count}` different words.",
+                description: $"You got `{config.Turns}` points, with `{config.SeenWords.Count}` unique words.",
                 title: "📈 Final Stats")
                     .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
 
             config.IsGameStarted = false;
+            config.LeaderboardEntries.Add(
+                new VerbalMemoryLeaderboardEntry(config));
+
+            await DataManager.SaveGuildDataToFileAsync(config.InitalContext.Guild.Id);
         }
     }
 }
