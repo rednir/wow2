@@ -42,7 +42,11 @@ namespace wow2.Modules.Dev
             await new WarningMessage("This is a warning message.", "Warning").SendAsync(context.Channel);
             await new ErrorMessage("This is an error message.", "Error").SendAsync(context.Channel);
             await new GenericMessage("This is a generic message.", "Response").SendAsync(context.Channel);
+        }
 
+        [Test("paged-message")]
+        public static async Task PagedMessageTest(SocketCommandContext context)
+        {
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             for (int i = 0; i < 46; i++)
             {
