@@ -37,12 +37,12 @@ namespace wow2.Modules.Keywords
         private List<ulong> UsersLikedIds { get; } = new();
 
         /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the reaction if so.</summary>
-        public static async Task<bool> ActOnReactionAddedAsync(SocketReaction reaction, IUserMessage message)
+        public static async Task<bool> ActOnReactionAddedAsync(SocketReaction reaction)
         {
-            var config = DataManager.AllGuildData[message.GetGuild().Id].Keywords;
+            var config = DataManager.AllGuildData[((SocketGuildChannel)reaction.Channel).Guild.Id].Keywords;
 
             ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
-                m => m.SentMessage?.Id == message.Id);
+                m => m.SentMessage?.Id == reaction.MessageId);
             if (responseMessage == null)
                 return false;
 

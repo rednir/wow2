@@ -177,12 +177,8 @@ namespace wow2
             if (reaction.UserId == Client.CurrentUser.Id)
                 return;
 
-            IUserMessage message = await cachedMessage.GetOrDownloadAsync();
-            if (message == null)
-                return;
-
             if (!await PagedMessage.ActOnReactionAsync(reaction))
-                await ResponseMessage.ActOnReactionAddedAsync(reaction, message);
+                await ResponseMessage.ActOnReactionAddedAsync(reaction);
         }
 
         public static async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
