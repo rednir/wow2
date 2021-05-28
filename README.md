@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/banner.png"></p>
+<p align="center"><img src="Assets/banner.png"></p>
 
 # wow2
 A Discord bot written in C# using the [Discord.NET](https://github.com/discord-net/Discord.Net) library.
