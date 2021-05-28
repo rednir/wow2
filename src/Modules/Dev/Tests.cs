@@ -17,7 +17,7 @@ namespace wow2.Modules.Dev
     {
         public static readonly Dictionary<string, Func<SocketCommandContext, Task>> TestList = new();
 
-        /// <summary>The time in milliseconds between asserts/commands.</summary>
+        /// <summary>The time in milliseconds between asserts/commands. This prevents the client being rate limited.</summary>
         private const int CommandDelay = 1000;
 
         static Tests()
