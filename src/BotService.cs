@@ -190,7 +190,7 @@ namespace wow2
             if (message == null)
                 return;
 
-            ResponseMessage.ActOnReactionRemoved(reaction, message);
+            ResponseMessage.ActOnReactionRemoved(reaction);
         }
 
         public static Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)

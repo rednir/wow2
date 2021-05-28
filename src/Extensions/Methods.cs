@@ -15,8 +15,10 @@ namespace wow2.Extensions
     {
         public static SocketGuild GetGuild(this SocketMessage socketMessage)
             => ((SocketGuildChannel)socketMessage.Channel).Guild;
-        public static SocketGuild GetGuild(this IUserMessage socketMessage)
-            => ((SocketGuildChannel)socketMessage.Channel).Guild;
+        public static SocketGuild GetGuild(this IUserMessage userMessage)
+            => ((SocketGuildChannel)userMessage.Channel).Guild;
+        public static SocketGuild GetGuild(this ISocketMessageChannel messageChannel)
+            => ((SocketGuildChannel)messageChannel).Guild;
 
         public static string GetCommandPrefix(this IGuild guild) =>
             DataManager.AllGuildData[guild.Id].Main.CommandPrefix;
