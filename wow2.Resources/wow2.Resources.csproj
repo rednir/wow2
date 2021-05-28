@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <CodeAnalysisRuleSet>..\wow2.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Fonts\**"/>
+    <EmbeddedResource Include="QuoteTemplates\**"/>
+  </ItemGroup>
+</Project>
