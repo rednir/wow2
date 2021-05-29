@@ -6,7 +6,7 @@ namespace wow2.Bot.Modules.Voice
 {
     public class ListOfSongsMessage : PagedMessage
     {
-        public ListOfSongsMessage(Queue<UserSongRequest> queue, string title = "List of songs", int page = -1)
+        public ListOfSongsMessage(Queue<UserSongRequest> queue, string title = "List of songs", int? page = null)
             : base(new List<EmbedFieldBuilder>(), string.Empty, title)
         {
             double totalDuration = 0;

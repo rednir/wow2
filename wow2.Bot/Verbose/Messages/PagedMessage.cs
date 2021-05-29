@@ -14,7 +14,7 @@ namespace wow2.Bot.Verbose.Messages
         public static readonly IEmote StopEmote = new Emoji("🛑");
         public static readonly IEmote PageRightEmote = new Emoji("⏩");
 
-        public PagedMessage(List<EmbedFieldBuilder> fieldBuilders, string description = "", string title = "", int page = -1)
+        public PagedMessage(List<EmbedFieldBuilder> fieldBuilders, string description = "", string title = "", int? page = null)
         {
             AllFieldBuilders = fieldBuilders;
             Page = page;
@@ -30,7 +30,7 @@ namespace wow2.Bot.Verbose.Messages
         public static List<PagedMessage> ListOfPagedMessages { get; protected set; } = new();
 
         public List<EmbedFieldBuilder> AllFieldBuilders { get; protected set; }
-        public int Page { get; protected set; }
+        public int? Page { get; protected set; }
 
         /// <summary>If the message has pages and the emote is recognised, modifies the page of the message.</summary>
         public static async Task<bool> ActOnReactionAsync(SocketReaction reaction)
@@ -118,37 +118,39 @@ namespace wow2.Bot.Verbose.Messages
                 int totalNumberOfPages = (int)Math.Ceiling((float)AllFieldBuilders.Count / maxFieldsPerPage);
 
                 // Pages are not used if page number is negative.
-                if (Page < 0)
+                if (Page == null)
                 {
                     EmbedBuilder.Footer = new EmbedFooterBuilder()
                     {
                         IconUrl = $"https://cdn.discordapp.com/emojis/{WarningEmoteId}.png",
                         Text = $"{AllFieldBuilders.Count - maxFieldsPerPage} items were excluded",
                     };
+
+                    EmbedBuilder.Fields = AllFieldBuilders.GetRange(0, 25);
                 }
                 else
                 {
                     // Ensure page number is within bounds.
-                    Page = Math.Min(totalNumberOfPages, Math.Max(1, Page));
+                    Page = Math.Min(totalNumberOfPages, Math.Max(Page ?? 0, 1));
 
                     EmbedBuilder.Footer = new EmbedFooterBuilder()
                     {
                         IconUrl = $"https://cdn.discordapp.com/emojis/{InfoEmoteId}.png",
                         Text = $"Page {Page}/{totalNumberOfPages}",
                     };
+
+                    // Page 0 and 1 should have the same starting index (never negative).
+                    int startIndex = maxFieldsPerPage * Math.Max((int)Page - 1, 0);
+
+                    // Get the fields that are within the page and set the embed's fields to that.
+                    bool isFinalPage = Page == totalNumberOfPages;
+                    EmbedBuilder.Fields = AllFieldBuilders.GetRange(startIndex,
+                        isFinalPage ? (AllFieldBuilders.Count - startIndex) : maxFieldsPerPage);
                 }
-
-                // Page 0 and 1 should have the same starting index (never negative).
-                int startIndex = maxFieldsPerPage * Math.Max(Page - 1, 0);
-
-                // Get the fields that are within the page and set the embed's fields to that.
-                bool isFinalPage = Page == totalNumberOfPages;
-                EmbedBuilder.Fields = AllFieldBuilders.GetRange(startIndex,
-                    isFinalPage ? (AllFieldBuilders.Count - startIndex) : maxFieldsPerPage);
             }
             else
             {
-                Page = -1;
+                Page = null;
                 EmbedBuilder.Fields = AllFieldBuilders;
             }
         }

@@ -12,7 +12,7 @@ namespace wow2.Bot.Modules.Games
             Func<LeaderboardEntry, string> detailsPredicate,
             string title,
             string description = null,
-            int page = -1)
+            int? page = null)
             : base(new List<EmbedFieldBuilder>(), description, title)
         {
             for (int i = 0; i < leaderboardEntries.Length; i++)

@@ -5,7 +5,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 {
     public class VerbalMemoryLeaderboardMessage : LeaderboardMessage
     {
-        public VerbalMemoryLeaderboardMessage(List<VerbalMemoryLeaderboardEntry> leaderboardEntries, int page = -1)
+        public VerbalMemoryLeaderboardMessage(List<VerbalMemoryLeaderboardEntry> leaderboardEntries, int? page = null)
             : base(
                 leaderboardEntries: leaderboardEntries.Cast<LeaderboardEntry>().ToArray(),
                 detailsPredicate: e =>

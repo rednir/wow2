@@ -5,7 +5,7 @@ namespace wow2.Bot.Modules.Games.Counting
 {
     public class CountingLeaderboardMessage : LeaderboardMessage
     {
-        public CountingLeaderboardMessage(List<CountingLeaderboardEntry> leaderboardEntries, int page = -1)
+        public CountingLeaderboardMessage(List<CountingLeaderboardEntry> leaderboardEntries, int? page = null)
             : base(
                 leaderboardEntries: leaderboardEntries.Cast<LeaderboardEntry>().ToArray(),
                 detailsPredicate: e =>
