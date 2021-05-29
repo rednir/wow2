@@ -1,4 +1,4 @@
-# List of commands (70 total)
+# List of commands (71 total)
 
 ## Main
 Stuff to do with the bot an other random stuff.
@@ -209,6 +209,9 @@ For having a bit of fun.
 
  - `!wow games verbal-memory`
      - Try remember as many words as you can.
+
+ - `!wow games verbal-memory-leaderboard [optional:PAGE]`
+     - Shows the leaderboard for the counting game.
 
 ## Developer
 Boring stuff for developers.

@@ -39,5 +39,14 @@ namespace wow2.Bot.Modules.Games
         {
             await VerbalMemoryGame.StartGame(Context);
         }
+
+        [Command("verbal-memory-leaderboard")]
+        [Alias("verbal-leaderboard", "verballeaderboard", "verbalmemoryleaderboard")]
+        [Summary("Shows the leaderboard for the counting game.")]
+        public async Task VerbalMemoryLeaderboardAsync(int page = 1)
+        {
+            await new VerbalMemoryLeaderboardMessage(Config.VerbalMemory.LeaderboardEntries, page)
+                .SendAsync(Context.Channel);
+        }
     }
 }

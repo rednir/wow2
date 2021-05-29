@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -129,6 +130,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             config.IsGameStarted = false;
             config.LeaderboardEntries.Add(
                 new VerbalMemoryLeaderboardEntry(config));
+            config.LeaderboardEntries = config.LeaderboardEntries.OrderByDescending(e => e.Points).ToList();
 
             await DataManager.SaveGuildDataToFileAsync(config.InitalContext.Guild.Id);
         }
