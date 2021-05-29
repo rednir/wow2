@@ -9,13 +9,13 @@ namespace wow2.Bot.Modules.Games.Counting
         public CountingLeaderboardEntry(CountingGameConfig gameConfig)
             : base(gameConfig.InitalContext.User)
         {
+            Points = gameConfig.ListOfMessages.Count - 1;
             Increment = gameConfig.Increment;
             FinalNumber = gameConfig.NextNumber - gameConfig.Increment;
-            NumberOfCorrectMessages = gameConfig.ListOfMessages.Count - 1;
         }
 
         public float Increment { get; set; }
+
         public float FinalNumber { get; set; }
-        public int NumberOfCorrectMessages { get; set; }
     }
 }

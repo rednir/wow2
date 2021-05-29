@@ -14,7 +14,7 @@ namespace wow2.Bot.Modules.Games.Counting
                 CountingLeaderboardEntry entry = leaderboardEntries[i];
                 AllFieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"{i + 1}) {entry.NumberOfCorrectMessages} points",
+                    Name = $"{i + 1}) {entry.Points} points",
                     Value = $"Started by {entry.PlayedByMention} at {entry.PlayedAt.ToShortDateString()}\nIncrement: {entry.Increment} • Final number: {entry.FinalNumber}",
                 });
             }

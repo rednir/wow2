@@ -13,8 +13,6 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             UniqueWords = gameConfig.SeenWords.Count;
         }
 
-        public int Points { get; set; }
-
         public int UniqueWords { get; set; }
     }
 }

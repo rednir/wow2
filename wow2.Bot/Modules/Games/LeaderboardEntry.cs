@@ -11,6 +11,8 @@ namespace wow2.Bot.Modules.Games
             PlayedByMention = user?.Mention;
         }
 
+        public int Points { get; set; }
+
         public DateTime PlayedAt { get; set; }
 
         public string PlayedByMention { get; set; }
