@@ -118,7 +118,7 @@ namespace wow2.Bot.Modules.Games.Counting
 
             config.IsGameStarted = false;
             config.LeaderboardEntries.Add(new CountingLeaderboardEntry(config));
-            config.LeaderboardEntries = config.LeaderboardEntries.OrderByDescending(e => e.NumberOfCorrectMessages).ToList();
+            config.LeaderboardEntries = config.LeaderboardEntries.OrderByDescending(e => e.Points).ToList();
 
             await DataManager.SaveGuildDataToFileAsync(config.InitalContext.Guild.Id);
         }
