@@ -11,13 +11,15 @@ namespace wow2.Bot.Modules.Games.Counting
         {
             for (int i = 0; i < leaderboardEntries.Count; i++)
             {
+                CountingLeaderboardEntry entry = leaderboardEntries[i];
                 AllFieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"{i + 1}) {leaderboardEntries[i].NumberOfCorrectMessages} points",
-                    Value = $"Started by {leaderboardEntries[i].PlayedByMention} at {leaderboardEntries[i].PlayedAt.ToShortDateString()}",
+                    Name = $"{i + 1}) {entry.NumberOfCorrectMessages} points",
+                    Value = $"Started by {entry.PlayedByMention} at {entry.PlayedAt.ToShortDateString()}\nIncrement: {entry.Increment} • Final number: {entry.FinalNumber}",
                 });
             }
 
+            EmbedBuilder.Description = "*The number of points is the final number divided by the increment.";
             Page = page;
             SetEmbedFields();
         }
