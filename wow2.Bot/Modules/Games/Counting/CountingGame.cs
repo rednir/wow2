@@ -117,8 +117,8 @@ namespace wow2.Bot.Modules.Games.Counting
                     .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
 
             config.IsGameStarted = false;
-            config.LeaderboardEntries.Add(
-                new CountingLeaderboardEntry(config));
+            config.LeaderboardEntries.Add(new CountingLeaderboardEntry(config));
+            config.LeaderboardEntries = config.LeaderboardEntries.OrderByDescending(e => e.NumberOfCorrectMessages).ToList();
 
             await DataManager.SaveGuildDataToFileAsync(config.InitalContext.Guild.Id);
         }

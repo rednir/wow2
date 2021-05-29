@@ -19,6 +19,6 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
         [JsonIgnore]
         public IUserMessage CurrentWordMessage { get; set; }
 
-        public List<VerbalMemoryLeaderboardEntry> LeaderboardEntries { get; } = new();
+        public List<VerbalMemoryLeaderboardEntry> LeaderboardEntries { get; set; } = new();
     }
 }

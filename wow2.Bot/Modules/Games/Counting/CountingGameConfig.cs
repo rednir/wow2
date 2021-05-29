@@ -15,6 +15,6 @@ namespace wow2.Bot.Modules.Games.Counting
         [JsonIgnore]
         public float NextNumber { get; set; }
 
-        public List<CountingLeaderboardEntry> LeaderboardEntries { get; } = new();
+        public List<CountingLeaderboardEntry> LeaderboardEntries { get; set; } = new();
     }
 }

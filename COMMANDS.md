@@ -1,4 +1,4 @@
-# List of commands (69 total)
+# List of commands (70 total)
 
 ## Main
 Stuff to do with the bot an other random stuff.
@@ -203,6 +203,9 @@ For having a bit of fun.
 
  - `!wow games counting [optional:INCREMENT]`
      - Start counting in a text channel. INCREMENT is the number that will be added each time.
+
+ - `!wow games counting-leaderboard [optional:PAGE]`
+     - Shows the leaderboard for the counting game.
 
  - `!wow games verbal-memory`
      - Try remember as many words as you can.

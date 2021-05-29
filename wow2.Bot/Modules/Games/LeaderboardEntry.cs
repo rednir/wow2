@@ -8,11 +8,11 @@ namespace wow2.Bot.Modules.Games
         protected LeaderboardEntry(IUser user = null)
         {
             PlayedAt = DateTime.Now;
-            PlayedByMention = user.Mention;
+            PlayedByMention = user?.Mention;
         }
 
-        public DateTime PlayedAt { get; }
+        public DateTime PlayedAt { get; set; }
 
-        public string PlayedByMention { get; }
+        public string PlayedByMention { get; set; }
     }
 }

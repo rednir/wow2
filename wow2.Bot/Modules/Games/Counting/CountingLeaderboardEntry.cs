@@ -11,11 +11,11 @@ namespace wow2.Bot.Modules.Games.Counting
         {
             Increment = gameConfig.Increment;
             FinalNumber = gameConfig.NextNumber - gameConfig.Increment;
-            NumberOfCorrectMessages = gameConfig.ListOfMessages.Count;
+            NumberOfCorrectMessages = gameConfig.ListOfMessages.Count - 1;
         }
 
-        public float Increment { get; }
-        public float FinalNumber { get; }
-        public int NumberOfCorrectMessages { get; }
+        public float Increment { get; set; }
+        public float FinalNumber { get; set; }
+        public int NumberOfCorrectMessages { get; set; }
     }
 }
