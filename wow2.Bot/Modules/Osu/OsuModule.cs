@@ -63,12 +63,12 @@ namespace wow2.Bot.Modules.Osu
         [Command("user")]
         [Alias("player")]
         [Summary("Get some infomation about a user.")]
-        public async Task UserAsync([Name("USER")] params string[] userSplit)
+        public async Task UserAsync([Name("USER")] [Remainder] string userInput)
         {
             UserData userData;
             try
             {
-                userData = await GetUserAsync(string.Join(' ', userSplit));
+                userData = await GetUserAsync(userInput.Trim('\"'));
             }
             catch (WebException)
             {
@@ -82,12 +82,12 @@ namespace wow2.Bot.Modules.Osu
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified about USER.")]
-        public async Task SubscribeAsync([Name("USER")] params string[] userSplit)
+        public async Task SubscribeAsync([Name("USER")] [Remainder] string userInput)
         {
             UserData userData;
             try
             {
-                userData = await GetUserAsync(string.Join(' ', userSplit));
+                userData = await GetUserAsync(userInput.Trim('\"'));
             }
             catch (WebException)
             {
