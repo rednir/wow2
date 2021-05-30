@@ -10,8 +10,8 @@ namespace wow2.Bot.Modules.Main
             var appInfo = BotService.ApplicationInfo;
             EmbedBuilder = new EmbedBuilder()
             {
-                Title = $"{appInfo.Name}  •  in {BotService.Client.Guilds.Count} servers",
-                Description = (string.IsNullOrWhiteSpace(appInfo.Description) ? null : appInfo.Description) + "\n[Link to github](https://github.com/rednir/wow2)",
+                Title = $"{appInfo.Name} / in {BotService.Client.Guilds.Count} servers",
+                Description = (string.IsNullOrWhiteSpace(appInfo.Description) ? null : appInfo.Description) + "\n[Link to github](https://github.com/rednir/wow2) • [Report an issue](https://github.com/rednir/wow2/issues/new/choose)",
                 Color = Color.LightGrey,
                 Author = new EmbedAuthorBuilder()
                 {
