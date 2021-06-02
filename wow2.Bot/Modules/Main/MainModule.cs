@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 using wow2.Bot.Verbose.Messages;
@@ -13,7 +11,7 @@ using wow2.Bot.Verbose.Messages;
 namespace wow2.Bot.Modules.Main
 {
     [Name("Main")]
-    [Summary("Stuff to do with the bot an other random stuff.")]
+    [Summary("Stuff to do with the bot and other random stuff.")]
     public class MainModule : Module
     {
         public MainModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Main;

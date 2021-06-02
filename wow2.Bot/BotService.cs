@@ -93,15 +93,29 @@ namespace wow2.Bot
             var stringBuilder = new StringBuilder($"# List of commands ({CommandService.Commands.Count()} total)\n\n");
             foreach (var module in commandsGroupedByModule)
             {
-                stringBuilder.AppendLine(
-                    $"## {module.Key.Name}\n{module.First().Module.Summary}\n");
+                stringBuilder
+                    .Append("## ")
+                    .Append(module.Key.Name)
+                    .Append(" (")
+                    .Append(module.Count())
+                    .Append(')')
+                    .Append('\n')
+                    .Append(module.First().Module.Summary)
+                    .Append("\n\n")
+                    .Append("|Command|Summary|\n|---|---|\n");
 
                 foreach (var command in module)
                 {
-                    string summary = command.Summary == null ? null : $"\n     - {command.Summary}";
-                    stringBuilder.AppendLine(
-                        $" - {command.MakeFullCommandString("!wow")}{summary}\n");
+                    stringBuilder
+                        .Append('|')
+                        .Append(command.MakeFullCommandString("!wow"))
+                        .Append('|')
+                        .Append(command.Summary ?? "No description provided.")
+                        .Append('|')
+                        .Append('\n');
                 }
+
+                stringBuilder.AppendLine();
             }
 
             return stringBuilder.ToString();
