@@ -5,19 +5,20 @@
     <CodeAnalysisRuleSet>..\wow2.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="2.4.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
-    <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta15" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta13" />
-    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.51.0.2294" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333" />
-    <PackageReference Include="Reddit" Version="1.5.0" />
+    <PackageReference Include="Discord.Net" Version="2.4.0"/>
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3"/>
+    <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta15"/>
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta13"/>
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.51.0.2294"/>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333"/>
+    <PackageReference Include="Reddit" Version="1.5.0"/>
+    <PackageReference Include="CliOptions" Version="0.1.0"/>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="res\*" />
-    <EmbeddedResource Include="res\quotetemplates\*" />
+    <EmbeddedResource Include="res\*"/>
+    <EmbeddedResource Include="res\quotetemplates\*"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\wow2.Resources\wow2.Resources.csproj" />
+    <ProjectReference Include="..\wow2.Resources\wow2.Resources.csproj"/>
   </ItemGroup>
 </Project>
