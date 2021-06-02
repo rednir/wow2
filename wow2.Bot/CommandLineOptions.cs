@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using CliOptions;
 using Discord;
 using wow2.Bot.Verbose;
@@ -12,10 +8,11 @@ namespace wow2.Bot
 {
     public class CommandLineOptions : ArgumentsParser
     {
-        [MethodOption("help", 'h', Description = "Displays a list of options.")]
+        [MethodOption("help", 'h', Description = "Displays a list of options and exits.")]
         public void Help()
         {
             Console.WriteLine("Application options:\n" + HelpText);
+            Environment.Exit(0);
         }
 
         [MethodOption("commands", 'c', Description = "Writes a list of commands to a markdown file.")]
