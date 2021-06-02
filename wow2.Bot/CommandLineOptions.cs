@@ -15,9 +15,17 @@ namespace wow2.Bot
             Environment.Exit(0);
         }
 
-        [MethodOption("commands", 'c', Description = "Writes a list of commands to a markdown file.")]
-        public void Commands()
+        [MethodOption("version", 'v', Description = "Prints the version number and exits.")]
+        public void Version()
         {
+            Console.WriteLine(Program.Version);
+            Environment.Exit(0);
+        }
+
+        [MethodOption("commands", 'c', Description = "Writes a list of commands to a markdown file.")]
+        public async void Commands()
+        {
+            await BotService.InstallCommandsAsync();
             string md = BotService.MakeCommandsMarkdown();
             File.WriteAllText("COMMANDS.md", md);
             Logger.Log($"Wrote to {Path.GetFullPath("COMMANDS.md")}", LogSeverity.Info);

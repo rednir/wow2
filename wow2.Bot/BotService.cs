@@ -59,15 +59,24 @@ namespace wow2.Bot
 
         public static async Task InstallCommandsAsync()
         {
+            if (CommandService != null)
+            {
+                Logger.Log("Not installing commands as they have already been installed.", LogSeverity.Debug);
+                return;
+            }
+
             var config = new CommandServiceConfig()
             {
                 IgnoreExtraArgs = true,
                 LogLevel = LogSeverity.Verbose,
                 DefaultRunMode = RunMode.Async,
             };
+
             CommandService = new CommandService(config);
             CommandService.Log += DiscordLogRecievedAsync;
             await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), null);
+
+            Logger.Log("Installed commands.", LogSeverity.Debug);
         }
 
         public static string MakeCommandsMarkdown()
