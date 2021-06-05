@@ -106,7 +106,7 @@ Automatically respond to keywords in user messages.
 |`!wow keywords add [KEYWORD] [VALUE]`|Adds value(s) to a keyword, creating a new keyword if it doesn't exist.|
 |`!wow keywords remove [KEYWORD] [optional:VALUE]`|Removes value(s) from a keyword, or if none are specified, removes all values and the keyword.|
 |`!wow keywords rename [OLDKEYWORD] [NEWKEYWORD]`|Renames a keyword, leaving its values unchanged.|
-|`!wow keywords list [optional:PAGE]`|Shows a list of all keywords, and a preview of their values.|
+|`!wow keywords list [optional:PAGE] [optional:SORT]`|Shows a list of all keywords, and a preview of their values. SORTBY can be date/likes/deletions|
 |`!wow keywords values [KEYWORD] [optional:PAGE]`|Shows a list of values for a keyword.|
 |`!wow keywords toggle-delete-reaction`|Toggles whether bot responses to keywords should have a wastebasket reaction, allowing a user to delete the message.|
 |`!wow keywords toggle-like-reaction`|Toggles whether bot responses to keywords should have a thumbs up reaction.|

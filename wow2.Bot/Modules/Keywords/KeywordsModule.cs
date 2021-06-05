@@ -147,8 +147,8 @@ namespace wow2.Bot.Modules.Keywords
 
         [Command("list")]
         [Alias("show", "all")]
-        [Summary("Shows a list of all keywords, and a preview of their values.")]
-        public async Task ListAsync(int page = 1)
+        [Summary("Shows a list of all keywords, and a preview of their values. SORTBY can be date/likes/deletions")]
+        public async Task ListAsync(int page = 1, KeywordSorts sort = KeywordSorts.Date)
         {
             var keywordsDictionary = Config.KeywordsDictionary;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
@@ -156,7 +156,9 @@ namespace wow2.Bot.Modules.Keywords
             if (keywordsDictionary.Count == 0)
                 throw new CommandReturnException(Context, "No keywords have been added yet, so there's nothing to show.");
 
-            foreach (var keywordPair in keywordsDictionary)
+            var orderedDictionary = SortKeywordsDictionary(keywordsDictionary, sort);
+
+            foreach (var keywordPair in orderedDictionary)
             {
                 string nameToShow = (keywordPair.Value.Count > 1) ? $"{keywordPair.Key}:\t({keywordPair.Value.Count} values)" : $"{keywordPair.Key}:";
                 string valueToShow = $"`{keywordPair.Value[0].Content.Truncate(50, true)}`";
@@ -171,12 +173,12 @@ namespace wow2.Bot.Modules.Keywords
 
             await new PagedMessage(
                 fieldBuilders: listOfFieldBuilders,
-                description: $"*There are {keywordsDictionary.Count} keywords in total, as listed below.*",
+                description: $"*There are {orderedDictionary.Count} keywords in total, as listed below.*",
                 title: "📒 Keywords",
                 page: page)
                     .SendAsync(Context.Channel);
         }
-
+        
         [Command("values")]
         [Alias("listvalues", "values", "list-value", "listvalue", "value", "list")]
         [Summary("Shows a list of values for a keyword.")]
@@ -251,6 +253,20 @@ namespace wow2.Bot.Modules.Keywords
             }
 
             return foundKeywords.ToArray();
+        }
+
+        private static Dictionary<string, List<KeywordValue>> SortKeywordsDictionary(Dictionary<string, List<KeywordValue>> dictionary, KeywordSorts sort)
+        {
+            return sort switch
+            {
+                KeywordSorts.Likes => dictionary.OrderByDescending(p => p.Value.Sum(v => v.TimesLiked))
+                    .ToDictionary(p => p.Key, p => p.Value),
+
+                KeywordSorts.Deletions => dictionary.OrderByDescending(p => p.Value.Sum(v => v.TimesDeleted))
+                    .ToDictionary(p => p.Key, p => p.Value),
+
+                _ => new(dictionary),
+            };
         }
     }
 }
