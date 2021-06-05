@@ -227,8 +227,12 @@ namespace wow2.Bot.Modules.Osu
                         .Equals(updatedUserData.BestScores.FirstOrDefault()) ?? false)
                     {
                         config.SubscribedUsers[i] = updatedUserData;
+
+                        var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
                         await new NewTopPlayMessage(updatedUserData, updatedUserData.BestScores[0])
-                            .SendAsync(BotService.Client.GetChannel(config.AnnouncementsChannelId) as SocketTextChannel);
+                            .SendAsync(textChannel);
+
+                        await DataManager.SaveGuildDataToFileAsync(textChannel.Guild.Id);
                     }
 
                     await Task.Delay(2000);
