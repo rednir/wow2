@@ -253,11 +253,11 @@ namespace wow2.Bot.Modules.Osu
 
                     // Check if top play has changed.
                     if (!currentUserData.BestScores.FirstOrDefault()?
-                        .Equals(updatedUserData.BestScores.FirstOrDefault()) ?? false)
+                        .Equals(updatedUserData.BestScores.FirstOrDefault()) ?? true)
                     {
                         var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
                         await textChannel.SendMessageAsync(
-                            text: $"**{updatedUserData.username}** just set a new top play, {(int)updatedUserData.BestScores[0].pp - (int)currentUserData.BestScores.FirstOrDefault()?.pp}pp higher than before!",
+                            text: $"**{updatedUserData.username}** just set a new top play, {(int)updatedUserData.BestScores[0].pp - currentUserData.BestScores.FirstOrDefault()?.pp ?? 0}pp higher than before!",
                             embed: new ScoreMessage(updatedUserData, updatedUserData.BestScores[0]).Embed);
 
                         config.SubscribedUsers[i] = updatedUserData;
