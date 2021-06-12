@@ -29,8 +29,8 @@ namespace wow2.Bot.Modules.Osu
             { "A", Emote.Parse("<:osua:807023193264881664>") },
             { "S", Emote.Parse("<:osus:807023232116981801>") },
             { "SH", Emote.Parse("<:osush:807023257357123595>") },
-            { "SS", Emote.Parse("<:osuss:807023277180583958>") },
-            { "SSH", Emote.Parse("<:osussh:807023289742262272>") },
+            { "X", Emote.Parse("<:osuss:807023277180583958>") },
+            { "XH", Emote.Parse("<:osussh:807023289742262272>") },
         };
 
         private static readonly System.Timers.Timer RefreshAccessTokenTimer = new(18 * 3600000);
