@@ -213,7 +213,6 @@ namespace wow2.Bot.Modules.Osu
         {
             foreach (var config in DataManager.AllGuildData.Select(g => g.Value.Osu).ToArray())
             {
-                // Guild hasn't set a announcements channel, so ignore it.
                 if (config.AnnouncementsChannelId == 0)
                     continue;
 
@@ -226,16 +225,16 @@ namespace wow2.Bot.Modules.Osu
                     if (!currentUserData.BestScores.FirstOrDefault()?
                         .Equals(updatedUserData.BestScores.FirstOrDefault()) ?? false)
                     {
-                        config.SubscribedUsers[i] = updatedUserData;
-
                         var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
-                        await new NewTopPlayMessage(updatedUserData, updatedUserData.BestScores[0])
-                            .SendAsync(textChannel);
+                        await textChannel.SendMessageAsync(
+                            text: $"**{updatedUserData.username}** just set a new top play, {(int)updatedUserData.BestScores[0].pp - (int)currentUserData.BestScores.FirstOrDefault()?.pp}pp higher than before!",
+                            embed: new ScoreMessage(updatedUserData, updatedUserData.BestScores[0]).Embed);
 
+                        config.SubscribedUsers[i] = updatedUserData;
                         await DataManager.SaveGuildDataToFileAsync(textChannel.Guild.Id);
                     }
 
-                    await Task.Delay(2000);
+                    await Task.Delay(800);
                 }
             }
         }
