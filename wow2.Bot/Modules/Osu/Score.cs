@@ -6,6 +6,7 @@ namespace wow2.Bot.Modules.Osu
     public class Score
     {
         public ulong id { get; set; }
+        public int user_id { get; set; }
         public double accuracy { get; set; }
         public string[] mods { get; set; }
         public ulong score { get; set; }

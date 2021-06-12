@@ -79,6 +79,25 @@ namespace wow2.Bot.Modules.Osu
                 .SendAsync(Context.Channel);
         }
 
+        [Command("score")]
+        [Alias("play")]
+        [Summary("Show some infomation about a score.")]
+        public async Task ScoreAsync(ulong id)
+        {
+            Score score;
+            try
+            {
+                score = await GetScoreAsync(id);
+            }
+            catch (WebException)
+            {
+                throw new CommandReturnException(Context, "That score doesn't exist.");
+            }
+
+            await new ScoreMessage(await GetUserAsync(score.user_id.ToString()), score)
+                .SendAsync(Context.Channel);
+        }
+
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified about USER.")]
@@ -207,6 +226,17 @@ namespace wow2.Bot.Modules.Osu
             userData.BestScores = await bestScoresGetResponse.Content.ReadFromJsonAsync<List<Score>>();
 
             return userData;
+        }
+
+        private static async Task<Score> GetScoreAsync(ulong id)
+        {
+            var scoreGetResponse = await HttpClient.GetAsync($"api/v2/scores/osu/{id}");
+
+            if (!scoreGetResponse.IsSuccessStatusCode)
+                throw new WebException(scoreGetResponse.StatusCode.ToString());
+
+            var a = await scoreGetResponse.Content.ReadAsStringAsync();
+            return await scoreGetResponse.Content.ReadFromJsonAsync<Score>();
         }
 
         private static async Task CheckForUserMilestonesAsync()
