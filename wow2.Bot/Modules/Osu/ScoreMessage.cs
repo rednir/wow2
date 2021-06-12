@@ -3,15 +3,15 @@ using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Osu
 {
-    public class NewTopPlayMessage : Message
+    public class ScoreMessage : Message
     {
-        public NewTopPlayMessage(UserData userData, Score score)
+        public ScoreMessage(UserData userData, Score score)
         {
             EmbedBuilder = new EmbedBuilder()
             {
                 Author = new EmbedAuthorBuilder()
                 {
-                    Name = $"{userData.username} set a new top play!",
+                    Name = $"Played by {userData.username}",
                     IconUrl = userData.avatar_url,
                     Url = $"https://osu.ppy.sh/users/{userData.id}",
                 },
@@ -19,6 +19,7 @@ namespace wow2.Bot.Modules.Osu
                 Description = OsuModule.MakeScoreDescription(score),
                 ImageUrl = score.beatmapSet.covers.cover,
                 Color = Color.LightGrey,
+                Timestamp = score.created_at,
             };
         }
     }

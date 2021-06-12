@@ -79,6 +79,25 @@ namespace wow2.Bot.Modules.Osu
                 .SendAsync(Context.Channel);
         }
 
+        [Command("score")]
+        [Alias("play")]
+        [Summary("Show some infomation about a score.")]
+        public async Task ScoreAsync(ulong id)
+        {
+            Score score;
+            try
+            {
+                score = await GetScoreAsync(id);
+            }
+            catch (WebException)
+            {
+                throw new CommandReturnException(Context, "That score doesn't exist.");
+            }
+
+            await new ScoreMessage(await GetUserAsync(score.user_id.ToString()), score)
+                .SendAsync(Context.Channel);
+        }
+
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified about USER.")]
@@ -209,11 +228,21 @@ namespace wow2.Bot.Modules.Osu
             return userData;
         }
 
+        private static async Task<Score> GetScoreAsync(ulong id)
+        {
+            var scoreGetResponse = await HttpClient.GetAsync($"api/v2/scores/osu/{id}");
+
+            if (!scoreGetResponse.IsSuccessStatusCode)
+                throw new WebException(scoreGetResponse.StatusCode.ToString());
+
+            var a = await scoreGetResponse.Content.ReadAsStringAsync();
+            return await scoreGetResponse.Content.ReadFromJsonAsync<Score>();
+        }
+
         private static async Task CheckForUserMilestonesAsync()
         {
             foreach (var config in DataManager.AllGuildData.Select(g => g.Value.Osu).ToArray())
             {
-                // Guild hasn't set a announcements channel, so ignore it.
                 if (config.AnnouncementsChannelId == 0)
                     continue;
 
@@ -226,16 +255,16 @@ namespace wow2.Bot.Modules.Osu
                     if (!currentUserData.BestScores.FirstOrDefault()?
                         .Equals(updatedUserData.BestScores.FirstOrDefault()) ?? false)
                     {
-                        config.SubscribedUsers[i] = updatedUserData;
-
                         var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
-                        await new NewTopPlayMessage(updatedUserData, updatedUserData.BestScores[0])
-                            .SendAsync(textChannel);
+                        await textChannel.SendMessageAsync(
+                            text: $"**{updatedUserData.username}** just set a new top play, {(int)updatedUserData.BestScores[0].pp - (int)currentUserData.BestScores.FirstOrDefault()?.pp}pp higher than before!",
+                            embed: new ScoreMessage(updatedUserData, updatedUserData.BestScores[0]).Embed);
 
+                        config.SubscribedUsers[i] = updatedUserData;
                         await DataManager.SaveGuildDataToFileAsync(textChannel.Guild.Id);
                     }
 
-                    await Task.Delay(2000);
+                    await Task.Delay(800);
                 }
             }
         }

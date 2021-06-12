@@ -1,4 +1,4 @@
-# List of commands (71 total)
+# List of commands (72 total)
 
 ## Main (7)
 Stuff to do with the bot and other random stuff.
@@ -76,12 +76,13 @@ View Reddit posts and other content.
 |`!wow reddit hot [SUBREDDIT]`|Gets the first post in hot from a given subreddit.|
 |`!wow reddit cont [SUBREDDIT]`|Gets the most controversial of all time from given subreddit.|
 
-## osu! (5)
+## osu! (6)
 Integrations with the osu!api
 
 |Command|Summary|
 |---|---|
 |`!wow osu user [USER]`|Get some infomation about a user.|
+|`!wow osu score [ID]`|Show some infomation about a score.|
 |`!wow osu subscribe [USER]`|Toggle whether your server will get notified about USER.|
 |`!wow osu list-subs [optional:PAGE]`|Lists the users your server will get notified about.|
 |`!wow osu set-announcements-channel [CHANNEL]`|Sets the channel where notifications about users will be sent.|
