@@ -8,10 +8,9 @@ namespace wow2.Bot.Extensions
 {
     public static class DiscordExtensions
     {
-        public static SocketGuild GetGuild(this SocketMessage socketMessage)
-            => ((SocketGuildChannel)socketMessage.Channel).Guild;
-        public static SocketGuild GetGuild(this IUserMessage userMessage)
+        public static SocketGuild GetGuild(this IMessage userMessage)
             => ((SocketGuildChannel)userMessage.Channel).Guild;
+
         public static SocketGuild GetGuild(this ISocketMessageChannel messageChannel)
             => ((SocketGuildChannel)messageChannel).Guild;
 
