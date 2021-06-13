@@ -92,7 +92,6 @@ namespace wow2.Bot.Modules.Keywords
 
         public async Task<IUserMessage> RespondToMessageAsync(SocketMessage message)
         {
-            IGuild guild = message.GetGuild();
             var config = DataManager.AllGuildData[message.GetGuild().Id].Keywords;
             ReplyToMessageId = message.Id;
 
