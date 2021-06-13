@@ -147,7 +147,7 @@ namespace wow2.Bot.Modules.Keywords
 
         [Command("list")]
         [Alias("show", "all")]
-        [Summary("Shows a list of all keywords, and a preview of their values. SORTBY can be date/likes/deletions")]
+        [Summary("Shows a list of all keywords, and a preview of their values. SORTBY can be date/likes/deletions/values")]
         public async Task ListAsync(int page = 1, KeywordSorts sort = KeywordSorts.Date)
         {
             var keywordsDictionary = Config.KeywordsDictionary;
@@ -178,7 +178,7 @@ namespace wow2.Bot.Modules.Keywords
                 page: page)
                     .SendAsync(Context.Channel);
         }
-        
+
         [Command("values")]
         [Alias("listvalues", "values", "list-value", "listvalue", "value", "list")]
         [Summary("Shows a list of values for a keyword.")]
@@ -263,6 +263,9 @@ namespace wow2.Bot.Modules.Keywords
                     .ToDictionary(p => p.Key, p => p.Value),
 
                 KeywordSorts.Deletions => dictionary.OrderByDescending(p => p.Value.Sum(v => v.TimesDeleted))
+                    .ToDictionary(p => p.Key, p => p.Value),
+
+                KeywordSorts.Values => dictionary.OrderByDescending(p => p.Value.Count)
                     .ToDictionary(p => p.Key, p => p.Value),
 
                 _ => new(dictionary),

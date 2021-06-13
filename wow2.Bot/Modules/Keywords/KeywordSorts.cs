@@ -5,5 +5,6 @@ namespace wow2.Bot.Modules.Keywords
         Date,
         Likes,
         Deletions,
+        Values,
     }
 }
