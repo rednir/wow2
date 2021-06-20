@@ -17,8 +17,8 @@ namespace wow2.Bot.Modules.Keywords
     [Summary("Automatically respond to keywords in user messages.")]
     public class KeywordsModule : Module
     {
-        private const int MaxNumberOfKeywords = 50;
-        private const int MaxNumberOfValues = 20;
+        private const int MaxNumberOfKeywords = 100;
+        private const int MaxNumberOfValues = 40;
 
         private KeywordsModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Keywords;
 
