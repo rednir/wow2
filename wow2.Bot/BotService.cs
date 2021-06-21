@@ -218,7 +218,9 @@ namespace wow2.Bot
 
         public static Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)
         {
-            PagedMessage.FromMessageId(cachedMessage.Id)?.Dispose();
+            PagedMessage.FromMessageId(
+                DataManager.AllGuildData[channel.GetGuild().Id], cachedMessage.Id)?.Dispose();
+
             return Task.CompletedTask;
         }
 
