@@ -15,6 +15,10 @@ namespace wow2.Bot.Verbose.Messages
         public static readonly IEmote StopEmote = new Emoji("🛑");
         public static readonly IEmote PageRightEmote = new Emoji("⏩");
 
+        public PagedMessage()
+        {
+        }
+
         public PagedMessage(List<EmbedFieldBuilder> fieldBuilders, string description = "", string title = "", int? page = null)
         {
             AllFieldBuilders = fieldBuilders;
