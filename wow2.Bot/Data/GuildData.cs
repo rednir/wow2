@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using wow2.Bot.Modules.Games;
 using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Modules.Main;
@@ -19,6 +20,7 @@ namespace wow2.Bot.Data
         // TODO: not sure why I don't just serialize/deserialize the DateTime object directly...
         public long DateTimeJoinedBinary { get; set; }
 
+        [JsonIgnore]
         public List<PagedMessage> PagedMessages { get; set; } = new();
 
         public MainModuleConfig Main { get; set; } = new();
