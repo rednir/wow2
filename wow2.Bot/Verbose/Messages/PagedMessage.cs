@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 
 namespace wow2.Bot.Verbose.Messages
@@ -13,6 +14,10 @@ namespace wow2.Bot.Verbose.Messages
         public static readonly IEmote PageLeftEmote = new Emoji("⏪");
         public static readonly IEmote StopEmote = new Emoji("🛑");
         public static readonly IEmote PageRightEmote = new Emoji("⏩");
+
+        public PagedMessage()
+        {
+        }
 
         public PagedMessage(List<EmbedFieldBuilder> fieldBuilders, string description = "", string title = "", int? page = null)
         {
@@ -27,15 +32,15 @@ namespace wow2.Bot.Verbose.Messages
             SetEmbedFields();
         }
 
-        public static List<PagedMessage> ListOfPagedMessages { get; protected set; } = new();
-
         public List<EmbedFieldBuilder> AllFieldBuilders { get; protected set; }
         public int? Page { get; protected set; }
 
         /// <summary>If the message has pages and the emote is recognised, modifies the page of the message.</summary>
         public static async Task<bool> ActOnReactionAsync(SocketReaction reaction)
         {
-            PagedMessage message = FromMessageId(reaction.MessageId);
+            PagedMessage message = FromMessageId(
+                DataManager.AllGuildData[reaction.Channel.GetGuild().Id], reaction.MessageId);
+
             if (message == null)
                 return false;
 
@@ -63,20 +68,19 @@ namespace wow2.Bot.Verbose.Messages
 
         /// <summary>Finds the <see cref="PagedMessage"/> with the matching message ID.</summary>
         /// <returns>The <see cref="PagedMessage"/> respresenting the message ID, or null if a match was not found.</returns>
-        public static PagedMessage FromMessageId(ulong id) =>
-            ListOfPagedMessages.Find(m => m.SentMessage.Id == id);
+        public static PagedMessage FromMessageId(GuildData guildData, ulong messageId) =>
+            guildData.PagedMessages.Find(m => m.SentMessage.Id == messageId);
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
-            // TODO: Maybe have a list for every guild?
-            ListOfPagedMessages.Truncate(128);
-
             IUserMessage message = await base.SendAsync(channel);
+            List<PagedMessage> pagedMessages = DataManager.AllGuildData[message.GetGuild().Id].PagedMessages;
 
-            // A negative page number means the message does not use pages.
-            if (Page >= 0)
+            if (Page != null)
             {
-                ListOfPagedMessages.Add(this);
+                pagedMessages.Truncate(40);
+                pagedMessages.Add(this);
+
                 await message.AddReactionsAsync(
                     new IEmote[] { PageLeftEmote, PageRightEmote, StopEmote });
             }
@@ -103,9 +107,9 @@ namespace wow2.Bot.Verbose.Messages
 
         public void Dispose()
         {
-            ListOfPagedMessages.Remove(this);
-            GC.SuppressFinalize(this);
+            DataManager.AllGuildData[SentMessage.GetGuild().Id].PagedMessages.Remove(this);
             Logger.Log($"PagedMessage {SentMessage.Id} was disposed.", LogSeverity.Debug);
+            GC.SuppressFinalize(this);
         }
 
         protected void SetEmbedFields()
