@@ -123,7 +123,6 @@ namespace wow2.Bot
 
         public static async Task ReadyAsync()
         {
-            await DataManager.InitializeAsync();
             await Client.SetStatusAsync(UserStatus.Online);
             await Client.SetGameAsync("!wow help");
         }

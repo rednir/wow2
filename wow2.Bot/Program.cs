@@ -35,6 +35,7 @@ namespace wow2.Bot
 
             await BotService.InstallCommandsAsync();
             await BotService.InitializeAndStartClientAsync();
+            await DataManager.InitializeAsync();
 
             await Task.Delay(-1);
         }
