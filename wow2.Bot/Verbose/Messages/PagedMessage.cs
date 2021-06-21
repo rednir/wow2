@@ -74,10 +74,13 @@ namespace wow2.Bot.Verbose.Messages
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             IUserMessage message = await base.SendAsync(channel);
+            List<PagedMessage> pagedMessages = DataManager.AllGuildData[message.GetGuild().Id].PagedMessages;
 
             if (Page != null)
             {
-                DataManager.AllGuildData[message.GetGuild().Id].PagedMessages.Add(this);
+                pagedMessages.Truncate(40);
+                pagedMessages.Add(this);
+
                 await message.AddReactionsAsync(
                     new IEmote[] { PageLeftEmote, PageRightEmote, StopEmote });
             }
