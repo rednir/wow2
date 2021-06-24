@@ -149,6 +149,7 @@ namespace wow2.Bot.Modules.Keywords
 
             await new SuccessMessage($"Renamed `{oldKeyword}` to `{newKeyword}`.")
                 .SendAsync(Context.Channel);
+
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
@@ -219,6 +220,22 @@ namespace wow2.Bot.Modules.Keywords
                 title: $"📒 Values for '{keyword}'",
                 page: page)
                     .SendAsync(Context.Channel);
+        }
+
+        [Command("restore")]
+        [Summary("Restores a previously deleted keyword from its name.")]
+        public async Task RestoreAsync([Remainder] string keyword)
+        {
+            if (!Config.DeletedKeywordsDictionary.ContainsKey(keyword))
+                throw new CommandReturnException("No keyword with that name was previously deleted.");
+
+            Config.KeywordsDictionary.Add(keyword, Config.DeletedKeywordsDictionary[keyword]);
+            Config.DeletedKeywordsDictionary.Remove(keyword);
+
+            await new SuccessMessage($"Restored `{keyword}` and it's {Config.KeywordsDictionary[keyword].Count} values.")
+                .SendAsync(Context.Channel);
+
+            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("toggle-delete-reaction")]
