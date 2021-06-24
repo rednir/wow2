@@ -61,6 +61,13 @@ namespace wow2.Bot.Modules.Dev
                 .SendAsync(context.Channel);
         }
 
+        [Test("confirm-message")]
+        public static async Task ConfirmMessageTest(SocketCommandContext context)
+        {
+            await new ConfirmMessage("This is a description.", "Are you sure?")
+                .SendAsync(context.Channel);
+        }
+
         [Test("aliases")]
         public static async Task AliasesTest(SocketCommandContext context)
         {
