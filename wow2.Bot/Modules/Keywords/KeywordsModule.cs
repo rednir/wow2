@@ -95,16 +95,20 @@ namespace wow2.Bot.Modules.Keywords
         [Summary("Removes value(s) from a keyword, or if none are specified, removes all values and the keyword.")]
         public async Task RemoveAsync(string keyword, [Name("value")][Remainder] string valueContent = null)
         {
-            var keywordsDictionary = Config.KeywordsDictionary;
             keyword = keyword.ToLower();
 
-            if (!keywordsDictionary.ContainsKey(keyword))
+            if (!Config.KeywordsDictionary.ContainsKey(keyword))
                 throw new CommandReturnException(Context, $"No such keyword `{keyword}` exists. Did you make a typo?");
 
             if (string.IsNullOrEmpty(valueContent))
             {
                 // No values have been specified, so assume the user wants to remove the keyword.
-                keywordsDictionary.Remove(keyword);
+                if (Config.DeletedKeywordsDictionary.ContainsKey(keyword))
+                    Config.DeletedKeywordsDictionary.Remove(keyword);
+
+                Config.DeletedKeywordsDictionary.Add(keyword, Config.KeywordsDictionary[keyword]);
+                Config.KeywordsDictionary.Remove(keyword);
+
                 await new SuccessMessage($"Sucessfully removed keyword `{keyword}`.")
                     .SendAsync(Context.Channel);
             }
@@ -112,12 +116,15 @@ namespace wow2.Bot.Modules.Keywords
             {
                 valueContent = valueContent.Trim('\"');
 
-                if (keywordsDictionary[keyword].RemoveAll(x => x.Content.Equals(valueContent, StringComparison.CurrentCultureIgnoreCase)) == 0)
+                if (Config.KeywordsDictionary[keyword]
+                    .RemoveAll(x => x.Content.Equals(valueContent, StringComparison.CurrentCultureIgnoreCase)) == 0)
+                {
                     throw new CommandReturnException(Context, $"No such value `{valueContent}` exists. Did you make a typo?");
+                }
 
                 // Discard keyword if it has no values.
-                if (keywordsDictionary[keyword].Count == 0)
-                    keywordsDictionary.Remove(keyword);
+                if (Config.KeywordsDictionary[keyword].Count == 0)
+                    Config.KeywordsDictionary.Remove(keyword);
 
                 await new SuccessMessage($"Sucessfully removed `{valueContent}` from `{keyword}`.")
                     .SendAsync(Context.Channel);

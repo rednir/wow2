@@ -10,7 +10,11 @@ namespace wow2.Bot.Modules.Keywords
         public List<ResponseMessage> ListOfResponseMessages { get; set; } = new();
 
         public Dictionary<string, List<KeywordValue>> KeywordsDictionary { get; set; } = new();
+
+        public Dictionary<string, List<KeywordValue>> DeletedKeywordsDictionary { get; set; } = new();
+
         public bool IsDeleteReactionOn { get; set; } = false;
+
         public bool IsLikeReactionOn { get; set; } = true;
     }
 }
