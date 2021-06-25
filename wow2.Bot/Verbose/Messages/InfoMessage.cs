@@ -9,7 +9,7 @@ namespace wow2.Bot.Verbose.Messages
             EmbedBuilder = new EmbedBuilder()
             {
                 Description = $"{new Emoji($"<:wowinfo:{InfoEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
-                Color = Color.Blue,
+                Color = new Color(0x3498DB),
             };
         }
     }
