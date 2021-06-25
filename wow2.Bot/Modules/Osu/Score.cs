@@ -13,6 +13,7 @@ namespace wow2.Bot.Modules.Osu
         public int max_combo { get; set; }
         public string rank { get; set; }
         public double pp { get; set; }
+        public bool replay { get; set; }
         public DateTime created_at { get; set; }
         public Beatmap beatmap { get; set; }
         public BeatmapSet beatmapSet { get; set; }

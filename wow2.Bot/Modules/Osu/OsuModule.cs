@@ -55,7 +55,7 @@ namespace wow2.Bot.Modules.Osu
             $"{RankingEmotes[score.rank]} {score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
 
         public static string MakeScoreDescription(Score score) =>
-            $"[More details](https://osu.ppy.sh/scores/osu/{score.id}) | {Math.Round(score.pp, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
+            $"[More details](https://osu.ppy.sh/scores/osu/{score.id}) | {(score.replay ? $"[Download replay](https://osu.ppy.sh/scores/osu/{score.id}/download) | " : null)}{Math.Round(score.pp, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
 
         public static string MakeReadableModsList(IEnumerable<string> mods) =>
             (mods.Any() ? "+" : null) + string.Join(' ', mods);
