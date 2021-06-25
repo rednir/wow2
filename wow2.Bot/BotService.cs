@@ -123,6 +123,9 @@ namespace wow2.Bot
 
         public static async Task ReadyAsync()
         {
+            if (DataManager.AllGuildData.Count == 0)
+                await DataManager.InitializeAsync();
+
             await Client.SetStatusAsync(UserStatus.Online);
             await Client.SetGameAsync("!wow help");
         }
