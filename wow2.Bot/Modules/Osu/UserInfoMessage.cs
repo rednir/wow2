@@ -7,14 +7,18 @@ namespace wow2.Bot.Modules.Osu
 {
     public class UserInfoMessage : Message
     {
-        public UserInfoMessage(UserData userData)
+        public UserInfoMessage(UserData userData, Score[] bestScores)
         {
             var fieldBuildersForScores = new List<EmbedFieldBuilder>();
-            userData.BestScores.ForEach(s => fieldBuildersForScores.Add(new EmbedFieldBuilder()
+
+            foreach (Score score in bestScores)
             {
-                Name = OsuModule.MakeScoreTitle(s),
-                Value = OsuModule.MakeScoreDescription(s),
-            }));
+                fieldBuildersForScores.Add(new EmbedFieldBuilder()
+                {
+                    Name = OsuModule.MakeScoreTitle(score),
+                    Value = OsuModule.MakeScoreDescription(score),
+                });
+            }
 
             EmbedBuilder = new EmbedBuilder()
             {
@@ -33,6 +37,6 @@ namespace wow2.Bot.Modules.Osu
                 Fields = fieldBuildersForScores,
                 Color = Color.LightGrey,
             };
+            }
         }
     }
-}

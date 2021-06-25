@@ -1,11 +1,9 @@
-using System.Collections.Generic;
-
 namespace wow2.Bot.Modules.Osu
 {
     /// <summary>What the user HTTP request will be deserialized into.</summary>
     public class UserData
     {
-        public int id { get; set; }
+        public ulong id { get; set; }
 
         public string username { get; set; }
 
@@ -16,8 +14,6 @@ namespace wow2.Bot.Modules.Osu
         public string cover_url { get; set; }
 
         public Statistics statistics { get; set; }
-
-        public List<Score> BestScores { get; set; } = new();
 
         public class Statistics
         {
