@@ -238,7 +238,6 @@ namespace wow2.Bot.Modules.Osu
             if (!scoreGetResponse.IsSuccessStatusCode)
                 throw new WebException(scoreGetResponse.StatusCode.ToString());
 
-            var a = await scoreGetResponse.Content.ReadAsStringAsync();
             return await scoreGetResponse.Content.ReadFromJsonAsync<Score>();
         }
 
@@ -253,11 +252,16 @@ namespace wow2.Bot.Modules.Osu
                 {
                     SubscribedUserData subscribedUserData = config.SubscribedUsers[i];
                     UserData updatedUserData = await GetUserAsync(config.SubscribedUsers[i].Id.ToString());
-                    Score currentBestScore = (await GetUserScores(updatedUserData.id, "best")).FirstOrDefault();
+                    Score currentBestScore = (await GetUserScores(updatedUserData.id, "best"))?.FirstOrDefault();
+
 
                     // Check if top play has changed.
-                    if (!subscribedUserData.BestScore.Equals(currentBestScore))
+                    if (!subscribedUserData.BestScore?.Equals(currentBestScore) ?? true)
                     {
+                        // Don't continue if the player has zero plays.
+                        if (currentBestScore == null)
+                            return;
+
                         var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
                         await textChannel.SendMessageAsync(
                             text: $"**{updatedUserData.username}** just set a new top play, {(int)currentBestScore.pp - (int)(subscribedUserData.BestScore?.pp ?? 0)}pp higher than before!",
