@@ -20,7 +20,8 @@ namespace wow2.Bot.Verbose.Messages
             OnDeny = onDeny;
             EmbedBuilder = new EmbedBuilder()
             {
-                Description = GetStatusMessageFormattedDescription(description, title),
+                Description = $"{new Emoji($"<:wowinfo:{QuestionEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
+                Color = new Color(0x9b59b6),
             };
         }
 
