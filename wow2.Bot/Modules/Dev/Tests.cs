@@ -9,6 +9,7 @@ using wow2.Bot.Data;
 using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Modules.Main;
 using wow2.Bot.Modules.Voice;
+using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Dev
@@ -59,6 +60,17 @@ namespace wow2.Bot.Modules.Dev
 
             await new PagedMessage(listOfFieldBuilders, "This is a response message with fields.", "Fields", 2)
                 .SendAsync(context.Channel);
+        }
+
+        [Test("question-message")]
+        public static async Task QuestionMessageTest(SocketCommandContext context)
+        {
+            await new QuestionMessage(
+                "This is a description.",
+                "Are you sure?",
+                () => context.Channel.SendMessageAsync("Yes."),
+                () => context.Channel.SendMessageAsync("No."))
+                    .SendAsync(context.Channel);
         }
 
         [Test("aliases")]

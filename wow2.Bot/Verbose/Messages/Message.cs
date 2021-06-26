@@ -11,6 +11,7 @@ namespace wow2.Bot.Verbose.Messages
         public const ulong InfoEmoteId = 858010084868227082;
         public const ulong WarningEmoteId = 858010661091147776;
         public const ulong ErrorEmoteId = 858011314022121482;
+        public const ulong QuestionEmoteId = 858340474627686431;
 
         public ulong ReplyToMessageId { get; set; }
 
