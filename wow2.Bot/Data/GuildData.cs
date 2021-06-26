@@ -24,7 +24,7 @@ namespace wow2.Bot.Data
         public List<PagedMessage> PagedMessages { get; set; } = new();
 
         [JsonIgnore]
-        public List<ConfirmMessage> ConfirmMessages { get; set; } = new();
+        public List<QuestionMessage> ConfirmMessages { get; set; } = new();
 
         public MainModuleConfig Main { get; set; } = new();
 

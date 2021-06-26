@@ -206,7 +206,7 @@ namespace wow2.Bot
             {
                 if (!await ResponseMessage.ActOnReactionAddedAsync(reaction))
                 {
-                    await ConfirmMessage.ActOnReactionAsync(reaction);
+                    await QuestionMessage.ActOnReactionAsync(reaction);
                 }
             }
         }
