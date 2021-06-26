@@ -254,7 +254,6 @@ namespace wow2.Bot.Modules.Osu
                     UserData updatedUserData = await GetUserAsync(config.SubscribedUsers[i].Id.ToString());
                     Score currentBestScore = (await GetUserScores(updatedUserData.id, "best"))?.FirstOrDefault();
 
-
                     // Check if top play has changed.
                     if (!subscribedUserData.BestScore?.Equals(currentBestScore) ?? true)
                     {
