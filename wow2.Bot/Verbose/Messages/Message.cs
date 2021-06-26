@@ -7,12 +7,13 @@ namespace wow2.Bot.Verbose.Messages
     /// <summary>Base class for sending and building embed messages.</summary>
     public abstract class Message
     {
-        public const ulong SuccessEmoteId = 823595458978512997;
-        public const ulong InfoEmoteId = 804732580423008297;
-        public const ulong WarningEmoteId = 804732632751407174;
-        public const ulong ErrorEmoteId = 804732656721199144;
+        public const ulong SuccessEmoteId = 858009017950404608;
+        public const ulong InfoEmoteId = 858010084868227082;
+        public const ulong WarningEmoteId = 858010661091147776;
+        public const ulong ErrorEmoteId = 858011314022121482;
 
         public ulong ReplyToMessageId { get; set; }
+
         public bool AllowMentions { get; set; }
 
         [JsonIgnore]

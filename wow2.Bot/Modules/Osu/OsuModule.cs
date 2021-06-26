@@ -55,7 +55,7 @@ namespace wow2.Bot.Modules.Osu
             $"{RankingEmotes[score.rank]} {score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
 
         public static string MakeScoreDescription(Score score) =>
-            $"[More details](https://osu.ppy.sh/scores/osu/{score.id}) | {Math.Round(score.pp, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
+            $"[More details](https://osu.ppy.sh/scores/osu/{score.id}) | {(score.replay ? $"[Download replay](https://osu.ppy.sh/scores/osu/{score.id}/download) | " : null)}{Math.Round(score.pp, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
 
         public static string MakeReadableModsList(IEnumerable<string> mods) =>
             (mods.Any() ? "+" : null) + string.Join(' ', mods);
@@ -75,7 +75,7 @@ namespace wow2.Bot.Modules.Osu
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            await new UserInfoMessage(userData)
+            await new UserInfoMessage(userData, await GetUserScores(userData.id, "best"))
                 .SendAsync(Context.Channel);
         }
 
@@ -113,7 +113,7 @@ namespace wow2.Bot.Modules.Osu
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            if (Config.SubscribedUsers.RemoveAll(u => u.id == userData.id) != 0)
+            if (Config.SubscribedUsers.RemoveAll(u => u.Id == userData.id) != 0)
             {
                 await new SuccessMessage($"You'll no longer get notifications about `{userData.username}`")
                     .SendAsync(Context.Channel);
@@ -123,7 +123,8 @@ namespace wow2.Bot.Modules.Osu
                 if (Config.SubscribedUsers.Count > 15)
                     throw new CommandReturnException(Context, "Remove some users before adding more.", "Too many subscribers");
 
-                Config.SubscribedUsers.Add(userData);
+                Score bestScore = (await GetUserScores(userData.id, "best")).FirstOrDefault();
+                Config.SubscribedUsers.Add(new SubscribedUserData(userData, bestScore));
 
                 await new SuccessMessage(Config.AnnouncementsChannelId == 0 ?
                     $"Once you use `set-announcements-channel`, you'll get notifications about `{userData.username}`" :
@@ -143,12 +144,12 @@ namespace wow2.Bot.Modules.Osu
                 throw new CommandReturnException(Context, "Add some users to the subscriber list first.", "Nothing to show");
 
             var fieldBuilders = new List<EmbedFieldBuilder>();
-            foreach (UserData user in Config.SubscribedUsers)
+            foreach (SubscribedUserData user in Config.SubscribedUsers)
             {
                 fieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"{user.username} | #{user.statistics.global_rank}",
-                    Value = $"[View profile](https://osu.ppy.sh/users/{user.id})",
+                    Name = $"{user.Username} | #{user.GlobalRank}",
+                    Value = $"[View profile](https://osu.ppy.sh/users/{user.Id})",
                     IsInline = true,
                 });
             }
@@ -221,11 +222,13 @@ namespace wow2.Bot.Modules.Osu
             if (!userGetResponse.IsSuccessStatusCode)
                 throw new WebException(userGetResponse.StatusCode.ToString());
 
-            var userData = await userGetResponse.Content.ReadFromJsonAsync<UserData>();
-            var bestScoresGetResponse = await HttpClient.GetAsync($"api/v2/users/{userData.id}/scores/best");
-            userData.BestScores = await bestScoresGetResponse.Content.ReadFromJsonAsync<List<Score>>();
+            return await userGetResponse.Content.ReadFromJsonAsync<UserData>();
+        }
 
-            return userData;
+        private static async Task<Score[]> GetUserScores(ulong userId, string type)
+        {
+            var bestScoresGetResponse = await HttpClient.GetAsync($"api/v2/users/{userId}/scores/{type}");
+            return await bestScoresGetResponse.Content.ReadFromJsonAsync<Score[]>();
         }
 
         private static async Task<Score> GetScoreAsync(ulong id)
@@ -235,7 +238,6 @@ namespace wow2.Bot.Modules.Osu
             if (!scoreGetResponse.IsSuccessStatusCode)
                 throw new WebException(scoreGetResponse.StatusCode.ToString());
 
-            var a = await scoreGetResponse.Content.ReadAsStringAsync();
             return await scoreGetResponse.Content.ReadFromJsonAsync<Score>();
         }
 
@@ -248,19 +250,23 @@ namespace wow2.Bot.Modules.Osu
 
                 for (int i = 0; i < config.SubscribedUsers.Count; i++)
                 {
-                    UserData currentUserData = config.SubscribedUsers[i];
-                    UserData updatedUserData = await GetUserAsync(config.SubscribedUsers[i].id.ToString());
+                    SubscribedUserData subscribedUserData = config.SubscribedUsers[i];
+                    UserData updatedUserData = await GetUserAsync(config.SubscribedUsers[i].Id.ToString());
+                    Score currentBestScore = (await GetUserScores(updatedUserData.id, "best"))?.FirstOrDefault();
 
                     // Check if top play has changed.
-                    if (!currentUserData.BestScores.FirstOrDefault()?
-                        .Equals(updatedUserData.BestScores.FirstOrDefault()) ?? true)
+                    if (!subscribedUserData.BestScore?.Equals(currentBestScore) ?? true)
                     {
+                        // Don't continue if the player has zero plays.
+                        if (currentBestScore == null)
+                            return;
+
                         var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
                         await textChannel.SendMessageAsync(
-                            text: $"**{updatedUserData.username}** just set a new top play, {(int)updatedUserData.BestScores[0].pp - (int)(currentUserData.BestScores.FirstOrDefault()?.pp ?? 0)}pp higher than before!",
-                            embed: new ScoreMessage(updatedUserData, updatedUserData.BestScores[0]).Embed);
+                            text: $"**{updatedUserData.username}** just set a new top play, {(int)currentBestScore.pp - (int)(subscribedUserData.BestScore?.pp ?? 0)}pp higher than before!",
+                            embed: new ScoreMessage(updatedUserData, currentBestScore).Embed);
 
-                        config.SubscribedUsers[i] = updatedUserData;
+                        config.SubscribedUsers[i] = new SubscribedUserData(updatedUserData, currentBestScore);
                         await DataManager.SaveGuildDataToFileAsync(textChannel.Guild.Id);
                     }
 

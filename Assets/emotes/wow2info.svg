@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128"
+   height="128"
+   viewBox="0 0 33.866665 33.866666"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1 (c4e8f9ed74, 2021-05-24)"
+   sodipodi:docname="wow2info.svg"
+   inkscape:export-filename="/home/davran/Documents/Code/Discord/wow2/Assets/emotes/wow2info.png"
+   inkscape:export-xdpi="150"
+   inkscape:export-ydpi="150"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     units="px"
+     showguides="false"
+     inkscape:zoom="1.8101934"
+     inkscape:cx="18.782524"
+     inkscape:cy="65.738834"
+     inkscape:window-width="1920"
+     inkscape:window-height="1048"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter3978"
+       x="-0.56692916"
+       y="-0.56692916"
+       width="2.1338583"
+       height="2.1338583">
+      <feFlood
+         flood-opacity="0.501961"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood3968" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="out"
+         result="composite1"
+         id="feComposite3970" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="8"
+         result="blur"
+         id="feGaussianBlur3972" />
+      <feOffset
+         dx="0"
+         dy="0"
+         result="offset"
+         id="feOffset3974" />
+      <feComposite
+         in="offset"
+         in2="SourceGraphic"
+         operator="atop"
+         result="composite2"
+         id="feComposite3976" />
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="fill:#3498db;fill-opacity:0.99215686;stroke-width:3.96245;stroke-linejoin:round;filter:url(#filter3978)"
+       id="path1113"
+       cx="16.933332"
+       cy="16.933332"
+       r="16.933332" />
+    <g
+       id="g1219"
+       transform="translate(-0.28784137,-0.62496423)">
+      <rect
+         style="fill:#ffffff;fill-opacity:0.992157;stroke:#ffffff;stroke-width:4.52519;stroke-linecap:round;stroke-linejoin:round"
+         id="rect933"
+         width="0.043944139"
+         height="9.3159924"
+         x="17.1992"
+         y="16.570034" />
+      <rect
+         style="fill:#ffffff;fill-opacity:0.992157;stroke:#ffffff;stroke-width:4.03434;stroke-linecap:round;stroke-linejoin:round"
+         id="rect933-3"
+         width="0.5347935"
+         height="0.60843682"
+         x="16.953775"
+         y="8.9851379" />
+    </g>
+  </g>
+</svg>
