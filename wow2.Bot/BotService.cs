@@ -203,7 +203,12 @@ namespace wow2.Bot
                 return;
 
             if (!await PagedMessage.ActOnReactionAsync(reaction))
-                await ResponseMessage.ActOnReactionAddedAsync(reaction);
+            {
+                if (!await ResponseMessage.ActOnReactionAddedAsync(reaction))
+                {
+                    await ConfirmMessage.ActOnReactionAsync(reaction);
+                }
+            }
         }
 
         public static async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)

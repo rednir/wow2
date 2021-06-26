@@ -9,6 +9,7 @@ using wow2.Bot.Data;
 using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Modules.Main;
 using wow2.Bot.Modules.Voice;
+using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Dev
@@ -64,8 +65,12 @@ namespace wow2.Bot.Modules.Dev
         [Test("confirm-message")]
         public static async Task ConfirmMessageTest(SocketCommandContext context)
         {
-            await new ConfirmMessage("This is a description.", "Are you sure?")
-                .SendAsync(context.Channel);
+            await new ConfirmMessage(
+                "This is a description.",
+                "Are you sure?",
+                () => context.Channel.SendMessageAsync("Yes."),
+                () => context.Channel.SendMessageAsync("No."))
+                    .SendAsync(context.Channel);
         }
 
         [Test("aliases")]
