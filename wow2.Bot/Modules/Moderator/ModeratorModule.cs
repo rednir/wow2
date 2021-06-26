@@ -169,10 +169,11 @@ namespace wow2.Bot.Modules.Moderator
         [Summary("Toggles whether the bot give warnings to users, for example if spam is detected.")]
         public async Task ToggleAutoMod()
         {
-            Config.IsAutoModOn = !Config.IsAutoModOn;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Auto mod is now `{(Config.IsAutoModOn ? "on" : "off")}`")
-                .SendAsync(Context.Channel);
+            await SendToggleQuestionAsync(
+                currentState: Config.IsAutoModOn,
+                setter: (x) => Config.IsAutoModOn = x,
+                toggledOnMessage: "Auto mod is now on and will give warnings to users.",
+                toggledOffMessage: "Auto mod has been disabled (probably for the best)");
         }
 
         private static async Task WarnOrBanUserAsync(ModeratorModuleConfig config, SocketGuildUser victim, SocketGuildUser requestedBy, string message)

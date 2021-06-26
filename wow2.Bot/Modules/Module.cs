@@ -20,7 +20,6 @@ namespace wow2.Bot.Modules
                 onConfirm: async () =>
                 {
                     setter.Invoke(!currentState);
-                    await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
                     await new SuccessMessage(!currentState ? toggledOnMessage : toggledOffMessage)
                         .SendAsync(Context.Channel);
                 },

@@ -242,20 +242,22 @@ namespace wow2.Bot.Modules.Keywords
         [Summary("Toggles whether bot responses to keywords should have a wastebasket reaction, allowing a user to delete the message.")]
         public async Task ToggleDeleteReactionAsync()
         {
-            Config.IsDeleteReactionOn = !Config.IsDeleteReactionOn;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Delete reaction is now `{(Config.IsDeleteReactionOn ? "on" : "off")}` for keyword responses.")
-                .SendAsync(Context.Channel);
+            await SendToggleQuestionAsync(
+                currentState: Config.IsDeleteReactionOn,
+                setter: (x) => Config.IsDeleteReactionOn = x,
+                toggledOnMessage: "Future responses to keywords will have a delete reaction.",
+                toggledOffMessage: "Future responses to keywords will no longer have a delete reaction.");
         }
 
         [Command("toggle-like-reaction")]
         [Summary("Toggles whether bot responses to keywords should have a thumbs up reaction.")]
         public async Task ToggleLikeReactionAsync()
         {
-            Config.IsLikeReactionOn = !Config.IsLikeReactionOn;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Like reaction is now `{(Config.IsLikeReactionOn ? "on" : "off")}` for keyword responses.")
-                .SendAsync(Context.Channel);
+            await SendToggleQuestionAsync(
+                currentState: Config.IsLikeReactionOn,
+                setter: (x) => Config.IsLikeReactionOn = x,
+                toggledOnMessage: "Future responses to keywords will have a like reaction.",
+                toggledOffMessage: "Future responses to keywords will no longer have a like reaction.");
         }
 
         private static string[] GetAllKeywordsInString(string content, IEnumerable<string> keywords)

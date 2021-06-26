@@ -310,29 +310,33 @@ namespace wow2.Bot.Modules.Voice
         [Summary("Toggles whether the current song request will keep looping.")]
         public async Task ToggleLoopAsync()
         {
-            Config.IsLoopEnabled = !Config.IsLoopEnabled;
-            await new SuccessMessage($"Looping is now turned `{(Config.IsLoopEnabled ? "on" : "off")}`")
-                .SendAsync(Context.Channel);
+            await SendToggleQuestionAsync(
+                currentState: Config.IsLoopEnabled,
+                setter: (x) => Config.IsLoopEnabled = x,
+                toggledOnMessage: "The current song will loop.",
+                toggledOffMessage: "Looping has been disabled.");
         }
 
         [Command("toggle-auto-np")]
         [Summary("Toggles whether the np command will be executed everytime a new song is playing.")]
         public async Task ToggleAutoNpAsync()
         {
-            Config.IsAutoNpOn = !Config.IsAutoNpOn;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Auto execution of `vc np` is turned `{(Config.IsAutoNpOn ? "on" : "off")}`")
-                .SendAsync(Context.Channel);
+            await SendToggleQuestionAsync(
+                currentState: Config.IsAutoNpOn,
+                setter: (x) => Config.IsAutoNpOn = x,
+                toggledOnMessage: "The `vc np` command will be executed everytime a new song is playing.",
+                toggledOffMessage: "The `vc np` command will no longer be executed everytime a new song is playing.");
         }
 
         [Command("toggle-auto-join")]
         [Summary("Toggles whether the bot will try join when a new song is added to the queue.")]
         public async Task ToggleAutoJoinAsync()
         {
-            Config.IsAutoJoinOn = !Config.IsAutoJoinOn;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-            await new SuccessMessage($"Auto joining when a new song is added is turned `{(Config.IsAutoJoinOn ? "on" : "off")}`")
-                .SendAsync(Context.Channel);
+            await SendToggleQuestionAsync(
+                currentState: Config.IsAutoJoinOn,
+                setter: (x) => Config.IsAutoJoinOn = x,
+                toggledOnMessage: "The bot will join a voice channel automatically.",
+                toggledOffMessage: "The bot will no longer join a voice channel automatically, you'll have to use the `vc join` command.");
         }
 
         [Command("set-vote-skips-needed")]
