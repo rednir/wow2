@@ -49,7 +49,7 @@ namespace wow2.Bot.Verbose.Messages
                 return false;
             }
 
-            guildData.ConfirmMessages.Remove(message);
+            guildData.QuestionMessages.Remove(message);
             await message.SentMessage.RemoveAllReactionsAsync();
 
             return true;
@@ -58,12 +58,12 @@ namespace wow2.Bot.Verbose.Messages
         /// <summary>Finds the <see cref="QuestionMessage"/> with the matching message ID.</summary>
         /// <returns>The <see cref="QuestionMessage"/> respresenting the message ID, or null if a match was not found.</returns>
         public static QuestionMessage FromMessageId(GuildData guildData, ulong messageId) =>
-            guildData.ConfirmMessages.Find(m => m.SentMessage.Id == messageId);
+            guildData.QuestionMessages.Find(m => m.SentMessage.Id == messageId);
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             IUserMessage message = await base.SendAsync(channel);
-            List<QuestionMessage> confirmMessages = DataManager.AllGuildData[message.GetGuild().Id].ConfirmMessages;
+            List<QuestionMessage> confirmMessages = DataManager.AllGuildData[message.GetGuild().Id].QuestionMessages;
 
             confirmMessages.Truncate(30);
             confirmMessages.Add(this);
