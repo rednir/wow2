@@ -120,7 +120,12 @@ namespace wow2.Bot.Modules.Keywords
                     await new QuestionMessage(
                         description: $"You are about to delete `{keyword}` and its {Config.KeywordsDictionary[keyword].Count} values.\nAre you okay with that?",
                         title: $"Here be dragons...",
-                        onConfirm: delete)
+                        onConfirm: delete,
+                        onDeny: async () =>
+                        {
+                            await new InfoMessage($"You can do that by typing `{Context.Guild.GetCommandPrefix()} keywords remove {keyword} [VALUE]`", "Just want to remove one value?")
+                                .SendAsync(Context.Channel);
+                        })
                             .SendAsync(Context.Channel);
                 }
             }
