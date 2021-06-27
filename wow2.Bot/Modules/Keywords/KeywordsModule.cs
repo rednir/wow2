@@ -100,17 +100,29 @@ namespace wow2.Bot.Modules.Keywords
             if (!Config.KeywordsDictionary.ContainsKey(keyword))
                 throw new CommandReturnException(Context, $"No such keyword `{keyword}` exists. Did you make a typo?");
 
+            // If the user didn't specify a value, assume removal of entire keyword.
             if (string.IsNullOrEmpty(valueContent))
             {
-                // No values have been specified, so assume the user wants to remove the keyword.
+                Func<Task> delete = async () =>
+                {
+                    Config.DeletedKeywordsDictionary.Add(keyword, Config.KeywordsDictionary[keyword]);
+                    Config.KeywordsDictionary.Remove(keyword);
+
+                    await new SuccessMessage($"Sucessfully removed keyword `{keyword}`.")
+                        .SendAsync(Context.Channel);
+                };
+
                 if (Config.DeletedKeywordsDictionary.ContainsKey(keyword))
                     Config.DeletedKeywordsDictionary.Remove(keyword);
 
-                Config.DeletedKeywordsDictionary.Add(keyword, Config.KeywordsDictionary[keyword]);
-                Config.KeywordsDictionary.Remove(keyword);
-
-                await new SuccessMessage($"Sucessfully removed keyword `{keyword}`.")
-                    .SendAsync(Context.Channel);
+                if (Config.KeywordsDictionary[keyword].Count > 1)
+                {
+                    await new QuestionMessage(
+                        description: $"You are about to delete `{keyword}` and its {Config.KeywordsDictionary[keyword].Count} values.\nAre you okay with that?",
+                        title: $"Here be dragons...",
+                        onConfirm: delete)
+                            .SendAsync(Context.Channel);
+                }
             }
             else
             {
