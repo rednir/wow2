@@ -12,10 +12,13 @@ namespace wow2.Bot
     {
         public static readonly DateTime TimeStarted = DateTime.Now;
         private const string ReleaseVersion = "v3.0";
+
         public static string Version => IsDebug ? "DEBUG BUILD" : ReleaseVersion;
+
         public static string RuntimeDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         public static bool IsDebug { get; private set; }
+
         public static CommandLineOptions Options { get; } = new();
 
         [Conditional("DEBUG")]
