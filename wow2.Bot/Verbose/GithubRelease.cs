@@ -4,6 +4,7 @@ namespace wow2.Bot.Verbose
     public class GithubRelease
     {
         public string tag_name { get; set; }
+
         public string html_url { get; set; }
     }
 }

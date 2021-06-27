@@ -29,6 +29,7 @@ namespace wow2.Bot
         public static DiscordSocketClient Client { get; set; }
 
         public static RestApplication ApplicationInfo { get; set; }
+
         public static CommandService CommandService { get; set; }
 
         public static async Task<SocketGuildUser> GetClientGuildUserAsync(ISocketMessageChannel channel)

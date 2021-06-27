@@ -16,6 +16,7 @@ namespace wow2.Bot
         }
 
         private int MaxAmountOfCachedObjects { get; }
+
         private TimeSpan OldestCachedObjectAllowed { get; }
 
         private List<CachedObject<T>> List { get; } = new();

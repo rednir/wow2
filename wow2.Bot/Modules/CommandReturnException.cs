@@ -33,6 +33,7 @@ namespace wow2.Bot.Modules
         }
 
         public string EmbedTitle { get; }
+
         public string EmbedDescription { get; }
     }
 }

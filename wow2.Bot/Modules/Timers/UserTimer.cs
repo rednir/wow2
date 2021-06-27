@@ -31,7 +31,9 @@ namespace wow2.Bot.Modules.Timers
         }
 
         public string Message { get; }
+
         public SocketCommandContext Context { get; }
+
         private TimersModuleConfig Config { get; }
 
         /// <summary>Disposes of the timer and removes it from the guild's config.</summary>

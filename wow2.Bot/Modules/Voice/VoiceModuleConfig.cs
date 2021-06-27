@@ -8,9 +8,13 @@ namespace wow2.Bot.Modules.Voice
     public class VoiceModuleConfig
     {
         public bool IsAutoNpOn { get; set; } = true;
+
         public bool IsAutoJoinOn { get; set; } = true;
+
         public int VoteSkipsNeeded { get; set; } = 1;
+
         public Queue<UserSongRequest> CurrentSongRequestQueue { get; set; } = new();
+
         public Dictionary<string, Queue<UserSongRequest>> SavedSongRequestQueues { get; set; } = new();
 
         [JsonIgnore]

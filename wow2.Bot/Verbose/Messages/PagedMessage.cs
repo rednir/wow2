@@ -33,6 +33,7 @@ namespace wow2.Bot.Verbose.Messages
         }
 
         public List<EmbedFieldBuilder> AllFieldBuilders { get; protected set; }
+
         public int? Page { get; protected set; }
 
         /// <summary>If the message has pages and the emote is recognised, modifies the page of the message.</summary>

@@ -12,7 +12,9 @@ namespace wow2.Bot
         }
 
         public string Identifier { get; }
+
         public T Value { get; }
+
         public DateTime CreatedAt { get; }
     }
 }

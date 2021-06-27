@@ -26,14 +26,21 @@ namespace wow2.Bot.Modules.Voice
         }
 
         public string title { get; set; }
+
         public string uploader { get; set; }
+
         public string webpage_url { get; set; }
+
         public string description { get; set; }
+
         public string extractor { get; set; }
+
         public double duration { get; set; }
 
         public ulong? view_count { get; set; }
+
         public ulong? like_count { get; set; }
+
         public ulong? dislike_count { get; set; }
 
         public List<VideoMetadataThumbnails> thumbnails { get; set; } = new();
