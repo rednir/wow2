@@ -30,8 +30,8 @@ namespace wow2.Bot.Verbose.Messages
 
         public static async Task<bool> ActOnReactionAsync(SocketReaction reaction)
         {
-            QuestionMessage message = FromMessageId(
-                DataManager.AllGuildData[reaction.Channel.GetGuild().Id], reaction.MessageId);
+            GuildData guildData = DataManager.AllGuildData[reaction.Channel.GetGuild().Id];
+            QuestionMessage message = FromMessageId(guildData, reaction.MessageId);
 
             if (message == null)
                 return false;
@@ -49,7 +49,9 @@ namespace wow2.Bot.Verbose.Messages
                 return false;
             }
 
+            guildData.ConfirmMessages.Remove(message);
             await message.SentMessage.RemoveAllReactionsAsync();
+
             return true;
         }
 
