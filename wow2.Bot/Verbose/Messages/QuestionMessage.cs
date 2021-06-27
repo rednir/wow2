@@ -15,8 +15,8 @@ namespace wow2.Bot.Verbose.Messages
 
         public QuestionMessage(string description, string title = null, Func<Task> onConfirm = null, Func<Task> onDeny = null)
         {
-            OnConfirm = onConfirm;
-            OnDeny = onDeny;
+            OnConfirm = onConfirm ?? (() => Task.CompletedTask);
+            OnDeny = onDeny ?? (() => Task.CompletedTask);
             EmbedBuilder = new EmbedBuilder()
             {
                 Description = $"{new Emoji($"<:wowinfo:{QuestionEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
