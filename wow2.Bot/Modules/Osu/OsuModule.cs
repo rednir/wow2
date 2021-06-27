@@ -23,14 +23,14 @@ namespace wow2.Bot.Modules.Osu
     {
         private static readonly Dictionary<string, IEmote> RankingEmotes = new()
         {
-            { "D", Emote.Parse("<:osud:838780206747090964>") },
-            { "C", Emote.Parse("<:osuc:838780141433257995>") },
-            { "B", Emote.Parse("<:osub:838780016278896712>") },
-            { "A", Emote.Parse("<:osua:807023193264881664>") },
-            { "S", Emote.Parse("<:osus:807023232116981801>") },
-            { "SH", Emote.Parse("<:osush:807023257357123595>") },
-            { "X", Emote.Parse("<:osuss:807023277180583958>") },
-            { "XH", Emote.Parse("<:osussh:807023289742262272>") },
+            { "D", Emote.Parse("<:wow2osuD:858722080702857236>") },
+            { "C", Emote.Parse("<:wow2osuC:858722124613419059>") },
+            { "B", Emote.Parse("<:wow2osuB:858722163174801428>") },
+            { "A", Emote.Parse("<:wow2osuA:858722183819165716>") },
+            { "S", Emote.Parse("<:wow2osuS:858722203423735838>") },
+            { "SH", Emote.Parse("<:wow2osuSH:858722220544753685>") },
+            { "X", Emote.Parse("<:wow2osuX:858722239620055050>") },
+            { "XH", Emote.Parse("<:wow2osuXH:858722266807926794>") },
         };
 
         private static readonly System.Timers.Timer RefreshAccessTokenTimer = new(18 * 3600000);
@@ -52,7 +52,7 @@ namespace wow2.Bot.Modules.Osu
         public OsuModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Osu;
 
         public static string MakeScoreTitle(Score score) =>
-            $"{RankingEmotes[score.rank]} {score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
+            $"{RankingEmotes[score.rank]}  {score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
 
         public static string MakeScoreDescription(Score score) =>
             $"[More details](https://osu.ppy.sh/scores/osu/{score.id}) | {(score.replay ? $"[Download replay](https://osu.ppy.sh/scores/osu/{score.id}/download) | " : null)}{Math.Round(score.pp, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
