@@ -126,10 +126,27 @@ namespace wow2.Bot.Modules.Dev
 
         [Command("stop-program")]
         [Summary("Stops the program.")]
-        public Task StopProgramAsync()
+        public async Task StopProgramAsync()
         {
+            foreach (GuildData guildData in DataManager.AllGuildData.Values)
+            {
+                foreach (PagedMessage message in guildData.PagedMessages)
+                {
+                    try
+                    {
+                        await message.SentMessage.RemoveAllReactionsAsync();
+                    }
+                    catch
+                    {
+                        Logger.Log("test");
+                    }
+                }
+            }
+
+            await new SuccessMessage("Done.")
+                .SendAsync(Context.Channel);
+
             Environment.Exit(0);
-            return Task.CompletedTask;
         }
 
         [Command("throw")]
