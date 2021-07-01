@@ -49,6 +49,14 @@ namespace wow2.Bot.Modules.Osu
             RefreshAccessTokenTimer.Start();
         }
 
+        public static Emote StdEmote { get; } = Emote.Parse("<:wow2osuStd:860176670715936768>");
+
+        public static Emote ManiaEmote { get; } = Emote.Parse("<:wow2osuMania:860176789389049907>");
+
+        public static Emote TaikoEmote { get; } = Emote.Parse("<:wow2osuTaiko:860176882317524992>");
+
+        public static Emote CtbEmote { get; } = Emote.Parse("<:wow2osuCtb:860176939620499487>");
+
         public OsuModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Osu;
 
         public static string MakeScoreTitle(Score score) =>
@@ -63,7 +71,7 @@ namespace wow2.Bot.Modules.Osu
         [Command("user")]
         [Alias("player")]
         [Summary("Get some infomation about a user.")]
-        public async Task UserAsync([Name("USER")] [Remainder] string userInput)
+        public async Task UserAsync([Name("USER")][Remainder] string userInput)
         {
             UserData userData;
             try
@@ -101,7 +109,7 @@ namespace wow2.Bot.Modules.Osu
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified about USER.")]
-        public async Task SubscribeAsync([Name("USER")] [Remainder] string userInput)
+        public async Task SubscribeAsync([Name("USER")][Remainder] string userInput)
         {
             UserData userData;
             try
