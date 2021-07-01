@@ -60,7 +60,7 @@ namespace wow2.Bot.Modules.Osu
             $"{RankingEmotes[score.rank]}  {score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
 
         public static string MakeScoreDescription(Score score) =>
-            $"[More details](https://osu.ppy.sh/scores/osu/{score.id}) | {(score.replay ? $"[Download replay](https://osu.ppy.sh/scores/osu/{score.id}/download) | " : null)}{Math.Round(score.pp, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
+            $"[More details](https://osu.ppy.sh/scores/osu/{score.id}) | {(score.replay ? $"[Download replay](https://osu.ppy.sh/scores/osu/{score.id}/download) | " : null)}{Math.Round(score.pp ?? 0, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
 
         public static string MakeReadableModsList(IEnumerable<string> mods) =>
             (mods.Any() ? "+" : null) + string.Join(' ', mods);
@@ -100,6 +100,30 @@ namespace wow2.Bot.Modules.Osu
             }
 
             await new ScoreMessage(await GetUserAsync(score.user_id.ToString()), score)
+                .SendAsync(Context.Channel);
+        }
+
+        [Command("last")]
+        [Alias("recent")]
+        [Summary("Shows the most recent score set by a player.")]
+        public async Task ScoreAsync([Name("USER")][Remainder] string userInput)
+        {
+            UserData userData;
+            try
+            {
+                userData = await GetUserAsync(userInput.Trim('\"'));
+            }
+            catch (WebException)
+            {
+                throw new CommandReturnException(Context, "That user doesn't exist.");
+            }
+
+            Score[] recentScores = await GetUserScores(userData.id, "recent");
+
+            if (recentScores.Length == 0)
+                throw new CommandReturnException(Context, $"{userData.username} hasn't set any scores in the last 24 hours.");
+
+            await new ScoreMessage(userData, recentScores[0])
                 .SendAsync(Context.Channel);
         }
 

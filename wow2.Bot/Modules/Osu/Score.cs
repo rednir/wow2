@@ -19,7 +19,7 @@ namespace wow2.Bot.Modules.Osu
 
         public string rank { get; set; }
 
-        public double pp { get; set; }
+        public double? pp { get; set; }
 
         public bool replay { get; set; }
 
