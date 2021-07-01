@@ -15,6 +15,11 @@ namespace wow2.Bot.Modules.Osu
                     IconUrl = userData.avatar_url,
                     Url = $"https://osu.ppy.sh/users/{userData.id}",
                 },
+                Footer = new EmbedFooterBuilder()
+                {
+                    Text = "osu!standard",
+                    IconUrl = $"https://cdn.discordapp.com/emojis/{OsuModule.StdEmoteId}.png",
+                },
                 Title = OsuModule.MakeScoreTitle(score),
                 Description = OsuModule.MakeScoreDescription(score),
                 ImageUrl = score.beatmapSet.covers.cover,

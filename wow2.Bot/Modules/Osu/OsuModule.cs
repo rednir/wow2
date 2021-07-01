@@ -21,6 +21,11 @@ namespace wow2.Bot.Modules.Osu
     [Summary("Integrations with the osu!api")]
     public class OsuModule : Module
     {
+        public const ulong StdEmoteId = 860176670715936768;
+        public const ulong ManiaEmoteId = 860176789389049907;
+        public const ulong TaikoEmoteId = 860176882317524992;
+        public const ulong CtbEmoteId = 860176939620499487;
+
         private static readonly Dictionary<string, IEmote> RankingEmotes = new()
         {
             { "D", Emote.Parse("<:wow2osuD:858722080702857236>") },
@@ -48,14 +53,6 @@ namespace wow2.Bot.Modules.Osu
             RefreshAccessTokenTimer.Elapsed += (sender, e) => _ = AuthenticateHttpClient();
             RefreshAccessTokenTimer.Start();
         }
-
-        public static Emote StdEmote { get; } = Emote.Parse("<:wow2osuStd:860176670715936768>");
-
-        public static Emote ManiaEmote { get; } = Emote.Parse("<:wow2osuMania:860176789389049907>");
-
-        public static Emote TaikoEmote { get; } = Emote.Parse("<:wow2osuTaiko:860176882317524992>");
-
-        public static Emote CtbEmote { get; } = Emote.Parse("<:wow2osuCtb:860176939620499487>");
 
         public OsuModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Osu;
 
