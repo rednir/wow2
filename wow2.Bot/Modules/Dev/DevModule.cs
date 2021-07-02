@@ -4,6 +4,7 @@ using Discord;
 using Discord.Commands;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
+using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
@@ -138,7 +139,17 @@ namespace wow2.Bot.Modules.Dev
                     }
                     catch
                     {
-                        Logger.Log("test");
+                    }
+                }
+
+                foreach (ResponseMessage message in guildData.Keywords.ListOfResponseMessages)
+                {
+                    try
+                    {
+                        await message.SentMessage.RemoveAllReactionsAsync();
+                    }
+                    catch
+                    {
                     }
                 }
             }
