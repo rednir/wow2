@@ -220,11 +220,11 @@ namespace wow2.Bot.Modules.YouTube
                 if (config.AnnouncementsChannelId == 0)
                     continue;
 
-                var subscribedChannelIds = config.SubscribedChannels;
+                List<SubscribedChannel> subscribedChannelIds = config.SubscribedChannels;
                 foreach (string id in subscribedChannelIds.Select(c => c.Id))
                 {
                     // TODO: proper error handling.
-                    var uploads = await GetChannelUploadsAsync(await GetChannelAsync(id), 1);
+                    IList<PlaylistItem> uploads = await GetChannelUploadsAsync(await GetChannelAsync(id), 1);
                     if (uploads.Count == 0)
                         continue;
 
