@@ -33,6 +33,7 @@ namespace wow2.Bot.Modules.Osu
         {
             if (other == null)
                 return false;
+
             return id == other.id;
         }
     }
