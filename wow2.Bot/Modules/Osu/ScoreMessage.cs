@@ -11,7 +11,7 @@ namespace wow2.Bot.Modules.Osu
             {
                 Author = new EmbedAuthorBuilder()
                 {
-                    Name = $"Played by {userData.username}",
+                    Name = $"Played by {userData.username} (#{userData.statistics.global_rank})",
                     IconUrl = userData.avatar_url,
                     Url = $"https://osu.ppy.sh/users/{userData.id}",
                 },
