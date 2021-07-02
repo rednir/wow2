@@ -272,6 +272,8 @@ namespace wow2.Bot.Modules.Osu
 
         private static async Task CheckForUserMilestonesAsync()
         {
+            Dictionary<UserData, Score> CachedUpdatedUserDataAndBestScore = new();
+
             foreach (var config in DataManager.AllGuildData.Select(g => g.Value.Osu).ToArray())
             {
                 if (config.AnnouncementsChannelId == 0)
@@ -280,27 +282,39 @@ namespace wow2.Bot.Modules.Osu
                 for (int i = 0; i < config.SubscribedUsers.Count; i++)
                 {
                     SubscribedUserData subscribedUserData = config.SubscribedUsers[i];
-                    UserData updatedUserData = await GetUserAsync(config.SubscribedUsers[i].Id.ToString());
-                    Score currentBestScore = (await GetUserScores(updatedUserData.id, "best"))?.FirstOrDefault();
 
-                    // Check if top play has changed.
-                    if (!subscribedUserData.BestScore?.Equals(currentBestScore) ?? true)
-                    {
-                        // Don't continue if the player has zero plays.
-                        if (currentBestScore == null)
-                            return;
+                    // Check if we have already requested data for this user before.
+                    KeyValuePair<UserData, Score> cachedPair = CachedUpdatedUserDataAndBestScore
+                        .FirstOrDefault(p => p.Key.id == subscribedUserData.Id);
 
-                        var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
-                        await textChannel.SendMessageAsync(
-                            text: $"**{updatedUserData.username}** just set a new top play, {(int)currentBestScore.pp - (int)(subscribedUserData.BestScore?.pp ?? 0)}pp higher than before!",
-                            embed: new ScoreMessage(updatedUserData, currentBestScore).Embed);
+                    UserData updatedUserData = cachedPair.Key ?? await GetUserAsync(subscribedUserData.Id.ToString());
+                    Score currentBestScore = cachedPair.Value ?? (await GetUserScores(subscribedUserData.Id, "best"))?.FirstOrDefault();
 
-                        config.SubscribedUsers[i] = new SubscribedUserData(updatedUserData, currentBestScore);
-                        await DataManager.SaveGuildDataToFileAsync(textChannel.Guild.Id);
-                    }
+                    await CheckForNewTopPlayAsync(subscribedUserData, updatedUserData, currentBestScore, config);
 
-                    await Task.Delay(800);
+                    // Update subscribed user data.
+                    config.SubscribedUsers[i] = new SubscribedUserData(updatedUserData, currentBestScore);
+                    CachedUpdatedUserDataAndBestScore.Add(updatedUserData, currentBestScore);
+
+                    await Task.Delay(500);
                 }
+            }
+        }
+
+        private static async Task CheckForNewTopPlayAsync(SubscribedUserData subscribedUserData, UserData updatedUserData, Score currentBestScore, OsuModuleConfig config)
+        {
+            if (!subscribedUserData.BestScore?.Equals(currentBestScore) ?? true)
+            {
+                // Don't continue if the player has zero plays.
+                if (currentBestScore == null)
+                    return;
+
+                var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
+                await textChannel.SendMessageAsync(
+                    text: $"**{updatedUserData.username}** just set a new top play, {(int)currentBestScore.pp - (int)(subscribedUserData.BestScore?.pp ?? 0)}pp higher than before!",
+                    embed: new ScoreMessage(updatedUserData, currentBestScore).Embed);
+
+                await DataManager.SaveGuildDataToFileAsync(textChannel.Guild.Id);
             }
         }
     }
