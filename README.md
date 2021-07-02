@@ -1,6 +1,5 @@
 <p align="center"><img src="Assets/banner.png"></p>
 
-# wow2
 A Discord bot written in C# using the [Discord.NET](https://github.com/discord-net/Discord.Net) library.
 
 [![Discord Bots](https://top.gg/api/widget/status/818156344594792451.svg)](https://top.gg/bot/818156344594792451)
