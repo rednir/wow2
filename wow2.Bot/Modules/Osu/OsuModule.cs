@@ -313,8 +313,6 @@ namespace wow2.Bot.Modules.Osu
                 await textChannel.SendMessageAsync(
                     text: $"**{updatedUserData.username}** just set a new top play, {(int)currentBestScore.pp - (int)(subscribedUserData.BestScore?.pp ?? 0)}pp higher than before!",
                     embed: new ScoreMessage(updatedUserData, currentBestScore).Embed);
-
-                await DataManager.SaveGuildDataToFileAsync(textChannel.Guild.Id);
             }
         }
     }
