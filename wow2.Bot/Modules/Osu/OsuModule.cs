@@ -294,7 +294,7 @@ namespace wow2.Bot.Modules.Osu
 
                     // Update subscribed user data.
                     config.SubscribedUsers[i] = new SubscribedUserData(updatedUserData, currentBestScore);
-                    CachedUpdatedUserDataAndBestScore.Add(updatedUserData, currentBestScore);
+                    CachedUpdatedUserDataAndBestScore.TryAdd(updatedUserData, currentBestScore);
 
                     await Task.Delay(500);
                 }
