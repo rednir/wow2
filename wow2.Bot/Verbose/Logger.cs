@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Discord;
 using wow2.Bot.Data;
+using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Verbose
 {
@@ -35,6 +36,7 @@ namespace wow2.Bot.Verbose
         {
             if (severity == LogSeverity.Debug && !Program.IsDebug)
                 return;
+
             Output($"{DateTime.Now} [{severity}] {message}");
         }
 
@@ -42,14 +44,19 @@ namespace wow2.Bot.Verbose
         {
             if (logMessage.Severity == LogSeverity.Debug && !Program.IsDebug)
                 return;
+
             Output($"{DateTime.Now} [{logMessage.Severity}] {logMessage.Source}: {logMessage.Message}");
         }
 
         public static void LogException(Exception exception, string message = "Exception was thrown:", bool notifyOwner = true)
         {
             Output($"{DateTime.Now} [Exception] {message}\n------ START OF EXCEPTION ------\n\n{exception}\n\n------ END OF EXCEPTION ------");
+
             if (notifyOwner)
-                _ = BotService.ApplicationInfo.Owner.SendMessageAsync($"{message}\n```\n{exception}\n```");
+            {
+                _ = BotService.ApplicationInfo.Owner.SendMessageAsync(
+                    embed: new ErrorMessage($"```\n{exception}\n```", message).Embed);
+            }
         }
 
         public static async Task<string> GetLogsForSessionAsync()
