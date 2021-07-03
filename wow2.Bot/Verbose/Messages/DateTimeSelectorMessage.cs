@@ -6,9 +6,8 @@ using Discord;
 using Discord.WebSocket;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
-using wow2.Bot.Verbose.Messages;
 
-namespace wow2.Bot.Modules.Events
+namespace wow2.Bot.Verbose.Messages
 {
     public class DateTimeSelectorMessage : Message
     {
@@ -45,15 +44,15 @@ namespace wow2.Bot.Modules.Events
 
         public static async Task<bool> ActOnReactionAsync(SocketReaction reaction)
         {
-            EventsModuleConfig config = DataManager.AllGuildData[reaction.Channel.GetGuild().Id].Events;
-            DateTimeSelectorMessage message = config.DateTimeSelectorMessages.Find(m => m.SentMessage.Id == reaction.MessageId);
+            GuildData guildData = DataManager.AllGuildData[reaction.Channel.GetGuild().Id];
+            DateTimeSelectorMessage message = guildData.DateTimeSelectorMessages.Find(m => m.SentMessage.Id == reaction.MessageId);
 
             if (message == null)
                 return false;
 
             if (reaction.Emote.Name == ConfirmChar)
             {
-                config.DateTimeSelectorMessages.Remove(message);
+                guildData.DateTimeSelectorMessages.Remove(message);
                 await message.SentMessage.RemoveAllReactionsAsync();
                 await message.ConfirmFunc.Invoke(message.DateTime);
                 return true;
@@ -75,7 +74,7 @@ namespace wow2.Bot.Modules.Events
         {
             IUserMessage message = await base.SendAsync(channel);
             List<DateTimeSelectorMessage> dateTimeSelectorMessages = DataManager
-                .AllGuildData[message.GetGuild().Id].Events.DateTimeSelectorMessages;
+                .AllGuildData[message.GetGuild().Id].DateTimeSelectorMessages;
 
             dateTimeSelectorMessages.Truncate(12);
             dateTimeSelectorMessages.Add(this);

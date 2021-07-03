@@ -27,6 +27,9 @@ namespace wow2.Bot.Data
         [JsonIgnore]
         public List<QuestionMessage> QuestionMessages { get; set; } = new();
 
+        [JsonIgnore]
+        public List<DateTimeSelectorMessage> DateTimeSelectorMessages { get; set; } = new();
+
         public MainModuleConfig Main { get; set; } = new();
 
         public KeywordsModuleConfig Keywords { get; set; } = new();
