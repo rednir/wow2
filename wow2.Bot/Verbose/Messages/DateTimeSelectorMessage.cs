@@ -92,7 +92,7 @@ namespace wow2.Bot.Verbose.Messages
             EmbedBuilder = new EmbedBuilder()
             {
                 Description = $"{new Emoji($"<:wowquestion:{QuestionEmoteId}>")} {Description}\n`{DateTime}`",
-                ImageUrl = "https://cdn.discordapp.com/attachments/680921268081524954/861017801065365524/datetimemessagehelp.png",
+                ImageUrl = "https://github.com/rednir/wow2/blob/master/Assets/datetimemessagehelp.png",
                 Color = new Color(0x9b59b6),
             };
 
