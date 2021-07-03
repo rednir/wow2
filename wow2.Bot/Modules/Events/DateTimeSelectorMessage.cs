@@ -88,7 +88,6 @@ namespace wow2.Bot.Modules.Events
             {
                 Description = $"{new Emoji($"<:wowinfo:{QuestionEmoteId}>")} {Description}\n\nCurrently set to: `{DateTime}`",
                 Color = new Color(0x9b59b6),
-                Timestamp = DateTime.Now + TimeSpan.FromDays(100),
             };
 
             await SentMessage?.ModifyAsync(m => m.Embed = Embed);
