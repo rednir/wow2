@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using wow2.Bot.Data;
+using wow2.Bot.Modules.Events;
 using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Modules.Main;
 using wow2.Bot.Modules.Voice;
@@ -71,6 +72,13 @@ namespace wow2.Bot.Modules.Dev
                 () => context.Channel.SendMessageAsync("Yes."),
                 () => context.Channel.SendMessageAsync("No."))
                     .SendAsync(context.Channel);
+        }
+
+        [Test("date-time-message")]
+        public static async Task DateTimeMessageTeset(SocketCommandContext context)
+        {
+            await new DateTimeSelectorMessage("This is a description.")
+                .SendAsync(context.Channel);
         }
 
         [Test("aliases")]
