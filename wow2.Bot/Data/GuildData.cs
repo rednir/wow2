@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using wow2.Bot.Modules.Events;
 using wow2.Bot.Modules.Games;
 using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Modules.Main;
@@ -41,5 +42,7 @@ namespace wow2.Bot.Data
         public YouTubeModuleConfig YouTube { get; set; } = new();
 
         public TimersModuleConfig Timers { get; set; } = new();
+
+        public EventsModuleConfig Events { get; set; } = new();
     }
 }
