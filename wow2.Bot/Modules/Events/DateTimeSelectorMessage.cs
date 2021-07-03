@@ -92,11 +92,8 @@ namespace wow2.Bot.Modules.Events
         {
             EmbedBuilder = new EmbedBuilder()
             {
-                Footer = new EmbedFooterBuilder()
-                {
-                    Text = $"Currently set to: {DateTime}",
-                },
-                Description = $"{new Emoji($"<:wowinfo:{QuestionEmoteId}>")} {Description}",
+                Description = $"{new Emoji($"<:wowquestion:{QuestionEmoteId}>")} {Description}\n`{DateTime}`",
+                ImageUrl = "https://cdn.discordapp.com/attachments/680921268081524954/861017801065365524/datetimemessagehelp.png",
                 Color = new Color(0x9b59b6),
             };
 
