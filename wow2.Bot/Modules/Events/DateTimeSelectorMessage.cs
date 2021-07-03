@@ -69,7 +69,9 @@ namespace wow2.Bot.Modules.Events
             dateTimeSelectorMessages.Truncate(12);
             dateTimeSelectorMessages.Add(this);
 
-            await message.AddReactionsAsync(MessageEmotes.Keys.ToArray());
+            await message.AddReactionsAsync(
+                MessageEmotes.Keys.Append(new Emoji(ConfirmChar)).ToArray());
+
             return message;
         }
     }
