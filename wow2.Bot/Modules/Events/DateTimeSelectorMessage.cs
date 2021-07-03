@@ -14,16 +14,7 @@ namespace wow2.Bot.Modules.Events
     {
         public const string ConfirmChar = "✅";
 
-        public DateTimeSelectorMessage(string description = "Select a date and time.")
-        {
-            EmbedBuilder = new EmbedBuilder()
-            {
-                Description = $"{new Emoji($"<:wowinfo:{QuestionEmoteId}>")} {description}",
-                Color = new Color(0x9b59b6),
-            };
-        }
-
-        public static IReadOnlyDictionary<IEmote, TimeSpan> MessageEmotes { get; } = new Dictionary<IEmote, TimeSpan>()
+        public static readonly IReadOnlyDictionary<IEmote, TimeSpan> DateTimeModifierEmotes = new Dictionary<IEmote, TimeSpan>()
         {
             { new Emoji("⏫"), TimeSpan.FromDays(7) },
             { new Emoji("⏬"), TimeSpan.FromDays(-7) },
@@ -34,6 +25,16 @@ namespace wow2.Bot.Modules.Events
             { new Emoji("▶"), TimeSpan.FromMinutes(10) },
             { new Emoji("◀"), TimeSpan.FromMinutes(-10) },
         };
+
+        public DateTimeSelectorMessage(string description = "Select a date and time.")
+        {
+            Description = description;
+            _ = UpdateMessageAsync();
+        }
+
+        public DateTime DateTime { get; set; } = DateTime.Now;
+
+        private string Description { get; }
 
         public static async Task<bool> ActOnReactionAsync(SocketReaction reaction)
         {
@@ -49,9 +50,11 @@ namespace wow2.Bot.Modules.Events
                 await message.SentMessage.RemoveAllReactionsAsync();
                 return true;
             }
-            else if (MessageEmotes.Any(p => p.Key.Name == reaction.Emote.Name))
+            else if (DateTimeModifierEmotes.Any(p => p.Key.Name == reaction.Emote.Name))
             {
                 await message.SentMessage.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
+                message.DateTime += DateTimeModifierEmotes[reaction.Emote];
+                await message.UpdateMessageAsync();
                 return true;
             }
             else
@@ -70,9 +73,20 @@ namespace wow2.Bot.Modules.Events
             dateTimeSelectorMessages.Add(this);
 
             await message.AddReactionsAsync(
-                MessageEmotes.Keys.Append(new Emoji(ConfirmChar)).ToArray());
+                DateTimeModifierEmotes.Keys.Append(new Emoji(ConfirmChar)).ToArray());
 
             return message;
+        }
+
+        private async Task UpdateMessageAsync()
+        {
+            EmbedBuilder = new EmbedBuilder()
+            {
+                Description = $"{new Emoji($"<:wowinfo:{QuestionEmoteId}>")} {Description}\nCurrently set to: `{DateTime}`",
+                Color = new Color(0x9b59b6),
+            };
+
+            await SentMessage?.ModifyAsync(m => m.Embed = Embed);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace wow2.Bot.Modules.Events
 {
@@ -6,6 +7,7 @@ namespace wow2.Bot.Modules.Events
     {
         public ulong AnnouncementsChannelId { get; set; }
 
+        [JsonIgnore]
         public List<DateTimeSelectorMessage> DateTimeSelectorMessages { get; set; } = new();
     }
 }
