@@ -86,7 +86,11 @@ namespace wow2.Bot.Modules.Events
         {
             EmbedBuilder = new EmbedBuilder()
             {
-                Description = $"{new Emoji($"<:wowinfo:{QuestionEmoteId}>")} {Description}\n\nCurrently set to: `{DateTime}`",
+                Footer = new EmbedFooterBuilder()
+                {
+                    Text = $"Currently set to: {DateTime}",
+                },
+                Description = $"{new Emoji($"<:wowinfo:{QuestionEmoteId}>")} {Description}",
                 Color = new Color(0x9b59b6),
             };
 
