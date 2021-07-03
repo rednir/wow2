@@ -14,6 +14,7 @@ using Discord.WebSocket;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 using wow2.Bot.Modules;
+using wow2.Bot.Modules.Events;
 using wow2.Bot.Modules.Games.Counting;
 using wow2.Bot.Modules.Games.VerbalMemory;
 using wow2.Bot.Modules.Keywords;
@@ -207,7 +208,10 @@ namespace wow2.Bot
             {
                 if (!await ResponseMessage.ActOnReactionAddedAsync(reaction))
                 {
-                    await QuestionMessage.ActOnReactionAsync(reaction);
+                    if (!await QuestionMessage.ActOnReactionAsync(reaction))
+                    {
+                        await DateTimeSelectorMessage.ActOnReactionAsync(reaction);
+                    }
                 }
             }
         }
