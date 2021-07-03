@@ -18,9 +18,12 @@ namespace wow2.Bot.Modules.Events
         [Command("new")]
         [Alias("start", "create", "add")]
         [Summary("Create a new event.")]
-        public async Task NewAsync()
+        public async Task NewAsync([Remainder] string description = "untitled event")
         {
-            throw new NotImplementedException();
+            await new DateTimeSelectorMessage(
+                d => Task.CompletedTask,
+                "Select a date and time for this event.")
+                    .SendAsync(Context.Channel);
         }
 
         [Command("delete")]
