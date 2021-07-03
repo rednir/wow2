@@ -28,9 +28,13 @@ namespace wow2.Bot.Modules.Events
 
         public DateTimeSelectorMessage(Func<DateTime, Task> confirmFunc, string description = "Select a date and time.")
         {
+            EmbedBuilder = new EmbedBuilder()
+            {
+                Description = "Give me a second to add reactions...",
+                Color = Color.LightGrey,
+            };
             Description = description;
             ConfirmFunc = confirmFunc;
-            _ = UpdateMessageAsync();
         }
 
         public DateTime DateTime { get; set; } = DateTime.Now;
@@ -78,6 +82,8 @@ namespace wow2.Bot.Modules.Events
 
             await message.AddReactionsAsync(
                 DateTimeModifierEmotes.Keys.Append(new Emoji(ConfirmChar)).ToArray());
+
+            await UpdateMessageAsync();
 
             return message;
         }
