@@ -14,6 +14,10 @@ namespace wow2.Bot.Modules.Events
         public static readonly IEmote AttendEmote = new Emoji("👌");
         public static readonly IEmote EditEmote = new Emoji("✏");
 
+        public EventMessage()
+        {
+        }
+
         public EventMessage(Event @event)
         {
             Event = @event;
