@@ -129,7 +129,7 @@ Create and organise events for you and your friends.
 
 |Command|Summary|
 |---|---|
-|`!wow events new`|Create a new event.|
+|`!wow events new [optional:DESCRIPTION]`|Create a new event.|
 |`!wow events delete`|Delete an upcoming event.|
 |`!wow events set-announcements-channel [CHANNEL]`|Sets the channel that event notifications will be sent to.|
 

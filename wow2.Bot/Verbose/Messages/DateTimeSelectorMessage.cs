@@ -76,12 +76,11 @@ namespace wow2.Bot.Verbose.Messages
             List<DateTimeSelectorMessage> dateTimeSelectorMessages = DataManager
                 .AllGuildData[message.GetGuild().Id].DateTimeSelectorMessages;
 
-            dateTimeSelectorMessages.Truncate(12);
-            dateTimeSelectorMessages.Add(this);
-
             await message.AddReactionsAsync(
                 DateTimeModifierEmotes.Keys.Append(new Emoji(ConfirmChar)).ToArray());
 
+            dateTimeSelectorMessages.Truncate(12);
+            dateTimeSelectorMessages.Add(this);
             await UpdateMessageAsync();
 
             return message;
