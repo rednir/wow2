@@ -1,8 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using wow2.Bot.Data;
+using wow2.Bot.Extensions;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Events
@@ -20,8 +22,28 @@ namespace wow2.Bot.Modules.Events
         [Summary("Create a new event.")]
         public async Task NewAsync([Remainder] string description = "untitled event")
         {
+            if (Config.AnnouncementsChannelId == default)
+            {
+                throw new CommandReturnException(
+                    Context,
+                    $"You can do this be using `{Context.Guild.GetCommandPrefix()} events set-announcements-channel`",
+                    "Set an announcements channel first");
+            }
+
             await new DateTimeSelectorMessage(
-                d => Task.CompletedTask,
+                async d =>
+                {
+                    var @event = new Event()
+                    {
+                        Description = description,
+                        ForDateTime = d,
+                        CreatedByMention = Context.User.Mention,
+                    };
+
+                    Config.Events.Add(@event);
+                    await new EventMessage(@event)
+                        .SendAsync((IMessageChannel)BotService.Client.GetChannel(Config.AnnouncementsChannelId));
+                },
                 "Select a date and time for this event.")
                     .SendAsync(Context.Channel);
         }

@@ -6,6 +6,8 @@ namespace wow2.Bot.Modules.Events
     {
         public List<Event> Events { get; set; } = new();
 
+        public List<EventMessage> EventMessages { get; set; } = new();
+
         public ulong AnnouncementsChannelId { get; set; }
     }
 }
