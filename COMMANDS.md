@@ -1,4 +1,4 @@
-# List of commands (74 total)
+# List of commands (77 total)
 
 ## Main (7)
 Stuff to do with the bot and other random stuff.
@@ -123,6 +123,15 @@ For having a bit of fun.
 |`!wow games counting-leaderboard [optional:PAGE]`|Shows the leaderboard for the counting game.|
 |`!wow games verbal-memory`|Try remember as many words as you can.|
 |`!wow games verbal-memory-leaderboard [optional:PAGE]`|Shows the leaderboard for the counting game.|
+
+## Events (3)
+Create and organise events for you and your friends.
+
+|Command|Summary|
+|---|---|
+|`!wow events new [optional:DESCRIPTION]`|Create a new event.|
+|`!wow events delete`|Delete an upcoming event.|
+|`!wow events set-announcements-channel [CHANNEL]`|Sets the channel that event notifications will be sent to.|
 
 ## Developer (10)
 Boring stuff for developers.
