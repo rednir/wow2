@@ -117,6 +117,7 @@ namespace wow2.Bot.Modules.Keywords
 
                 if (Config.KeywordsDictionary[keyword].Count > 1)
                 {
+                    // Warn the user about deleting multiple values.
                     await new QuestionMessage(
                         description: $"You are about to delete `{keyword}` and its {Config.KeywordsDictionary[keyword].Count} values.\nAre you okay with that?",
                         title: $"Here be dragons...",
@@ -127,6 +128,10 @@ namespace wow2.Bot.Modules.Keywords
                                 .SendAsync(Context.Channel);
                         })
                             .SendAsync(Context.Channel);
+                }
+                else
+                {
+                    await delete.Invoke();
                 }
             }
             else
