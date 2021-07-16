@@ -81,9 +81,9 @@ Integrations with the osu!api
 
 |Command|Summary|
 |---|---|
-|`!wow osu user [USER]`|Get some infomation about a user.|
-|`!wow osu score [ID]`|Show some infomation about a score.|
-|`!wow osu last [USER]`|Shows the most recent score set by a player.|
+|`!wow osu user [USER] [optional:MODE]`|Get some infomation about a user.|
+|`!wow osu score [ID] [optional:MODE]`|Show some infomation about a score.|
+|`!wow osu last [USER] [optional:MODE]`|Shows the most recent score set by a player.|
 |`!wow osu subscribe [USER]`|Toggle whether your server will get notified about USER.|
 |`!wow osu list-subs [optional:PAGE]`|Lists the users your server will get notified about.|
 |`!wow osu set-announcements-channel [CHANNEL]`|Sets the channel where notifications about users will be sent.|

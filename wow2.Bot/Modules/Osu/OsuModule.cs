@@ -68,57 +68,57 @@ namespace wow2.Bot.Modules.Osu
         [Command("user")]
         [Alias("player")]
         [Summary("Get some infomation about a user.")]
-        public async Task UserAsync([Name("USER")][Remainder] string userInput)
+        public async Task UserAsync([Name("USER")] string userInput, string mode = null)
         {
             UserData userData;
             try
             {
-                userData = await GetUserAsync(userInput.Trim('\"'));
+                userData = await GetUserAsync(userInput, ParseMode(mode));
             }
             catch (WebException)
             {
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            await new UserInfoMessage(userData, await GetUserScores(userData.id, "best"))
+            await new UserInfoMessage(userData, await GetUserScores(userData.id, "best", ParseMode(mode)))
                 .SendAsync(Context.Channel);
         }
 
         [Command("score")]
         [Alias("play")]
         [Summary("Show some infomation about a score.")]
-        public async Task ScoreAsync(ulong id, string mode)
+        public async Task ScoreAsync(ulong id, string mode = "osu")
         {
             Score score;
             try
             {
-                score = await GetScoreAsync(id);
+                score = await GetScoreAsync(id, ParseMode(mode));
             }
             catch (WebException)
             {
                 throw new CommandReturnException(Context, "That score doesn't exist.");
             }
 
-            await new ScoreMessage(await GetUserAsync(score.user_id.ToString()), score)
+            await new ScoreMessage(await GetUserAsync(score.user_id.ToString(), score.mode), score)
                 .SendAsync(Context.Channel);
         }
 
         [Command("last")]
         [Alias("recent")]
         [Summary("Shows the most recent score set by a player.")]
-        public async Task LastAsync([Name("USER")][Remainder] string userInput)
+        public async Task LastAsync([Name("USER")] string userInput, string mode = null)
         {
             UserData userData;
             try
             {
-                userData = await GetUserAsync(userInput.Trim('\"'));
+                userData = await GetUserAsync(userInput, ParseMode(mode));
             }
             catch (WebException)
             {
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            Score[] recentScores = await GetUserScores(userData.id, "recent");
+            Score[] recentScores = await GetUserScores(userData.id, "recent", ParseMode(mode));
 
             if (recentScores.Length == 0)
                 throw new CommandReturnException(Context, $"{userData.username} hasn't set any scores in the last 24 hours.");
@@ -130,12 +130,12 @@ namespace wow2.Bot.Modules.Osu
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified about USER.")]
-        public async Task SubscribeAsync([Name("USER")][Remainder] string userInput)
+        public async Task SubscribeAsync([Name("USER")] string userInput)
         {
             UserData userData;
             try
             {
-                userData = await GetUserAsync(userInput.Trim('\"'));
+                userData = await GetUserAsync(userInput);
             }
             catch (WebException)
             {
@@ -239,9 +239,9 @@ namespace wow2.Bot.Modules.Osu
                 "Bearer", tokenRequestResponse["access_token"].ToString());
         }
 
-        private static async Task<UserData> GetUserAsync(string user)
+        private static async Task<UserData> GetUserAsync(string user, string mode = null)
         {
-            var userGetResponse = await HttpClient.GetAsync($"api/v2/users/{user}");
+            var userGetResponse = await HttpClient.GetAsync($"api/v2/users/{user}/{mode}");
 
             // If `user` is a username, the client will be redirected, losing
             // its headers. So another request will need to be made.
@@ -254,15 +254,15 @@ namespace wow2.Bot.Modules.Osu
             return await userGetResponse.Content.ReadFromJsonAsync<UserData>();
         }
 
-        private static async Task<Score[]> GetUserScores(ulong userId, string type)
+        private static async Task<Score[]> GetUserScores(ulong userId, string type, string mode = null)
         {
-            var bestScoresGetResponse = await HttpClient.GetAsync($"api/v2/users/{userId}/scores/{type}");
+            var bestScoresGetResponse = await HttpClient.GetAsync($"api/v2/users/{userId}/scores/{type}?{(mode == null ? null : $"mode={mode}&")}include_fails=1");
             return await bestScoresGetResponse.Content.ReadFromJsonAsync<Score[]>();
         }
 
-        private static async Task<Score> GetScoreAsync(ulong id)
+        private static async Task<Score> GetScoreAsync(ulong id, string mode)
         {
-            var scoreGetResponse = await HttpClient.GetAsync($"api/v2/scores/osu/{id}");
+            var scoreGetResponse = await HttpClient.GetAsync($"api/v2/scores/{mode}/{id}");
 
             if (!scoreGetResponse.IsSuccessStatusCode)
                 throw new WebException(scoreGetResponse.StatusCode.ToString());
@@ -274,7 +274,7 @@ namespace wow2.Bot.Modules.Osu
         /// <returns>Returns the gamemode identifier as a string, or null if there was no best match.</returns>
         private static string ParseMode(string modeUserInput)
         {
-            return modeUserInput.ToLower() switch
+            return modeUserInput?.ToLower() switch
             {
                 "osu" or "std" or "standard" or "osu!std" or "osu!standard" => "osu",
                 "taiko" or "drums" or "osu!taiko" => "taiko",
