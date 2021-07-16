@@ -129,6 +129,8 @@ namespace wow2.Bot.Modules.Dev
         [Summary("Stops the program.")]
         public async Task StopProgramAsync()
         {
+            await SaveGuildDataAsync();
+
             foreach (GuildData guildData in DataManager.AllGuildData.Values)
             {
                 foreach (PagedMessage message in guildData.PagedMessages)
