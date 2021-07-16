@@ -87,7 +87,7 @@ namespace wow2.Bot.Modules.Osu
         [Command("score")]
         [Alias("play")]
         [Summary("Show some infomation about a score.")]
-        public async Task ScoreAsync(ulong id)
+        public async Task ScoreAsync(ulong id, string mode)
         {
             Score score;
             try
@@ -268,6 +268,20 @@ namespace wow2.Bot.Modules.Osu
                 throw new WebException(scoreGetResponse.StatusCode.ToString());
 
             return await scoreGetResponse.Content.ReadFromJsonAsync<Score>();
+        }
+
+        /// <summary>Finds the best matching gamemode based on a string.</summary>
+        /// <returns>Returns the gamemode identifier as a string, or null if there was no best match.</returns>
+        private static string ParseMode(string modeUserInput)
+        {
+            return modeUserInput.ToLower() switch
+            {
+                "osu" or "std" or "standard" or "osu!std" or "osu!standard" => "osu",
+                "taiko" or "drums" or "osu!taiko" => "taiko",
+                "fruits" or "ctb" or "catch" or "osu!ctb" or "osu!catch" => "fruits",
+                "mania" or "osu!mania" => "mania",
+                _ => null,
+            };
         }
 
         private static async Task CheckForUserMilestonesAsync()
