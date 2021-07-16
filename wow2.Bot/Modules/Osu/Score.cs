@@ -23,6 +23,8 @@ namespace wow2.Bot.Modules.Osu
 
         public bool replay { get; set; }
 
+        public string mode { get; set; }
+
         public DateTime created_at { get; set; }
 
         public Beatmap beatmap { get; set; }
