@@ -130,34 +130,38 @@ namespace wow2.Bot.Modules.Osu
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified about USER.")]
-        public async Task SubscribeAsync([Name("USER")] string userInput)
+        public async Task SubscribeAsync([Name("USER")] string userInput, string mode = null)
         {
+            mode = ParseMode(mode);
+
             UserData userData;
             try
             {
-                userData = await GetUserAsync(userInput);
+                userData = await GetUserAsync(userInput, mode);
             }
             catch (WebException)
             {
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            if (Config.SubscribedUsers.RemoveAll(u => u.Id == userData.id) != 0)
+            mode ??= userData.playmode;
+
+            if (Config.SubscribedUsers.RemoveAll(u => u.Id == userData.id && u.Mode == mode) != 0)
             {
-                await new SuccessMessage($"You'll no longer get notifications about `{userData.username}`")
+                await new SuccessMessage($"You'll no longer get notifications about `{userData.username}` ({mode})")
                     .SendAsync(Context.Channel);
             }
             else
             {
-                if (Config.SubscribedUsers.Count > 15)
+                if (Config.SubscribedUsers.Count > 20)
                     throw new CommandReturnException(Context, "Remove some users before adding more.", "Too many subscribers");
 
-                Score bestScore = (await GetUserScores(userData.id, "best")).FirstOrDefault();
-                Config.SubscribedUsers.Add(new SubscribedUserData(userData, bestScore));
+                Score bestScore = (await GetUserScores(userData.id, "best", mode)).FirstOrDefault();
+                Config.SubscribedUsers.Add(new SubscribedUserData(userData, bestScore, mode));
 
                 await new SuccessMessage(Config.AnnouncementsChannelId == 0 ?
-                    $"Once you use `set-announcements-channel`, you'll get notifications about `{userData.username}`" :
-                    $"You'll get notifications about `{userData.username}`.")
+                    $"Once you use `set-announcements-channel`, you'll get notifications about `{userData.username}` ({mode})" :
+                    $"You'll get notifications about `{userData.username}` ({mode})")
                         .SendAsync(Context.Channel);
             }
 
@@ -177,8 +181,8 @@ namespace wow2.Bot.Modules.Osu
             {
                 fieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"{user.Username} | #{user.GlobalRank}",
-                    Value = $"[View profile](https://osu.ppy.sh/users/{user.Id})",
+                    Name = $"{user.Username} ({user.Mode}) | #{user.GlobalRank}",
+                    Value = $"[View profile](https://osu.ppy.sh/users/{user.Id}/{user.Mode})",
                     IsInline = true,
                 });
             }
@@ -299,10 +303,10 @@ namespace wow2.Bot.Modules.Osu
 
                     // Check if we have already requested data for this user before.
                     KeyValuePair<UserData, Score> cachedPair = CachedUpdatedUserDataAndBestScore
-                        .FirstOrDefault(p => p.Key.id == subscribedUserData.Id);
+                        .FirstOrDefault(p => p.Key.id == subscribedUserData.Id && p.Value.mode == subscribedUserData.Mode);
 
-                    UserData updatedUserData = cachedPair.Key ?? await GetUserAsync(subscribedUserData.Id.ToString());
-                    Score currentBestScore = cachedPair.Value ?? (await GetUserScores(subscribedUserData.Id, "best"))?.FirstOrDefault();
+                    UserData updatedUserData = cachedPair.Key ?? await GetUserAsync(subscribedUserData.Id.ToString(), subscribedUserData.Mode);
+                    Score currentBestScore = cachedPair.Value ?? (await GetUserScores(subscribedUserData.Id, "best", subscribedUserData.Mode))?.FirstOrDefault();
 
                     await CheckForNewTopPlayAsync(subscribedUserData, updatedUserData, currentBestScore, config);
 
