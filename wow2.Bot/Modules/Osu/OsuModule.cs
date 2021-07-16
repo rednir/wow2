@@ -21,13 +21,17 @@ namespace wow2.Bot.Modules.Osu
     [Summary("Integrations with the osu!api")]
     public class OsuModule : Module
     {
-        public const ulong StdEmoteId = 860176670715936768;
-        public const ulong ManiaEmoteId = 860176789389049907;
-        public const ulong TaikoEmoteId = 860176882317524992;
-        public const ulong CtbEmoteId = 860176939620499487;
-
-        private static readonly Dictionary<string, IEmote> RankingEmotes = new()
+        public static readonly Dictionary<string, ulong> ModeEmoteIds = new()
         {
+            { "osu", 860176670715936768 },
+            { "taiko", 860176882317524992 },
+            { "fruits", 860176939620499487 },
+            { "mania", 860176789389049907 },
+        };
+
+        public static readonly Dictionary<string, IEmote> RankingEmotes = new()
+        {
+            { "F", Emote.Parse("<:wow2osuF:865666110895161384>") },
             { "D", Emote.Parse("<:wow2osuD:858722080702857236>") },
             { "C", Emote.Parse("<:wow2osuC:858722124613419059>") },
             { "B", Emote.Parse("<:wow2osuB:858722163174801428>") },
@@ -68,57 +72,57 @@ namespace wow2.Bot.Modules.Osu
         [Command("user")]
         [Alias("player")]
         [Summary("Get some infomation about a user.")]
-        public async Task UserAsync([Name("USER")][Remainder] string userInput)
+        public async Task UserAsync([Name("USER")] string userInput, string mode = null)
         {
             UserData userData;
             try
             {
-                userData = await GetUserAsync(userInput.Trim('\"'));
+                userData = await GetUserAsync(userInput, ParseMode(mode));
             }
             catch (WebException)
             {
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            await new UserInfoMessage(userData, await GetUserScores(userData.id, "best"))
+            await new UserInfoMessage(userData, await GetUserScores(userData.id, "best", ParseMode(mode)))
                 .SendAsync(Context.Channel);
         }
 
         [Command("score")]
         [Alias("play")]
         [Summary("Show some infomation about a score.")]
-        public async Task ScoreAsync(ulong id)
+        public async Task ScoreAsync(ulong id, string mode = "osu")
         {
             Score score;
             try
             {
-                score = await GetScoreAsync(id);
+                score = await GetScoreAsync(id, ParseMode(mode));
             }
             catch (WebException)
             {
                 throw new CommandReturnException(Context, "That score doesn't exist.");
             }
 
-            await new ScoreMessage(await GetUserAsync(score.user_id.ToString()), score)
+            await new ScoreMessage(await GetUserAsync(score.user_id.ToString(), score.mode), score)
                 .SendAsync(Context.Channel);
         }
 
         [Command("last")]
         [Alias("recent")]
         [Summary("Shows the most recent score set by a player.")]
-        public async Task ScoreAsync([Name("USER")][Remainder] string userInput)
+        public async Task LastAsync([Name("USER")] string userInput, string mode = null)
         {
             UserData userData;
             try
             {
-                userData = await GetUserAsync(userInput.Trim('\"'));
+                userData = await GetUserAsync(userInput, ParseMode(mode));
             }
             catch (WebException)
             {
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            Score[] recentScores = await GetUserScores(userData.id, "recent");
+            Score[] recentScores = await GetUserScores(userData.id, "recent", ParseMode(mode));
 
             if (recentScores.Length == 0)
                 throw new CommandReturnException(Context, $"{userData.username} hasn't set any scores in the last 24 hours.");
@@ -130,34 +134,38 @@ namespace wow2.Bot.Modules.Osu
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified about USER.")]
-        public async Task SubscribeAsync([Name("USER")][Remainder] string userInput)
+        public async Task SubscribeAsync([Name("USER")] string userInput, string mode = null)
         {
+            mode = ParseMode(mode);
+
             UserData userData;
             try
             {
-                userData = await GetUserAsync(userInput.Trim('\"'));
+                userData = await GetUserAsync(userInput, mode);
             }
             catch (WebException)
             {
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            if (Config.SubscribedUsers.RemoveAll(u => u.Id == userData.id) != 0)
+            mode ??= userData.playmode;
+
+            if (Config.SubscribedUsers.RemoveAll(u => u.Id == userData.id && u.Mode == mode) != 0)
             {
-                await new SuccessMessage($"You'll no longer get notifications about `{userData.username}`")
+                await new SuccessMessage($"You'll no longer get notifications about `{userData.username}` ({mode})")
                     .SendAsync(Context.Channel);
             }
             else
             {
-                if (Config.SubscribedUsers.Count > 15)
+                if (Config.SubscribedUsers.Count > 20)
                     throw new CommandReturnException(Context, "Remove some users before adding more.", "Too many subscribers");
 
-                Score bestScore = (await GetUserScores(userData.id, "best")).FirstOrDefault();
-                Config.SubscribedUsers.Add(new SubscribedUserData(userData, bestScore));
+                Score bestScore = (await GetUserScores(userData.id, "best", mode)).FirstOrDefault();
+                Config.SubscribedUsers.Add(new SubscribedUserData(userData, bestScore, mode));
 
                 await new SuccessMessage(Config.AnnouncementsChannelId == 0 ?
-                    $"Once you use `set-announcements-channel`, you'll get notifications about `{userData.username}`" :
-                    $"You'll get notifications about `{userData.username}`.")
+                    $"Once you use `set-announcements-channel`, you'll get notifications about `{userData.username}` ({mode})" :
+                    $"You'll get notifications about `{userData.username}` ({mode})")
                         .SendAsync(Context.Channel);
             }
 
@@ -177,8 +185,8 @@ namespace wow2.Bot.Modules.Osu
             {
                 fieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"{user.Username} | #{user.GlobalRank}",
-                    Value = $"[View profile](https://osu.ppy.sh/users/{user.Id})",
+                    Name = $"{user.Username} ({user.Mode}) | #{user.GlobalRank}",
+                    Value = $"[View profile](https://osu.ppy.sh/users/{user.Id}/{user.Mode})",
                     IsInline = true,
                 });
             }
@@ -239,9 +247,9 @@ namespace wow2.Bot.Modules.Osu
                 "Bearer", tokenRequestResponse["access_token"].ToString());
         }
 
-        private static async Task<UserData> GetUserAsync(string user)
+        private static async Task<UserData> GetUserAsync(string user, string mode = null)
         {
-            var userGetResponse = await HttpClient.GetAsync($"api/v2/users/{user}");
+            var userGetResponse = await HttpClient.GetAsync($"api/v2/users/{user}/{mode}");
 
             // If `user` is a username, the client will be redirected, losing
             // its headers. So another request will need to be made.
@@ -254,20 +262,34 @@ namespace wow2.Bot.Modules.Osu
             return await userGetResponse.Content.ReadFromJsonAsync<UserData>();
         }
 
-        private static async Task<Score[]> GetUserScores(ulong userId, string type)
+        private static async Task<Score[]> GetUserScores(ulong userId, string type, string mode = null)
         {
-            var bestScoresGetResponse = await HttpClient.GetAsync($"api/v2/users/{userId}/scores/{type}");
+            var bestScoresGetResponse = await HttpClient.GetAsync($"api/v2/users/{userId}/scores/{type}?{(mode == null ? null : $"mode={mode}&")}include_fails=1");
             return await bestScoresGetResponse.Content.ReadFromJsonAsync<Score[]>();
         }
 
-        private static async Task<Score> GetScoreAsync(ulong id)
+        private static async Task<Score> GetScoreAsync(ulong id, string mode)
         {
-            var scoreGetResponse = await HttpClient.GetAsync($"api/v2/scores/osu/{id}");
+            var scoreGetResponse = await HttpClient.GetAsync($"api/v2/scores/{mode}/{id}");
 
             if (!scoreGetResponse.IsSuccessStatusCode)
                 throw new WebException(scoreGetResponse.StatusCode.ToString());
 
             return await scoreGetResponse.Content.ReadFromJsonAsync<Score>();
+        }
+
+        /// <summary>Finds the best matching gamemode based on a string.</summary>
+        /// <returns>Returns the gamemode identifier as a string, or null if there was no best match.</returns>
+        private static string ParseMode(string modeUserInput)
+        {
+            return modeUserInput?.ToLower() switch
+            {
+                "osu" or "std" or "standard" or "osu!std" or "osu!standard" => "osu",
+                "taiko" or "drums" or "osu!taiko" => "taiko",
+                "fruits" or "ctb" or "catch" or "osu!ctb" or "osu!catch" => "fruits",
+                "mania" or "osu!mania" => "mania",
+                _ => null,
+            };
         }
 
         private static async Task CheckForUserMilestonesAsync()
@@ -285,10 +307,10 @@ namespace wow2.Bot.Modules.Osu
 
                     // Check if we have already requested data for this user before.
                     KeyValuePair<UserData, Score> cachedPair = CachedUpdatedUserDataAndBestScore
-                        .FirstOrDefault(p => p.Key.id == subscribedUserData.Id);
+                        .FirstOrDefault(p => p.Key.id == subscribedUserData.Id && p.Value.mode == subscribedUserData.Mode);
 
-                    UserData updatedUserData = cachedPair.Key ?? await GetUserAsync(subscribedUserData.Id.ToString());
-                    Score currentBestScore = cachedPair.Value ?? (await GetUserScores(subscribedUserData.Id, "best"))?.FirstOrDefault();
+                    UserData updatedUserData = cachedPair.Key ?? await GetUserAsync(subscribedUserData.Id.ToString(), subscribedUserData.Mode);
+                    Score currentBestScore = cachedPair.Value ?? (await GetUserScores(subscribedUserData.Id, "best", subscribedUserData.Mode))?.FirstOrDefault();
 
                     await CheckForNewTopPlayAsync(subscribedUserData, updatedUserData, currentBestScore, config);
 

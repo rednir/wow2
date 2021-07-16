@@ -6,10 +6,11 @@ namespace wow2.Bot.Modules.Osu
         {
         }
 
-        public SubscribedUserData(UserData userData, Score bestScore)
+        public SubscribedUserData(UserData userData, Score bestScore, string mode = null)
         {
             Id = userData.id;
             Username = userData.username;
+            Mode = mode ?? userData.playmode;
             GlobalRank = userData.statistics.global_rank;
             BestScore = bestScore;
         }
@@ -17,6 +18,8 @@ namespace wow2.Bot.Modules.Osu
         public ulong Id { get; set; }
 
         public string Username { get; set; }
+
+        public string Mode { get; set; }
 
         public int? GlobalRank { get; set; }
 
