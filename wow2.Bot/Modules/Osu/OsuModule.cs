@@ -21,12 +21,15 @@ namespace wow2.Bot.Modules.Osu
     [Summary("Integrations with the osu!api")]
     public class OsuModule : Module
     {
-        public const ulong StdEmoteId = 860176670715936768;
-        public const ulong ManiaEmoteId = 860176789389049907;
-        public const ulong TaikoEmoteId = 860176882317524992;
-        public const ulong CtbEmoteId = 860176939620499487;
+        public static readonly Dictionary<string, ulong> ModeEmoteIds = new()
+        {
+            { "osu", 860176670715936768 },
+            { "taiko", 860176882317524992 },
+            { "fruits", 860176939620499487 },
+            { "mania", 860176789389049907 },
+        };
 
-        private static readonly Dictionary<string, IEmote> RankingEmotes = new()
+        public static readonly Dictionary<string, IEmote> RankingEmotes = new()
         {
             { "F", Emote.Parse("<:wow2osuF:865666110895161384>") },
             { "D", Emote.Parse("<:wow2osuD:858722080702857236>") },
