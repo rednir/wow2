@@ -315,7 +315,7 @@ namespace wow2.Bot.Modules.Osu
                     await CheckForNewTopPlayAsync(subscribedUserData, updatedUserData, currentBestScore, config);
 
                     // Update subscribed user data.
-                    config.SubscribedUsers[i] = new SubscribedUserData(updatedUserData, currentBestScore);
+                    config.SubscribedUsers[i] = new SubscribedUserData(updatedUserData, currentBestScore, subscribedUserData.Mode);
                     CachedUpdatedUserDataAndBestScore.TryAdd(updatedUserData, currentBestScore);
 
                     await Task.Delay(500);
