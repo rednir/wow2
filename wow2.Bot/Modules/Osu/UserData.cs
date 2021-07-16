@@ -13,6 +13,8 @@ namespace wow2.Bot.Modules.Osu
 
         public string cover_url { get; set; }
 
+        public string playmode { get; set; }
+
         public Statistics statistics { get; set; }
 
         public class Statistics
