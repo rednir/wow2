@@ -28,6 +28,7 @@ namespace wow2.Bot.Modules.Osu
 
         private static readonly Dictionary<string, IEmote> RankingEmotes = new()
         {
+            { "F", Emote.Parse("<:wow2osuF:865666110895161384>") },
             { "D", Emote.Parse("<:wow2osuD:858722080702857236>") },
             { "C", Emote.Parse("<:wow2osuC:858722124613419059>") },
             { "B", Emote.Parse("<:wow2osuB:858722163174801428>") },
