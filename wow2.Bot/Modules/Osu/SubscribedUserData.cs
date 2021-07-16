@@ -6,11 +6,11 @@ namespace wow2.Bot.Modules.Osu
         {
         }
 
-        public SubscribedUserData(UserData userData, Score bestScore)
+        public SubscribedUserData(UserData userData, Score bestScore, string mode = null)
         {
             Id = userData.id;
             Username = userData.username;
-            Mode = userData.playmode;
+            Mode = mode ?? userData.playmode;
             GlobalRank = userData.statistics.global_rank;
             BestScore = bestScore;
         }
