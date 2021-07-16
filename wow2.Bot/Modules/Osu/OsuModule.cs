@@ -106,7 +106,7 @@ namespace wow2.Bot.Modules.Osu
         [Command("last")]
         [Alias("recent")]
         [Summary("Shows the most recent score set by a player.")]
-        public async Task ScoreAsync([Name("USER")][Remainder] string userInput)
+        public async Task LastAsync([Name("USER")][Remainder] string userInput)
         {
             UserData userData;
             try
