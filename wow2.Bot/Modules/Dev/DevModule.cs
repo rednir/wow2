@@ -156,6 +156,9 @@ namespace wow2.Bot.Modules.Dev
                 }
             }
 
+            await BotService.Client.SetGameAsync("RESTARTING...");
+            await BotService.Client.SetStatusAsync(UserStatus.DoNotDisturb);
+
             await new SuccessMessage("Done.")
                 .SendAsync(Context.Channel);
 
