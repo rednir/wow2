@@ -9,6 +9,7 @@ namespace wow2.Bot.Modules.Osu
     {
         public UserInfoMessage(UserData userData, Score[] bestScores)
         {
+            string mode = bestScores.Length > 0 ? bestScores[0].mode : null;
             var fieldBuildersForScores = new List<EmbedFieldBuilder>();
 
             foreach (Score score in bestScores)
@@ -30,7 +31,8 @@ namespace wow2.Bot.Modules.Osu
                 },
                 Footer = new EmbedFooterBuilder()
                 {
-                    Text = $"Joined: {DateTime.Parse(userData.join_date)}",
+                    IconUrl = mode == null ? null : $"https://cdn.discordapp.com/emojis/{OsuModule.ModeEmoteIds[mode]}.png",
+                    Text = $"{(mode == null ? "osu!" : OsuModule.ModeStandardNames[mode])} • Joined: {DateTime.Parse(userData.join_date)}",
                 },
                 Description = $"**Performance:** {Math.Round(userData.statistics.pp)}pp\n**Accuracy:** {Math.Round(userData.statistics.hit_accuracy, 2)}%\n**Time Played:** {userData.statistics.play_time / 3600}h",
                 ImageUrl = userData.cover_url,
