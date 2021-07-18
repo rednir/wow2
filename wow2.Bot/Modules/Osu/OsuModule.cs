@@ -359,7 +359,7 @@ namespace wow2.Bot.Modules.Osu
             {
                 var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
                 await textChannel.SendMessageAsync(
-                    text: $"**{updatedUserData.username}** is no longer a {oldRank.Length} digit, but a {newRank.Length} digit! Crazy!\nThis means they are now **top {Math.Pow(10, newRank.Length)}** in the world.",
+                    text: $"**{updatedUserData.username}** is no longer a {oldRank.Length} digit in {ModeStandardNames[subscribedUserData.Mode]}, but a {newRank.Length} digit! Crazy!\nThis means they are now **top {Math.Pow(10, newRank.Length)}** in the world.",
                     embed: new UserInfoMessage(updatedUserData, await GetUserScoresAsync(updatedUserData.id, "best", subscribedUserData.Mode)).Embed);
             }
         }
