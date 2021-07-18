@@ -21,6 +21,14 @@ namespace wow2.Bot.Modules.Osu
     [Summary("Integrations with the osu!api")]
     public class OsuModule : Module
     {
+        public static readonly Dictionary<string, string> ModeStandardNames = new()
+        {
+            { "osu", "osu!standard" },
+            { "taiko", "osu!taiko" },
+            { "fruits", "osu!catch" },
+            { "mania", "osu!mania" },
+        };
+
         public static readonly Dictionary<string, ulong> ModeEmoteIds = new()
         {
             { "osu", 860176670715936768 },
