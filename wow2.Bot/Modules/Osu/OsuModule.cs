@@ -84,7 +84,7 @@ namespace wow2.Bot.Modules.Osu
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            await new UserInfoMessage(userData, await GetUserScores(userData.id, "best", ParseMode(mode)))
+            await new UserInfoMessage(userData, await GetUserScoresAsync(userData.id, "best", ParseMode(mode)))
                 .SendAsync(Context.Channel);
         }
 
@@ -122,7 +122,7 @@ namespace wow2.Bot.Modules.Osu
                 throw new CommandReturnException(Context, "That user doesn't exist.");
             }
 
-            Score[] recentScores = await GetUserScores(userData.id, "recent", ParseMode(mode));
+            Score[] recentScores = await GetUserScoresAsync(userData.id, "recent", ParseMode(mode));
 
             if (recentScores.Length == 0)
                 throw new CommandReturnException(Context, $"{userData.username} hasn't set any scores in the last 24 hours.");
@@ -160,7 +160,7 @@ namespace wow2.Bot.Modules.Osu
                 if (Config.SubscribedUsers.Count > 20)
                     throw new CommandReturnException(Context, "Remove some users before adding more.", "Too many subscribers");
 
-                Score bestScore = (await GetUserScores(userData.id, "best", mode)).FirstOrDefault();
+                Score bestScore = (await GetUserScoresAsync(userData.id, "best", mode)).FirstOrDefault();
                 Config.SubscribedUsers.Add(new SubscribedUserData(userData, bestScore, mode));
 
                 await new SuccessMessage(Config.AnnouncementsChannelId == 0 ?
@@ -262,7 +262,7 @@ namespace wow2.Bot.Modules.Osu
             return await userGetResponse.Content.ReadFromJsonAsync<UserData>();
         }
 
-        private static async Task<Score[]> GetUserScores(ulong userId, string type, string mode = null)
+        private static async Task<Score[]> GetUserScoresAsync(ulong userId, string type, string mode = null)
         {
             var bestScoresGetResponse = await HttpClient.GetAsync($"api/v2/users/{userId}/scores/{type}?{(mode == null ? null : $"mode={mode}&")}include_fails=1");
             return await bestScoresGetResponse.Content.ReadFromJsonAsync<Score[]>();
@@ -310,7 +310,7 @@ namespace wow2.Bot.Modules.Osu
                         .FirstOrDefault(p => p.Key.id == subscribedUserData.Id && p.Value.mode == subscribedUserData.Mode);
 
                     UserData updatedUserData = cachedPair.Key ?? await GetUserAsync(subscribedUserData.Id.ToString(), subscribedUserData.Mode);
-                    Score currentBestScore = cachedPair.Value ?? (await GetUserScores(subscribedUserData.Id, "best", subscribedUserData.Mode))?.FirstOrDefault();
+                    Score currentBestScore = cachedPair.Value ?? (await GetUserScoresAsync(subscribedUserData.Id, "best", subscribedUserData.Mode))?.FirstOrDefault();
 
                     await CheckForNewTopPlayAsync(subscribedUserData, updatedUserData, currentBestScore, config);
                     await CheckForRankMilestoneAsync(subscribedUserData, updatedUserData, config);
@@ -352,7 +352,7 @@ namespace wow2.Bot.Modules.Osu
                 var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
                 await textChannel.SendMessageAsync(
                     text: $"**{updatedUserData.username}** is no longer a {oldRank.Length} digit, but a {newRank.Length} digit! Crazy!\nThis means they are now **top {Math.Pow(10, newRank.Length)}** in the world.",
-                    embed: new UserInfoMessage(updatedUserData, await GetUserScores(updatedUserData.id, "best", subscribedUserData.Mode)).Embed);
+                    embed: new UserInfoMessage(updatedUserData, await GetUserScoresAsync(updatedUserData.id, "best", subscribedUserData.Mode)).Embed);
             }
         }
     }
