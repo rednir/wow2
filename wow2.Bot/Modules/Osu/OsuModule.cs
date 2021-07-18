@@ -313,6 +313,7 @@ namespace wow2.Bot.Modules.Osu
                     Score currentBestScore = cachedPair.Value ?? (await GetUserScores(subscribedUserData.Id, "best", subscribedUserData.Mode))?.FirstOrDefault();
 
                     await CheckForNewTopPlayAsync(subscribedUserData, updatedUserData, currentBestScore, config);
+                    await CheckForRankMilestoneAsync(subscribedUserData, updatedUserData, config);
 
                     // Update subscribed user data.
                     config.SubscribedUsers[i] = new SubscribedUserData(updatedUserData, currentBestScore, subscribedUserData.Mode);
@@ -335,6 +336,23 @@ namespace wow2.Bot.Modules.Osu
                 await textChannel.SendMessageAsync(
                     text: $"**{updatedUserData.username}** just set a new top play, {(int)currentBestScore.pp - (int)(subscribedUserData.BestScore?.pp ?? 0)}pp higher than before!",
                     embed: new ScoreMessage(updatedUserData, currentBestScore).Embed);
+            }
+        }
+
+        private static async Task CheckForRankMilestoneAsync(SubscribedUserData subscribedUserData, UserData updatedUserData, OsuModuleConfig config)
+        {
+            if (!updatedUserData.statistics.global_rank.HasValue)
+                return;
+
+            string oldRank = subscribedUserData.GlobalRank.GetValueOrDefault().ToString();
+            string newRank = updatedUserData.statistics.global_rank.GetValueOrDefault().ToString();
+
+            if (newRank.Length < oldRank.Length)
+            {
+                var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
+                await textChannel.SendMessageAsync(
+                    text: $"**{updatedUserData.username}** is no longer a {oldRank.Length} digit, but a {newRank.Length} digit! Crazy!\nThis means they are now **top {Math.Pow(10, newRank.Length)}** in the world.",
+                    embed: new UserInfoMessage(updatedUserData, await GetUserScores(updatedUserData.id, "best", subscribedUserData.Mode)).Embed);
             }
         }
     }
