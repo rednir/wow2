@@ -69,13 +69,13 @@ namespace wow2.Bot.Modules.Osu
         public OsuModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Osu;
 
         public static string MakeScoreTitle(Score score) =>
-            $"{RankingEmotes[score.rank]}  {score.beatmapSet.title} [{score.beatmap.version}] {MakeReadableModsList(score.mods)}";
+            $"{RankingEmotes[score.rank]}  {score.beatmapSet.artist} - {score.beatmapSet.title} [{score.beatmap.version}] *{MakeReadableModsList(score.mods)}*";
 
         public static string MakeScoreDescription(Score score) =>
-            $"[More details](https://osu.ppy.sh/scores/{score.mode}/{score.id}) | {(score.replay ? $"[Download replay](https://osu.ppy.sh/scores/{score.mode}/{score.id}/download) | " : null)}{Math.Round(score.pp ?? 0, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x";
+            $"[More details](https://osu.ppy.sh/scores/{score.mode}/{score.id}) | {(score.replay ? $"[Download replay](https://osu.ppy.sh/scores/{score.mode}/{score.id}/download) | " : null)}{Math.Round(score.pp ?? 0, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x | {score.beatmap.difficulty_rating}*";
 
         public static string MakeReadableModsList(IEnumerable<string> mods) =>
-            (mods.Any() ? "+" : null) + string.Join(' ', mods);
+            (mods.Any() ? "+" : null) + string.Join(null, mods);
 
         [Command("user")]
         [Alias("player")]
