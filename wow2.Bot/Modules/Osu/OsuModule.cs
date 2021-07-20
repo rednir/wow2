@@ -50,6 +50,40 @@ namespace wow2.Bot.Modules.Osu
             { "XH", Emote.Parse("<:wow2osuXH:858722266807926794>") },
         };
 
+        public static readonly Dictionary<string, IEmote> ModEmotes = new()
+        {
+            { "TD", Emote.Parse("<:TD:867017049145475122>") },
+            { "SD", Emote.Parse("<:SD:867017027612311573>") },
+            { "SO", Emote.Parse("<:SO:867017018262945822>") },
+            { "RD", Emote.Parse("<:RD:867016990899830825>") },
+            { "NF", Emote.Parse("<:NF:867016970166599710>") },
+            { "MR", Emote.Parse("<:MR:867016944527867904>") },
+            { "TP", Emote.Parse("<:TP:867017038937063504>") },
+            { "RX", Emote.Parse("<:RX:867017009518739487>") },
+            { "PF", Emote.Parse("<:PF:867016981264465941>") },
+            { "NC", Emote.Parse("<:NC:867016957601775626>") },
+            { "HR", Emote.Parse("<:HR:867016899392176208>") },
+            { "FL", Emote.Parse("<:FL:867016845541376050>") },
+            { "DT", Emote.Parse("<:DT:867016797093363722>") },
+            { "AP", Emote.Parse("<:AP:867016751489482804>") },
+            { "HT", Emote.Parse("<:HT:867016872520187914>") },
+            { "HD", Emote.Parse("<:HD:867016920813273119>") },
+            { "FI", Emote.Parse("<:FI:867016853360738326>") },
+            { "EZ", Emote.Parse("<:EZ:867016827446886400>") },
+            { "DS", Emote.Parse("<:DS:867016774775996436>") },
+            { "CN", Emote.Parse("<:CN:867016761701302302>") },
+            { "AT", Emote.Parse("<:AT:867016739808346122>") },
+            { "9K", Emote.Parse("<:9K:867016686892220426>") },
+            { "8K", Emote.Parse("<:8K:867016671335284736>") },
+            { "7K", Emote.Parse("<:7K:867016653783171072>") },
+            { "6K", Emote.Parse("<:6K:867016634135871489>") },
+            { "5K", Emote.Parse("<:5K:867016614612566067>") },
+            { "4K", Emote.Parse("<:4K:867016600677515314>") },
+            { "3K", Emote.Parse("<:3K:867016575483510784>") },
+            { "2K", Emote.Parse("<:2K:867016556898811964>") },
+            { "1K", Emote.Parse("<:1K:867016423146651668>") },
+        };
+
         private static readonly System.Timers.Timer RefreshAccessTokenTimer = new(18 * 3600000);
 
         private static readonly HttpClient HttpClient = new()
