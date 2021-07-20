@@ -93,7 +93,7 @@ namespace wow2.Bot.Modules.Osu
 
         static OsuModule()
         {
-            PollingService.CreateService(CheckForUserMilestonesAsync, 15);
+            PollingService.CreateService(CheckForUserMilestonesAsync, 10);
 
             _ = AuthenticateHttpClient();
             RefreshAccessTokenTimer.Elapsed += (sender, e) => _ = AuthenticateHttpClient();
