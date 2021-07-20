@@ -108,8 +108,14 @@ namespace wow2.Bot.Modules.Osu
         public static string MakeScoreDescription(Score score) =>
             $"[More details](https://osu.ppy.sh/scores/{score.mode}/{score.id}) | {(score.replay ? $"[Download replay](https://osu.ppy.sh/scores/{score.mode}/{score.id}/download) | " : null)}{Math.Round(score.pp ?? 0, 0)}pp • {Math.Round(score.accuracy * 100, 2)}% • {score.max_combo}x | {score.beatmap.difficulty_rating}\\*";
 
-        public static string MakeReadableModsList(IEnumerable<string> mods) =>
-            mods.Any() ? $"*+{string.Join(null, mods)}*" : string.Empty;
+        public static string MakeReadableModsList(IEnumerable<string> mods)
+        {
+            string result = string.Empty;
+            foreach (string mod in mods)
+                result += ModEmotes.ContainsKey(mod) ? ModEmotes[mod] : $"<{mod}>";
+
+            return result;
+        }
 
         [Command("user")]
         [Alias("player")]
