@@ -307,12 +307,14 @@ namespace wow2.Bot.Modules.Osu
             if (!userGetResponse.IsSuccessStatusCode)
                 throw new WebException(userGetResponse.StatusCode.ToString());
 
+            Logger.Log($"Got osu! user data for {user} ({mode})", LogSeverity.Debug);
             return await userGetResponse.Content.ReadFromJsonAsync<UserData>();
         }
 
         private static async Task<Score[]> GetUserScoresAsync(ulong userId, string type, string mode = null)
         {
             var bestScoresGetResponse = await HttpClient.GetAsync($"api/v2/users/{userId}/scores/{type}?{(mode == null ? null : $"mode={mode}&")}include_fails=1");
+            Logger.Log($"Got osu! user {type} scores for {userId} ({mode})", LogSeverity.Debug);
             return await bestScoresGetResponse.Content.ReadFromJsonAsync<Score[]>();
         }
 
@@ -323,6 +325,7 @@ namespace wow2.Bot.Modules.Osu
             if (!scoreGetResponse.IsSuccessStatusCode)
                 throw new WebException(scoreGetResponse.StatusCode.ToString());
 
+            Logger.Log($"Got osu! score {id} ({mode})", LogSeverity.Debug);
             return await scoreGetResponse.Content.ReadFromJsonAsync<Score>();
         }
 
