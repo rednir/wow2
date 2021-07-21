@@ -53,10 +53,7 @@ namespace wow2.Bot.Verbose
             Output($"{DateTime.Now} [Exception] {message}\n------ START OF EXCEPTION ------\n\n{exception}\n\n------ END OF EXCEPTION ------");
 
             if (notifyOwner)
-            {
-                _ = BotService.ApplicationInfo.Owner.SendMessageAsync(
-                    embed: new ErrorMessage($"```\n{exception}\n```", message).Embed);
-            }
+                _ = BotService.ApplicationInfo.Owner.SendMessageAsync($"{message}\n```\n{exception}\n```");
         }
 
         public static async Task<string> GetLogsForSessionAsync()
