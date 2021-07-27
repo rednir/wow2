@@ -383,6 +383,10 @@ namespace wow2.Bot.Modules.Osu
                 if (currentBestScore == null)
                     return;
 
+                // Server hasn't finished calculating new top play.
+                if (currentBestScore.pp < subscribedUserData.BestScore?.pp)
+                    return;
+
                 var textChannel = (SocketTextChannel)BotService.Client.GetChannel(config.AnnouncementsChannelId);
                 await textChannel.SendMessageAsync(
                     text: $"**{updatedUserData.username}** just set a new top play, {(int)currentBestScore.pp - (int)(subscribedUserData.BestScore?.pp ?? 0)}pp higher than before!",
