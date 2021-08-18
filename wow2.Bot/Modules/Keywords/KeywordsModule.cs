@@ -26,6 +26,10 @@ namespace wow2.Bot.Modules.Keywords
         public static bool CheckMessageForKeyword(SocketCommandContext context)
         {
             var config = DataManager.AllGuildData[context.Guild.Id].Keywords;
+
+            if (!config.IsResponsesOn)
+                return false;
+
             string messageContent = context.Message.Content.ToLower();
             string[] listOfFoundKeywords = GetAllKeywordsInString(messageContent, config.KeywordsDictionary.Keys);
 
@@ -280,6 +284,18 @@ namespace wow2.Bot.Modules.Keywords
                 setter: (x) => Config.IsLikeReactionOn = x,
                 toggledOnMessage: "Future responses to keywords will have a like reaction.",
                 toggledOffMessage: "Future responses to keywords will no longer have a like reaction.");
+        }
+
+        [Command("toggle-responses")]
+        [Alias("toggle-response", "toggle")]
+        [Summary("Toggles whether the bot will respond to keywords.")]
+        public async Task ToggleResponsesAsync()
+        {
+            await SendToggleQuestionAsync(
+                currentState: Config.IsResponsesOn,
+                setter: (x) => Config.IsResponsesOn = x,
+                toggledOnMessage: "Keyword responses have been enabled.",
+                toggledOffMessage: "Keyword responses have been disabled.");
         }
 
         private static string[] GetAllKeywordsInString(string content, IEnumerable<string> keywords)
