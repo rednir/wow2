@@ -16,5 +16,7 @@ namespace wow2.Bot.Modules.Keywords
         public bool IsDeleteReactionOn { get; set; } = false;
 
         public bool IsLikeReactionOn { get; set; } = true;
+
+        public bool IsResponsesOn { get; set; } = true;
     }
 }
