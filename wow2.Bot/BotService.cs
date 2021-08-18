@@ -198,7 +198,9 @@ namespace wow2.Bot
             }
             else
             {
-                Logger.Log(logMessage);
+                // These "Unknown Dispatch" messages are useless to me and take up 90% of the log file.
+                if (!logMessage.Message.Contains("Unknown Dispatch"))
+                    Logger.Log(logMessage);
             }
         }
 
