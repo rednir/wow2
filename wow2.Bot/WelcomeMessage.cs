@@ -25,6 +25,7 @@ namespace wow2.Bot
 
         public async Task<IUserMessage> SendToBestChannelAsync()
         {
+            int tryNum = 0;
             foreach (SocketTextChannel channel in Guild.TextChannels)
             {
                 try
@@ -34,7 +35,11 @@ namespace wow2.Bot
                 catch (HttpException)
                 {
                     // Most likely the bot does not have sufficient privileges.
+                    tryNum++;
                 }
+
+                if (tryNum >= 5)
+                    break;
             }
 
             Logger.Log($"Couldn't send welcome message to {Guild.Name} ({Guild.Id})", LogSeverity.Warning);

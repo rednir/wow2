@@ -143,8 +143,10 @@ namespace wow2.Bot
                 DataManager.AllGuildData[guild.Id]
                     .DateTimeJoinedBinary = DateTime.Now.ToBinary();
             }
+            
 
-            await new WelcomeMessage(guild)
+            // This could take a while.
+            _ = new WelcomeMessage(guild)
                 .SendToBestChannelAsync();
         }
 
