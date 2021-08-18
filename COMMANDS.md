@@ -136,8 +136,8 @@ Boring stuff for developers.
 |`!wow dev run-test [GROUPS]`|Runs a list of commands.|
 |`!wow dev commands-list`|Creates a COMMANDS.md file with a list of all commands.|
 |`!wow dev get-logs`|Sends the log file for this session.|
-|`!wow dev panic`|Uninstalls all user commands and changes the bot's Discord status.|
-|`!wow dev unpanic`|Installs all commands and reconnects the bot, reloading save data from file.|
+|`!wow dev panic`|Disables the bot for non-owner and changes the bot's Discord status.|
+|`!wow dev unpanic`|Enables the bot for all.|
 |`!wow dev stop-program`|Stops the program.|
 |`!wow dev throw`|Throws an unhandled exception.|
 

@@ -97,31 +97,26 @@ namespace wow2.Bot.Modules.Dev
         }
 
         [Command("panic")]
-        [Summary("Uninstalls all user commands and changes the bot's Discord status.")]
+        [Summary("Disables the bot for non-owner and changes the bot's Discord status.")]
         public async Task PanicAsync()
         {
-            await BotService.Client.SetGameAsync("under maintenance");
+            await BotService.Client.SetGameAsync("*under maintenance*");
             await BotService.Client.SetStatusAsync(UserStatus.DoNotDisturb);
-            foreach (ModuleInfo module in BotService.CommandService.Modules)
-            {
-                // TODO: Get attribute from this class.
-                if (module.Name != "Developer")
-                    await BotService.CommandService.RemoveModuleAsync(module);
-            }
+            BotService.IsDisabled = true;
 
             await new SuccessMessage("Done.")
                 .SendAsync(Context.Channel);
         }
 
         [Command("unpanic")]
-        [Summary("Installs all commands and reconnects the bot, reloading save data from file.")]
+        [Summary("Enables the bot for all.")]
         public async Task UnpanicAsync()
         {
-            await BotService.Client.StopAsync();
-            await BotService.InstallCommandsAsync();
-            await BotService.InitializeAndStartClientAsync();
+            await BotService.Client.SetGameAsync("!wow help");
+            await BotService.Client.SetStatusAsync(UserStatus.Online);
+            BotService.IsDisabled = false;
 
-            await new SuccessMessage("Reconnected.")
+            await new SuccessMessage("Done.")
                 .SendAsync(Context.Channel);
         }
 

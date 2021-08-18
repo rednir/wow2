@@ -32,6 +32,8 @@ namespace wow2.Bot
 
         public static CommandService CommandService { get; set; }
 
+        public static bool IsDisabled { get; set; } = false;
+
         public static async Task<SocketGuildUser> GetClientGuildUserAsync(ISocketMessageChannel channel)
             => (SocketGuildUser)await channel.GetUserAsync(Client.CurrentUser.Id);
 
@@ -250,6 +252,13 @@ namespace wow2.Bot
 
         public static async Task<IResult> ExecuteCommandAsync(SocketCommandContext context, string input)
         {
+            if (IsDisabled && context.User.Id != ApplicationInfo.Owner.Id)
+            {
+                await new WarningMessage("You can't use any commands right now. Check my Discord status to see when I go back online, or ask the bot owner.", "The bot is under maintenance.")
+                    .SendAsync(context.Channel);
+                return null;
+            }
+
             using var _ = context.Channel.EnterTypingState();
 
             if (ModeratorModule.CheckForCommandAbuse(context))
