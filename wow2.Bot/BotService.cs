@@ -144,7 +144,6 @@ namespace wow2.Bot
                     .DateTimeJoinedBinary = DateTime.Now.ToBinary();
             }
             
-
             // This could take a while.
             _ = new WelcomeMessage(guild)
                 .SendToBestChannelAsync();
