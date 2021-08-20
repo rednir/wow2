@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using System.Timers;
 using Discord;
 using Discord.Commands;
 using wow2.Bot.Data;
@@ -117,6 +118,27 @@ namespace wow2.Bot.Modules.Dev
             BotService.IsDisabled = false;
 
             await new SuccessMessage("Done.")
+                .SendAsync(Context.Channel);
+        }
+
+        [Command("poll-start")]
+        [Summary("Enables the bot for all.")]
+        public async Task PollStartAsync(string name)
+        {
+            Timer timer = PollingService.PollingServiceTimers[name];
+            timer.Start();
+
+            await new SuccessMessage($"Started `{name}` with interval {timer.Interval / 60000}min.")
+                .SendAsync(Context.Channel);
+        }
+
+        [Command("poll-stop")]
+        [Summary("Stops a polling service.")]
+        public async Task PollStopAsync(string name)
+        {
+            PollingService.PollingServiceTimers[name].Stop();
+
+            await new SuccessMessage("Stopped.")
                 .SendAsync(Context.Channel);
         }
 

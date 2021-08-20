@@ -1,4 +1,4 @@
-# List of commands (75 total)
+# List of commands (78 total)
 
 ## Main (7)
 Stuff to do with the bot and other random stuff.
@@ -125,7 +125,7 @@ For having a bit of fun.
 |`!wow games verbal-memory`|Try remember as many words as you can.|
 |`!wow games verbal-memory-leaderboard [optional:PAGE]`|Shows the leaderboard for the counting game.|
 
-## Developer (10)
+## Developer (13)
 Boring stuff for developers.
 
 |Command|Summary|
@@ -138,6 +138,9 @@ Boring stuff for developers.
 |`!wow dev get-logs`|Sends the log file for this session.|
 |`!wow dev panic`|Disables the bot for non-owner and changes the bot's Discord status.|
 |`!wow dev unpanic`|Enables the bot for all.|
+|`!wow dev poll-start [NAME]`|Enables the bot for all.|
+|`!wow dev poll-stop [NAME]`|Stops a polling service.|
+|`!wow dev poll-list`|Lists all polling services.|
 |`!wow dev stop-program`|Stops the program.|
 |`!wow dev throw`|Throws an unhandled exception.|
 
