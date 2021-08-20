@@ -11,7 +11,7 @@ namespace wow2.Bot.Modules
     /// <summary>Service allowing modules to execute code on intervals.</summary>
     public static class PollingService
     {
-        public static Dictionary<string, Timer> PollingServiceTimers { get; }
+        public static Dictionary<string, Timer> PollingServiceTimers { get; } = new();
         
         public static void CreateService(Func<Task> action, int intervalMinutes)
         {
