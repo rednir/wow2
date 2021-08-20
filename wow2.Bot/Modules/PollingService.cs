@@ -12,7 +12,7 @@ namespace wow2.Bot.Modules
     public static class PollingService
     {
         public static Dictionary<string, Timer> PollingServiceTimers { get; } = new();
-        
+
         public static void CreateService(Func<Task> action, int intervalMinutes)
         {
             var timer = new Timer(intervalMinutes * 60000)

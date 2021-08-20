@@ -39,6 +39,6 @@ namespace wow2.Bot.Modules.Osu
                 Fields = fieldBuildersForScores,
                 Color = Color.LightGrey,
             };
-            }
         }
     }
+}

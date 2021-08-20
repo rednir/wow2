@@ -114,7 +114,7 @@ namespace wow2.Bot.Modules.YouTube
         [Command("channel")]
         [Alias("user")]
         [Summary("Shows some basic data about a channel.")]
-        public async Task ChannelAsync([Name("CHANNEL")] [Remainder] string userInput)
+        public async Task ChannelAsync([Name("CHANNEL")][Remainder] string userInput)
         {
             Channel channel;
             try
@@ -132,7 +132,7 @@ namespace wow2.Bot.Modules.YouTube
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified when CHANNEL uploads a new video.")]
-        public async Task SubscribeAsync([Name("CHANNEL")] [Remainder] string userInput)
+        public async Task SubscribeAsync([Name("CHANNEL")][Remainder] string userInput)
         {
             var channel = await GetChannelAsync(userInput.Trim('\"'));
 
