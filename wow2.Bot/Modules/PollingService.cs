@@ -11,6 +11,8 @@ namespace wow2.Bot.Modules
     /// <summary>Service allowing modules to execute code on intervals.</summary>
     public static class PollingService
     {
+        public static Dictionary<string, Timer> PollingServiceTimers { get; }
+        
         public static void CreateService(Func<Task> action, int intervalMinutes)
         {
             var timer = new Timer(intervalMinutes * 60000)
@@ -43,6 +45,7 @@ namespace wow2.Bot.Modules
             };
 
             timer.Start();
+            PollingServiceTimers.Add(action.Method.Name, timer);
             Logger.Log($"Started polling service '{action.Method.Name}', set to run every {intervalMinutes} minutes.", LogSeverity.Debug);
         }
     }
