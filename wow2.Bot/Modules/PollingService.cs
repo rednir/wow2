@@ -27,6 +27,7 @@ namespace wow2.Bot.Modules
                 try
                 {
                     await action.Invoke();
+                    consecutiveFailures = 0;
                     Logger.Log($"Finished running polling service '{action.Method.Name}'.", LogSeverity.Debug);
                 }
                 catch (Exception ex)
