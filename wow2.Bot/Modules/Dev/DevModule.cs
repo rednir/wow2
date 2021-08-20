@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using Discord;
@@ -139,6 +140,25 @@ namespace wow2.Bot.Modules.Dev
             PollingService.PollingServiceTimers[name].Stop();
 
             await new SuccessMessage("Stopped.")
+                .SendAsync(Context.Channel);
+        }
+
+        [Command("poll-list")]
+        [Summary("Lists all polling services.")]
+        public async Task PollListAsync()
+        {
+            StringBuilder stringBuilder = new();
+            foreach (var pair in PollingService.PollingServiceTimers)
+            {
+                stringBuilder
+                    .Append(pair.Key)
+                    .Append('(')
+                    .Append(pair.Value.Interval / 60000)
+                    .Append(")    ")
+                    .AppendLine(pair.Value.Enabled ? "STARTED" : "STOPPED");
+            }
+
+            await new GenericMessage($"```{stringBuilder}```", "Polling services")
                 .SendAsync(Context.Channel);
         }
 
