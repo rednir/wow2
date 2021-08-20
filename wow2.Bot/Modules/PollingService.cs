@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
 using Discord;
@@ -17,6 +18,8 @@ namespace wow2.Bot.Modules
                 AutoReset = true,
             };
 
+            int consecutiveFailures = 0;
+            const int maxConsecutiveFailures = 2;
             timer.Elapsed += async (source, e) =>
             {
                 try
@@ -26,7 +29,16 @@ namespace wow2.Bot.Modules
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogException(ex, $"Exception thrown when running polling service '{action.Method.Name}'");
+                    consecutiveFailures++;
+                    if (consecutiveFailures > maxConsecutiveFailures)
+                    {
+                        Logger.LogException(ex, $"Polling service '{action.Method.Name}' has failed {consecutiveFailures} times in a row and will be terminated.");
+                        timer.Stop();
+                    }
+                    else
+                    {
+                        Logger.LogException(ex, $"Exception thrown when running polling service '{action.Method.Name}'. This is failure number {consecutiveFailures}.");
+                    }
                 }
             };
 
