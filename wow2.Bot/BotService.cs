@@ -212,7 +212,10 @@ namespace wow2.Bot
             {
                 if (!await ResponseMessage.ActOnReactionAddedAsync(reaction))
                 {
-                    await QuestionMessage.ActOnReactionAsync(reaction);
+                    if (!await QuestionMessage.ActOnReactionAsync(reaction))
+                    {
+                        await DateTimeSelectorMessage.ActOnReactionAsync(reaction);
+                    }
                 }
             }
         }

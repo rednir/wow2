@@ -73,6 +73,14 @@ namespace wow2.Bot.Modules.Dev
                     .SendAsync(context.Channel);
         }
 
+        [Test("date-time-message")]
+        public static async Task DateTimeMessageTeset(SocketCommandContext context)
+        {
+            await new DateTimeSelectorMessage(
+                (d) => context.Channel.SendMessageAsync($"DateTime: {d}"))
+                    .SendAsync(context.Channel);
+        }
+
         [Test("aliases")]
         public static async Task AliasesTest(SocketCommandContext context)
         {
