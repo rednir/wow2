@@ -19,6 +19,7 @@ using wow2.Bot.Modules.Games.VerbalMemory;
 using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Modules.Main;
 using wow2.Bot.Modules.Moderator;
+using wow2.Bot.Services;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
@@ -31,6 +32,8 @@ namespace wow2.Bot
         public static RestApplication ApplicationInfo { get; set; }
 
         public static CommandService CommandService { get; set; }
+
+        public static IYoutubeModuleService YoutubeService { get; set; }
 
         public static bool IsDisabled { get; set; } = false;
 
