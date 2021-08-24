@@ -13,6 +13,7 @@
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333"/>
     <PackageReference Include="Reddit" Version="1.5.0"/>
     <PackageReference Include="CliOptions" Version="0.1.0"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2"/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="res\*"/>
