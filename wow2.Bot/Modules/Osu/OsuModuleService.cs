@@ -118,33 +118,6 @@ namespace wow2.Bot.Modules.Osu
             }
         }
 
-        public async Task AuthenticateHttpClient()
-        {
-            var tokenRequestParams = new Dictionary<string, string>()
-            {
-                { "client_id", ClientId },
-                { "client_secret", ClientSecret },
-                { "grant_type", "client_credentials" },
-                { "scope", "public" },
-            };
-
-            Dictionary<string, object> tokenRequestResponse;
-            try
-            {
-                tokenRequestResponse = await HttpClient
-                    .PostAsync("oauth/token", new FormUrlEncodedContent(tokenRequestParams))
-                    .Result.Content.ReadFromJsonAsync<Dictionary<string, object>>();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogException(ex, "Exception thrown when attempting to get an osu!api access token.");
-                return;
-            }
-
-            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
-                "Bearer", tokenRequestResponse["access_token"].ToString());
-        }
-
         public async Task<Score> GetScoreAsync(ulong id, string mode)
         {
             var scoreGetResponse = await HttpClient.GetAsync($"api/v2/scores/{mode}/{id}");
@@ -245,6 +218,33 @@ namespace wow2.Bot.Modules.Osu
                     text: $"**{updatedUserData.username}** is no longer a {oldRank.Length} digit in {ModeStandardNames[subscribedUserData.Mode]}, but a {newRank.Length} digit! Crazy!\nThis means they are now **top {Math.Pow(10, newRank.Length)}** in the world.",
                     embed: new UserInfoMessage(updatedUserData, await GetUserScoresAsync(updatedUserData.id, "best", subscribedUserData.Mode)).Embed);
             }
+        }
+
+        private async Task AuthenticateHttpClient()
+        {
+            var tokenRequestParams = new Dictionary<string, string>()
+            {
+                { "client_id", ClientId },
+                { "client_secret", ClientSecret },
+                { "grant_type", "client_credentials" },
+                { "scope", "public" },
+            };
+
+            Dictionary<string, object> tokenRequestResponse;
+            try
+            {
+                tokenRequestResponse = await HttpClient
+                    .PostAsync("oauth/token", new FormUrlEncodedContent(tokenRequestParams))
+                    .Result.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "Exception thrown when attempting to get an osu!api access token.");
+                return;
+            }
+
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                "Bearer", tokenRequestResponse["access_token"].ToString());
         }
     }
 }
