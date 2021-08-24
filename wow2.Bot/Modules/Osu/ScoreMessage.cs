@@ -1,4 +1,5 @@
 using Discord;
+using wow2.Bot.Services;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Osu
@@ -17,11 +18,11 @@ namespace wow2.Bot.Modules.Osu
                 },
                 Footer = new EmbedFooterBuilder()
                 {
-                    Text = OsuModule.ModeStandardNames[score.mode],
-                    IconUrl = $"https://cdn.discordapp.com/emojis/{OsuModule.ModeEmoteIds[score.mode]}.png",
+                    Text = OsuModuleService.ModeStandardNames[score.mode],
+                    IconUrl = $"https://cdn.discordapp.com/emojis/{OsuModuleService.ModeEmoteIds[score.mode]}.png",
                 },
-                Title = OsuModule.MakeScoreTitle(score),
-                Description = OsuModule.MakeScoreDescription(score),
+                Title = OsuModuleService.MakeScoreTitle(score),
+                Description = OsuModuleService.MakeScoreDescription(score),
                 ImageUrl = score.beatmapSet.covers.cover,
                 Color = Color.LightGrey,
                 Timestamp = score.created_at,

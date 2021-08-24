@@ -74,6 +74,7 @@ namespace wow2.Bot
 
             Services = new ServiceCollection()
                 .AddSingleton<IYoutubeModuleService>(new YoutubeModuleService(DataManager.Secrets.GoogleApiKey))
+                .AddSingleton<IOsuModuleService>(new OsuModuleService(DataManager.Secrets.OsuClientId, DataManager.Secrets.OsuClientSecret))
                 .BuildServiceProvider();
 
             // TODO: inject this the proper way. need to get DownloadService non-static first.
