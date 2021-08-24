@@ -24,6 +24,9 @@ namespace wow2.Bot.Modules.YouTube
                 ApiKey = apiKey,
                 ApplicationName = "wow2-youtube",
             });
+
+            if (!string.IsNullOrWhiteSpace(apiKey))
+                PollingService.CreateService(CheckForNewVideosAsync, 15);
         }
 
         public async Task<Channel> GetChannelAsync(string channelIdOrUsername)

@@ -115,6 +115,7 @@ namespace wow2.Bot.Modules.Osu
                 _ = AuthenticateHttpClient();
                 RefreshAccessTokenTimer.Elapsed += (sender, e) => _ = AuthenticateHttpClient();
                 RefreshAccessTokenTimer.Start();
+                PollingService.CreateService(CheckForUserMilestonesAsync, 10);
             }
         }
 
