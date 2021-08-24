@@ -15,5 +15,7 @@ namespace wow2.Bot.Services
         Task<Video> GetVideoAsync(string id);
 
         Task<SearchResult> SearchForAsync(string term, string type);
+
+        Task CheckForNewVideosAsync();
     }
 }

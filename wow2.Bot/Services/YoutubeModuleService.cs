@@ -99,7 +99,7 @@ namespace wow2.Bot.Services
             return listResponse.Items[0];
         }
 
-        private async Task CheckForNewVideosAsync()
+        public async Task CheckForNewVideosAsync()
         {
             // Dictionary where the key is the video ID, and the
             // value is a list of ID's of the text channels to notify.
