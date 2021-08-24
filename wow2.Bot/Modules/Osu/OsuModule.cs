@@ -1,18 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using wow2.Bot.Data;
-using wow2.Bot.Services;
-using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Osu

@@ -1,20 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Google;
-using Google.Apis.Services;
-using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using wow2.Bot.Data;
-using wow2.Bot.Services;
-using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
-using SearchResult = Google.Apis.YouTube.v3.Data.SearchResult;
 
 namespace wow2.Bot.Modules.YouTube
 {

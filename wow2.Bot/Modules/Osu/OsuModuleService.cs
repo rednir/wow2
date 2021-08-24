@@ -10,10 +10,9 @@ using System.Timers;
 using Discord;
 using Discord.WebSocket;
 using wow2.Bot.Data;
-using wow2.Bot.Modules.Osu;
 using wow2.Bot.Verbose;
 
-namespace wow2.Bot.Services
+namespace wow2.Bot.Modules.Osu
 {
     public class OsuModuleService : IOsuModuleService
     {

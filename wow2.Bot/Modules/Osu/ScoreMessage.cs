@@ -1,5 +1,4 @@
 using Discord;
-using wow2.Bot.Services;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Osu

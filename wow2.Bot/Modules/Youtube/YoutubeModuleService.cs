@@ -9,7 +9,7 @@ using Google.Apis.YouTube.v3.Data;
 using wow2.Bot.Data;
 using wow2.Bot.Verbose;
 
-namespace wow2.Bot.Services
+namespace wow2.Bot.Modules.YouTube
 {
     public class YoutubeModuleService : IYoutubeModuleService
     {

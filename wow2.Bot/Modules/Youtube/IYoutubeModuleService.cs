@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 
-namespace wow2.Bot.Services
+namespace wow2.Bot.Modules.YouTube
 {
     public interface IYoutubeModuleService
     {

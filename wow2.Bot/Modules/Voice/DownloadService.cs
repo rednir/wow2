@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -8,7 +7,6 @@ using System.Threading.Tasks;
 using System.Web;
 using Google.Apis.YouTube.v3.Data;
 using wow2.Bot.Modules.YouTube;
-using wow2.Bot.Services;
 
 namespace wow2.Bot.Modules.Voice
 {

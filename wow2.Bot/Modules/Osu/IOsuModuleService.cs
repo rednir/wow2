@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using wow2.Bot.Modules.Osu;
 
-namespace wow2.Bot.Services
+namespace wow2.Bot.Modules.Osu
 {
     public interface IOsuModuleService
     {

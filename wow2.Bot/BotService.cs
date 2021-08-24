@@ -20,7 +20,8 @@ using wow2.Bot.Modules.Games.VerbalMemory;
 using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Modules.Main;
 using wow2.Bot.Modules.Moderator;
-using wow2.Bot.Services;
+using wow2.Bot.Modules.Osu;
+using wow2.Bot.Modules.YouTube;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
