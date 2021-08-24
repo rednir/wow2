@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -16,6 +15,8 @@ namespace wow2.Bot.Modules.Voice
         public static readonly string YouTubeDlPath = Environment.GetEnvironmentVariable("YOUTUBE_DL_PATH") ?? "youtube-dl";
         public static readonly string FFmpegPath = Environment.GetEnvironmentVariable("FFMPEG_PATH") ?? "ffmpeg";
 
+        public static IYoutubeModuleService YouTubeService { get; set; }
+
         public static Cache<VideoMetadata> VideoMetadataCache { get; } = new(120);
 
         /// <summary>Looks up a URL or search term and gets the video metadata.</summary>
@@ -30,7 +31,7 @@ namespace wow2.Bot.Modules.Voice
             Video video;
             if (TryGetVideoIdFromUrl(searchOrUrl, out string id))
             {
-                video = await YouTubeModule.GetVideoAsync(id);
+                video = await YouTubeService.GetVideoAsync(id);
             }
             else if (searchOrUrl.Contains("twitch.tv/"))
             {
@@ -38,8 +39,8 @@ namespace wow2.Bot.Modules.Voice
             }
             else
             {
-                SearchResult searchResult = await YouTubeModule.SearchForAsync(searchOrUrl, "video");
-                video = await YouTubeModule.GetVideoAsync(searchResult.Id.VideoId);
+                SearchResult searchResult = await YouTubeService.SearchForAsync(searchOrUrl, "video");
+                video = await YouTubeService.GetVideoAsync(searchResult.Id.VideoId);
             }
 
             var videoMetadata = new VideoMetadata(video);
