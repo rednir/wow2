@@ -1,4 +1,4 @@
-# List of commands (78 total)
+# List of commands (79 total)
 
 ## Main (7)
 Stuff to do with the bot and other random stuff.
@@ -125,7 +125,7 @@ For having a bit of fun.
 |`!wow games verbal-memory`|Try remember as many words as you can.|
 |`!wow games verbal-memory-leaderboard [optional:PAGE]`|Shows the leaderboard for the counting game.|
 
-## Developer (13)
+## Developer (14)
 Boring stuff for developers.
 
 |Command|Summary|
@@ -141,6 +141,7 @@ Boring stuff for developers.
 |`!wow dev poll-start [NAME]`|Enables the bot for all.|
 |`!wow dev poll-stop [NAME]`|Stops a polling service.|
 |`!wow dev poll-list`|Lists all polling services.|
+|`!wow dev reconnect`|Disconnect and reconnect the bot.|
 |`!wow dev stop-program`|Stops the program.|
 |`!wow dev throw`|Throws an unhandled exception.|
 

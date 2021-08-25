@@ -162,6 +162,17 @@ namespace wow2.Bot.Modules.Dev
                 .SendAsync(Context.Channel);
         }
 
+        [Command("reconnect")]
+        [Summary("Disconnect and reconnect the bot.")]
+        public async Task ReconnectAsync()
+        {
+            await BotService.Client.StopAsync();
+            await BotService.Client.StartAsync();
+
+            await new SuccessMessage("Done.")
+                .SendAsync(Context.Channel);
+        }
+
         [Command("stop-program")]
         [Summary("Stops the program.")]
         public async Task StopProgramAsync()
