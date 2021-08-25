@@ -46,6 +46,7 @@ namespace wow2.Bot.Data
             }
 
             await LoadGuildDataFromFileAsync();
+            Logger.Log("Data manager has finished initialising.", LogSeverity.Verbose);
         }
 
         /// <summary>Deserializes the secrets.json file into the Secrets property. If it doesn't exist, creates one and stops the program.</summary>

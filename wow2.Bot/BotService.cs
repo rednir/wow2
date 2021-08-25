@@ -52,12 +52,6 @@ namespace wow2.Bot
 
             Client.Ready += ReadyAsync;
             Client.Log += DiscordLogRecievedAsync;
-            Client.ReactionAdded += ReactionAddedAsync;
-            Client.ReactionRemoved += ReactionRemovedAsync;
-            Client.MessageReceived += MessageRecievedAsync;
-            Client.MessageDeleted += MessageDeletedAsync;
-            Client.JoinedGuild += JoinedGuildAsync;
-            Client.LeftGuild += LeftGuildAsync;
 
             await Client.LoginAsync(TokenType.Bot, DataManager.Secrets.DiscordBotToken);
             await Client.StartAsync();
@@ -140,7 +134,16 @@ namespace wow2.Bot
         public static async Task ReadyAsync()
         {
             if (DataManager.AllGuildData.Count == 0)
+            {
                 await DataManager.InitializeAsync();
+
+                Client.ReactionAdded += ReactionAddedAsync;
+                Client.ReactionRemoved += ReactionRemovedAsync;
+                Client.MessageReceived += MessageRecievedAsync;
+                Client.MessageDeleted += MessageDeletedAsync;
+                Client.JoinedGuild += JoinedGuildAsync;
+                Client.LeftGuild += LeftGuildAsync;
+            }
 
             await Client.SetStatusAsync(UserStatus.Online);
             await Client.SetGameAsync("!wow help");
@@ -249,8 +252,6 @@ namespace wow2.Bot
 
         public static async Task MessageRecievedAsync(SocketMessage socketMessage)
         {
-            if (CommandService == null)
-                return;
             if (socketMessage.Author.Id == Client.CurrentUser.Id)
                 return;
             if (socketMessage.Channel is SocketDMChannel)
