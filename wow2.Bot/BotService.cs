@@ -11,6 +11,7 @@ using Discord.Commands;
 using Discord.Net;
 using Discord.Rest;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 using wow2.Bot.Modules;
@@ -19,6 +20,8 @@ using wow2.Bot.Modules.Games.VerbalMemory;
 using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Modules.Main;
 using wow2.Bot.Modules.Moderator;
+using wow2.Bot.Modules.Osu;
+using wow2.Bot.Modules.YouTube;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
@@ -31,6 +34,8 @@ namespace wow2.Bot
         public static RestApplication ApplicationInfo { get; set; }
 
         public static CommandService CommandService { get; set; }
+
+        public static IServiceProvider Services { get; set; }
 
         public static bool IsDisabled { get; set; } = false;
 
@@ -68,6 +73,14 @@ namespace wow2.Bot
                 return;
             }
 
+            Services = new ServiceCollection()
+                .AddSingleton<IYoutubeModuleService>(new YoutubeModuleService(DataManager.Secrets.GoogleApiKey))
+                .AddSingleton<IOsuModuleService>(new OsuModuleService(DataManager.Secrets.OsuClientId, DataManager.Secrets.OsuClientSecret))
+                .BuildServiceProvider();
+
+            // TODO: inject this the proper way. need to get DownloadService non-static first.
+            Modules.Voice.DownloadService.YouTubeService = Services.GetService<IYoutubeModuleService>();
+
             var config = new CommandServiceConfig()
             {
                 IgnoreExtraArgs = true,
@@ -77,7 +90,7 @@ namespace wow2.Bot
 
             CommandService = new CommandService(config);
             CommandService.Log += DiscordLogRecievedAsync;
-            await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), null);
+            await CommandService.AddModulesAsync(Assembly.GetEntryAssembly(), Services);
 
             Logger.Log("Installed commands.", LogSeverity.Debug);
         }
@@ -271,7 +284,7 @@ namespace wow2.Bot
             IResult result = await CommandService.ExecuteAsync(
                 context: context,
                 input: input,
-                services: null);
+                services: Services);
 
             if (result.Error.HasValue)
                 await SendErrorMessageToChannel(result.Error, context);
