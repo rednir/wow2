@@ -221,16 +221,10 @@ namespace wow2.Bot
             if (reaction.UserId == Client.CurrentUser.Id)
                 return;
 
-            if (!await PagedMessage.ActOnReactionAsync(reaction))
-            {
-                if (!await ResponseMessage.ActOnReactionAddedAsync(reaction))
-                {
-                    if (!await QuestionMessage.ActOnReactionAsync(reaction))
-                    {
-                        await DateTimeSelectorMessage.ActOnReactionAsync(reaction);
-                    }
-                }
-            }
+            _ = !await PagedMessage.ActOnReactionAsync(reaction)
+                && !await ResponseMessage.ActOnReactionAddedAsync(reaction)
+                && !await QuestionMessage.ActOnReactionAsync(reaction)
+                && !await DateTimeSelectorMessage.ActOnReactionAsync(reaction);
         }
 
         public static async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
