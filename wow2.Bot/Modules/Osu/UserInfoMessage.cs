@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Discord;
+using wow2.Bot.Extensions;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Osu
@@ -21,11 +22,12 @@ namespace wow2.Bot.Modules.Osu
                 });
             }
 
+            string rank = userData.statistics.global_rank.HasValue ? $"#{userData.statistics.global_rank.Value.Humanize()}" : "unranked";
             EmbedBuilder = new EmbedBuilder()
             {
                 Author = new EmbedAuthorBuilder()
                 {
-                    Name = $"{userData.username} | #{userData.statistics.global_rank}",
+                    Name = $"{userData.username} | {rank}",
                     IconUrl = userData.avatar_url.StartsWith("http") ? userData.avatar_url : null,
                     Url = $"https://osu.ppy.sh/users/{userData.id}",
                 },

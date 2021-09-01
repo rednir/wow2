@@ -1,4 +1,5 @@
 using Discord;
+using wow2.Bot.Extensions;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Osu
@@ -7,11 +8,13 @@ namespace wow2.Bot.Modules.Osu
     {
         public ScoreMessage(UserData userData, Score score)
         {
+            // todo: put this in property get method.
+            string rank = userData.statistics.global_rank.HasValue ? $"#{userData.statistics.global_rank.Value.Humanize()}" : "unranked";
             EmbedBuilder = new EmbedBuilder()
             {
                 Author = new EmbedAuthorBuilder()
                 {
-                    Name = $"Played by {userData.username} (#{userData.statistics.global_rank})",
+                    Name = $"Played by {userData.username} ({rank})",
                     IconUrl = userData.avatar_url,
                     Url = $"https://osu.ppy.sh/users/{userData.id}/{score.mode}",
                 },
