@@ -13,7 +13,7 @@ namespace wow2.Bot.Modules.Osu
                 {
                     Name = $"Played by {userData.username} (#{userData.statistics.global_rank})",
                     IconUrl = userData.avatar_url,
-                    Url = $"https://osu.ppy.sh/users/{userData.id}",
+                    Url = $"https://osu.ppy.sh/users/{userData.id}/{score.mode}",
                 },
                 Footer = new EmbedFooterBuilder()
                 {
