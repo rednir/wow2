@@ -89,6 +89,28 @@ namespace wow2.Bot.Extensions
             return elementsToRemove;
         }
 
+        /// <summary>Adds a <typeparamref name="separator"/> throughout an int.</summary>
+        /// <returns>The integer as a string with <typeparamref name="separator"/> placed throughout it.</returns>
+        public static string Humanize(this long input, char separator = ',')
+        {
+            StringBuilder stringBuilder = new(input.ToString());
+
+            bool isNegative = false;
+            if (stringBuilder[0] == '-')
+            {
+                isNegative = true;
+                stringBuilder.Remove(0, 1);
+            }
+
+            if (stringBuilder.Length <= 4)
+                return stringBuilder.ToString();
+
+            for (int i = stringBuilder.Length - 3; i > 0; i -= 3)
+                stringBuilder.Insert(i, separator);
+
+            return (isNegative ? '-' : null) + stringBuilder.ToString();
+        }
+
         /// <summary>Checks if a string starts with a given value, and also is not part of another word.</summary>
         public static bool StartsWithWord(this string stringToCheck, string word, bool ignoreCase = false) =>
 
