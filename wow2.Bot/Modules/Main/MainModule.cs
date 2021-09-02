@@ -167,9 +167,9 @@ namespace wow2.Bot.Modules.Main
                 filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json");
         }
 
-        [Command("toggle-image-voting-in-channel")]
-        [Alias("toggle-voting", "toggle-image-voting")]
-        [Summary("Toggles whether the specified text channel will have thumbs up/down reactions for each new message with image posted there.")]
+        [Command("toggle-attachment-voting")]
+        [Alias("toggle-voting", "toggle-image-voting", "toggle-video-voting")]
+        [Summary("Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.")]
         public async Task ToggleVotingInChannelAsync(SocketTextChannel channel)
         {
             bool currentlyOn = Config.VotingEnabledChannelIds.Contains(channel.Id);
@@ -182,7 +182,7 @@ namespace wow2.Bot.Modules.Main
                     else if (!x && currentlyOn)
                         Config.VotingEnabledChannelIds.Remove(channel.Id);
                 },
-                toggledOnMessage: $"Every new message with an image in {channel.Mention} will have thumbs up/down reactions added.",
+                toggledOnMessage: $"Every new message with an attachment in {channel.Mention} will have thumbs up/down reactions added.",
                 toggledOffMessage: $"Messages in {channel.Mention} will no longer have thumbs up/down reactions added.");
         }
 
