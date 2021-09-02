@@ -175,7 +175,7 @@ namespace wow2.Bot.Modules.Main
             bool currentlyOn = Config.VotingEnabledChannelIds.Contains(channel.Id);
             await SendToggleQuestionAsync(
                 currentState: currentlyOn,
-                setter: (x) =>
+                setter: x =>
                 {
                     if (x && !currentlyOn)
                         Config.VotingEnabledChannelIds.Add(channel.Id);

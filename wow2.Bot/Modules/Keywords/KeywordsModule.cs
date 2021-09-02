@@ -304,7 +304,7 @@ namespace wow2.Bot.Modules.Keywords
         {
             await SendToggleQuestionAsync(
                 currentState: Config.IsDeleteReactionOn,
-                setter: (x) => Config.IsDeleteReactionOn = x,
+                setter: x => Config.IsDeleteReactionOn = x,
                 toggledOnMessage: "Future responses to keywords will have a delete reaction.",
                 toggledOffMessage: "Future responses to keywords will no longer have a delete reaction.");
         }
@@ -315,7 +315,7 @@ namespace wow2.Bot.Modules.Keywords
         {
             await SendToggleQuestionAsync(
                 currentState: Config.IsLikeReactionOn,
-                setter: (x) => Config.IsLikeReactionOn = x,
+                setter: x => Config.IsLikeReactionOn = x,
                 toggledOnMessage: "Future responses to keywords will have a like reaction.",
                 toggledOffMessage: "Future responses to keywords will no longer have a like reaction.");
         }
@@ -327,7 +327,7 @@ namespace wow2.Bot.Modules.Keywords
         {
             await SendToggleQuestionAsync(
                 currentState: Config.IsResponsesOn,
-                setter: (x) => Config.IsResponsesOn = x,
+                setter: x => Config.IsResponsesOn = x,
                 toggledOnMessage: "Keyword responses have been enabled.",
                 toggledOffMessage: "Keyword responses have been disabled.");
         }

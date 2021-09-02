@@ -312,7 +312,7 @@ namespace wow2.Bot.Modules.Voice
         {
             await SendToggleQuestionAsync(
                 currentState: Config.IsLoopEnabled,
-                setter: (x) => Config.IsLoopEnabled = x,
+                setter: x => Config.IsLoopEnabled = x,
                 toggledOnMessage: "The current song will loop.",
                 toggledOffMessage: "Looping has been disabled.");
         }
@@ -323,7 +323,7 @@ namespace wow2.Bot.Modules.Voice
         {
             await SendToggleQuestionAsync(
                 currentState: Config.IsAutoNpOn,
-                setter: (x) => Config.IsAutoNpOn = x,
+                setter: x => Config.IsAutoNpOn = x,
                 toggledOnMessage: "The `vc np` command will be executed everytime a new song is playing.",
                 toggledOffMessage: "The `vc np` command will no longer be executed everytime a new song is playing.");
         }
@@ -334,7 +334,7 @@ namespace wow2.Bot.Modules.Voice
         {
             await SendToggleQuestionAsync(
                 currentState: Config.IsAutoJoinOn,
-                setter: (x) => Config.IsAutoJoinOn = x,
+                setter: x => Config.IsAutoJoinOn = x,
                 toggledOnMessage: "The bot will join a voice channel automatically.",
                 toggledOffMessage: "The bot will no longer join a voice channel automatically, you'll have to use the `vc join` command.");
         }

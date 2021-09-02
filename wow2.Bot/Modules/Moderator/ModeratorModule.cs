@@ -171,7 +171,7 @@ namespace wow2.Bot.Modules.Moderator
         {
             await SendToggleQuestionAsync(
                 currentState: Config.IsAutoModOn,
-                setter: (x) => Config.IsAutoModOn = x,
+                setter: x => Config.IsAutoModOn = x,
                 toggledOnMessage: "Auto mod is now on and will give warnings to users.",
                 toggledOffMessage: "Auto mod has been disabled (probably for the best)");
         }
