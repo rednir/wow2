@@ -248,6 +248,20 @@ namespace wow2.Bot.Modules.Keywords
                     .SendAsync(Context.Channel);
         }
 
+        [Command("gallery")]
+        [Summary("Shows all values in a keyword as a message you can scroll through (useful for values with images or videos)")]
+        public async Task GalleryAsync(string keyword)
+        {
+            var keywordsDictionary = Config.KeywordsDictionary;
+            keyword = keyword.ToLower();
+
+            if (!keywordsDictionary.TryGetValue(keyword, out List<KeywordValue> values))
+                throw new CommandReturnException(Context, "No such keyword.");
+
+            await new ResponseGallery(values)
+                .SendAsync(Context.Channel);
+        }
+
         [Command("restore")]
         [Summary("Restores a previously deleted keyword from its name.")]
         public async Task RestoreAsync([Remainder] string keyword)

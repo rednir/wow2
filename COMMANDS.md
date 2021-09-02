@@ -1,4 +1,4 @@
-# List of commands (80 total)
+# List of commands (81 total)
 
 ## Main (8)
 Stuff to do with the bot and other random stuff.
@@ -11,7 +11,7 @@ Stuff to do with the bot and other random stuff.
 |`!wow alias-list`|Displays a list of aliases.|
 |`!wow ping`|Checks the latency between the message that executes a command, and the response that the bot sends.|
 |`!wow upload-raw-data`|Uploads a file containing all the data the bot stores about this server.|
-|`!wow toggle-image-voting-in-channel [CHANNEL]`|Toggles whether the specified text channel will have thumbs up/down reactions for each new message with image posted there.|
+|`!wow toggle-attachment-voting [CHANNEL]`|Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.|
 |`!wow set-command-prefix [PREFIX]`|Change the prefix used to identify commands. '!wow' is the default.|
 
 ## YouTube (5)
@@ -101,7 +101,7 @@ Use tools to manage the server. This is still very rudimentary and unfinished.  
 |`!wow mod set-warnings-until-ban [NUMBER]`|Sets the number of warnings required before a user is automatically banned. Set NUMBER to -1 to disable this.|
 |`!wow mod toggle-auto-mod`|Toggles whether the bot give warnings to users, for example if spam is detected.|
 
-## Keywords (9)
+## Keywords (10)
 Automatically respond to keywords in user messages.
 
 |Command|Summary|
@@ -111,6 +111,7 @@ Automatically respond to keywords in user messages.
 |`!wow keywords rename [OLDKEYWORD] [NEWKEYWORD]`|Renames a keyword, leaving its values unchanged.|
 |`!wow keywords list [optional:PAGE] [optional:SORT]`|Shows a list of all keywords, and a preview of their values. SORTBY can be date/likes/deletions/values|
 |`!wow keywords values [KEYWORD] [optional:PAGE]`|Shows a list of values for a keyword.|
+|`!wow keywords gallery [KEYWORD]`|Shows all values in a keyword as a message you can scroll through (useful for values with images or videos)|
 |`!wow keywords restore [KEYWORD]`|Restores a previously deleted keyword from its name.|
 |`!wow keywords toggle-delete-reaction`|Toggles whether bot responses to keywords should have a wastebasket reaction, allowing a user to delete the message.|
 |`!wow keywords toggle-like-reaction`|Toggles whether bot responses to keywords should have a thumbs up reaction.|
