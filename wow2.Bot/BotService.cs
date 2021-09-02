@@ -254,10 +254,21 @@ namespace wow2.Bot
         {
             if (socketMessage.Author.Id == Client.CurrentUser.Id)
                 return;
-            if (socketMessage.Channel is SocketDMChannel)
-                return;
             if (socketMessage is not SocketUserMessage socketUserMessage)
                 return;
+
+            if (socketMessage.Channel is SocketDMChannel)
+            {
+                // Route the messages the bot recieves to the owner.
+                if (socketMessage.Author != ApplicationInfo.Owner)
+                {
+                    await ApplicationInfo.Owner.SendMessageAsync(
+                        text: $"Message from **{socketMessage.Author.Mention}** ({socketMessage.Author})",
+                        embed: new GenericMessage(socketMessage.Content).Embed);
+                }
+
+                return;
+            }
 
             var context = new SocketCommandContext(Client, socketUserMessage);
             await DataManager.EnsureGuildDataExistsAsync(context.Guild.Id);
