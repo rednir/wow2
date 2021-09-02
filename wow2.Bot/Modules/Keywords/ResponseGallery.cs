@@ -28,13 +28,14 @@ namespace wow2.Bot.Modules.Keywords
                 Page = Values.Count;
 
             KeywordValue value = Values[Page.Value - 1];
+            Text = $"**⋘ page {Page}/{Values.Count} ⋙**\n";
 
             // Don't use embed message if the value to send contains a link.
             if (value.Content.Contains("http://") || value.Content.Contains("https://"))
             {
                 // todo: This is not the same implementation as SendAsPlainTextAsync()
                 // Probably won't cause any major issues but may display values with titles incorrectly.
-                Text = value.Content;
+                Text += value.Content;
                 EmbedBuilder = null;
             }
             else
@@ -44,7 +45,6 @@ namespace wow2.Bot.Modules.Keywords
 
                 EmbedBuilder.Title = value.Title;
                 EmbedBuilder.Description = value.Content;
-                Text = null;
             }
         }
     }
