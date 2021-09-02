@@ -181,6 +181,7 @@ namespace wow2.Bot.Modules.Dev
 
             await BotService.Client.SetGameAsync("RESTARTING...");
             await BotService.Client.SetStatusAsync(UserStatus.DoNotDisturb);
+            BotService.IsDisabled = true;
 
             foreach (GuildData guildData in DataManager.AllGuildData.Values)
             {
