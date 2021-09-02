@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using Discord.WebSocket;
 using Discord.Commands;
+using Discord.WebSocket;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 using wow2.Bot.Verbose.Messages;
@@ -15,6 +15,9 @@ namespace wow2.Bot.Modules.Main
     [Summary("Stuff to do with the bot and other random stuff.")]
     public class MainModule : Module
     {
+        public static readonly IEmote LikeReactionEmote = new Emoji("👍");
+        public static readonly IEmote DislikeReactionEmote = new Emoji("👎");
+
         public MainModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Main;
 
         public static async Task<bool> TryExecuteAliasAsync(SocketCommandContext context)
