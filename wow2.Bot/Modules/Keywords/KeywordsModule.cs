@@ -278,6 +278,21 @@ namespace wow2.Bot.Modules.Keywords
             await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
+        [Command("set-chance")]
+        [Alias("chance")]
+        [Summary("Sets the chance of the bot replying to a keyword with a response.")]
+        public async Task SetChanceAsync(int percentage)
+        {
+            if (percentage <= 0)
+                throw new CommandReturnException("Percentage is too low. Consider using the `toggle-responses` command.");
+            if (percentage > 100)
+                throw new CommandReturnException("That.. isn't how percentages work.");
+
+            Config.ResponseChancePercentage = percentage;
+            await new SuccessMessage($"Keyword responses will be set {percentage}% of the time.")
+                .SendAsync(Context.Channel);
+        }
+
         [Command("toggle-delete-reaction")]
         [Summary("Toggles whether bot responses to keywords should have a wastebasket reaction, allowing a user to delete the message.")]
         public async Task ToggleDeleteReactionAsync()

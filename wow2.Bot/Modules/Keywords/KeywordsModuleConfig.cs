@@ -13,6 +13,8 @@ namespace wow2.Bot.Modules.Keywords
 
         public Dictionary<string, List<KeywordValue>> DeletedKeywordsDictionary { get; set; } = new();
 
+        public int ResponseChancePercentage { get; set; } = 100;
+
         public bool IsDeleteReactionOn { get; set; } = false;
 
         public bool IsLikeReactionOn { get; set; } = true;
