@@ -20,6 +20,8 @@ namespace wow2.Bot.Modules.Keywords
         private const int MaxNumberOfKeywords = 100;
         private const int MaxNumberOfValues = 40;
 
+        private static readonly Random Random = new();
+
         private KeywordsModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Keywords;
 
         /// <summary>Checks if a message contains a keyword, and responds to that message with the value if it does.</summary>
@@ -35,6 +37,9 @@ namespace wow2.Bot.Modules.Keywords
 
             if (listOfFoundKeywords.Length == 0)
                 return false;
+
+            if (Random.Next(0, 100) > config.ResponseChancePercentage)
+                return true;
 
             // Prioritize the longest keyword if multiple keywords have been found.
             string foundKeyword = listOfFoundKeywords.OrderByDescending(s => s.Length).First();
@@ -289,7 +294,7 @@ namespace wow2.Bot.Modules.Keywords
                 throw new CommandReturnException("That.. isn't how percentages work.");
 
             Config.ResponseChancePercentage = percentage;
-            await new SuccessMessage($"Keyword responses will be set {percentage}% of the time.")
+            await new SuccessMessage($"Keyword responses will be responded to {percentage}% of the time.")
                 .SendAsync(Context.Channel);
         }
 

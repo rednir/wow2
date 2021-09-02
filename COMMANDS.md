@@ -1,4 +1,4 @@
-# List of commands (81 total)
+# List of commands (82 total)
 
 ## Main (8)
 Stuff to do with the bot and other random stuff.
@@ -101,7 +101,7 @@ Use tools to manage the server. This is still very rudimentary and unfinished.  
 |`!wow mod set-warnings-until-ban [NUMBER]`|Sets the number of warnings required before a user is automatically banned. Set NUMBER to -1 to disable this.|
 |`!wow mod toggle-auto-mod`|Toggles whether the bot give warnings to users, for example if spam is detected.|
 
-## Keywords (10)
+## Keywords (11)
 Automatically respond to keywords in user messages.
 
 |Command|Summary|
@@ -113,6 +113,7 @@ Automatically respond to keywords in user messages.
 |`!wow keywords values [KEYWORD] [optional:PAGE]`|Shows a list of values for a keyword.|
 |`!wow keywords gallery [KEYWORD]`|Shows all values in a keyword as a message you can scroll through (useful for values with images or videos)|
 |`!wow keywords restore [KEYWORD]`|Restores a previously deleted keyword from its name.|
+|`!wow keywords set-chance [PERCENTAGE]`|Sets the chance of the bot replying to a keyword with a response.|
 |`!wow keywords toggle-delete-reaction`|Toggles whether bot responses to keywords should have a wastebasket reaction, allowing a user to delete the message.|
 |`!wow keywords toggle-like-reaction`|Toggles whether bot responses to keywords should have a thumbs up reaction.|
 |`!wow keywords toggle-responses`|Toggles whether the bot will respond to keywords.|
