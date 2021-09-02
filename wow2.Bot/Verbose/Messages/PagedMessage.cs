@@ -95,7 +95,12 @@ namespace wow2.Bot.Verbose.Messages
             Page += increment;
             UpdateEmbed();
             await SentMessage.ModifyAsync(
-                message => message.Embed = EmbedBuilder.Build());
+                message =>
+                {
+                    message.Content = Text;
+                    if (message.Embed.IsSpecified)
+                        message.Embed = EmbedBuilder?.Build();
+                });
             Logger.Log($"PagedMessage {SentMessage.Id} was changed to page {Page}.", LogSeverity.Debug);
         }
 

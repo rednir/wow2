@@ -18,6 +18,9 @@ namespace wow2.Bot.Verbose.Messages
         public bool AllowMentions { get; set; }
 
         [JsonIgnore]
+        public string Text { get; set; }
+
+        [JsonIgnore]
         public IUserMessage SentMessage { get; protected set; }
 
         [JsonIgnore]
@@ -33,7 +36,8 @@ namespace wow2.Bot.Verbose.Messages
         public virtual async Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             SentMessage = await channel.SendMessageAsync(
-                embed: EmbedBuilder.Build(),
+                text: Text,
+                embed: EmbedBuilder?.Build(),
                 allowedMentions: AllowMentions ? AllowedMentions.All : AllowedMentions.None,
                 messageReference: MessageReference);
             return SentMessage;
