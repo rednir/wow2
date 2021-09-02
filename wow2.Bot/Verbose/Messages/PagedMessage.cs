@@ -29,7 +29,7 @@ namespace wow2.Bot.Verbose.Messages
                 Description = description,
                 Color = Color.LightGrey,
             };
-            SetEmbedFields();
+            UpdateEmbed();
         }
 
         public List<EmbedFieldBuilder> AllFieldBuilders { get; protected set; }
@@ -93,7 +93,7 @@ namespace wow2.Bot.Verbose.Messages
         public async Task ChangePageByAsync(int increment)
         {
             Page += increment;
-            SetEmbedFields();
+            UpdateEmbed();
             await SentMessage.ModifyAsync(
                 message => message.Embed = EmbedBuilder.Build());
             Logger.Log($"PagedMessage {SentMessage.Id} was changed to page {Page}.", LogSeverity.Debug);
@@ -113,7 +113,7 @@ namespace wow2.Bot.Verbose.Messages
             GC.SuppressFinalize(this);
         }
 
-        protected void SetEmbedFields()
+        protected virtual void UpdateEmbed()
         {
             const int maxFieldsPerPage = 8;
 
