@@ -1,6 +1,6 @@
-# List of commands (79 total)
+# List of commands (80 total)
 
-## Main (7)
+## Main (8)
 Stuff to do with the bot and other random stuff.
 
 |Command|Summary|
@@ -11,6 +11,7 @@ Stuff to do with the bot and other random stuff.
 |`!wow alias-list`|Displays a list of aliases.|
 |`!wow ping`|Checks the latency between the message that executes a command, and the response that the bot sends.|
 |`!wow upload-raw-data`|Uploads a file containing all the data the bot stores about this server.|
+|`!wow toggle-image-voting-in-channel [CHANNEL]`|Toggles whether the specified text channel will have thumbs up/down reactions for each new message with image posted there.|
 |`!wow set-command-prefix [PREFIX]`|Change the prefix used to identify commands. '!wow' is the default.|
 
 ## YouTube (5)

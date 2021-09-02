@@ -6,6 +6,8 @@ namespace wow2.Bot.Modules.Main
     {
         public string CommandPrefix { get; set; } = "!wow";
 
-        public Dictionary<string, string> AliasesDictionary { get; set; } = new Dictionary<string, string>();
+        public Dictionary<string, string> AliasesDictionary { get; set; } = new();
+
+        public List<ulong> VotingEnabledChannelIds { get; set; } = new();
     }
 }

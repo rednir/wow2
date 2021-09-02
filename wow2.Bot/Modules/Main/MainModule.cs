@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
+using Discord.WebSocket;
 using Discord.Commands;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
@@ -161,6 +162,25 @@ namespace wow2.Bot.Modules.Main
         {
             await Context.Channel.SendFileAsync(
                 filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json");
+        }
+
+        [Command("toggle-image-voting-in-channel")]
+        [Alias("toggle-voting", "toggle-image-voting")]
+        [Summary("Toggles whether the specified text channel will have thumbs up/down reactions for each new message with image posted there.")]
+        public async Task ToggleVotingInChannelAsync(SocketTextChannel channel)
+        {
+            bool currentlyOn = Config.VotingEnabledChannelIds.Contains(channel.Id);
+            await SendToggleQuestionAsync(
+                currentState: currentlyOn,
+                setter: (x) =>
+                {
+                    if (x && !currentlyOn)
+                        Config.VotingEnabledChannelIds.Add(channel.Id);
+                    else if (!x && currentlyOn)
+                        Config.VotingEnabledChannelIds.Remove(channel.Id);
+                },
+                toggledOnMessage: $"Every new message with an image in {channel.Mention} will have thumbs up/down reactions added.",
+                toggledOffMessage: $"Messages in {channel.Mention} will no longer have thumbs up/down reactions added.");
         }
 
         [Command("set-command-prefix")]
