@@ -11,7 +11,7 @@ namespace wow2.Bot.Modules.Keywords
             : base(new List<EmbedFieldBuilder>(), "INITIAL STATE", string.Empty)
         {
             Values = values ?? throw new ArgumentNullException(nameof(values));
-            Page = Values.Count > 1 ? 1 : null;
+            Page = 1;
             UpdateEmbed();
         }
 
@@ -19,6 +19,7 @@ namespace wow2.Bot.Modules.Keywords
 
         protected override void UpdateEmbed()
         {
+            // This method is called in the ctor of PagedMessage when Page is not set yet.
             if (Page == null)
                 return;
 
