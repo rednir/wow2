@@ -221,6 +221,9 @@ namespace wow2.Bot
 
         public static async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
         {
+            if (reaction.UserId == Client.CurrentUser.Id)
+                return;
+
             await ResponseMessage.ActOnReactionAddedAsync(reaction);
         }
 
