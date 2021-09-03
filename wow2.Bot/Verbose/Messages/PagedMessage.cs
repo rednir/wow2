@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -11,8 +12,8 @@ namespace wow2.Bot.Verbose.Messages
     /// <summary>Class for sending and building embeds with pages of fields.</summary>
     public class PagedMessage : Message, IDisposable
     {
+        public const string StopText = "Stop";
         public static readonly IEmote PageLeftEmote = new Emoji("⏪");
-        public static readonly IEmote StopEmote = new Emoji("🛑");
         public static readonly IEmote PageRightEmote = new Emoji("⏩");
 
         public PagedMessage()
@@ -29,6 +30,7 @@ namespace wow2.Bot.Verbose.Messages
                 Description = description,
                 Color = Color.LightGrey,
             };
+
             UpdateEmbed();
         }
 
@@ -36,26 +38,24 @@ namespace wow2.Bot.Verbose.Messages
 
         public int? Page { get; protected set; }
 
-        /// <summary>If the message has pages and the emote is recognised, modifies the page of the message.</summary>
-        public static async Task<bool> ActOnReactionAsync(SocketReaction reaction)
+        /// <summary>If the message has pages, modifies the page of the message.</summary>
+        public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
         {
             PagedMessage message = FromMessageId(
-                DataManager.AllGuildData[reaction.Channel.GetGuild().Id], reaction.MessageId);
+                DataManager.AllGuildData[component.Channel.GetGuild().Id], component.Message.Id);
 
             if (message == null)
                 return false;
 
-            if (reaction.Emote.Name == PageLeftEmote.Name)
+            if (component.Data.CustomId == PageLeftEmote.Name)
             {
                 await message.ChangePageByAsync(-1);
-                await message.SentMessage.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
             }
-            else if (reaction.Emote.Name == PageRightEmote.Name)
+            else if (component.Data.CustomId == PageRightEmote.Name)
             {
                 await message.ChangePageByAsync(1);
-                await message.SentMessage.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
             }
-            else if (reaction.Emote.Name == StopEmote.Name)
+            else if (component.Data.CustomId == StopText)
             {
                 await message.StopAsync();
             }
@@ -74,17 +74,19 @@ namespace wow2.Bot.Verbose.Messages
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
+            if (Page == null)
+                return await base.SendAsync(channel);
+
+            Components = new ComponentBuilder()
+                .WithButton("Left", PageLeftEmote.Name, ButtonStyle.Primary, emote: PageLeftEmote)
+                .WithButton("Right", PageRightEmote.Name, ButtonStyle.Primary, emote: PageRightEmote)
+                .WithButton("Stop", StopText, ButtonStyle.Danger);
+
             IUserMessage message = await base.SendAsync(channel);
+
             List<PagedMessage> pagedMessages = DataManager.AllGuildData[message.GetGuild().Id].PagedMessages;
-
-            if (Page != null)
-            {
-                pagedMessages.Truncate(40);
-                pagedMessages.Add(this);
-
-                await message.AddReactionsAsync(
-                    new IEmote[] { PageLeftEmote, PageRightEmote, StopEmote });
-            }
+            pagedMessages.Truncate(40);
+            pagedMessages.Add(this);
 
             return message;
         }
@@ -106,8 +108,8 @@ namespace wow2.Bot.Verbose.Messages
         /// <summary>Removes reactions, and stops ability to scroll through pages for this message.</summary>
         public async Task StopAsync()
         {
+            SentMessage?.ModifyAsync(m => m.Components = null);
             Dispose();
-            await SentMessage.RemoveAllReactionsAsync();
         }
 
         public void Dispose()

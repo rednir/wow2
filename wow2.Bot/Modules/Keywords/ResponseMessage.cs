@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -65,7 +64,6 @@ namespace wow2.Bot.Modules.Keywords
                 return false;
             }
 
-            await DataManager.SaveGuildDataToFileAsync(responseMessage.SentMessage.GetGuild().Id);
             return true;
         }
 

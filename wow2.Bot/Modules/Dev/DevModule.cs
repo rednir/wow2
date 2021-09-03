@@ -185,17 +185,6 @@ namespace wow2.Bot.Modules.Dev
 
             foreach (GuildData guildData in DataManager.AllGuildData.Values)
             {
-                foreach (PagedMessage message in guildData.PagedMessages)
-                {
-                    try
-                    {
-                        await message.SentMessage.RemoveAllReactionsAsync();
-                    }
-                    catch
-                    {
-                    }
-                }
-
                 foreach (ResponseMessage message in guildData.Keywords.ListOfResponseMessages)
                 {
                     try

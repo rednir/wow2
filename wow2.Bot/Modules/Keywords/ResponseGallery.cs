@@ -19,6 +19,7 @@ namespace wow2.Bot.Modules.Keywords
 
         protected override void UpdateEmbed()
         {
+            // This method is called in the ctor of PagedMessage when Page is not set yet.
             if (Page == null)
                 return;
 

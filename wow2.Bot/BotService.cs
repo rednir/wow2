@@ -46,7 +46,6 @@ namespace wow2.Bot
         {
             Client = new DiscordSocketClient(new DiscordSocketConfig()
             {
-                ExclusiveBulkDelete = false,
                 AlwaysDownloadUsers = true,
             });
 
@@ -143,6 +142,7 @@ namespace wow2.Bot
                 Client.MessageDeleted += MessageDeletedAsync;
                 Client.JoinedGuild += JoinedGuildAsync;
                 Client.LeftGuild += LeftGuildAsync;
+                Client.ButtonExecuted += ButtonExecutedAsync;
             }
 
             await Client.SetStatusAsync(UserStatus.Online);
@@ -219,18 +219,15 @@ namespace wow2.Bot
             }
         }
 
-        public static async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
+        public static async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
         {
             if (reaction.UserId == Client.CurrentUser.Id)
                 return;
 
-            _ = !await PagedMessage.ActOnReactionAsync(reaction)
-                && !await ResponseMessage.ActOnReactionAddedAsync(reaction)
-                && !await QuestionMessage.ActOnReactionAsync(reaction)
-                && !await DateTimeSelectorMessage.ActOnReactionAsync(reaction);
+            await ResponseMessage.ActOnReactionAddedAsync(reaction);
         }
 
-        public static async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel channel, SocketReaction reaction)
+        public static async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
         {
             if (reaction.UserId == Client.CurrentUser.Id)
                 return;
@@ -242,12 +239,19 @@ namespace wow2.Bot
             ResponseMessage.ActOnReactionRemoved(reaction);
         }
 
-        public static Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, ISocketMessageChannel channel)
+        public static async Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel)
         {
+            ISocketMessageChannel channel = await cachedChannel.GetOrDownloadAsync() as ISocketMessageChannel;
+
             PagedMessage.FromMessageId(
                 DataManager.AllGuildData[channel.GetGuild().Id], cachedMessage.Id)?.Dispose();
+        }
 
-            return Task.CompletedTask;
+        public static async Task ButtonExecutedAsync(SocketMessageComponent component)
+        {
+            _ = !await PagedMessage.ActOnButtonAsync(component)
+                && !await QuestionMessage.ActOnButtonAsync(component)
+                && !await DateTimeSelectorMessage.ActOnButtonAsync(component);
         }
 
         public static async Task MessageRecievedAsync(SocketMessage socketMessage)

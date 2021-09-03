@@ -190,7 +190,7 @@ namespace wow2.Bot.Modules.Moderator
 
             await DataManager.SaveGuildDataToFileAsync(requestedBy.Guild.Id);
 
-            IDMChannel dmChannel = await victim.GetOrCreateDMChannelAsync();
+            IDMChannel dmChannel = await victim.CreateDMChannelAsync();
             if (userRecord.Warnings.Count >= config.WarningsUntilBan &&
                 config.WarningsUntilBan != -1)
             {
