@@ -10,8 +10,8 @@ namespace wow2.Bot.Verbose.Messages
 {
     public class QuestionMessage : Message
     {
-        public static readonly IEmote ConfirmEmote = new Emoji("👌");
-        public static readonly IEmote DenyEmote = new Emoji("❌");
+        public const string ConfirmText = "Yeah!";
+        public const string DenyText = "Nah.";
 
         public QuestionMessage(string description, string title = null, Func<Task> onConfirm = null, Func<Task> onDeny = null)
         {
@@ -22,25 +22,29 @@ namespace wow2.Bot.Verbose.Messages
                 Description = $"{new Emoji($"<:wowinfo:{QuestionEmoteId}>")} {GetStatusMessageFormattedDescription(description, title)}",
                 Color = new Color(0x9b59b6),
             };
+
+            Components = new ComponentBuilder()
+                .WithButton(ConfirmText, ConfirmText, ButtonStyle.Primary)
+                .WithButton(DenyText, DenyText, ButtonStyle.Secondary);
         }
 
         public Func<Task> OnConfirm { get; }
 
         public Func<Task> OnDeny { get; }
 
-        public static async Task<bool> ActOnReactionAsync(SocketReaction reaction)
+        public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
         {
-            GuildData guildData = DataManager.AllGuildData[reaction.Channel.GetGuild().Id];
-            QuestionMessage message = FromMessageId(guildData, reaction.MessageId);
+            GuildData guildData = DataManager.AllGuildData[component.Channel.GetGuild().Id];
+            QuestionMessage message = FromMessageId(guildData, component.Message.Id);
 
             if (message == null)
                 return false;
 
-            if (reaction.Emote.Name == ConfirmEmote.Name)
+            if (component.Data.CustomId == ConfirmText)
             {
                 await message.OnConfirm.Invoke();
             }
-            else if (reaction.Emote.Name == DenyEmote.Name)
+            else if (component.Data.CustomId == DenyText)
             {
                 await message.OnDeny.Invoke();
             }
@@ -50,8 +54,7 @@ namespace wow2.Bot.Verbose.Messages
             }
 
             guildData.QuestionMessages.Remove(message);
-            await message.SentMessage.RemoveAllReactionsAsync();
-
+            await message.SentMessage.ModifyAsync(m => m.Components = null);
             return true;
         }
 
@@ -67,9 +70,6 @@ namespace wow2.Bot.Verbose.Messages
 
             confirmMessages.Truncate(30);
             confirmMessages.Add(this);
-
-            await message.AddReactionsAsync(
-                new IEmote[] { ConfirmEmote, DenyEmote });
 
             return message;
         }

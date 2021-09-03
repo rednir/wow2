@@ -142,6 +142,7 @@ namespace wow2.Bot
                 Client.MessageDeleted += MessageDeletedAsync;
                 Client.JoinedGuild += JoinedGuildAsync;
                 Client.LeftGuild += LeftGuildAsync;
+                Client.ButtonExecuted += ButtonExecutedAsync;
             }
 
             await Client.SetStatusAsync(UserStatus.Online);
@@ -218,16 +219,8 @@ namespace wow2.Bot
             }
         }
 
-        public static async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
-        {
-            if (reaction.UserId == Client.CurrentUser.Id)
-                return;
-
-            _ = !await PagedMessage.ActOnReactionAsync(reaction)
-                && !await ResponseMessage.ActOnReactionAddedAsync(reaction)
-                && !await QuestionMessage.ActOnReactionAsync(reaction)
-                && !await DateTimeSelectorMessage.ActOnReactionAsync(reaction);
-        }
+        public static Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
+            => Task.CompletedTask;
 
         public static async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
         {
@@ -247,6 +240,14 @@ namespace wow2.Bot
 
             PagedMessage.FromMessageId(
                 DataManager.AllGuildData[channel.GetGuild().Id], cachedMessage.Id)?.Dispose();
+        }
+
+        public static async Task ButtonExecutedAsync(SocketMessageComponent component)
+        {
+            _ = !await PagedMessage.ActOnButtonAsync(component)
+                && !await ResponseMessage.ActOnButtonAsync(component)
+                && !await QuestionMessage.ActOnButtonAsync(component)
+                && !await DateTimeSelectorMessage.ActOnButtonAsync(component);
         }
 
         public static async Task MessageRecievedAsync(SocketMessage socketMessage)

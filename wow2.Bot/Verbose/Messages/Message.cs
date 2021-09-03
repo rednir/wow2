@@ -27,6 +27,9 @@ namespace wow2.Bot.Verbose.Messages
         public Embed Embed => EmbedBuilder.Build();
 
         [JsonIgnore]
+        public ComponentBuilder Components { get; set; }
+
+        [JsonIgnore]
         public MessageReference MessageReference =>
             ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null;
 
@@ -39,7 +42,8 @@ namespace wow2.Bot.Verbose.Messages
                 text: Text,
                 embed: EmbedBuilder?.Build(),
                 allowedMentions: AllowMentions ? AllowedMentions.All : AllowedMentions.None,
-                messageReference: MessageReference);
+                messageReference: MessageReference,
+                component: Components?.Build());
             return SentMessage;
         }
 
@@ -48,7 +52,8 @@ namespace wow2.Bot.Verbose.Messages
             SentMessage = await channel.SendMessageAsync(
                 text: (!string.IsNullOrWhiteSpace(EmbedBuilder.Title) ? $"**{EmbedBuilder.Title}**\n\n" : null) + EmbedBuilder.Description,
                 allowedMentions: AllowMentions ? AllowedMentions.All : AllowedMentions.None,
-                messageReference: MessageReference);
+                messageReference: MessageReference,
+                component: Components?.Build());
             return SentMessage;
         }
 

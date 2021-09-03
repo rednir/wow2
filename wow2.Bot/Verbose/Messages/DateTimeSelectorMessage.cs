@@ -11,29 +11,28 @@ namespace wow2.Bot.Verbose.Messages
 {
     public class DateTimeSelectorMessage : Message
     {
-        public const string ConfirmChar = "✅";
+        public const string ConfirmString = "Confirm";
 
-        public static readonly IReadOnlyDictionary<IEmote, TimeSpan> DateTimeModifierEmotes = new Dictionary<IEmote, TimeSpan>()
+        public static readonly IReadOnlyDictionary<string, TimeSpan> DateTimeModifierEmotes = new Dictionary<string, TimeSpan>()
         {
-            { new Emoji("⏫"), TimeSpan.FromDays(7) },
-            { new Emoji("⏬"), TimeSpan.FromDays(-7) },
-            { new Emoji("🔼"), TimeSpan.FromDays(1) },
-            { new Emoji("🔽"), TimeSpan.FromDays(-1) },
-            { new Emoji("⏩"), TimeSpan.FromHours(1) },
-            { new Emoji("⏪"), TimeSpan.FromHours(-1) },
-            { new Emoji("▶"), TimeSpan.FromMinutes(10) },
-            { new Emoji("◀"), TimeSpan.FromMinutes(-10) },
+            { "+1 week", TimeSpan.FromDays(7) },
+            { "-1 week", TimeSpan.FromDays(-7) },
+            { "+1 day", TimeSpan.FromDays(1) },
+            { "-1 day", TimeSpan.FromDays(-1) },
+            { "+1 hour", TimeSpan.FromHours(1) },
+            { "-1 hour", TimeSpan.FromHours(-1) },
+            { "+10 minutes", TimeSpan.FromMinutes(10) },
+            { "-10 minutes", TimeSpan.FromMinutes(-10) },
         };
 
         public DateTimeSelectorMessage(Func<DateTime, Task> confirmFunc, string description = "Select a date and time.")
         {
-            EmbedBuilder = new EmbedBuilder()
-            {
-                Description = "Give me a second to add reactions...",
-                Color = Color.LightGrey,
-            };
             Description = description;
             ConfirmFunc = confirmFunc;
+
+            Components = new ComponentBuilder().WithButton(ConfirmString, ConfirmString, ButtonStyle.Primary, row: 2);
+            foreach (string text in DateTimeModifierEmotes.Keys)
+                Components.WithButton(text, text, ButtonStyle.Secondary);
         }
 
         public DateTime DateTime { get; set; } = DateTime.Now;
@@ -42,26 +41,24 @@ namespace wow2.Bot.Verbose.Messages
 
         private Func<DateTime, Task> ConfirmFunc { get; }
 
-        public static async Task<bool> ActOnReactionAsync(SocketReaction reaction)
+        public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
         {
-            GuildData guildData = DataManager.AllGuildData[reaction.Channel.GetGuild().Id];
-            DateTimeSelectorMessage message = guildData.DateTimeSelectorMessages.Find(m => m.SentMessage.Id == reaction.MessageId);
+            GuildData guildData = DataManager.AllGuildData[component.Channel.GetGuild().Id];
+            DateTimeSelectorMessage message = guildData.DateTimeSelectorMessages.Find(m => m.SentMessage.Id == component.Message.Id);
 
             if (message == null)
                 return false;
 
-            if (reaction.Emote.Name == ConfirmChar)
+            if (component.Data.CustomId == ConfirmString)
             {
                 guildData.DateTimeSelectorMessages.Remove(message);
-                await message.SentMessage.RemoveAllReactionsAsync();
                 await message.ConfirmFunc.Invoke(message.DateTime);
                 return true;
             }
-            else if (DateTimeModifierEmotes.Any(p => p.Key.Name == reaction.Emote.Name))
+            else if (DateTimeModifierEmotes.Any(p => p.Key == component.Data.CustomId))
             {
-                await message.SentMessage.RemoveReactionAsync(reaction.Emote, reaction.User.Value);
-                message.DateTime += DateTimeModifierEmotes[reaction.Emote];
-                await message.UpdateMessageAsync();
+                message.DateTime += DateTimeModifierEmotes[component.Data.CustomId];
+                await message.UpdateEmbedAsync();
                 return true;
             }
             else
@@ -72,30 +69,28 @@ namespace wow2.Bot.Verbose.Messages
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
+            await UpdateEmbedAsync();
+
             IUserMessage message = await base.SendAsync(channel);
             List<DateTimeSelectorMessage> dateTimeSelectorMessages = DataManager
                 .AllGuildData[message.GetGuild().Id].DateTimeSelectorMessages;
 
-            await message.AddReactionsAsync(
-                DateTimeModifierEmotes.Keys.Append(new Emoji(ConfirmChar)).ToArray());
-
-            dateTimeSelectorMessages.Truncate(12);
+            dateTimeSelectorMessages.Truncate(40);
             dateTimeSelectorMessages.Add(this);
-            await UpdateMessageAsync();
 
             return message;
         }
 
-        private async Task UpdateMessageAsync()
+        private async Task UpdateEmbedAsync()
         {
             EmbedBuilder = new EmbedBuilder()
             {
                 Description = $"{new Emoji($"<:wowquestion:{QuestionEmoteId}>")} {Description}\n`{DateTime}`",
-                ImageUrl = "https://github.com/rednir/wow2/blob/master/Assets/datetimemessagehelp.png",
                 Color = new Color(0x9b59b6),
             };
 
-            await SentMessage?.ModifyAsync(m => m.Embed = Embed);
+            if (SentMessage != null)
+                await SentMessage.ModifyAsync(m => m.Embed = Embed);
         }
     }
 }
