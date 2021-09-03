@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -36,39 +35,36 @@ namespace wow2.Bot.Modules.Keywords
         /// <summary>Gets a list of IDs of users who have previously given a like to the KeywordValue via this message.</summary>
         private List<ulong> UsersLikedIds { get; } = new();
 
-        /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the button press if so.</summary>
-        public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
+        /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the reaction if so.</summary>
+        public static async Task<bool> ActOnReactionAddedAsync(SocketReaction reaction)
         {
-            // todo: do i still want to use reactions here?
-            var config = DataManager.AllGuildData[component.Channel.GetGuild().Id].Keywords;
-            return false;
+            var config = DataManager.AllGuildData[reaction.Channel.GetGuild().Id].Keywords;
 
-            // ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
-            //     m => m.SentMessage?.Id == component.Message.Id);
-            // if (responseMessage == null)
-            //     return false;
+            ResponseMessage responseMessage = config.ListOfResponseMessages.Find(
+                m => m.SentMessage?.Id == reaction.MessageId);
+            if (responseMessage == null)
+                return false;
 
-            // if (component.Data.CustomId == DeleteReactionEmote.Name && config.IsDeleteReactionOn)
-            // {
-            //     responseMessage.KeywordValue.TimesDeleted++;
-            //     config.ListOfResponseMessages.Remove(responseMessage);
-            //     await responseMessage.SentMessage.DeleteAsync();
-            // }
-            // else if (component.Data.CustomId == LikeReactionEmote.Name && config.IsLikeReactionOn)
-            // {
-            //     if (!responseMessage.UsersLikedIds.Contains(component.User.Id))
-            //     {
-            //         responseMessage.UsersLikedIds.Add(component.User.Id);
-            //         responseMessage.KeywordValue.TimesLiked++;
-            //     }
-            // }
-            // else
-            // {
-            //     return false;
-            // }
+            if (reaction.Emote.Name == DeleteReactionEmote.Name && config.IsDeleteReactionOn)
+            {
+                responseMessage.KeywordValue.TimesDeleted++;
+                config.ListOfResponseMessages.Remove(responseMessage);
+                await responseMessage.SentMessage.DeleteAsync();
+            }
+            else if (reaction.Emote.Name == LikeReactionEmote.Name && config.IsLikeReactionOn)
+            {
+                if (!responseMessage.UsersLikedIds.Contains(reaction.UserId))
+                {
+                    responseMessage.UsersLikedIds.Add(reaction.UserId);
+                    responseMessage.KeywordValue.TimesLiked++;
+                }
+            }
+            else
+            {
+                return false;
+            }
 
-            // await DataManager.SaveGuildDataToFileAsync(responseMessage.SentMessage.GetGuild().Id);
-            // return true;
+            return true;
         }
 
         /// <summary>Checks if a message was a keyword response sent by the bot, and acts on the removed reaction if so.</summary>

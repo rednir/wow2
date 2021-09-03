@@ -11,7 +11,7 @@ namespace wow2.Bot.Modules.Keywords
             : base(new List<EmbedFieldBuilder>(), "INITIAL STATE", string.Empty)
         {
             Values = values ?? throw new ArgumentNullException(nameof(values));
-            Page = 1;
+            Page = Values.Count > 1 ? 1 : null;
             UpdateEmbed();
         }
 

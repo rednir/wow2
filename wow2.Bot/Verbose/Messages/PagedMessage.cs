@@ -32,14 +32,6 @@ namespace wow2.Bot.Verbose.Messages
             };
 
             UpdateEmbed();
-
-            if (Page != null)
-            {
-                Components = new ComponentBuilder()
-                    .WithButton("Left", PageLeftEmote.Name, ButtonStyle.Primary, emote: PageLeftEmote)
-                    .WithButton("Right", PageRightEmote.Name, ButtonStyle.Primary, emote: PageRightEmote)
-                    .WithButton("Stop", StopText, ButtonStyle.Danger);
-            }
         }
 
         public List<EmbedFieldBuilder> AllFieldBuilders { get; protected set; }
@@ -82,14 +74,19 @@ namespace wow2.Bot.Verbose.Messages
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
+            if (Page == null)
+                return await base.SendAsync(channel);
+
+            Components = new ComponentBuilder()
+                .WithButton("Left", PageLeftEmote.Name, ButtonStyle.Primary, emote: PageLeftEmote)
+                .WithButton("Right", PageRightEmote.Name, ButtonStyle.Primary, emote: PageRightEmote)
+                .WithButton("Stop", StopText, ButtonStyle.Danger);
+
             IUserMessage message = await base.SendAsync(channel);
 
-            if (Page != null)
-            {
-                List<PagedMessage> pagedMessages = DataManager.AllGuildData[message.GetGuild().Id].PagedMessages;
-                pagedMessages.Truncate(40);
-                pagedMessages.Add(this);
-            }
+            List<PagedMessage> pagedMessages = DataManager.AllGuildData[message.GetGuild().Id].PagedMessages;
+            pagedMessages.Truncate(40);
+            pagedMessages.Add(this);
 
             return message;
         }

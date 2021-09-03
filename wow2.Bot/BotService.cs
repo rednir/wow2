@@ -219,8 +219,10 @@ namespace wow2.Bot
             }
         }
 
-        public static Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
-            => Task.CompletedTask;
+        public static async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
+        {
+            await ResponseMessage.ActOnReactionAddedAsync(reaction);
+        }
 
         public static async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
         {
@@ -245,7 +247,6 @@ namespace wow2.Bot
         public static async Task ButtonExecutedAsync(SocketMessageComponent component)
         {
             _ = !await PagedMessage.ActOnButtonAsync(component)
-                && !await ResponseMessage.ActOnButtonAsync(component)
                 && !await QuestionMessage.ActOnButtonAsync(component)
                 && !await DateTimeSelectorMessage.ActOnButtonAsync(component);
         }
