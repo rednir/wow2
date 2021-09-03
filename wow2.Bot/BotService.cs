@@ -382,7 +382,7 @@ namespace wow2.Bot
             if (DataManager.AllGuildData[context.Guild.Id].Main.VotingEnabledChannelIds.Contains(context.Channel.Id)
                 && message.Attachments.Count > 0)
             {
-                message.AddReactionsAsync(new[] { MainModule.LikeReactionEmote, MainModule.DislikeReactionEmote });
+                _ = message.AddReactionsAsync(new[] { MainModule.LikeReactionEmote, MainModule.DislikeReactionEmote });
             }
 
             // Only auto mod message if not related to a game.
