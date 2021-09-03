@@ -105,7 +105,7 @@ namespace wow2.Bot.Verbose.Messages
             Logger.Log($"PagedMessage {SentMessage.Id} was changed to page {Page}.", LogSeverity.Debug);
         }
 
-        /// <summary>Removes reactions, and stops ability to scroll through pages for this message.</summary>
+        /// <summary>Removes buttons, and stops ability to scroll through pages for this message.</summary>
         public async Task StopAsync()
         {
             SentMessage?.ModifyAsync(m => m.Components = null);
