@@ -158,6 +158,11 @@ namespace wow2.Bot.Modules.Main
                 => message.Embed = new SuccessMessage($"That was about `{pongTimeSpan.Milliseconds}ms`", "Pong!").Embed);
         }
 
+        [Command("say")]
+        [Summary("Sends a message. That's it.")]
+        public async Task SayAsync(string message)
+            => await ReplyAsync(message);
+
         [Command("upload-raw-data")]
         [Alias("raw-data", "upload-raw")]
         [Summary("Uploads a file containing all the data the bot stores about this server.")]

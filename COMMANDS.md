@@ -1,6 +1,6 @@
-# List of commands (82 total)
+# List of commands (83 total)
 
-## Main (8)
+## Main (9)
 Stuff to do with the bot and other random stuff.
 
 |Command|Summary|
@@ -10,6 +10,7 @@ Stuff to do with the bot and other random stuff.
 |`!wow alias [NAME] [DEFINITION]`|Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to blank to remove it.|
 |`!wow alias-list`|Displays a list of aliases.|
 |`!wow ping`|Checks the latency between the message that executes a command, and the response that the bot sends.|
+|`!wow say [MESSAGE]`|Send a message.|
 |`!wow upload-raw-data`|Uploads a file containing all the data the bot stores about this server.|
 |`!wow toggle-attachment-voting [CHANNEL]`|Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.|
 |`!wow set-command-prefix [PREFIX]`|Change the prefix used to identify commands. '!wow' is the default.|
