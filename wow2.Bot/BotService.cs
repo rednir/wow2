@@ -251,7 +251,8 @@ namespace wow2.Bot
         {
             _ = !await PagedMessage.ActOnButtonAsync(component)
                 && !await QuestionMessage.ActOnButtonAsync(component)
-                && !await DateTimeSelectorMessage.ActOnButtonAsync(component);
+                && !await DateTimeSelectorMessage.ActOnButtonAsync(component)
+                && !await VerbalMemoryGame.ActOnButtonAsync(component);
         }
 
         public static async Task MessageRecievedAsync(SocketMessage socketMessage)
@@ -390,8 +391,7 @@ namespace wow2.Bot
             }
 
             // Only auto mod message if not related to a game.
-            if (!await CountingGame.CheckMessageAsync(context)
-                && !await VerbalMemoryGame.CheckMessageAsync(context))
+            if (!await CountingGame.CheckMessageAsync(context))
             {
                 await ModeratorModule.CheckMessageWithAutoMod(context);
             }

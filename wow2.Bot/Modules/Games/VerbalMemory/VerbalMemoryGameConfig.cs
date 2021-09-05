@@ -19,6 +19,10 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
         [JsonIgnore]
         public IUserMessage CurrentWordMessage { get; set; }
 
+        /// <summary>Gets or sets the message that the bot sent, marking the start of the game.</summary>
+        [JsonIgnore]
+        public IUserMessage GameMessage { get; set; }
+
         public List<VerbalMemoryLeaderboardEntry> LeaderboardEntries { get; set; } = new();
     }
 }

@@ -12,31 +12,32 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 {
     public static class VerbalMemoryGame
     {
-        public const string SeenKeyword = "s";
-        public const string NewKeyword = "n";
+        public const string SeenWordText = "Seen it.";
+        public const string NewWordText = "That's new!";
 
         public static VerbalMemoryGameConfig GetConfig(IGuild guild)
             => DataManager.AllGuildData[guild.Id].Games.VerbalMemory;
 
-        /// <summary>Checks whether a user message is part of the verbal memory game, and acts on it if so.</summary>
-        /// <returns>True if the message was related to the game.</returns>
-        public static async Task<bool> CheckMessageAsync(SocketCommandContext context)
+        public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
         {
-            var config = GetConfig(context.Guild);
+            var config = GetConfig(component.Channel.GetGuild());
 
-            if (!config.IsGameStarted)
+            if (!config.IsGameStarted || config.GameMessage.Id != component.Message.Id)
                 return false;
 
-            if (context.Channel != config.InitalContext.Channel
-                || context.User != config.InitalContext.User)
+            if (component.Channel.Id != config.InitalContext.Channel.Id
+                || component.User.Id != config.InitalContext.User.Id)
             {
-                return false;
+                await component.FollowupAsync(
+                    embed: new WarningMessage("You aren't playing this game, get out of here.").Embed,
+                    ephemeral: true);
+                return true;
             }
 
             string currentWord = config.CurrentWordMessage.Content;
-            switch (context.Message.Content)
+            switch (component.Data.CustomId)
             {
-                case NewKeyword:
+                case NewWordText:
                     if (config.SeenWords.Contains(currentWord))
                     {
                         await new InfoMessage(
@@ -53,7 +54,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
                         break;
                     }
 
-                case SeenKeyword:
+                case SeenWordText:
                     if (config.SeenWords.Contains(currentWord))
                     {
                         break;
@@ -74,7 +75,6 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 
             config.Turns++;
             await NextWordAsync(config);
-            await context.Message.DeleteAsync();
             return true;
         }
 
@@ -92,10 +92,15 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             config.InitalContext = context;
             config.IsGameStarted = true;
 
-            await new InfoMessage(
-                description: $"After every word, respond with:\n • `{SeenKeyword}` if you have seen the word previously\n • `{NewKeyword}` if the word is new",
+            config.GameMessage = await new InfoMessage(
+                description: "See the word below? Tell me if you've seen it yet or not by pressing the buttons.",
                 title: $"Verbal memory has started for {context.User.Mention}")
-                    .SendAsync(context.Channel);
+            {
+                Components = new ComponentBuilder()
+                    .WithButton(SeenWordText, SeenWordText)
+                    .WithButton(NewWordText, NewWordText),
+            }
+            .SendAsync(context.Channel);
 
             await NextWordAsync(config);
         }
@@ -133,6 +138,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             config.LeaderboardEntries = config.LeaderboardEntries.OrderByDescending(e => e.Points).ToList();
 
             await DataManager.SaveGuildDataToFileAsync(config.InitalContext.Guild.Id);
+            await config.GameMessage?.ModifyAsync(m => m.Components = null);
         }
     }
 }
