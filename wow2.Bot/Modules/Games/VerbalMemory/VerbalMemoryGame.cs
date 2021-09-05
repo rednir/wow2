@@ -34,11 +34,10 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
                 return true;
             }
 
-            string currentWord = config.CurrentWordMessage.Content;
             switch (component.Data.CustomId)
             {
                 case NewWordText:
-                    if (config.SeenWords.Contains(currentWord))
+                    if (config.SeenWords.Contains(config.CurrentWord))
                     {
                         await new InfoMessage(
                             description: "You've seen that word before.",
@@ -49,13 +48,13 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
                     }
                     else
                     {
-                        config.SeenWords.Add(currentWord);
-                        config.UnseenWords.Remove(currentWord);
+                        config.SeenWords.Add(config.CurrentWord);
+                        config.UnseenWords.Remove(config.CurrentWord);
                         break;
                     }
 
                 case SeenWordText:
-                    if (config.SeenWords.Contains(currentWord))
+                    if (config.SeenWords.Contains(config.CurrentWord))
                     {
                         break;
                     }
@@ -85,6 +84,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             // TODO: need to find a better way of doing this
             var defaultConfig = new VerbalMemoryGameConfig();
             config.CurrentWordMessage = defaultConfig.CurrentWordMessage;
+            config.CurrentWord = defaultConfig.CurrentWord;
             config.SeenWords = defaultConfig.SeenWords;
             config.UnseenWords = defaultConfig.UnseenWords;
             config.Turns = defaultConfig.Turns;
@@ -110,18 +110,18 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             var random = new Random();
 
             bool pickSeenWord = (random.NextDouble() >= 0.5) && (config.SeenWords.Count > 3);
-            string currentWord = pickSeenWord ?
+            config.CurrentWord = pickSeenWord ?
                 config.SeenWords[random.Next(config.SeenWords.Count)] :
                 config.UnseenWords[random.Next(config.UnseenWords.Count)];
 
             // Check if it's necessary to send a new message.
             if (config.CurrentWordMessage == null)
             {
-                config.CurrentWordMessage = await config.InitalContext.Channel.SendMessageAsync(currentWord);
+                config.CurrentWordMessage = await config.InitalContext.Channel.SendMessageAsync($"**{config.Turns + 1}.** {config.CurrentWord}");
             }
             else
             {
-                await config.CurrentWordMessage.ModifyAsync(message => message.Content = currentWord);
+                await config.CurrentWordMessage.ModifyAsync(message => message.Content = $"**{config.Turns + 1}.** {config.CurrentWord}");
             }
         }
 

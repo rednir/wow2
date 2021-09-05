@@ -13,11 +13,13 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
         public List<string> SeenWords { get; set; } = new List<string>();
 
         [JsonIgnore]
-        public int Turns { get; set; } = 0;
+        public int Turns { get; set; }
 
-        /// <summary>Gets or sets the message with the current word.</summary>
         [JsonIgnore]
         public IUserMessage CurrentWordMessage { get; set; }
+
+        [JsonIgnore]
+        public string CurrentWord { get; set; }
 
         /// <summary>Gets or sets the message that the bot sent, marking the start of the game.</summary>
         [JsonIgnore]
