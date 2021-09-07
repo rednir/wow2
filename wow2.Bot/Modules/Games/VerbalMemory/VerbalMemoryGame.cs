@@ -133,8 +133,8 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
                     .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
 
             config.IsGameStarted = false;
-            config.LeaderboardEntries.Add(
-                new VerbalMemoryLeaderboardEntry(config));
+            config.LeaderboardEntries.Add(new VerbalMemoryLeaderboardEntry(config));
+            config.LeaderboardEntries.Truncate(100);
             config.LeaderboardEntries = config.LeaderboardEntries.OrderByDescending(e => e.Points).ToList();
 
             await DataManager.SaveGuildDataToFileAsync(config.InitalContext.Guild.Id);
