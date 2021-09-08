@@ -21,21 +21,39 @@ namespace wow2.Bot.Modules.Dev
         [Command("load-guild-data")]
         [Alias("load")]
         [Summary("Loads guild data from file to memory, discarding any unsaved changes.")]
-        public async Task LoadGuildDataAsync()
+        public async Task LoadGuildDataAsync(ulong id = 0)
         {
-            await DataManager.LoadGuildDataFromFileAsync();
-            await new SuccessMessage($"`{DataManager.AllGuildData.Count}` guilds has their data loaded.")
-                .SendAsync(Context.Channel);
+            if (id == 0)
+            {
+                await DataManager.LoadGuildDataFromFileAsync();
+                await new SuccessMessage($"`{DataManager.AllGuildData.Count}` guilds has their data loaded.")
+                    .SendAsync(Context.Channel);
+            }
+            else
+            {
+                await DataManager.LoadGuildDataFromFileAsync(id);
+                await new SuccessMessage($"Guild `{id}` had their data loaded.")
+                    .SendAsync(Context.Channel);
+            }
         }
 
         [Command("save-guild-data")]
         [Alias("save")]
         [Summary("Save guild data from memory to file, optionally stopping the bot.")]
-        public async Task SaveGuildDataAsync()
+        public async Task SaveGuildDataAsync(ulong id = 0)
         {
-            await DataManager.SaveGuildDataToFileAsync();
-            await new SuccessMessage($"`{DataManager.AllGuildData.Count}` guilds has their data saved.")
-                .SendAsync(Context.Channel);
+            if (id == 0)
+            {
+                await DataManager.SaveGuildDataToFileAsync();
+                await new SuccessMessage($"`{DataManager.AllGuildData.Count}` guilds has their data saved.")
+                    .SendAsync(Context.Channel);
+            }
+            else
+            {
+                await DataManager.SaveGuildDataToFileAsync(id);
+                await new SuccessMessage($"Guild `{id}` had their data saved.")
+                    .SendAsync(Context.Channel);
+            }
         }
 
         [Command("set-status")]
