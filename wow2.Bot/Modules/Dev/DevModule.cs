@@ -82,6 +82,14 @@ namespace wow2.Bot.Modules.Dev
                     .SendAsync(Context.Channel);
         }
 
+        [Command("get-guild-data")]
+        [Summary("Gets the json file for the specified guild, default current guild.")]
+        public async Task GetGuildDataAsync(ulong id = 0)
+        {
+            await Context.Channel.SendFileAsync(
+                filePath: $"{DataManager.AppDataDirPath}/GuildData/{(id != 0 ? id : Context.Guild.Id)}.json");
+        }
+
         [Command("set-status")]
         [Summary("Sets the 'playing' text and the status of the bot user.")]
         public async Task SetStatus(string message, UserStatus status)

@@ -1,4 +1,4 @@
-# List of commands (84 total)
+# List of commands (85 total)
 
 ## Main (9)
 Stuff to do with the bot and other random stuff.
@@ -129,7 +129,7 @@ For having a bit of fun.
 |`!wow games verbal-memory`|Try remember as many words as you can.|
 |`!wow games verbal-memory-leaderboard [optional:PAGE]`|Shows the leaderboard for the counting game.|
 
-## Developer (15)
+## Developer (16)
 Boring stuff for developers.
 
 |Command|Summary|
@@ -137,6 +137,7 @@ Boring stuff for developers.
 |`!wow dev load-guild-data [optional:ID]`|Loads guild data from file to memory, discarding any unsaved changes.|
 |`!wow dev save-guild-data [optional:ID]`|Save guild data from memory to file, optionally stopping the bot.|
 |`!wow dev guild-list`|Displays a list of guilds the bot is currently in.|
+|`!wow dev get-guild-data [optional:ID]`|Gets the json file for the specified guild, default current guild.|
 |`!wow dev set-status [MESSAGE] [STATUS]`|Sets the 'playing' text and the status of the bot user.|
 |`!wow dev run-test [GROUPS]`|Runs a list of commands.|
 |`!wow dev commands-list`|Creates a COMMANDS.md file with a list of all commands.|
