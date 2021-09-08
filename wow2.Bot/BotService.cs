@@ -55,6 +55,9 @@ namespace wow2.Bot
             await Client.LoginAsync(TokenType.Bot, DataManager.Secrets.DiscordBotToken);
             await Client.StartAsync();
 
+            await Client.SetStatusAsync(UserStatus.Online);
+            await Client.SetGameAsync("!wow help");
+
             ApplicationInfo = await Client.GetApplicationInfoAsync();
         }
 
@@ -144,9 +147,6 @@ namespace wow2.Bot
                 Client.LeftGuild += LeftGuildAsync;
                 Client.ButtonExecuted += ButtonExecutedAsync;
             }
-
-            await Client.SetStatusAsync(UserStatus.Online);
-            await Client.SetGameAsync("!wow help");
         }
 
         public static async Task JoinedGuildAsync(SocketGuild guild)
