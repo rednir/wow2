@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -54,6 +55,31 @@ namespace wow2.Bot.Modules.Dev
                 await new SuccessMessage($"Guild `{id}` had their data saved.")
                     .SendAsync(Context.Channel);
             }
+        }
+
+        [Command("guild-list")]
+        [Summary("Displays a list of guilds the bot is currently in.")]
+        public async Task GuildListAsync()
+        {
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+            var guilds = BotService.Client.Guilds;
+
+            foreach (var guild in guilds)
+            {
+                DataManager.AllGuildData.TryGetValue(guild.Id, out GuildData guildData);
+                listOfFieldBuilders.Add(new EmbedFieldBuilder()
+                {
+                    Name = $"{guild.Name} *({guild.Id})*",
+                    Value = $"Joined {DateTime.FromBinary(guildData?.DateTimeJoinedBinary ?? default).ToLongDateString()} with {guild.MemberCount} members.",
+                });
+            }
+
+            string descExt = guilds.Count != DataManager.AllGuildData.Count ? $" but {DataManager.AllGuildData.Count} guild data files are loaded" : null;
+            await new PagedMessage(
+                fieldBuilders: listOfFieldBuilders,
+                description: $"The bot is in {guilds.Count} guilds{descExt}.",
+                title: "Joined Guilds")
+                    .SendAsync(Context.Channel);
         }
 
         [Command("set-status")]
