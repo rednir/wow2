@@ -137,7 +137,6 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             config.LeaderboardEntries.Truncate(100);
             config.LeaderboardEntries = config.LeaderboardEntries.OrderByDescending(e => e.Points).ToList();
 
-            await DataManager.SaveGuildDataToFileAsync(config.InitalContext.Guild.Id);
             await config.GameMessage?.ModifyAsync(m => m.Components = null);
         }
     }

@@ -96,7 +96,6 @@ namespace wow2.Bot.Modules.Keywords
 
             await new SuccessMessage($"Added a value to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.")
                 .SendAsync(Context.Channel);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("remove")]
@@ -160,8 +159,6 @@ namespace wow2.Bot.Modules.Keywords
                 await new SuccessMessage($"Sucessfully removed `{valueContent}` from `{keyword}`.")
                     .SendAsync(Context.Channel);
             }
-
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("rename")]
@@ -180,8 +177,6 @@ namespace wow2.Bot.Modules.Keywords
 
             await new SuccessMessage($"Renamed `{oldKeyword}` to `{newKeyword}`.")
                 .SendAsync(Context.Channel);
-
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("list")]
@@ -279,8 +274,6 @@ namespace wow2.Bot.Modules.Keywords
 
             await new SuccessMessage($"Restored `{keyword}` and it's {Config.KeywordsDictionary[keyword].Count} values.")
                 .SendAsync(Context.Channel);
-
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("set-chance")]

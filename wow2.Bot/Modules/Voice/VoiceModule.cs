@@ -102,8 +102,6 @@ namespace wow2.Bot.Modules.Voice
             // Play song if nothing else is playing.
             if (!CheckIfAudioClientDisconnected(Config.AudioClient) && Config.CurrentlyPlayingSongRequest == null)
                 _ = ContinueAsync();
-
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("remove")]
@@ -233,8 +231,6 @@ namespace wow2.Bot.Modules.Voice
                 throw new CommandReturnException(Context, "You already have a saved queue with that name.");
 
             Config.SavedSongRequestQueues.Add(name, new(Config.CurrentSongRequestQueue));
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-
             await new SuccessMessage("You can load this queue anytime you want.", "Saved queue")
                 .SendAsync(Context.Channel);
         }
@@ -284,7 +280,6 @@ namespace wow2.Bot.Modules.Voice
 
             Config.CurrentSongRequestQueue = loadedQueue;
             Config.SavedSongRequestQueues.Remove(name);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
 
             await new SuccessMessage("Also deleted queue from the saved queue list.", "Loaded queue")
                 .SendAsync(Context.Channel);
@@ -299,8 +294,6 @@ namespace wow2.Bot.Modules.Voice
                 throw new CommandReturnException(Context, "No queue with that name exists.");
 
             Config.CurrentSongRequestQueue = new(loadedQueue);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-
             await new SuccessMessage("You can safely delete this queue from the saved queue list if you want.", "Loaded queue")
                 .SendAsync(Context.Channel);
         }
@@ -348,7 +341,6 @@ namespace wow2.Bot.Modules.Voice
 
             newNumberOfSkips = Math.Max(newNumberOfSkips, 1);
             Config.VoteSkipsNeeded = newNumberOfSkips;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
             await new SuccessMessage($"`{newNumberOfSkips}` votes are now required to skip a song request.")
                 .SendAsync(Context.Channel);
         }

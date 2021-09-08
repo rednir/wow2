@@ -161,8 +161,6 @@ namespace wow2.Bot.Modules.Moderator
                 await new SuccessMessage($"{number} warnings will result in a ban.")
                     .SendAsync(Context.Channel);
             }
-
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("toggle-auto-mod")]
@@ -187,8 +185,6 @@ namespace wow2.Bot.Modules.Moderator
                 RequestedBy = requestedBy.Id,
                 DateTimeBinary = DateTime.Now.ToBinary(),
             });
-
-            await DataManager.SaveGuildDataToFileAsync(requestedBy.Guild.Id);
 
             IDMChannel dmChannel = await victim.CreateDMChannelAsync();
             if (userRecord.Warnings.Count >= config.WarningsUntilBan &&

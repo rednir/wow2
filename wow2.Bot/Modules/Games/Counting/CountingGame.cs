@@ -120,8 +120,6 @@ namespace wow2.Bot.Modules.Games.Counting
             config.LeaderboardEntries.Add(new CountingLeaderboardEntry(config));
             config.LeaderboardEntries.Truncate(100);
             config.LeaderboardEntries = config.LeaderboardEntries.OrderByDescending(e => e.Points).ToList();
-
-            await DataManager.SaveGuildDataToFileAsync(config.InitalContext.Guild.Id);
         }
 
         private static string MakeComment(float nextNumber, float increment)

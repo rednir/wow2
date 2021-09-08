@@ -65,8 +65,6 @@ namespace wow2.Bot.Modules.YouTube
                     $"You'll get notifications when `{channel.Snippet.Title}` uploads a new video.")
                         .SendAsync(Context.Channel);
             }
-
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("list-subs")]
@@ -101,8 +99,6 @@ namespace wow2.Bot.Modules.YouTube
         public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
         {
             Config.AnnouncementsChannelId = channel.Id;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-
             await new SuccessMessage($"You'll get YouTube announcements in {channel.Mention}")
                 .SendAsync(Context.Channel);
         }

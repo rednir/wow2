@@ -119,7 +119,6 @@ namespace wow2.Bot.Modules.Main
 
             await new SuccessMessage($"Typing `{name}` will now execute `{Config.CommandPrefix} {definition}`\n{removeAliasText}")
                 .SendAsync(Context.Channel);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("alias-list")]
@@ -202,7 +201,6 @@ namespace wow2.Bot.Modules.Main
             Config.CommandPrefix = prefix;
             await new SuccessMessage($"Changed command prefix to `{prefix}`")
                 .SendAsync(Context.Channel);
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         /// <summary>Builds embed fields for all command modules.</summary>

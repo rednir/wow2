@@ -118,8 +118,6 @@ namespace wow2.Bot.Modules.Osu
                     $"You'll get notifications about `{userData.username}` ({mode})")
                         .SendAsync(Context.Channel);
             }
-
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
         }
 
         [Command("list-subs")]
@@ -154,8 +152,6 @@ namespace wow2.Bot.Modules.Osu
         public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
         {
             Config.AnnouncementsChannelId = channel.Id;
-            await DataManager.SaveGuildDataToFileAsync(Context.Guild.Id);
-
             await new SuccessMessage($"You'll get osu! announcements in {channel.Mention}")
                 .SendAsync(Context.Channel);
         }
