@@ -137,7 +137,7 @@ namespace wow2.Bot.Verbose.Messages
                         Text = $"{AllFieldBuilders.Count - maxFieldsPerPage} items were excluded",
                     };
 
-                    EmbedBuilder.Fields = AllFieldBuilders.GetRange(0, 25);
+                    EmbedBuilder.Fields = AllFieldBuilders.GetRange(0, AllFieldBuilders.Count > 25 ? 25 : AllFieldBuilders.Count);
                 }
                 else
                 {
