@@ -78,7 +78,8 @@ namespace wow2.Bot.Modules.Dev
             await new PagedMessage(
                 fieldBuilders: listOfFieldBuilders,
                 description: $"The bot is in {guilds.Count} guilds{descExt}.",
-                title: "Joined Guilds")
+                title: "Joined Guilds",
+                page: 1)
                     .SendAsync(Context.Channel);
         }
 
