@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -226,9 +227,25 @@ namespace wow2.Bot.Modules.Dev
                 .SendAsync(Context.Channel);
         }
 
+        [Command("execute-manual-script")]
+        [Alias("execute-manual", "manual-script", "script", "manual")]
+        [Summary("Run the file at the environment variable WOW2_MANUAL_SCRIPT.")]
+        public async Task ExecuteManualScriptAsync()
+        {
+            using (var process = new Process())
+            {
+                process.StartInfo.FileName = Environment.GetEnvironmentVariable("WOW2_MANUAL_SCRIPT");
+                process.Start();
+                await process.WaitForExitAsync();
+            }
+
+            await new SuccessMessage("Done.")
+                .SendAsync(Context.Channel);
+        }
+
         [Command("stop-program")]
-        [Summary("Stops the program.")]
-        public async Task StopProgramAsync()
+        [Summary("Prepares to stop the program.")]
+        public async Task StopProgramAsync(bool exit = false)
         {
             await SaveGuildDataAsync();
 
@@ -253,7 +270,8 @@ namespace wow2.Bot.Modules.Dev
             await new SuccessMessage("Done.")
                 .SendAsync(Context.Channel);
 
-            Environment.Exit(0);
+            if (exit)
+                Environment.Exit(0);
         }
 
         [Command("throw")]
