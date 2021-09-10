@@ -80,11 +80,19 @@ namespace wow2.Bot.Extensions
 
         /// <summary>Checks if a list is longer than the maximum length allowed and truncates it if so, removing elements from the start.</summary>
         /// <returns>The number of items removed.</returns>
-        public static int Truncate<T>(this IList<T> list, int maxLength)
+        public static int Truncate<T>(this IList<T> list, int maxLength, bool removeLast = false)
         {
             int elementsToRemove = Math.Max(list.Count - maxLength, 0);
-            for (int i = 0; i < elementsToRemove; i++)
-                list.RemoveAt(0);
+            if (removeLast)
+            {
+                for (int i = 0; i < elementsToRemove; i++)
+                    list.RemoveAt(list.Count - 1);
+            }
+            else
+            {
+                for (int i = 0; i < elementsToRemove; i++)
+                    list.RemoveAt(0);
+            }
 
             return elementsToRemove;
         }
