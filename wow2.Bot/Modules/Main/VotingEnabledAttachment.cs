@@ -13,6 +13,7 @@ namespace wow2.Bot.Modules.Main
 
         public VotingEnabledAttachment(ICommandContext context)
         {
+            GuildId = context.Guild.Id;
             ChannelId = context.Channel.Id;
             MessageId = context.Message.Id;
             FileName = context.Message.Attachments.FirstOrDefault()?.Url.Split('/').Last();
@@ -20,7 +21,9 @@ namespace wow2.Bot.Modules.Main
             DateTime = context.Message.Timestamp.DateTime;
         }
 
-        public string AttachmentUrl => $"https://cdn.discordapp.com/attachments/{ChannelId}/{MessageId}/{FileName}";
+        public string MessageUrl => $"https://cdn.discordapp.com/channels/{GuildId}/{ChannelId}/{MessageId}";
+
+        public ulong GuildId { get; set; }
 
         public ulong ChannelId { get; set; }
 
