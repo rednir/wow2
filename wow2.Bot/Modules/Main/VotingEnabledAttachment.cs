@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Discord.Commands;
 
@@ -31,8 +32,10 @@ namespace wow2.Bot.Modules.Main
 
         public DateTimeOffset DateTime { get; set; }
 
-        public int Likes { get; set; }
+        public int Points => UsersLikedIds.Count - UsersDislikedIds.Count;
 
-        public int Dislikes { get; set; }
+        public List<ulong> UsersLikedIds { get; set; } = new();
+
+        public List<ulong> UsersDislikedIds { get; set; } = new();
     }
 }
