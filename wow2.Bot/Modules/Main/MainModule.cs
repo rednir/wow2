@@ -222,12 +222,11 @@ namespace wow2.Bot.Modules.Main
 
             foreach (var attachment in attachmentsCollection)
             {
-                var fieldBuilderForKeyword = new EmbedFieldBuilder()
+                listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"[{attachment.AttachmentUrl}]({attachment.FileName}) | *{attachment.Points} points*",
-                    Value = $"{attachment.UsersLikedIds.Count} likes, {attachment.UsersDislikedIds.Count}\nUploaded by {attachment.AuthorMention} at {attachment.DateTime}",
-                };
-                listOfFieldBuilders.Add(fieldBuilderForKeyword);
+                    Name = $"{attachment.Points} points",
+                    Value = $"[{attachment.FileName}]({attachment.AttachmentUrl}) by {attachment.AuthorMention} at {attachment.DateTime.ToShortDateString()}\n{attachment.UsersLikedIds.Count} {LikeReactionEmote}   |   {attachment.UsersDislikedIds.Count} {DislikeReactionEmote}",
+                });
             }
 
             await new PagedMessage(
