@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Discord.WebSocket;
 using Google;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
@@ -139,10 +140,9 @@ namespace wow2.Bot.Modules.YouTube
                 {
                     try
                     {
-                        throw new NotImplementedException();
-                        /*await NotifyGuildForNewVideoAsync(
+                        await NotifyGuildForNewVideoAsync(
                             video: await GetVideoAsync(pair.Key),
-                            channel: (SocketTextChannel)BotService.Client.GetChannel(channelId));*/
+                            channel: (SocketTextChannel)BotService.Client.GetChannel(channelId));
                     }
                     catch (Exception ex)
                     {
@@ -152,6 +152,12 @@ namespace wow2.Bot.Modules.YouTube
             }
 
             TimeOfLastVideoCheck = DateTime.Now;
+        }
+
+        private static async Task NotifyGuildForNewVideoAsync(Video video, SocketTextChannel channel)
+        {
+            await channel.SendMessageAsync(
+                $"**{video.Snippet.ChannelTitle}** just uploaded a new video! Check it out:\nhttps://www.youtube.com/watch?v={video.Id}");
         }
     }
 }

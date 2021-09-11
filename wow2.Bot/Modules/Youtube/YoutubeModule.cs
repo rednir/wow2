@@ -113,12 +113,6 @@ namespace wow2.Bot.Modules.YouTube
                 .SendAsync(Context.Channel);
         }
 
-        private static async Task NotifyGuildForNewVideoAsync(Video video, SocketTextChannel channel)
-        {
-            await channel.SendMessageAsync(
-                $"**{video.Snippet.ChannelTitle}** just uploaded a new video! Check it out:\nhttps://www.youtube.com/watch?v={video.Id}");
-        }
-
         private async Task<Embed> BuildChannelOverviewEmbedAsync(Channel channel)
         {
             var uploads = await Service.GetChannelUploadsAsync(channel);
