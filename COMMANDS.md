@@ -1,4 +1,4 @@
-# List of commands (87 total)
+# List of commands (88 total)
 
 ## Main (10)
 Stuff to do with the bot and other random stuff.
@@ -130,7 +130,7 @@ For having a bit of fun.
 |`!wow games verbal-memory`|Try remember as many words as you can.|
 |`!wow games verbal-memory-leaderboard [optional:PAGE]`|Shows the leaderboard for the counting game.|
 
-## Developer (17)
+## Developer (18)
 Boring stuff for developers.
 
 |Command|Summary|
@@ -151,5 +151,6 @@ Boring stuff for developers.
 |`!wow dev reconnect`|Disconnect and reconnect the bot.|
 |`!wow dev execute-manual-script`|Run the file at the environment variable WOW2_MANUAL_SCRIPT.|
 |`!wow dev stop-program [optional:EXIT]`|Prepares to stop the program.|
+|`!wow dev migrate-attachments [CHANNEL]`|Migrates attachments.|
 |`!wow dev throw`|Throws an unhandled exception.|
 

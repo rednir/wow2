@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using Discord;
 using Discord.Commands;
+using Discord.Rest;
+using Discord.WebSocket;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 using wow2.Bot.Modules.Keywords;
+using wow2.Bot.Modules.Main;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
@@ -276,6 +280,47 @@ namespace wow2.Bot.Modules.Dev
 
             if (exit)
                 Environment.Exit(0);
+        }
+
+        // Temporary and rushed method.
+        [Command("migrate-attachments")]
+        [Summary("Migrates attachments, clearing the current list.")]
+        public async Task MigrateAttachmentsAsync(SocketTextChannel channel)
+        {
+            var config = DataManager.AllGuildData[channel.GetGuild().Id].Main;
+            config.VotingEnabledAttachments.Clear();
+
+            await foreach (var messageBatch in channel.GetMessagesAsync(200))
+            {
+                foreach (RestUserMessage message in messageBatch)
+                {
+                    foreach (var reactionPair in message.Reactions)
+                    {
+                        if (reactionPair.Key.Name != MainModule.LikeReactionEmote.Name)
+                            continue;
+
+                        await foreach (var userBatch in message.GetReactionUsersAsync(MainModule.LikeReactionEmote, 10))
+                        {
+                            if (!config.VotingEnabledAttachments.Any(a => a.MessageId == message.Id))
+                                config.VotingEnabledAttachments.Add(new VotingEnabledAttachment(new CommandContext(BotService.Client, message)));
+
+                            VotingEnabledAttachment attachment = config.VotingEnabledAttachments.Find(a => a.MessageId == message?.Id);
+
+                            foreach (var user in userBatch)
+                            {
+                                if (user == BotService.Client.CurrentUser)
+                                    continue;
+
+                                attachment.UsersLikedIds.Add(user.Id);
+                                Logger.Log($"Added reaction {reactionPair.Key.Name} by user {user}");
+                            }
+                        }
+                    }
+                }
+            }
+
+            await new SuccessMessage("Done.")
+                .SendAsync(Context.Channel);
         }
 
         [Command("throw")]
