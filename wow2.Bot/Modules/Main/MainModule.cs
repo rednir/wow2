@@ -44,11 +44,16 @@ namespace wow2.Bot.Modules.Main
 
         public static async Task CheckMessageAsync(SocketCommandContext context)
         {
-            if (DataManager.AllGuildData[context.Guild.Id].Main.VotingEnabledChannelIds.Contains(context.Channel.Id)
-                && context.Message.Attachments.Count > 0)
+            var config = DataManager.AllGuildData[context.Guild.Id].Main;
+
+            if (!DataManager.AllGuildData[context.Guild.Id].Main.VotingEnabledChannelIds.Contains(context.Channel.Id)
+                || context.Message.Attachments.Count == 0)
             {
-                _ = context.Message.AddReactionsAsync(new[] { LikeReactionEmote, DislikeReactionEmote });
+                return;
             }
+
+            _ = context.Message.AddReactionsAsync(new[] { LikeReactionEmote, DislikeReactionEmote });
+            config.VotingEnabledAttachments.Add(new VotingEnabledAttachment(context));
         }
 
         [Command("about")]
