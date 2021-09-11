@@ -119,7 +119,6 @@ namespace wow2.Bot.Modules.Games.Counting
             config.IsGameStarted = false;
             config.LeaderboardEntries.Add(new CountingLeaderboardEntry(config));
             config.LeaderboardEntries = config.LeaderboardEntries.OrderByDescending(e => e.Points).ToList();
-            config.LeaderboardEntries.Truncate(100, true);
         }
 
         private static string MakeComment(float nextNumber, float increment)
