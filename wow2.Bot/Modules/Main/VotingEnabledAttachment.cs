@@ -11,7 +11,7 @@ namespace wow2.Bot.Modules.Main
         {
         }
 
-        public VotingEnabledAttachment(SocketCommandContext context)
+        public VotingEnabledAttachment(ICommandContext context)
         {
             ChannelId = context.Channel.Id;
             MessageId = context.Message.Id;
