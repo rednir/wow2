@@ -182,7 +182,7 @@ namespace wow2.Bot.Modules.Keywords
         [Command("list")]
         [Alias("show", "all")]
         [Summary("Shows a list of all keywords, and a preview of their values. SORTBY can be date/likes/deletions/values")]
-        public async Task ListAsync(int page = 1, KeywordSorts sort = KeywordSorts.Date)
+        public async Task ListAsync(KeywordSorts sort = KeywordSorts.Date, int page = 1)
         {
             var keywordsDictionary = Config.KeywordsDictionary;
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
