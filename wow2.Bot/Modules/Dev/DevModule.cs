@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -232,9 +233,12 @@ namespace wow2.Bot.Modules.Dev
         [Summary("Run the file at the environment variable WOW2_MANUAL_SCRIPT.")]
         public async Task ExecuteManualScriptAsync()
         {
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
             using (var process = new Process())
             {
-                process.StartInfo.FileName = Environment.GetEnvironmentVariable("WOW2_MANUAL_SCRIPT");
+                process.StartInfo.FileName = isWindows ? "cmd" : "bash";
+                process.StartInfo.Arguments = $"{(isWindows ? "/c" : "-c")} {Environment.GetEnvironmentVariable("WOW2_MANUAL_SCRIPT")}";
                 process.Start();
                 await process.WaitForExitAsync();
             }
