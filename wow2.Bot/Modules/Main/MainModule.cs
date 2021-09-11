@@ -56,6 +56,42 @@ namespace wow2.Bot.Modules.Main
             config.VotingEnabledAttachments.Add(new VotingEnabledAttachment(context));
         }
 
+        public static bool ActOnReactionAdded(SocketReaction reaction)
+        {
+            var config = DataManager.AllGuildData[reaction.Channel.GetGuild().Id].Main;
+
+            VotingEnabledAttachment attachment = config.VotingEnabledAttachments.Find(a => a.MessageId == reaction.MessageId);
+            if (attachment == null)
+                return false;
+
+            if (reaction.Emote.Name == LikeReactionEmote.Name && !attachment.UsersLikedIds.Contains(reaction.UserId))
+                attachment.UsersLikedIds.Add(reaction.UserId);
+            else if (reaction.Emote.Name == DislikeReactionEmote.Name && !attachment.UsersLikedIds.Contains(reaction.UserId))
+                attachment.UsersDislikedIds.Add(reaction.UserId);
+            else
+                return false;
+
+            return true;
+        }
+
+        public static bool ActOnReactionRemoved(SocketReaction reaction)
+        {
+            var config = DataManager.AllGuildData[reaction.Channel.GetGuild().Id].Main;
+
+            VotingEnabledAttachment attachment = config.VotingEnabledAttachments.Find(a => a.MessageId == reaction.MessageId);
+            if (attachment == null)
+                return false;
+
+            if (reaction.Emote.Name == LikeReactionEmote.Name && attachment.UsersLikedIds.Contains(reaction.UserId))
+                attachment.UsersLikedIds.Remove(reaction.UserId);
+            else if (reaction.Emote.Name == DislikeReactionEmote.Name && attachment.UsersLikedIds.Contains(reaction.UserId))
+                attachment.UsersDislikedIds.Remove(reaction.UserId);
+            else
+                return false;
+
+            return true;
+        }
+
         [Command("about")]
         [Summary("Shows some infomation about the bot.")]
         public async Task AboutAsync()

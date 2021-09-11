@@ -225,7 +225,8 @@ namespace wow2.Bot
             if (reaction.UserId == Client.CurrentUser.Id)
                 return;
 
-            await ResponseMessage.ActOnReactionAddedAsync(reaction);
+            _ = !await ResponseMessage.ActOnReactionAddedAsync(reaction)
+                && !MainModule.ActOnReactionAdded(reaction);
         }
 
         public static async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
@@ -233,11 +234,8 @@ namespace wow2.Bot
             if (reaction.UserId == Client.CurrentUser.Id)
                 return;
 
-            IUserMessage message = await cachedMessage.GetOrDownloadAsync();
-            if (message == null)
-                return;
-
-            ResponseMessage.ActOnReactionRemoved(reaction);
+            _ = !ResponseMessage.ActOnReactionRemoved(reaction)
+                && !MainModule.ActOnReactionRemoved(reaction);
         }
 
         public static async Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel)
