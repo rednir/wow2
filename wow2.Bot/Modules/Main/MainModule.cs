@@ -42,6 +42,15 @@ namespace wow2.Bot.Modules.Main
             return false;
         }
 
+        public static async Task CheckMessageAsync(SocketCommandContext context)
+        {
+            if (DataManager.AllGuildData[context.Guild.Id].Main.VotingEnabledChannelIds.Contains(context.Channel.Id)
+                && context.Message.Attachments.Count > 0)
+            {
+                _ = context.Message.AddReactionsAsync(new[] { LikeReactionEmote, DislikeReactionEmote });
+            }
+        }
+
         [Command("about")]
         [Summary("Shows some infomation about the bot.")]
         public async Task AboutAsync()

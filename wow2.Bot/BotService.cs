@@ -383,13 +383,7 @@ namespace wow2.Bot
         {
             SocketUserMessage message = context.Message;
 
-            // For channels added with "toggle-image-voting-in-channel" in main module.
-            // todo: This should exist elsewhere (as with everything else in this method honestly)
-            if (DataManager.AllGuildData[context.Guild.Id].Main.VotingEnabledChannelIds.Contains(context.Channel.Id)
-                && message.Attachments.Count > 0)
-            {
-                _ = message.AddReactionsAsync(new[] { MainModule.LikeReactionEmote, MainModule.DislikeReactionEmote });
-            }
+            await MainModule.CheckMessageAsync(context);
 
             // Only auto mod message if not related to a game.
             if (!await CountingGame.CheckMessageAsync(context))
