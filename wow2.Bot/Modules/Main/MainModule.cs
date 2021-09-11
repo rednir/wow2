@@ -66,7 +66,7 @@ namespace wow2.Bot.Modules.Main
 
             if (reaction.Emote.Name == LikeReactionEmote.Name && !attachment.UsersLikedIds.Contains(reaction.UserId))
                 attachment.UsersLikedIds.Add(reaction.UserId);
-            else if (reaction.Emote.Name == DislikeReactionEmote.Name && !attachment.UsersLikedIds.Contains(reaction.UserId))
+            else if (reaction.Emote.Name == DislikeReactionEmote.Name && !attachment.UsersDislikedIds.Contains(reaction.UserId))
                 attachment.UsersDislikedIds.Add(reaction.UserId);
             else
                 return false;
@@ -84,7 +84,7 @@ namespace wow2.Bot.Modules.Main
 
             if (reaction.Emote.Name == LikeReactionEmote.Name && attachment.UsersLikedIds.Contains(reaction.UserId))
                 attachment.UsersLikedIds.Remove(reaction.UserId);
-            else if (reaction.Emote.Name == DislikeReactionEmote.Name && attachment.UsersLikedIds.Contains(reaction.UserId))
+            else if (reaction.Emote.Name == DislikeReactionEmote.Name && attachment.UsersDislikedIds.Contains(reaction.UserId))
                 attachment.UsersDislikedIds.Remove(reaction.UserId);
             else
                 return false;
@@ -212,13 +212,41 @@ namespace wow2.Bot.Modules.Main
         public async Task SayAsync(string message)
             => await ReplyAsync(message);
 
-        [Command("upload-raw-data")]
-        [Alias("raw-data", "upload-raw")]
-        [Summary("Uploads a file containing all the data the bot stores about this server.")]
-        public async Task UploadRawGuildDataAsync()
+        [Command("attachment-list")]
+        [Alias("list-attachment", "list-attachments", "attachments-list", "attachments", "image-list", "list-images")]
+        [Summary("Lists all attachments with voting enabled.")]
+        public async Task AttachmentListAsync(AttachmentSorts sort = AttachmentSorts.Date, int page = 1)
         {
-            await Context.Channel.SendFileAsync(
-                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json");
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+            var attachmentsCollection = getAttachments();
+
+            foreach (var attachment in attachmentsCollection)
+            {
+                var fieldBuilderForKeyword = new EmbedFieldBuilder()
+                {
+                    Name = $"[{attachment.AttachmentUrl}]({attachment.FileName}) | *{attachment.Points} points*",
+                    Value = $"{attachment.UsersLikedIds.Count} likes, {attachment.UsersDislikedIds.Count}\nUploaded by {attachment.AuthorMention} at {attachment.DateTime}",
+                };
+                listOfFieldBuilders.Add(fieldBuilderForKeyword);
+            }
+
+            await new PagedMessage(
+                fieldBuilders: listOfFieldBuilders,
+                description: $"*There are {attachmentsCollection.Length} attachments with voting enabled, as listed below.*",
+                title: "🖼 Voting-enabled Attachments",
+                page: page)
+                    .SendAsync(Context.Channel);
+
+            VotingEnabledAttachment[] getAttachments()
+            {
+                return sort switch
+                {
+                    AttachmentSorts.Likes => Config.VotingEnabledAttachments.OrderByDescending(p => p.UsersLikedIds.Count).ToArray(),
+                    AttachmentSorts.Dislikes => Config.VotingEnabledAttachments.OrderByDescending(p => p.UsersDislikedIds.Count).ToArray(),
+                    AttachmentSorts.Points => Config.VotingEnabledAttachments.OrderByDescending(p => p.Points).ToArray(),
+                    _ => Config.VotingEnabledAttachments.ToArray(),
+                };
+            }
         }
 
         [Command("toggle-attachment-voting")]
@@ -291,6 +319,15 @@ namespace wow2.Bot.Modules.Main
                 }
             });
             return listOfFieldBuilders;
+        }
+
+        [Command("upload-raw-data")]
+        [Alias("raw-data", "upload-raw")]
+        [Summary("Uploads a file containing all the data the bot stores about this server.")]
+        public async Task UploadRawGuildDataAsync()
+        {
+            await Context.Channel.SendFileAsync(
+                filePath: $"{DataManager.AppDataDirPath}/GuildData/{Context.Guild.Id}.json");
         }
 
         /// <summary>Builds embed fields for commands in a single module.</summary>
