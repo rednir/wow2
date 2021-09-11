@@ -267,7 +267,7 @@ namespace wow2.Bot.Modules.Dev
                 }
             }
 
-            await new SuccessMessage("Done.")
+            await new SuccessMessage(exit ? "The bot will be stopped." : "The bot is ready to be stopped.")
                 .SendAsync(Context.Channel);
 
             if (exit)
