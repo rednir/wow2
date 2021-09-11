@@ -215,18 +215,20 @@ namespace wow2.Bot.Modules.Main
         [Command("attachment-list")]
         [Alias("list-attachment", "list-attachments", "attachments-list", "attachments", "image-list", "list-images")]
         [Summary("Lists all attachments with voting enabled.")]
-        public async Task AttachmentListAsync(AttachmentSorts sort = AttachmentSorts.Date, int page = 1)
+        public async Task AttachmentListAsync(AttachmentSorts sort = AttachmentSorts.Points, int page = 1)
         {
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             var attachmentsCollection = getAttachments();
 
+            int num = 1;
             foreach (var attachment in attachmentsCollection)
             {
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = $"{attachment.Points} points",
+                    Name = $"{num}) {attachment.Points} points",
                     Value = $"[{attachment.FileName}]({attachment.AttachmentUrl}) by {attachment.AuthorMention} at {attachment.DateTime.ToShortDateString()}\n{attachment.UsersLikedIds.Count} {LikeReactionEmote}   |   {attachment.UsersDislikedIds.Count} {DislikeReactionEmote}",
                 });
+                num++;
             }
 
             await new PagedMessage(

@@ -151,6 +151,6 @@ Boring stuff for developers.
 |`!wow dev reconnect`|Disconnect and reconnect the bot.|
 |`!wow dev execute-manual-script`|Run the file at the environment variable WOW2_MANUAL_SCRIPT.|
 |`!wow dev stop-program [optional:EXIT]`|Prepares to stop the program.|
-|`!wow dev migrate-attachments [CHANNEL]`|Migrates attachments.|
+|`!wow dev migrate-attachments [CHANNEL]`|Migrates attachments, clearing the current list.|
 |`!wow dev throw`|Throws an unhandled exception.|
 
