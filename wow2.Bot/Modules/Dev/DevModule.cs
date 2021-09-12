@@ -282,59 +282,6 @@ namespace wow2.Bot.Modules.Dev
                 Environment.Exit(0);
         }
 
-        // Temporary and rushed method.
-        [Command("migrate-attachments")]
-        [Summary("Migrates attachments, clearing the current list.")]
-        public async Task MigrateAttachmentsAsync(SocketTextChannel channel)
-        {
-            var config = DataManager.AllGuildData[channel.GetGuild().Id].Main;
-            config.VotingEnabledAttachments.Clear();
-
-            await foreach (var messageBatch in channel.GetMessagesAsync(200))
-            {
-                foreach (RestUserMessage message in messageBatch)
-                {
-                    foreach (var reactionPair in message.Reactions)
-                    {
-                        if (reactionPair.Key.Name != MainModule.LikeReactionEmote.Name)
-                            continue;
-
-                        if (!config.VotingEnabledAttachments.Any(a => a.MessageId == message.Id))
-                            config.VotingEnabledAttachments.Add(new VotingEnabledAttachment(new CommandContext(BotService.Client, message)));
-
-                        VotingEnabledAttachment attachment = config.VotingEnabledAttachments.Find(a => a.MessageId == message?.Id);
-
-                        await foreach (var userBatch in message.GetReactionUsersAsync(MainModule.LikeReactionEmote, 10))
-                        {
-                            foreach (var user in userBatch)
-                            {
-                                if (user.Id == BotService.Client.CurrentUser.Id)
-                                    continue;
-
-                                attachment.UsersLikedIds.Add(user.Id);
-                                Logger.Log($"Added reaction {MainModule.LikeReactionEmote} by user {user}");
-                            }
-                        }
-
-                        await foreach (var userBatch in message.GetReactionUsersAsync(MainModule.DislikeReactionEmote, 10))
-                        {
-                            foreach (var user in userBatch)
-                            {
-                                if (user.Id == BotService.Client.CurrentUser.Id)
-                                    continue;
-
-                                attachment.UsersDislikedIds.Add(user.Id);
-                                Logger.Log($"Added reaction {MainModule.DislikeReactionEmote} by user {user}");
-                            }
-                        }
-                    }
-                }
-            }
-
-            await new SuccessMessage("Done.")
-                .SendAsync(Context.Channel);
-        }
-
         [Command("throw")]
         [Summary("Throws an unhandled exception.")]
         public Task Throw()
