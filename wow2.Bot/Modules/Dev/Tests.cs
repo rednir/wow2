@@ -49,7 +49,7 @@ namespace wow2.Bot.Modules.Dev
         public static async Task PagedMessageTest(SocketCommandContext context)
         {
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 100000; i++)
             {
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
@@ -58,7 +58,7 @@ namespace wow2.Bot.Modules.Dev
                 });
             }
 
-            await new PagedMessage(listOfFieldBuilders, "This is a response message with fields.", "Fields", 2)
+            await new PagedMessage(listOfFieldBuilders, "This is a response message with fields.", "Fields", 1000)
                 .SendAsync(context.Channel);
         }
 
