@@ -299,20 +299,32 @@ namespace wow2.Bot.Modules.Dev
                         if (reactionPair.Key.Name != MainModule.LikeReactionEmote.Name)
                             continue;
 
+                        if (!config.VotingEnabledAttachments.Any(a => a.MessageId == message.Id))
+                            config.VotingEnabledAttachments.Add(new VotingEnabledAttachment(new CommandContext(BotService.Client, message)));
+
+                        VotingEnabledAttachment attachment = config.VotingEnabledAttachments.Find(a => a.MessageId == message?.Id);
+
                         await foreach (var userBatch in message.GetReactionUsersAsync(MainModule.LikeReactionEmote, 10))
                         {
-                            if (!config.VotingEnabledAttachments.Any(a => a.MessageId == message.Id))
-                                config.VotingEnabledAttachments.Add(new VotingEnabledAttachment(new CommandContext(BotService.Client, message)));
-
-                            VotingEnabledAttachment attachment = config.VotingEnabledAttachments.Find(a => a.MessageId == message?.Id);
-
                             foreach (var user in userBatch)
                             {
-                                if (user == BotService.Client.CurrentUser)
+                                if (user.Id == BotService.Client.CurrentUser.Id)
                                     continue;
 
                                 attachment.UsersLikedIds.Add(user.Id);
-                                Logger.Log($"Added reaction {reactionPair.Key.Name} by user {user}");
+                                Logger.Log($"Added reaction {MainModule.LikeReactionEmote} by user {user}");
+                            }
+                        }
+
+                        await foreach (var userBatch in message.GetReactionUsersAsync(MainModule.DislikeReactionEmote, 10))
+                        {
+                            foreach (var user in userBatch)
+                            {
+                                if (user.Id == BotService.Client.CurrentUser.Id)
+                                    continue;
+
+                                attachment.UsersDislikedIds.Add(user.Id);
+                                Logger.Log($"Added reaction {MainModule.DislikeReactionEmote} by user {user}");
                             }
                         }
                     }
