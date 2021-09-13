@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
 using Discord;
-using wow2.Bot.Extensions;
 using wow2.Bot.Verbose;
 
-namespace wow2.Bot.Modules
+namespace wow2.Bot
 {
     /// <summary>Service allowing modules to execute code on intervals.</summary>
     public static class PollingService
