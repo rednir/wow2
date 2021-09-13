@@ -229,13 +229,15 @@ namespace wow2.Bot
                 && !MainModule.ActOnReactionAdded(reaction);
         }
 
-        public static async Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
+        public static Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
         {
             if (reaction.UserId == Client.CurrentUser.Id)
-                return;
+                return Task.CompletedTask;
 
             _ = !ResponseMessage.ActOnReactionRemoved(reaction)
                 && !MainModule.ActOnReactionRemoved(reaction);
+
+            return Task.CompletedTask;
         }
 
         public static async Task MessageDeletedAsync(Cacheable<IMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel)
