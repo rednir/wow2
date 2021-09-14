@@ -47,6 +47,7 @@ namespace wow2.Bot.Modules.ServerIcon
             if (config.IconRotateTimerInterval == null)
                 return;
 
+            config.IconRotateTimer?.Stop();
             config.IconRotateTimer = new Timer()
             {
                 Interval = config.IconRotateTimerInterval.Value,
