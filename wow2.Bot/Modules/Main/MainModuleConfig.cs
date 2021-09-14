@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Timers;
 using Discord;
 
 namespace wow2.Bot.Modules.Main
@@ -14,10 +14,12 @@ namespace wow2.Bot.Modules.Main
 
         public List<VotingEnabledAttachment> VotingEnabledAttachments { get; set; } = new();
 
-        public bool IsIconRotateOn { get; set; }
+        public Timer IconRotateTimer { get; set; }
 
-        public TimeSpan IconRotateTimeSpan { get; set; }
+        public double? IconRotateTimerInterval { get; set; }
 
-        public List<Image> IconsToRotate { get; set; }
+        public List<Image> IconsToRotate { get; set; } = new();
+
+        public int IconsToRotateIndex { get; set; }
     }
 }

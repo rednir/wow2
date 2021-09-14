@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -90,6 +91,29 @@ namespace wow2.Bot.Modules.Main
                 return false;
 
             return true;
+        }
+
+        private static void InitializeTimer(SocketGuild guild, MainModuleConfig config)
+        {
+            if (config.IconRotateTimerInterval == null)
+                return;
+
+            config.IconRotateTimer = new Timer()
+            {
+                Interval = config.IconRotateTimerInterval.Value,
+            };
+
+            config.IconRotateTimer.Elapsed += async (source, e) =>
+            {
+                if (config.IconsToRotate.Count < 2)
+                    return;
+
+                if (config.IconsToRotateIndex >= config.IconsToRotate.Count)
+                    config.IconsToRotateIndex = 0;
+
+                await guild.ModifyAsync(g => g.Icon = config.IconsToRotate[config.IconsToRotateIndex]);
+                config.IconsToRotateIndex++;
+            };
         }
 
         [Command("about")]
@@ -276,9 +300,39 @@ namespace wow2.Bot.Modules.Main
         public async Task ToggleIconRotateAsync()
         {
             await SendToggleQuestionAsync(
-                currentState: Config.IsIconRotateOn,
-                setter: x => Config.IsIconRotateOn = x,
-                toggledOnMessage: $"Icons will start rotating every {Config.IconRotateTimeSpan.TotalDays} days{(Config.IconsToRotate.Count == 0 ? " after you add your first icon" : null)}.",
+                currentState: Config.IconRotateTimerInterval != null,
+                setter: async x =>
+                {
+                    if (x)
+                    {
+                        await new TimeSpanSelectorMessage(
+                            confirmFunc: async t =>
+                            {
+                                if (t < TimeSpan.FromHours(12))
+                                {
+                                    await new WarningMessage("Time span is too short. Try something a bit longer.")
+                                        .SendAsync(Context.Channel);
+                                    return;
+                                }
+
+                                Config.IconRotateTimerInterval = t.TotalMilliseconds;
+                                InitializeTimer(Context.Guild, Config);
+                                await new SuccessMessage($"The server icon will rotate periodically{(Config.IconsToRotate.Count < 2 ? " once you add more than 2 icons to the list" : null)}.")
+                                    .SendAsync(Context.Channel);
+                            },
+                            description: "Cool! Now you need to set how many days you want in between each rotation.")
+                        {
+                            TimeSpan = TimeSpan.FromMilliseconds(Config.IconRotateTimerInterval ?? 0),
+                        }
+                            .SendAsync(Context.Channel);
+                    }
+                    else if (!x)
+                    {
+                        Config.IconRotateTimerInterval = null;
+                        Config.IconRotateTimer?.Stop();
+                    }
+                },
+                toggledOnMessage: null,
                 toggledOffMessage: "The server icon will no longer rotate periodically.");
         }
 
