@@ -19,7 +19,7 @@ namespace wow2.Bot.Modules.ServerIcon
     [Summary("Manage the icon of this server.")]
     public class ServerIconModule : Module
     {
-        public static WebClient WebClient { get; set; }
+        public static WebClient WebClient { get; set; } = new();
 
         private ServerIconModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].ServerIcon;
 
