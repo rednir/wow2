@@ -1,6 +1,6 @@
-# List of commands (88 total)
+# List of commands (90 total)
 
-## Main (11)
+## Main (13)
 Stuff to do with the bot and other random stuff.
 
 |Command|Summary|
@@ -14,6 +14,8 @@ Stuff to do with the bot and other random stuff.
 |`!wow toggle-attachment-voting [CHANNEL]`|Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.|
 |`!wow attachment-list [optional:SORT] [optional:PAGE]`|Lists all attachments with voting enabled. SORT can be points/users/date/likes/deletions/values, default is likes.|
 |`!wow toggle-icon-rotate`|Toggles whether this server's icon will rotate periodically. You can configure what images are in the rotation.|
+|`!wow add-icon [IMAGEURL]`|Adds an icon for server icon rotation. IMAGEURL must contain an image only.|
+|`!wow list-icons [optional:PAGE]`|Lists all the server icons in rotation.|
 |`!wow set-command-prefix [PREFIX]`|Change the prefix used to identify commands. '!wow' is the default.|
 |`!wow upload-raw-data`|Uploads a file containing all the data the bot stores about this server.|
 

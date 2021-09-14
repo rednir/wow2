@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.WebSockets;
 using System.Reflection;
 using System.Text;
@@ -73,6 +74,7 @@ namespace wow2.Bot
             Services = new ServiceCollection()
                 .AddSingleton<IYoutubeModuleService>(new YoutubeModuleService(DataManager.Secrets.GoogleApiKey))
                 .AddSingleton<IOsuModuleService>(new OsuModuleService(DataManager.Secrets.OsuClientId, DataManager.Secrets.OsuClientSecret))
+                .AddSingleton<WebClient>()
                 .BuildServiceProvider();
 
             // TODO: inject this the proper way. need to get DownloadService non-static first.

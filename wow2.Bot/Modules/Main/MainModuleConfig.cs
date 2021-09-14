@@ -18,7 +18,7 @@ namespace wow2.Bot.Modules.Main
 
         public double? IconRotateTimerInterval { get; set; }
 
-        public List<Image> IconsToRotate { get; set; } = new();
+        public List<ServerIcon> IconsToRotate { get; set; } = new();
 
         public int IconsToRotateIndex { get; set; }
     }
