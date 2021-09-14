@@ -253,6 +253,7 @@ namespace wow2.Bot
             _ = !await PagedMessage.ActOnButtonAsync(component)
                 && !await QuestionMessage.ActOnButtonAsync(component)
                 && !await DateTimeSelectorMessage.ActOnButtonAsync(component)
+                && !await TimeSpanSelectorMessage.ActOnButtonAsync(component)
                 && !await VerbalMemoryGame.ActOnButtonAsync(component);
         }
 
