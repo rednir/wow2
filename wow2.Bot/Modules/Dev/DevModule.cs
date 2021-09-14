@@ -263,7 +263,7 @@ namespace wow2.Bot.Modules.Dev
 
             foreach (GuildData guildData in DataManager.AllGuildData.Values)
             {
-                foreach (ResponseMessage message in guildData.Keywords.ListOfResponseMessages)
+                foreach (ResponseMessage message in guildData.Keywords.ListOfResponseMessages.ToArray())
                 {
                     try
                     {
@@ -274,7 +274,7 @@ namespace wow2.Bot.Modules.Dev
                     }
                 }
 
-                foreach (PagedMessage message in guildData.PagedMessages)
+                foreach (PagedMessage message in guildData.PagedMessages.ToArray())
                 {
                     try
                     {
