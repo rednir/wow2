@@ -11,7 +11,7 @@ Stuff to do with the bot and other random stuff.
 |`!wow alias-list`|Displays a list of aliases.|
 |`!wow ping`|Checks the latency between the message that executes a command, and the response that the bot sends.|
 |`!wow say [MESSAGE]`|Sends a message. That's it.|
-|`!wow attachment-list [optional:SORT] [optional:PAGE]`|Lists all attachments with voting enabled.|
+|`!wow attachment-list [optional:SORT] [optional:PAGE]`|Lists all attachments with voting enabled. SORT can be points/users/date/likes/deletions/values, default is likes.|
 |`!wow toggle-attachment-voting [CHANNEL]`|Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.|
 |`!wow set-command-prefix [PREFIX]`|Change the prefix used to identify commands. '!wow' is the default.|
 |`!wow upload-raw-data`|Uploads a file containing all the data the bot stores about this server.|
@@ -111,7 +111,7 @@ Automatically respond to keywords in user messages.
 |`!wow keywords add [KEYWORD] [VALUE]`|Adds value(s) to a keyword, creating a new keyword if it doesn't exist.|
 |`!wow keywords remove [KEYWORD] [optional:VALUE]`|Removes value(s) from a keyword, or if none are specified, removes all values and the keyword.|
 |`!wow keywords rename [OLDKEYWORD] [NEWKEYWORD]`|Renames a keyword, leaving its values unchanged.|
-|`!wow keywords list [optional:SORT] [optional:PAGE]`|Shows a list of all keywords, and a preview of their values. SORTBY can be date/likes/deletions/values|
+|`!wow keywords list [optional:SORT] [optional:PAGE]`|Shows a list of all keywords, and a preview of their values. SORT can be date/likes/deletions/values|
 |`!wow keywords values [KEYWORD] [optional:PAGE]`|Shows a list of values for a keyword.|
 |`!wow keywords gallery [KEYWORD]`|Shows all values in a keyword as a message you can scroll through (useful for values with images or videos)|
 |`!wow keywords restore [KEYWORD]`|Restores a previously deleted keyword from its name.|
