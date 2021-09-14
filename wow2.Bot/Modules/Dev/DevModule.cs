@@ -273,6 +273,17 @@ namespace wow2.Bot.Modules.Dev
                     {
                     }
                 }
+
+                foreach (PagedMessage message in guildData.PagedMessages)
+                {
+                    try
+                    {
+                        await message.StopAsync();
+                    }
+                    catch
+                    {
+                    }
+                }
             }
 
             await new SuccessMessage(exit ? "The bot will be stopped." : "The bot is ready to be stopped.")
