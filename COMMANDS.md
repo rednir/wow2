@@ -1,4 +1,4 @@
-# List of commands (90 total)
+# List of commands (91 total)
 
 ## Main (10)
 Stuff to do with the bot and other random stuff.
@@ -69,13 +69,14 @@ Change and manipulate text.
 |`!wow text replace [OLDVALUE] [NEWVALUE] [TEXT]`|Replaces all instances of OLDVALUE with NEWVALUE within TEXT.|
 |`!wow text emojify [TEXT]`|Adds emojis to some text because its funny haha.|
 
-## Server Icon (3)
+## Server Icon (4)
 Manage the icon of this server.
 
 |Command|Summary|
 |---|---|
 |`!wow icon toggle-icon-rotate`|Toggles whether this server's icon will rotate periodically. You can configure what images are in the rotation.|
 |`!wow icon add [IMAGEURL]`|Adds an image for server icon rotation. IMAGEURL must contain an image only.|
+|`!wow icon remove [ID]`|Removes an image from the server icon rotation from ID.|
 |`!wow icon list [optional:PAGE]`|Lists all the server icons in rotation.|
 
 ## Reddit (4)

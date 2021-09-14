@@ -122,7 +122,7 @@ namespace wow2.Bot.Modules.ServerIcon
 
         [Command("add")]
         [Summary("Adds an image for server icon rotation. IMAGEURL must contain an image only.")]
-        public async Task AddIconAsync(string imageUrl)
+        public async Task AddAsync(string imageUrl)
         {
             if (!imageUrl.StartsWith("http://") && !imageUrl.StartsWith("https://"))
                 throw new CommandReturnException(Context, "Make sure you link to an image!");
@@ -138,10 +138,23 @@ namespace wow2.Bot.Modules.ServerIcon
                 .SendAsync(Context.Channel);
         }
 
+        [Command("remove")]
+        [Alias("delete")]
+        [Summary("Removes an image from the server icon rotation from ID.")]
+        public async Task RemoveAsync(int id)
+        {
+            if (id > Config.IconsToRotate.Count || id < 1)
+                throw new CommandReturnException(Context, "No such icon with that ID.");
+
+            Config.IconsToRotate.RemoveAt(id - 1);
+            await new SuccessMessage("Removed icon from the rotation.")
+                .SendAsync(Context.Channel);
+        }
+
         [Command("list")]
         [Alias("list-icons", "icons")]
         [Summary("Lists all the server icons in rotation.")]
-        public async Task ListIconsAsync(int page = 1)
+        public async Task ListAsync(int page = 1)
         {
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
 
