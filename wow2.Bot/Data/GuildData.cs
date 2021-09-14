@@ -5,6 +5,7 @@ using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Modules.Main;
 using wow2.Bot.Modules.Moderator;
 using wow2.Bot.Modules.Osu;
+using wow2.Bot.Modules.ServerIcon;
 using wow2.Bot.Modules.Timers;
 using wow2.Bot.Modules.Voice;
 using wow2.Bot.Modules.YouTube;
@@ -43,6 +44,8 @@ namespace wow2.Bot.Data
         public ModeratorModuleConfig Moderator { get; set; } = new();
 
         public OsuModuleConfig Osu { get; set; } = new();
+
+        public ServerIconModuleConfig ServerIcon { get; set; } = new();
 
         public YouTubeModuleConfig YouTube { get; set; } = new();
 

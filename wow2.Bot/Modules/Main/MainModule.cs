@@ -1,16 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
-using System.Timers;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
-using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Main
@@ -21,8 +17,6 @@ namespace wow2.Bot.Modules.Main
     {
         public static readonly IEmote LikeReactionEmote = new Emoji("👍");
         public static readonly IEmote DislikeReactionEmote = new Emoji("👎");
-
-        public WebClient WebClient { get; set; }
 
         public MainModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Main;
 
@@ -96,40 +90,6 @@ namespace wow2.Bot.Modules.Main
                 return false;
 
             return true;
-        }
-
-        private static void InitializeTimer(SocketGuild guild, MainModuleConfig config)
-        {
-            if (config.IconRotateTimerInterval == null)
-                return;
-
-            config.IconRotateTimer = new Timer()
-            {
-                Interval = config.IconRotateTimerInterval.Value,
-            };
-
-            config.IconRotateTimer.Elapsed += async (source, e) =>
-            {
-                if (config.IconsToRotate.Count < 2)
-                    return;
-
-                if (config.IconsToRotateIndex >= config.IconsToRotate.Count)
-                    config.IconsToRotateIndex = 0;
-
-                try
-                {
-                    await guild.ModifyAsync(g => g.Icon = config.IconsToRotate[config.IconsToRotateIndex].Image);
-                    Logger.Log($"Rotated guild icon to index {config.IconsToRotateIndex} for {guild.Name} ({guild.Id})", LogSeverity.Debug);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogException(ex, $"Exception thrown when trying to modify server icon for {guild.Name} ({guild.Id})");
-                }
-
-                config.IconsToRotateIndex++;
-            };
-
-            config.IconRotateTimer.Start();
         }
 
         [Command("about")]
@@ -308,93 +268,6 @@ namespace wow2.Bot.Modules.Main
                     _ => Config.VotingEnabledAttachments.ToArray(),
                 };
             }
-        }
-
-        [Command("toggle-icon-rotate")]
-        [Alias("toggle-icon-rotation", "toggle-icon")]
-        [Summary("Toggles whether this server's icon will rotate periodically. You can configure what images are in the rotation.")]
-        public async Task ToggleIconRotateAsync()
-        {
-            await SendToggleQuestionAsync(
-                currentState: Config.IconRotateTimerInterval != null,
-                setter: async x =>
-                {
-                    if (x)
-                    {
-                        await new TimeSpanSelectorMessage(
-                            confirmFunc: async t =>
-                            {
-                                if (t < TimeSpan.FromHours(12))
-                                {
-                                    await new WarningMessage("Time span is too short. Try something a bit longer.")
-                                        .SendAsync(Context.Channel);
-                                    return;
-                                }
-
-                                Config.IconRotateTimerInterval = t.TotalMilliseconds;
-                                InitializeTimer(Context.Guild, Config);
-                                await new SuccessMessage($"The server icon will rotate periodically{(Config.IconsToRotate.Count < 2 ? " once you add more than 2 icons to the list" : null)}.")
-                                    .SendAsync(Context.Channel);
-                            },
-                            description: "Cool! Now you need to set how many days you want in between each rotation.")
-                        {
-                            TimeSpan = TimeSpan.FromMilliseconds(Config.IconRotateTimerInterval ?? 0),
-                        }
-                            .SendAsync(Context.Channel);
-                    }
-                    else if (!x)
-                    {
-                        Config.IconRotateTimerInterval = null;
-                        Config.IconRotateTimer?.Stop();
-                    }
-                },
-                toggledOnMessage: null,
-                toggledOffMessage: "The server icon will no longer rotate periodically.");
-        }
-
-        [Command("add-icon")]
-        [Summary("Adds an icon for server icon rotation. IMAGEURL must contain an image only.")]
-        public async Task AddIconAsync(string imageUrl)
-        {
-            if (!imageUrl.StartsWith("http://") && !imageUrl.StartsWith("https://"))
-                throw new CommandReturnException(Context, "Make sure you link to an image!");
-
-            var image = new Image(new MemoryStream(WebClient.DownloadData(imageUrl)));
-            Config.IconsToRotate.Add(new ServerIcon()
-            {
-                Url = imageUrl,
-                Image = image,
-                DateTimeAdded = DateTime.Now,
-                AddedByMention = Context.User.Mention,
-            });
-
-            await new SuccessMessage($"Added server icon to the list.{(Config.IconRotateTimerInterval == null ? " Remember to toggle server icon rotation on!" : null)}")
-                .SendAsync(Context.Channel);
-        }
-
-        [Command("list-icons")]
-        [Alias("list-icons", "icons")]
-        [Summary("Lists all the server icons in rotation.")]
-        public async Task ListIconsAsync(int page = 1)
-        {
-            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-
-            int id = 1;
-            foreach (var icon in Config.IconsToRotate)
-            {
-                listOfFieldBuilders.Add(new EmbedFieldBuilder()
-                {
-                    Name = $"ID: {id}",
-                    Value = $"[View image]({icon.Url}) • Added by {icon.AddedByMention} at {icon.DateTimeAdded.ToShortDateString()}",
-                });
-                id++;
-            }
-
-            await new PagedMessage(
-                fieldBuilders: listOfFieldBuilders,
-                title: "📷 Rotating server icons",
-                page: page)
-                    .SendAsync(Context.Channel);
         }
 
         [Command("set-command-prefix")]

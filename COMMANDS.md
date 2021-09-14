@@ -1,6 +1,6 @@
 # List of commands (90 total)
 
-## Main (13)
+## Main (10)
 Stuff to do with the bot and other random stuff.
 
 |Command|Summary|
@@ -13,9 +13,6 @@ Stuff to do with the bot and other random stuff.
 |`!wow say [MESSAGE]`|Sends a message. That's it.|
 |`!wow toggle-attachment-voting [CHANNEL]`|Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.|
 |`!wow attachment-list [optional:SORT] [optional:PAGE]`|Lists all attachments with voting enabled. SORT can be points/users/date/likes/deletions/values, default is likes.|
-|`!wow toggle-icon-rotate`|Toggles whether this server's icon will rotate periodically. You can configure what images are in the rotation.|
-|`!wow add-icon [IMAGEURL]`|Adds an icon for server icon rotation. IMAGEURL must contain an image only.|
-|`!wow list-icons [optional:PAGE]`|Lists all the server icons in rotation.|
 |`!wow set-command-prefix [PREFIX]`|Change the prefix used to identify commands. '!wow' is the default.|
 |`!wow upload-raw-data`|Uploads a file containing all the data the bot stores about this server.|
 
@@ -71,6 +68,15 @@ Change and manipulate text.
 |`!wow text quote [QUOTE] [optional:AUTHOR]`|Creates a fake quote of a famous person. If you want to use a specific person, set AUTHOR to their name.|
 |`!wow text replace [OLDVALUE] [NEWVALUE] [TEXT]`|Replaces all instances of OLDVALUE with NEWVALUE within TEXT.|
 |`!wow text emojify [TEXT]`|Adds emojis to some text because its funny haha.|
+
+## Server Icon (3)
+Manage the icon of this server.
+
+|Command|Summary|
+|---|---|
+|`!wow icon toggle-icon-rotate`|Toggles whether this server's icon will rotate periodically. You can configure what images are in the rotation.|
+|`!wow icon add-icon [IMAGEURL]`|Adds an icon for server icon rotation. IMAGEURL must contain an image only.|
+|`!wow icon list-icons [optional:PAGE]`|Lists all the server icons in rotation.|
 
 ## Reddit (4)
 View Reddit posts and other content.

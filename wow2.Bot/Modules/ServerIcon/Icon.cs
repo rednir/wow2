@@ -1,9 +1,9 @@
 using System;
 using Discord;
 
-namespace wow2.Bot.Modules.Main
+namespace wow2.Bot.Modules.ServerIcon
 {
-    public class ServerIcon
+    public class Icon
     {
         public string Url { get; set; }
 
