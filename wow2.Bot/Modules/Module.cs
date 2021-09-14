@@ -20,8 +20,16 @@ namespace wow2.Bot.Modules
                 onConfirm: async () =>
                 {
                     setter.Invoke(!currentState);
-                    await new SuccessMessage(!currentState ? toggledOnMessage : toggledOffMessage)
-                        .SendAsync(Context.Channel);
+                    if (!currentState && toggledOnMessage != null)
+                    {
+                        await new SuccessMessage(toggledOnMessage)
+                            .SendAsync(Context.Channel);
+                    }
+                    else if (currentState && toggledOffMessage != null)
+                    {
+                        await new SuccessMessage(toggledOffMessage)
+                            .SendAsync(Context.Channel);
+                    }
                 },
                 onDeny: async () =>
                 {
