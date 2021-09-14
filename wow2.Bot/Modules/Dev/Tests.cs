@@ -81,6 +81,14 @@ namespace wow2.Bot.Modules.Dev
                     .SendAsync(context.Channel);
         }
 
+        [Test("time-span-message")]
+        public static async Task TimeSpanMessageTest(SocketCommandContext context)
+        {
+            await new TimeSpanSelectorMessage(
+                (t) => context.Channel.SendMessageAsync($"TimeSpan: {t}"))
+                    .SendAsync(context.Channel);
+        }
+
         [Test("welcome-message")]
         public static async Task WelcomeMessageTest(SocketCommandContext context)
         {

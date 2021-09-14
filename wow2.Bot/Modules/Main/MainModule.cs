@@ -212,6 +212,25 @@ namespace wow2.Bot.Modules.Main
         public async Task SayAsync(string message)
             => await ReplyAsync(message);
 
+        [Command("toggle-attachment-voting")]
+        [Alias("toggle-voting", "toggle-image-voting", "toggle-video-voting")]
+        [Summary("Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.")]
+        public async Task ToggleVotingInChannelAsync(SocketTextChannel channel)
+        {
+            bool currentlyOn = Config.VotingEnabledChannelIds.Contains(channel.Id);
+            await SendToggleQuestionAsync(
+                currentState: currentlyOn,
+                setter: x =>
+                {
+                    if (x && !currentlyOn)
+                        Config.VotingEnabledChannelIds.Add(channel.Id);
+                    else if (!x && currentlyOn)
+                        Config.VotingEnabledChannelIds.Remove(channel.Id);
+                },
+                toggledOnMessage: $"Every new message with an attachment in {channel.Mention} will have thumbs up/down reactions added.",
+                toggledOffMessage: $"Messages in {channel.Mention} will no longer have thumbs up/down reactions added.");
+        }
+
         [Command("attachment-list")]
         [Alias("list-attachment", "list-attachments", "attachments-list", "attachments", "image-list", "list-images")]
         [Summary("Lists all attachments with voting enabled. SORT can be points/users/date/likes/deletions/values, default is likes.")]
@@ -251,23 +270,16 @@ namespace wow2.Bot.Modules.Main
             }
         }
 
-        [Command("toggle-attachment-voting")]
-        [Alias("toggle-voting", "toggle-image-voting", "toggle-video-voting")]
-        [Summary("Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.")]
-        public async Task ToggleVotingInChannelAsync(SocketTextChannel channel)
+        [Command("toggle-icon-rotate")]
+        [Alias("toggle-icon-rotation", "toggle-icon")]
+        [Summary("Toggles whether this server's icon will rotate periodically. You can configure what images are in the rotation.")]
+        public async Task ToggleIconRotateAsync()
         {
-            bool currentlyOn = Config.VotingEnabledChannelIds.Contains(channel.Id);
             await SendToggleQuestionAsync(
-                currentState: currentlyOn,
-                setter: x =>
-                {
-                    if (x && !currentlyOn)
-                        Config.VotingEnabledChannelIds.Add(channel.Id);
-                    else if (!x && currentlyOn)
-                        Config.VotingEnabledChannelIds.Remove(channel.Id);
-                },
-                toggledOnMessage: $"Every new message with an attachment in {channel.Mention} will have thumbs up/down reactions added.",
-                toggledOffMessage: $"Messages in {channel.Mention} will no longer have thumbs up/down reactions added.");
+                currentState: Config.IsIconRotateOn,
+                setter: x => Config.IsIconRotateOn = x,
+                toggledOnMessage: $"Icons will start rotating every {Config.IconRotateTimeSpan.TotalDays} days{(Config.IconsToRotate.Count == 0 ? " after you add your first icon" : null)}.",
+                toggledOffMessage: "The server icon will no longer rotate periodically.");
         }
 
         [Command("set-command-prefix")]

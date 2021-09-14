@@ -9,7 +9,7 @@ using wow2.Bot.Extensions;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public class DateTimeSelectorMessage : Message
+    public class TimeSpanSelectorMessage : Message
     {
         public const string ConfirmString = "Confirm";
 
@@ -25,7 +25,7 @@ namespace wow2.Bot.Verbose.Messages
             { "-10 minutes", TimeSpan.FromMinutes(-10) },
         };
 
-        public DateTimeSelectorMessage(Func<DateTime, Task> confirmFunc, string description = "Select a date and time.")
+        public TimeSpanSelectorMessage(Func<TimeSpan, Task> confirmFunc, string description = "Select a time span.")
         {
             Description = description;
             ConfirmFunc = confirmFunc;
@@ -35,30 +35,30 @@ namespace wow2.Bot.Verbose.Messages
                 Components.WithButton(text, text, ButtonStyle.Secondary);
         }
 
-        public DateTime DateTime { get; set; } = DateTime.Now;
+        public TimeSpan TimeSpan { get; set; } = TimeSpan.Zero;
 
         private string Description { get; }
 
-        private Func<DateTime, Task> ConfirmFunc { get; }
+        private Func<TimeSpan, Task> ConfirmFunc { get; }
 
         public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
         {
             GuildData guildData = DataManager.AllGuildData[component.Channel.GetGuild().Id];
-            DateTimeSelectorMessage message = guildData.DateTimeSelectorMessages.Find(m => m.SentMessage.Id == component.Message.Id);
+            TimeSpanSelectorMessage message = guildData.TimeSpanSelectorMessages.Find(m => m.SentMessage.Id == component.Message.Id);
 
             if (message == null)
                 return false;
 
             if (component.Data.CustomId == ConfirmString)
             {
-                guildData.DateTimeSelectorMessages.Remove(message);
+                guildData.TimeSpanSelectorMessages.Remove(message);
                 message.SentMessage?.ModifyAsync(m => m.Components = null);
-                await message.ConfirmFunc?.Invoke(message.DateTime);
+                await message.ConfirmFunc?.Invoke(message.TimeSpan);
                 return true;
             }
             else if (DateTimeModifierEmotes.Any(p => p.Key == component.Data.CustomId))
             {
-                message.DateTime += DateTimeModifierEmotes[component.Data.CustomId];
+                message.TimeSpan += DateTimeModifierEmotes[component.Data.CustomId];
                 await message.UpdateEmbedAsync();
                 return true;
             }
@@ -73,11 +73,11 @@ namespace wow2.Bot.Verbose.Messages
             await UpdateEmbedAsync();
 
             IUserMessage message = await base.SendAsync(channel);
-            List<DateTimeSelectorMessage> dateTimeSelectorMessages = DataManager
-                .AllGuildData[message.GetGuild().Id].DateTimeSelectorMessages;
+            var timeSpanSelectorMessages = DataManager
+                .AllGuildData[message.GetGuild().Id].TimeSpanSelectorMessages;
 
-            dateTimeSelectorMessages.Truncate(40);
-            dateTimeSelectorMessages.Add(this);
+            timeSpanSelectorMessages.Truncate(40);
+            timeSpanSelectorMessages.Add(this);
 
             return message;
         }
@@ -86,7 +86,7 @@ namespace wow2.Bot.Verbose.Messages
         {
             EmbedBuilder = new EmbedBuilder()
             {
-                Description = $"{new Emoji($"<:wowquestion:{QuestionEmoteId}>")} {Description}\n`{DateTime}`",
+                Description = $"{new Emoji($"<:wowquestion:{QuestionEmoteId}>")} {Description}\n`{TimeSpan.Days} days, {TimeSpan.Hours} hours, {TimeSpan.Minutes} minutes`",
                 Color = new Color(0x9b59b6),
             };
 
