@@ -53,7 +53,7 @@ namespace wow2.Bot.Verbose.Messages
             {
                 guildData.DateTimeSelectorMessages.Remove(message);
                 message.SentMessage?.ModifyAsync(m => m.Components = null);
-                await message.ConfirmFunc.Invoke(message.DateTime);
+                await message.ConfirmFunc?.Invoke(message.DateTime);
                 return true;
             }
             else if (DateTimeModifierEmotes.Any(p => p.Key == component.Data.CustomId))
