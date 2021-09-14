@@ -22,6 +22,7 @@ using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Modules.Main;
 using wow2.Bot.Modules.Moderator;
 using wow2.Bot.Modules.Osu;
+using wow2.Bot.Modules.ServerIcon;
 using wow2.Bot.Modules.YouTube;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
@@ -74,7 +75,6 @@ namespace wow2.Bot
             Services = new ServiceCollection()
                 .AddSingleton<IYoutubeModuleService>(new YoutubeModuleService(DataManager.Secrets.GoogleApiKey))
                 .AddSingleton<IOsuModuleService>(new OsuModuleService(DataManager.Secrets.OsuClientId, DataManager.Secrets.OsuClientSecret))
-                .AddSingleton<WebClient>()
                 .BuildServiceProvider();
 
             // TODO: inject this the proper way. need to get DownloadService non-static first.
@@ -141,6 +141,9 @@ namespace wow2.Bot
             if (DataManager.AllGuildData.Count == 0)
             {
                 await DataManager.InitializeAsync();
+
+                // TODO: This server icon stuff needs to be moved out of here.
+                ServerIconModule.InitializeAllTimers();
 
                 Client.ReactionAdded += ReactionAddedAsync;
                 Client.ReactionRemoved += ReactionRemovedAsync;

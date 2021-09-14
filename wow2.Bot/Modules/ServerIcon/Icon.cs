@@ -7,8 +7,6 @@ namespace wow2.Bot.Modules.ServerIcon
     {
         public string Url { get; set; }
 
-        public Image Image { get; set; }
-
         public DateTime DateTimeAdded { get; set; }
 
         public string AddedByMention { get; set; }

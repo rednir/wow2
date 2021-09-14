@@ -75,8 +75,8 @@ Manage the icon of this server.
 |Command|Summary|
 |---|---|
 |`!wow icon toggle-icon-rotate`|Toggles whether this server's icon will rotate periodically. You can configure what images are in the rotation.|
-|`!wow icon add-icon [IMAGEURL]`|Adds an icon for server icon rotation. IMAGEURL must contain an image only.|
-|`!wow icon list-icons [optional:PAGE]`|Lists all the server icons in rotation.|
+|`!wow icon add [IMAGEURL]`|Adds an image for server icon rotation. IMAGEURL must contain an image only.|
+|`!wow icon list [optional:PAGE]`|Lists all the server icons in rotation.|
 
 ## Reddit (4)
 View Reddit posts and other content.

@@ -19,9 +19,28 @@ namespace wow2.Bot.Modules.ServerIcon
     [Summary("Manage the icon of this server.")]
     public class ServerIconModule : Module
     {
-        public WebClient WebClient { get; set; }
+        public static WebClient WebClient { get; set; }
 
         private ServerIconModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].ServerIcon;
+
+        public static void InitializeAllTimers()
+        {
+            lock (DataManager.AllGuildData)
+            {
+                foreach (var pair in DataManager.AllGuildData)
+                {
+                    try
+                    {
+                        var guild = BotService.Client.GetGuild(pair.Key);
+                        InitializeTimer(guild, pair.Value.ServerIcon);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogException(ex, $"Exception thrown when trying to initialize server icon timer for {pair.Value.NameOfGuild} ({pair.Key})");
+                    }
+                }
+            }
+        }
 
         private static void InitializeTimer(SocketGuild guild, ServerIconModuleConfig config)
         {
@@ -43,7 +62,9 @@ namespace wow2.Bot.Modules.ServerIcon
 
                 try
                 {
-                    await guild.ModifyAsync(g => g.Icon = config.IconsToRotate[config.IconsToRotateIndex].Image);
+                    // TODO: probably want to get rid of invalid urls here after a couple failed tries...
+                    byte[] imageBytes = WebClient.DownloadData(config.IconsToRotate[config.IconsToRotateIndex].Url);
+                    await guild.ModifyAsync(g => g.Icon = new Image(new MemoryStream(imageBytes)));
                     Logger.Log($"Rotated guild icon to index {config.IconsToRotateIndex} for {guild.Name} ({guild.Id})", LogSeverity.Debug);
                 }
                 catch (Exception ex)
@@ -58,7 +79,7 @@ namespace wow2.Bot.Modules.ServerIcon
         }
 
         [Command("toggle-icon-rotate")]
-        [Alias("toggle-icon-rotation", "toggle-icon", "toggle-rotate")]
+        [Alias("toggle-icon-rotation", "toggle-icon", "toggle-rotate", "toggle")]
         [Summary("Toggles whether this server's icon will rotate periodically. You can configure what images are in the rotation.")]
         public async Task ToggleIconRotateAsync()
         {
@@ -106,11 +127,9 @@ namespace wow2.Bot.Modules.ServerIcon
             if (!imageUrl.StartsWith("http://") && !imageUrl.StartsWith("https://"))
                 throw new CommandReturnException(Context, "Make sure you link to an image!");
 
-            var image = new Image(new MemoryStream(WebClient.DownloadData(imageUrl)));
             Config.IconsToRotate.Add(new Icon()
             {
                 Url = imageUrl,
-                Image = image,
                 DateTimeAdded = DateTime.Now,
                 AddedByMention = Context.User.Mention,
             });
