@@ -173,7 +173,7 @@ namespace wow2.Bot
 
         public static async Task DiscordLogRecievedAsync(LogMessage logMessage)
         {
-            if (logMessage.Exception is Exception)
+            if (logMessage.Exception is not null)
             {
                 // Return if command intentionally threw an exception.
                 if (logMessage.Exception.InnerException is CommandReturnException)
