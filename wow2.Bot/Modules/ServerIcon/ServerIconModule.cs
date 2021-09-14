@@ -93,7 +93,7 @@ namespace wow2.Bot.Modules.ServerIcon
                         await new TimeSpanSelectorMessage(
                             confirmFunc: async t =>
                             {
-                                if (t < TimeSpan.FromHours(12))
+                                if (t < TimeSpan.FromHours(1))
                                 {
                                     await new WarningMessage("Time span is too short. Try something a bit longer.")
                                         .SendAsync(Context.Channel);
