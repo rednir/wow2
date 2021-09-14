@@ -255,11 +255,17 @@ namespace wow2.Bot
 
         public static async Task ButtonExecutedAsync(SocketMessageComponent component)
         {
-            _ = !await PagedMessage.ActOnButtonAsync(component)
-                && !await QuestionMessage.ActOnButtonAsync(component)
-                && !await DateTimeSelectorMessage.ActOnButtonAsync(component)
-                && !await TimeSpanSelectorMessage.ActOnButtonAsync(component)
-                && !await VerbalMemoryGame.ActOnButtonAsync(component);
+            _ = Task.WhenAll(
+                PagedMessage.ActOnButtonAsync(component),
+                QuestionMessage.ActOnButtonAsync(component),
+                DateTimeSelectorMessage.ActOnButtonAsync(component),
+                TimeSpanSelectorMessage.ActOnButtonAsync(component),
+                VerbalMemoryGame.ActOnButtonAsync(component))
+                    .ContinueWith(t =>
+                    {
+                        if (t.Exception != null)
+                            Logger.LogException(t.Exception, "ButtonExecuted handler threw an exception.");
+                    });
         }
 
         public static async Task MessageRecievedAsync(SocketMessage socketMessage)
