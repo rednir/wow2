@@ -270,6 +270,18 @@ namespace wow2.Bot.Modules.Main
             }
         }
 
+        [Command("toggle-icon-rotate")]
+        [Alias("toggle-icon-rotation", "toggle-icon")]
+        [Summary("Toggles whether this server's icon will rotate periodically. You can configure what images are in the rotation.")]
+        public async Task ToggleIconRotateAsync()
+        {
+            await SendToggleQuestionAsync(
+                currentState: Config.IsIconRotateOn,
+                setter: x => Config.IsIconRotateOn = x,
+                toggledOnMessage: $"Icons will start rotating every {Config.IconRotateTimeSpan.TotalDays} days{(Config.IconsToRotate.Count == 0 ? " after you add your first icon" : null)}.",
+                toggledOffMessage: "The server icon will no longer rotate periodically.");
+        }
+
         [Command("set-command-prefix")]
         [Alias("set-prefix", "setprefix")]
         [Summary("Change the prefix used to identify commands. '!wow' is the default.")]
