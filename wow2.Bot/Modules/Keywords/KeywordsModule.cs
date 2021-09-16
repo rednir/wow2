@@ -111,14 +111,14 @@ namespace wow2.Bot.Modules.Keywords
             // If the user didn't specify a value, assume removal of entire keyword.
             if (string.IsNullOrEmpty(valueContent))
             {
-                Func<Task> delete = async () =>
+                async Task delete()
                 {
                     Config.DeletedKeywordsDictionary.Add(keyword, Config.KeywordsDictionary[keyword]);
                     Config.KeywordsDictionary.Remove(keyword);
 
                     await new SuccessMessage($"Sucessfully removed keyword `{keyword}`.")
                         .SendAsync(Context.Channel);
-                };
+                }
 
                 if (Config.DeletedKeywordsDictionary.ContainsKey(keyword))
                     Config.DeletedKeywordsDictionary.Remove(keyword);
@@ -139,7 +139,7 @@ namespace wow2.Bot.Modules.Keywords
                 }
                 else
                 {
-                    await delete.Invoke();
+                    await delete();
                 }
             }
             else
