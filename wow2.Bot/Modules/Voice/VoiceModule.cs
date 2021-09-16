@@ -10,6 +10,7 @@ using Discord.Audio;
 using Discord.Commands;
 using Discord.Net;
 using wow2.Bot.Data;
+using wow2.Bot.Extensions;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
@@ -85,22 +86,30 @@ namespace wow2.Bot.Modules.Voice
                 RequestedBy = Context.User,
             });
 
-            await new SuccessMessage($"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
-                .SendAsync(Context.Channel);
-
-            if (Config.IsAutoJoinOn)
+            bool isDisconnected = CheckIfAudioClientDisconnected(Config.AudioClient);
+            if (isDisconnected)
             {
-                try
+                if (Config.IsAutoJoinOn)
                 {
-                    await JoinVoiceChannelAsync(((IGuildUser)Context.User).VoiceChannel);
+                    await new SuccessMessage($"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
+                        .SendAsync(Context.Channel);
+                    try
+                    {
+                        await JoinVoiceChannelAsync(((IGuildUser)Context.User).VoiceChannel);
+                    }
+                    catch
+                    {
+                    }
                 }
-                catch
+                else
                 {
+                    await new SuccessMessage($"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}\n\n**You have `toggle-auto-join` turned off,**so if you want me to join the voice channel you'll have to type `{Context.Guild.GetCommandPrefix()} vc join`")
+                        .SendAsync(Context.Channel);
                 }
             }
 
             // Play song if nothing else is playing.
-            if (!CheckIfAudioClientDisconnected(Config.AudioClient) && Config.CurrentlyPlayingSongRequest == null)
+            if (!isDisconnected && Config.CurrentlyPlayingSongRequest == null)
                 _ = ContinueAsync();
         }
 
