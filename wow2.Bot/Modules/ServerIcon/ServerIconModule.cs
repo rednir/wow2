@@ -44,7 +44,8 @@ namespace wow2.Bot.Modules.ServerIcon
 
         private static void InitializeTimer(SocketGuild guild, ServerIconModuleConfig config)
         {
-            if (config.IconRotateTimerInterval == null)
+            // Have this here as a failsafe, theoretically this should never be true.
+            if (config.IconRotateTimerInterval is null or < 600000)
                 return;
 
             config.IconRotateTimer?.Stop();
