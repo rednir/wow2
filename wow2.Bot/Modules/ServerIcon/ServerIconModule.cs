@@ -36,11 +36,7 @@ namespace wow2.Bot.Modules.ServerIcon
                             var config = DataManager.AllGuildData[pair.Key].ServerIcon;
                             var guild = BotService.Client.GetGuild(pair.Key);
 
-                            TimeSpan waitTime = config.NextPlannedRotate - DateTime.Now;
-                            if (waitTime > TimeSpan.Zero)
-                                await Task.Delay(waitTime);
-
-                            await InitializeTimerAsync(guild, pair.Value.ServerIcon, true);
+                            await InitializeTimerAsync(guild, pair.Value.ServerIcon, config.NextPlannedRotate);
                         }
                         catch (Exception ex)
                         {
@@ -51,7 +47,7 @@ namespace wow2.Bot.Modules.ServerIcon
             }
         }
 
-        private static async Task InitializeTimerAsync(SocketGuild guild, ServerIconModuleConfig config, bool updateIconImmediately = false)
+        private static async Task InitializeTimerAsync(SocketGuild guild, ServerIconModuleConfig config, DateTime firstIconUpdate = default)
         {
             // Have this here as a failsafe, theoretically this should never be true.
             if (config.IconRotateTimerInterval is null or < 600000)
@@ -65,8 +61,13 @@ namespace wow2.Bot.Modules.ServerIcon
 
             config.IconRotateTimer.Elapsed += async (source, e) => await updateIcon();
 
-            if (updateIconImmediately)
+            if (firstIconUpdate != default)
+            {
+                TimeSpan waitTime = firstIconUpdate - DateTime.Now;
+                if (waitTime > TimeSpan.Zero)
+                    await Task.Delay(waitTime);
                 await updateIcon();
+            }
 
             config.NextPlannedRotate = DateTime.Now + TimeSpan.FromMilliseconds(config.IconRotateTimerInterval.Value);
             config.IconRotateTimer.Start();
@@ -107,19 +108,29 @@ namespace wow2.Bot.Modules.ServerIcon
                     if (x)
                     {
                         await new TimeSpanSelectorMessage(
-                            confirmFunc: async t =>
+                            confirmFunc: async ts =>
                             {
-                                if (t < TimeSpan.FromHours(1))
+                                if (ts < TimeSpan.FromHours(1))
                                 {
                                     await new WarningMessage("Time span is too short. Try something a bit longer.")
                                         .SendAsync(Context.Channel);
                                     return;
                                 }
 
-                                Config.IconRotateTimerInterval = t.TotalMilliseconds;
-                                await InitializeTimerAsync(Context.Guild, Config);
-                                await new SuccessMessage($"The server icon will rotate periodically{(Config.IconsToRotate.Count < 2 ? " once you add more than 2 icons to the list" : null)}.")
-                                    .SendAsync(Context.Channel);
+                                await new DateTimeSelectorMessage(
+                                    confirmFunc: async dt =>
+                                    {
+                                        Config.IconRotateTimerInterval = ts.TotalMilliseconds;
+                                        if (dt > DateTime.Now)
+                                            await InitializeTimerAsync(Context.Guild, Config, dt);
+                                        else
+                                            await InitializeTimerAsync(Context.Guild, Config);
+
+                                        await new SuccessMessage($"The server icon will rotate periodically{(Config.IconsToRotate.Count < 2 ? " once you add more than 2 icons to the list" : null)}.")
+                                            .SendAsync(Context.Channel);
+                                    },
+                                    description: "You can also schedule when you want the first icon rotate to take place.\nNot sure? Just ignore this and press confirm.")
+                                        .SendAsync(Context.Channel);
                             },
                             description: "Cool! Now you need to set how many days you want in between each rotation.")
                         {
