@@ -307,7 +307,7 @@ namespace wow2.Bot.Modules.Main
                     if (!string.IsNullOrWhiteSpace(module.Summary))
                         fieldBuilderForModule.Value += $"*{module.Summary}*\n";
 
-                    fieldBuilderForModule.Value += $"`{commandPrefix} help {module.Name.ToLower()}`";
+                    fieldBuilderForModule.Value += $"`{commandPrefix} help {module.Group ?? module.Name.ToLower()}`";
 
                     // TODO: find a way to get name attribute of this class instead of hardcoding module name.
                     if (module.Name == "Main")
