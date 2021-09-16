@@ -152,8 +152,7 @@ namespace wow2.Bot.Data
                 await SaveGuildDataToFileAsync(guildId);
             }
 
-            var guildData = AllGuildData[guildId];
-            return guildData;
+            return AllGuildData[guildId];
         }
 
         public static async Task UnloadGuildDataAsync(ulong guildId)
