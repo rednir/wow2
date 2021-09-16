@@ -86,7 +86,7 @@ namespace wow2.Bot.Verbose.Messages
         {
             EmbedBuilder = new EmbedBuilder()
             {
-                Description = $"{new Emoji($"<:wowquestion:{QuestionEmoteId}>")} {Description}\n`{DateTime}`",
+                Description = $"{new Emoji($"<:wowquestion:{QuestionEmoteId}>")} {Description}\n`{DateTime.ToLongDateString()} / {DateTime.ToShortTimeString()}`",
                 Color = new Color(0x9b59b6),
             };
 
