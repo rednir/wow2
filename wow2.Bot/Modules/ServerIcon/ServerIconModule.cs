@@ -63,6 +63,7 @@ namespace wow2.Bot.Modules.ServerIcon
 
             if (firstIconUpdate != default)
             {
+                // Might be a better way of delaying the first execution...
                 TimeSpan waitTime = firstIconUpdate - DateTime.Now;
                 if (waitTime > TimeSpan.Zero)
                     await Task.Delay(waitTime);
@@ -121,13 +122,13 @@ namespace wow2.Bot.Modules.ServerIcon
                                     confirmFunc: async dt =>
                                     {
                                         Config.IconRotateTimerInterval = ts.TotalMilliseconds;
+                                        await new SuccessMessage($"The server icon will rotate periodically{(Config.IconsToRotate.Count < 2 ? " once you add more than 2 icons to the list" : null)}.")
+                                            .SendAsync(Context.Channel);
+
                                         if (dt > DateTime.Now)
                                             await InitializeTimerAsync(Context.Guild, Config, dt);
                                         else
                                             await InitializeTimerAsync(Context.Guild, Config);
-
-                                        await new SuccessMessage($"The server icon will rotate periodically{(Config.IconsToRotate.Count < 2 ? " once you add more than 2 icons to the list" : null)}.")
-                                            .SendAsync(Context.Channel);
                                     },
                                     description: "You can also schedule when you want the first icon rotate to take place.\nNot sure? Just ignore this and press confirm.")
                                         .SendAsync(Context.Channel);
