@@ -29,32 +29,49 @@ namespace wow2.Bot.Modules.ServerIcon
             {
                 foreach (var pair in DataManager.AllGuildData)
                 {
-                    try
+                    Task.Run(async () =>
                     {
-                        var guild = BotService.Client.GetGuild(pair.Key);
-                        InitializeTimer(guild, pair.Value.ServerIcon);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.LogException(ex, $"Exception thrown when trying to initialize server icon timer for {pair.Value.NameOfGuild} ({pair.Key})");
-                    }
+                        try
+                        {
+                            var config = DataManager.AllGuildData[pair.Key].ServerIcon;
+                            var guild = BotService.Client.GetGuild(pair.Key);
+
+                            TimeSpan waitTime = config.NextPlannedRotate - DateTime.Now;
+                            if (waitTime > TimeSpan.Zero)
+                                await Task.Delay(waitTime);
+
+                            await InitializeTimerAsync(guild, pair.Value.ServerIcon, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.LogException(ex, $"Exception thrown when trying to initialize server icon timer for {pair.Value.NameOfGuild} ({pair.Key})");
+                        }
+                    });
                 }
             }
         }
 
-        private static void InitializeTimer(SocketGuild guild, ServerIconModuleConfig config)
+        private static async Task InitializeTimerAsync(SocketGuild guild, ServerIconModuleConfig config, bool updateIconImmediately = false)
         {
             // Have this here as a failsafe, theoretically this should never be true.
             if (config.IconRotateTimerInterval is null or < 600000)
                 return;
 
             config.IconRotateTimer?.Stop();
-            config.IconRotateTimer = new Timer()
+            config.IconRotateTimer = new Timer
             {
                 Interval = config.IconRotateTimerInterval.Value,
             };
 
-            config.IconRotateTimer.Elapsed += async (source, e) =>
+            config.IconRotateTimer.Elapsed += async (source, e) => await updateIcon();
+
+            if (updateIconImmediately)
+                await updateIcon();
+
+            config.NextPlannedRotate = DateTime.Now + TimeSpan.FromMilliseconds(config.IconRotateTimerInterval.Value);
+            config.IconRotateTimer.Start();
+
+            async Task updateIcon()
             {
                 if (config.IconsToRotate.Count < 2)
                     return;
@@ -75,9 +92,7 @@ namespace wow2.Bot.Modules.ServerIcon
                 }
 
                 config.IconsToRotateIndex++;
-            };
-
-            config.IconRotateTimer.Start();
+            }
         }
 
         [Command("toggle-icon-rotate")]
@@ -102,7 +117,7 @@ namespace wow2.Bot.Modules.ServerIcon
                                 }
 
                                 Config.IconRotateTimerInterval = t.TotalMilliseconds;
-                                InitializeTimer(Context.Guild, Config);
+                                await InitializeTimerAsync(Context.Guild, Config);
                                 await new SuccessMessage($"The server icon will rotate periodically{(Config.IconsToRotate.Count < 2 ? " once you add more than 2 icons to the list" : null)}.")
                                     .SendAsync(Context.Channel);
                             },
