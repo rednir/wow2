@@ -234,7 +234,7 @@ namespace wow2.Bot.Modules.Main
         [Command("attachment-list")]
         [Alias("list-attachment", "list-attachments", "attachments-list", "attachments", "image-list", "list-images")]
         [Summary("Lists all attachments with voting enabled. SORT can be points/users/date/likes/deletions/values, default is likes.")]
-        public async Task AttachmentListAsync(AttachmentSorts sort = AttachmentSorts.Likes, int page = 1)
+        public async Task AttachmentListAsync(AttachmentSorts sort = AttachmentSorts.Points, int page = 1)
         {
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             var attachmentsCollection = getAttachments();
