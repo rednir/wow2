@@ -108,7 +108,7 @@ namespace wow2.Bot.Verbose.Messages
         /// <summary>Removes buttons, and stops ability to scroll through pages for this message.</summary>
         public async Task StopAsync()
         {
-            SentMessage?.ModifyAsync(m => m.Components = null);
+            await SentMessage?.ModifyAsync(m => m.Components = null);
             Dispose();
         }
 
