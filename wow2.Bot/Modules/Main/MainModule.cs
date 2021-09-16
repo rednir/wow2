@@ -209,7 +209,7 @@ namespace wow2.Bot.Modules.Main
 
         [Command("say")]
         [Summary("Sends a message. That's it.")]
-        public async Task SayAsync(string message)
+        public async Task SayAsync([Remainder] string message)
             => await ReplyAsync(message);
 
         [Command("toggle-attachment-voting")]
