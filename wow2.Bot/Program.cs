@@ -21,16 +21,14 @@ namespace wow2.Bot
 
         public static CommandLineOptions Options { get; } = new();
 
-        [Conditional("DEBUG")]
-        private static void SetIsDebugField()
-            => IsDebug = true;
-
         private static void Main(string[] args)
             => new Program().MainAsync(args).GetAwaiter().GetResult();
 
         private async Task MainAsync(string[] args)
         {
-            SetIsDebugField();
+#if DEBUG
+            IsDebug = true;
+#endif
             await Logger.LogInitialize();
             await DataManager.LoadSecretsFromFileAsync();
 
