@@ -46,8 +46,15 @@ namespace wow2.Bot.Modules.Main
         {
             var config = DataManager.AllGuildData[context.Guild.Id].Main;
 
-            if (!DataManager.AllGuildData[context.Guild.Id].Main.VotingEnabledChannelIds.Contains(context.Channel.Id)
-                || context.Message.Attachments.Count == 0)
+            if (!DataManager.AllGuildData[context.Guild.Id].Main.VotingEnabledChannelIds.Contains(context.Channel.Id))
+                return;
+
+            // TODO: probably a better way of doing this.
+            if (context.Message.Attachments.Count == 0
+                && !context.Message.Content.Contains("://www.youtube.com/watch?v=")
+                && !context.Message.Content.Contains("://youtu.be/")
+                && !(context.Message.Content.Contains("twitch.tv/")
+                    && (context.Message.Content.Contains("/clip/") || context.Message.Content.Contains("/videos/") || context.Message.Content.Contains("://clips."))))
             {
                 return;
             }
