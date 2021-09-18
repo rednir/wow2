@@ -297,7 +297,7 @@ namespace wow2.Bot
         {
             if (IsDisabled && context.User.Id != ApplicationInfo.Owner.Id)
             {
-                await new WarningMessage("You can't use any commands right now. Check my Discord status to see when I go back online, or ask the bot owner.", "The bot is under maintenance.")
+                await new WarningMessage("You can't use any commands right now. Check my Discord status to see when I go back online, or shoot me a DM.", "The bot is under maintenance.")
                     .SendAsync(context.Channel);
                 return null;
             }
