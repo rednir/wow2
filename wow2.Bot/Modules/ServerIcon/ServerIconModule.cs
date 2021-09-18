@@ -64,6 +64,7 @@ namespace wow2.Bot.Modules.ServerIcon
             if (firstIconUpdate != default)
             {
                 // Might be a better way of delaying the first execution...
+                config.NextPlannedRotate = firstIconUpdate;
                 TimeSpan waitTime = firstIconUpdate - DateTime.Now;
                 if (waitTime > TimeSpan.Zero)
                     await Task.Delay(waitTime);
