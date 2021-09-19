@@ -48,6 +48,10 @@ namespace wow2.Bot.Modules.Voice
             {
                 return new List<VideoMetadata>(await GetMetadataFromSpotifyPlaylistAsync(searchOrUrl));
             }
+            else if (searchOrUrl.Contains("open.spotify.com/album/"))
+            {
+                return new List<VideoMetadata>(await GetMetadataFromSpotifyAlbumAsync(searchOrUrl));
+            }
             else
             {
                 SearchResult searchResult = await YouTubeService.SearchForAsync(searchOrUrl, "video");
@@ -113,8 +117,6 @@ namespace wow2.Bot.Modules.Voice
             try
             {
                 var uri = new Uri(url);
-
-                // TODO: increase limit.
                 playlist = await SpotifyService.Client.Playlists.GetItems(uri.Segments.Last());
             }
             catch (UriFormatException)
@@ -130,6 +132,26 @@ namespace wow2.Bot.Modules.Voice
 
                 videos.Add(new VideoMetadataFromSpotify((FullTrack)item.Track));
             }
+
+            return videos;
+        }
+
+        private static async Task<List<VideoMetadataFromSpotify>> GetMetadataFromSpotifyAlbumAsync(string url)
+        {
+            FullAlbum album;
+            try
+            {
+                var uri = new Uri(url);
+                album = await SpotifyService.Client.Albums.Get(uri.Segments.Last());
+            }
+            catch (UriFormatException)
+            {
+                return null;
+            }
+
+            var videos = new List<VideoMetadataFromSpotify>();
+            foreach (var track in album.Tracks.Items)
+                videos.Add(new VideoMetadataFromSpotify(track));
 
             return videos;
         }

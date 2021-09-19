@@ -12,5 +12,13 @@ namespace wow2.Bot.Modules.Voice
             webpage_url = "https://open.spotify.com/track/" + spotifyTrack.Id;
             duration = spotifyTrack.DurationMs / 1000;
         }
+
+        public VideoMetadataFromSpotify(SimpleTrack spotifyTrack)
+        {
+            title = $"{spotifyTrack.Artists.FirstOrDefault()?.Name} - {spotifyTrack.Name}";
+            uploader = "Spotify";
+            webpage_url = "https://open.spotify.com/track/" + spotifyTrack.Id;
+            duration = spotifyTrack.DurationMs / 1000;
+        }
     }
 }
