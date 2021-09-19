@@ -69,7 +69,7 @@ namespace wow2.Bot.Modules.Voice
             }
             catch (ArgumentException ex)
             {
-                throw new CommandReturnException(Context, $"`{ex.Message}`", "Invalid input");
+                throw new CommandReturnException(Context, $"{ex.Message}", "Invalid input");
             }
             catch (Exception ex)
             {
