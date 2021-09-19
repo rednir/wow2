@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using Google.Apis.YouTube.v3.Data;
+using SpotifyAPI.Web;
 using wow2.Bot.Modules.YouTube;
 
 namespace wow2.Bot.Modules.Voice
@@ -16,6 +17,8 @@ namespace wow2.Bot.Modules.Voice
         public static readonly string FFmpegPath = Environment.GetEnvironmentVariable("FFMPEG_PATH") ?? "ffmpeg";
 
         public static IYoutubeModuleService YouTubeService { get; set; }
+
+        public static ISpotifyClient SpotifyClient { get; set; }
 
         public static Cache<VideoMetadata> VideoMetadataCache { get; } = new(120);
 

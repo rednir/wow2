@@ -13,6 +13,7 @@ using Discord.Net;
 using Discord.Rest;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using SpotifyAPI.Web;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 using wow2.Bot.Modules;
@@ -75,10 +76,12 @@ namespace wow2.Bot
             Services = new ServiceCollection()
                 .AddSingleton<IYoutubeModuleService>(new YoutubeModuleService(DataManager.Secrets.GoogleApiKey))
                 .AddSingleton<IOsuModuleService>(new OsuModuleService(DataManager.Secrets.OsuClientId, DataManager.Secrets.OsuClientSecret))
+                .AddSingleton<ISpotifyClient>(new SpotifyClient(DataManager.Secrets.SpotifyAccessToken))
                 .BuildServiceProvider();
 
             // TODO: inject this the proper way. need to get DownloadService non-static first.
             Modules.Voice.DownloadService.YouTubeService = Services.GetService<IYoutubeModuleService>();
+            Modules.Voice.DownloadService.SpotifyClient = Services.GetService<ISpotifyClient>();
 
             var config = new CommandServiceConfig()
             {
