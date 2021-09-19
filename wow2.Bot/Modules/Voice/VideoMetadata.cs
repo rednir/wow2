@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using Google.Apis.YouTube.v3.Data;
+using SpotifyAPI.Web;
 
 namespace wow2.Bot.Modules.Voice
 {

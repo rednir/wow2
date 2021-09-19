@@ -7,6 +7,10 @@ namespace wow2.Bot.Data
 
         public string GoogleApiKey { get; set; } = "Replace this with a key from https://console.cloud.google.com/apis/credentials";
 
+        public string SpotifyClientId { get; set; } = "Replace this with a client ID from https://developer.spotify.com/dashboard/";
+        
+        public string SpotifyClientSecret { get; set; } = "Replace this with a client secret from https://developer.spotify.com/dashboard/";
+
         public string OsuClientId { get; set; } = "Replace this with a client ID from https://osu.ppy.sh/home/account/edit#new-oauth-application";
 
         public string OsuClientSecret { get; set; } = "Replace this with a client secret from https://osu.ppy.sh/home/account/edit#new-oauth-application";

@@ -11,6 +11,7 @@ using Discord.Commands;
 using Discord.Net;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
+using wow2.Bot.Modules.YouTube;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
@@ -23,6 +24,8 @@ namespace wow2.Bot.Modules.Voice
     public class VoiceModule : Module
     {
         public VoiceModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Voice;
+
+        public IYoutubeModuleService YouTubeService { get; set; }
 
         public static bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
             => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;
@@ -62,10 +65,10 @@ namespace wow2.Bot.Modules.Voice
             /*if (((SocketGuildUser)Context.User).VoiceChannel == null)
                 throw new CommandReturnException(Context, "Join a voice channel first before adding song requests.");*/
 
-            VideoMetadata metadata;
+            List<VideoMetadata> metadataList;
             try
             {
-                metadata = await DownloadService.GetMetadataAsync(songRequest);
+                metadataList = await DownloadService.GetMetadataAsync(songRequest);
             }
             catch (ArgumentException ex)
             {
@@ -79,22 +82,29 @@ namespace wow2.Bot.Modules.Voice
                 return;
             }
 
-            Config.CurrentSongRequestQueue.Enqueue(new UserSongRequest()
+            foreach (var metadata in metadataList)
             {
-                VideoMetadata = metadata,
-                TimeRequested = DateTime.Now,
-                RequestedBy = Context.User,
-            });
+                Config.CurrentSongRequestQueue.Enqueue(new UserSongRequest()
+                {
+                    VideoMetadata = metadata,
+                    TimeRequested = DateTime.Now,
+                    RequestedBy = Context.User,
+                });
+            }
+
+            string successText = metadataList.Count > 1 ?
+                $"Added a playlist with {metadataList.Count} items.\nYou can clear the queue with `{Context.Guild.GetCommandPrefix()} vc clear`, or save it for later with `{Context.Guild.GetCommandPrefix()} vc save-queue [NAME]`" :
+                $"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadataList[0].title}**\n{metadataList[0].webpage_url}";
 
             bool isDisconnected = CheckIfAudioClientDisconnected(Config.AudioClient);
             if (isDisconnected && !Config.IsAutoJoinOn)
             {
-                await new SuccessMessage($"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}\n\n**You have `toggle-auto-join` turned off, **so if you want me to join the voice channel you'll have to type `{Context.Guild.GetCommandPrefix()} vc join`")
+                await new SuccessMessage($"{successText}\n\n**You have `toggle-auto-join` turned off, **so if you want me to join the voice channel you'll have to type `{Context.Guild.GetCommandPrefix()} vc join`")
                     .SendAsync(Context.Channel);
             }
             else
             {
-                await new SuccessMessage($"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
+                await new SuccessMessage(successText)
                     .SendAsync(Context.Channel);
 
                 if (Config.IsAutoJoinOn)
@@ -404,6 +414,16 @@ namespace wow2.Bot.Modules.Voice
 
         private async Task PlayRequestAsync(UserSongRequest request, CancellationToken cancellationToken)
         {
+            if (request.VideoMetadata is VideoMetadataFromSpotify)
+            {
+                // Convert spotify metadata to yt metadata.
+                var search = await YouTubeService.SearchForAsync(request.VideoMetadata.title, "videos");
+                request.VideoMetadata = new VideoMetadata(await YouTubeService.GetVideoAsync(search.Id.VideoId))
+                {
+                    extractor = "spotify",
+                };
+            }
+
             using (Process ffmpeg = DownloadService.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
             using (Stream output = ffmpeg.StandardOutput.BaseStream)
             using (AudioOutStream discord = Config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
