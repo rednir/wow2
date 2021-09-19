@@ -89,7 +89,7 @@ namespace wow2.Bot.Modules.Voice
             bool isDisconnected = CheckIfAudioClientDisconnected(Config.AudioClient);
             if (isDisconnected && !Config.IsAutoJoinOn)
             {
-                await new SuccessMessage($"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}\n**You have `toggle-auto-join` turned off,**so if you want me to join the voice channel you'll have to type `{Context.Guild.GetCommandPrefix()} vc join`")
+                await new SuccessMessage($"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}\n\n**You have `toggle-auto-join` turned off, **so if you want me to join the voice channel you'll have to type `{Context.Guild.GetCommandPrefix()} vc join`")
                     .SendAsync(Context.Channel);
             }
             else
