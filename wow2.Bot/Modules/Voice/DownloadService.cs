@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Google.Apis.YouTube.v3.Data;
 using SpotifyAPI.Web;
+using wow2.Bot.Modules.Spotify;
 using wow2.Bot.Modules.YouTube;
 using wow2.Bot.Verbose;
 
@@ -20,7 +21,7 @@ namespace wow2.Bot.Modules.Voice
 
         public static IYoutubeModuleService YouTubeService { get; set; }
 
-        public static ISpotifyClient SpotifyClient { get; set; }
+        public static ISpotifyModuleService SpotifyService { get; set; }
 
         public static Cache<List<VideoMetadata>> VideoMetadataCache { get; } = new(120);
 
@@ -114,7 +115,7 @@ namespace wow2.Bot.Modules.Voice
                 var uri = new Uri(url);
 
                 // TODO: increase limit.
-                playlist = await SpotifyClient.Playlists.GetItems(uri.Segments.Last());
+                playlist = await SpotifyService.Client.Playlists.GetItems(uri.Segments.Last());
             }
             catch (UriFormatException)
             {

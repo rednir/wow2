@@ -24,6 +24,7 @@ using wow2.Bot.Modules.Main;
 using wow2.Bot.Modules.Moderator;
 using wow2.Bot.Modules.Osu;
 using wow2.Bot.Modules.ServerIcon;
+using wow2.Bot.Modules.Spotify;
 using wow2.Bot.Modules.YouTube;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
@@ -76,12 +77,12 @@ namespace wow2.Bot
             Services = new ServiceCollection()
                 .AddSingleton<IYoutubeModuleService>(new YoutubeModuleService(DataManager.Secrets.GoogleApiKey))
                 .AddSingleton<IOsuModuleService>(new OsuModuleService(DataManager.Secrets.OsuClientId, DataManager.Secrets.OsuClientSecret))
-                .AddSingleton<ISpotifyClient>(new SpotifyClient(DataManager.Secrets.SpotifyAccessToken))
+                .AddSingleton<ISpotifyModuleService>(new SpotifyModuleService(DataManager.Secrets.SpotifyClientId, DataManager.Secrets.SpotifyClientSecret))
                 .BuildServiceProvider();
 
             // TODO: inject this the proper way. need to get DownloadService non-static first.
             Modules.Voice.DownloadService.YouTubeService = Services.GetService<IYoutubeModuleService>();
-            Modules.Voice.DownloadService.SpotifyClient = Services.GetService<ISpotifyClient>();
+            Modules.Voice.DownloadService.SpotifyService = Services.GetService<ISpotifyModuleService>();
 
             var config = new CommandServiceConfig()
             {
