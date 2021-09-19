@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -8,6 +9,7 @@ using System.Web;
 using Google.Apis.YouTube.v3.Data;
 using SpotifyAPI.Web;
 using wow2.Bot.Modules.YouTube;
+using wow2.Bot.Verbose;
 
 namespace wow2.Bot.Modules.Voice
 {
@@ -20,25 +22,30 @@ namespace wow2.Bot.Modules.Voice
 
         public static ISpotifyClient SpotifyClient { get; set; }
 
-        public static Cache<VideoMetadata> VideoMetadataCache { get; } = new(120);
+        public static Cache<List<VideoMetadata>> VideoMetadataCache { get; } = new(120);
 
         /// <summary>Looks up a URL or search term and gets the video metadata.</summary>
-        /// <returns>Video metadata deserialized into <c>YouTubeVideoMetadata</c>.</returns>
-        public static async Task<VideoMetadata> GetMetadataAsync(string searchOrUrl)
+        /// <returns>A list of video metadata. Will have only one element unless it is a playlist.</returns>
+        public static async Task<List<VideoMetadata>> GetMetadataAsync(string searchOrUrl)
         {
             searchOrUrl = searchOrUrl.Trim('\"');
 
             if (VideoMetadataCache.TryFetch(searchOrUrl, out var metadataFromCache))
                 return metadataFromCache;
 
+            // TODO: this seems like its getting a little bloated, could do with a lookover.
             Video video;
-            if (TryGetYoutubeVideoIdFromUrl(searchOrUrl, out string id))
+            if (TryGetYoutubeVideoIdFromUrl(searchOrUrl, out string youtubeVideoId))
             {
-                video = await YouTubeService.GetVideoAsync(id);
+                video = await YouTubeService.GetVideoAsync(youtubeVideoId);
             }
             else if (searchOrUrl.Contains("twitch.tv/"))
             {
-                return await GetMetadataFromYoutubeDlAsync(searchOrUrl);
+                return new List<VideoMetadata>() { await GetMetadataFromYoutubeDlAsync(searchOrUrl) };
+            }
+            else if (searchOrUrl.Contains("open.spotify.com/playlist/"))
+            {
+                return new List<VideoMetadata>(await GetMetadataFromSpotifyPlaylistAsync(searchOrUrl));
             }
             else
             {
@@ -46,7 +53,7 @@ namespace wow2.Bot.Modules.Voice
                 video = await YouTubeService.GetVideoAsync(searchResult.Id.VideoId);
             }
 
-            var videoMetadata = new VideoMetadata(video);
+            var videoMetadata = new List<VideoMetadata>() { new VideoMetadata(video) };
             VideoMetadataCache.Add(searchOrUrl, videoMetadata);
             return videoMetadata;
         }
@@ -97,6 +104,33 @@ namespace wow2.Bot.Modules.Voice
                 throw new ArgumentException(standardError);
 
             return JsonSerializer.Deserialize<VideoMetadata>(standardOutput);
+        }
+
+        private static async Task<List<VideoMetadataFromSpotify>> GetMetadataFromSpotifyPlaylistAsync(string url)
+        {
+            Paging<PlaylistTrack<IPlayableItem>> playlist;
+            try
+            {
+                var uri = new Uri(url);
+
+                // TODO: increase limit.
+                playlist = await SpotifyClient.Playlists.GetItems(uri.Segments.Last());
+            }
+            catch (UriFormatException)
+            {
+                return null;
+            }
+
+            var videos = new List<VideoMetadataFromSpotify>();
+            foreach (var item in playlist.Items)
+            {
+                if (item.Track.Type != ItemType.Track)
+                    continue;
+
+                videos.Add(new VideoMetadataFromSpotify((FullTrack)item.Track));
+            }
+
+            return videos;
         }
 
         private static bool TryGetYoutubeVideoIdFromUrl(string url, out string id)

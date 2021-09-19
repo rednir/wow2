@@ -62,10 +62,10 @@ namespace wow2.Bot.Modules.Voice
             /*if (((SocketGuildUser)Context.User).VoiceChannel == null)
                 throw new CommandReturnException(Context, "Join a voice channel first before adding song requests.");*/
 
-            VideoMetadata metadata;
+            List<VideoMetadata> metadataList;
             try
             {
-                metadata = await DownloadService.GetMetadataAsync(songRequest);
+                metadataList = await DownloadService.GetMetadataAsync(songRequest);
             }
             catch (ArgumentException ex)
             {
@@ -79,22 +79,29 @@ namespace wow2.Bot.Modules.Voice
                 return;
             }
 
-            Config.CurrentSongRequestQueue.Enqueue(new UserSongRequest()
+            foreach (var metadata in metadataList)
             {
-                VideoMetadata = metadata,
-                TimeRequested = DateTime.Now,
-                RequestedBy = Context.User,
-            });
+                Config.CurrentSongRequestQueue.Enqueue(new UserSongRequest()
+                {
+                    VideoMetadata = metadata,
+                    TimeRequested = DateTime.Now,
+                    RequestedBy = Context.User,
+                });
+            }
+
+            string successText = metadataList.Count > 1 ?
+                $"Added a playlist with {metadataList.Count} items to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue." :
+                $"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadataList[0].title}**\n{metadataList[0].webpage_url}";
 
             bool isDisconnected = CheckIfAudioClientDisconnected(Config.AudioClient);
             if (isDisconnected && !Config.IsAutoJoinOn)
             {
-                await new SuccessMessage($"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}\n\n**You have `toggle-auto-join` turned off, **so if you want me to join the voice channel you'll have to type `{Context.Guild.GetCommandPrefix()} vc join`")
+                await new SuccessMessage($"{successText}\n\n**You have `toggle-auto-join` turned off, **so if you want me to join the voice channel you'll have to type `{Context.Guild.GetCommandPrefix()} vc join`")
                     .SendAsync(Context.Channel);
             }
             else
             {
-                await new SuccessMessage($"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadata.title}**\n{metadata.webpage_url}")
+                await new SuccessMessage(successText)
                     .SendAsync(Context.Channel);
 
                 if (Config.IsAutoJoinOn)
