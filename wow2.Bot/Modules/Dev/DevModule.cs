@@ -274,7 +274,7 @@ namespace wow2.Bot.Modules.Dev
                     }
                 }
 
-                foreach (PagedMessage message in guildData.PagedMessages.ToArray())
+                foreach (SavedMessage message in guildData.SavedMessages.ToArray())
                 {
                     try
                     {

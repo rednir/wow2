@@ -9,7 +9,7 @@ using wow2.Bot.Extensions;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public class DateTimeSelectorMessage : Message
+    public class DateTimeSelectorMessage : SavedMessage
     {
         public const string ConfirmString = "Confirm";
 
@@ -44,15 +44,12 @@ namespace wow2.Bot.Verbose.Messages
         public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
         {
             GuildData guildData = DataManager.AllGuildData[component.Channel.GetGuild().Id];
-            DateTimeSelectorMessage message = guildData.DateTimeSelectorMessages.Find(m => m.SentMessage.Id == component.Message.Id);
-
-            if (message == null)
+            if (FromMessageId(guildData, component.Message.Id) is not DateTimeSelectorMessage message)
                 return false;
 
             if (component.Data.CustomId == ConfirmString)
             {
-                guildData.DateTimeSelectorMessages.Remove(message);
-                message.SentMessage?.ModifyAsync(m => m.Components = null);
+                await message.StopAsync();
                 await message.ConfirmFunc?.Invoke(message.DateTime);
                 return true;
             }
@@ -71,15 +68,7 @@ namespace wow2.Bot.Verbose.Messages
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             await UpdateEmbedAsync();
-
-            IUserMessage message = await base.SendAsync(channel);
-            List<DateTimeSelectorMessage> dateTimeSelectorMessages = DataManager
-                .AllGuildData[message.GetGuild().Id].DateTimeSelectorMessages;
-
-            dateTimeSelectorMessages.Truncate(40);
-            dateTimeSelectorMessages.Add(this);
-
-            return message;
+            return await base.SendAsync(channel);
         }
 
         private async Task UpdateEmbedAsync()

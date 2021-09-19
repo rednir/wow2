@@ -8,7 +8,7 @@ using wow2.Bot.Extensions;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public class QuestionMessage : Message
+    public class QuestionMessage : SavedMessage
     {
         public const string ConfirmText = "Yeah!";
         public const string DenyText = "Nah.";
@@ -35,9 +35,7 @@ namespace wow2.Bot.Verbose.Messages
         public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
         {
             GuildData guildData = DataManager.AllGuildData[component.Channel.GetGuild().Id];
-            QuestionMessage message = FromMessageId(guildData, component.Message.Id);
-
-            if (message == null)
+            if (FromMessageId(guildData, component.Message.Id) is not QuestionMessage message)
                 return false;
 
             if (component.Data.CustomId == ConfirmText)
@@ -53,25 +51,8 @@ namespace wow2.Bot.Verbose.Messages
                 return false;
             }
 
-            guildData.QuestionMessages.Remove(message);
-            await message.SentMessage.ModifyAsync(m => m.Components = null);
+            await message.StopAsync();
             return true;
-        }
-
-        /// <summary>Finds the <see cref="QuestionMessage"/> with the matching message ID.</summary>
-        /// <returns>The <see cref="QuestionMessage"/> respresenting the message ID, or null if a match was not found.</returns>
-        public static QuestionMessage FromMessageId(GuildData guildData, ulong messageId) =>
-            guildData.QuestionMessages.Find(m => m.SentMessage.Id == messageId);
-
-        public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
-        {
-            IUserMessage message = await base.SendAsync(channel);
-            List<QuestionMessage> confirmMessages = DataManager.AllGuildData[message.GetGuild().Id].QuestionMessages;
-
-            confirmMessages.Truncate(30);
-            confirmMessages.Add(this);
-
-            return message;
         }
     }
 }

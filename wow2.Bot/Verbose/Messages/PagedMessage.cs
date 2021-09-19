@@ -10,7 +10,7 @@ using wow2.Bot.Extensions;
 namespace wow2.Bot.Verbose.Messages
 {
     /// <summary>Class for sending and building embeds with pages of fields.</summary>
-    public class PagedMessage : Message, IDisposable
+    public class PagedMessage : SavedMessage
     {
         public const string StopText = "Stop";
         public static readonly IEmote PageLeftEmote = new Emoji("⏪");
@@ -38,13 +38,12 @@ namespace wow2.Bot.Verbose.Messages
 
         public int? Page { get; protected set; }
 
+        protected override bool DontSave => Page == null;
+
         /// <summary>If the message has pages, modifies the page of the message.</summary>
         public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
         {
-            PagedMessage message = FromMessageId(
-                DataManager.AllGuildData[component.Channel.GetGuild().Id], component.Message.Id);
-
-            if (message == null)
+            if (FromMessageId(DataManager.AllGuildData[component.Channel.GetGuild().Id], component.Message.Id) is not PagedMessage message)
                 return false;
 
             if (component.Data.CustomId == PageLeftEmote.Name)
@@ -67,28 +66,17 @@ namespace wow2.Bot.Verbose.Messages
             return true;
         }
 
-        /// <summary>Finds the <see cref="PagedMessage"/> with the matching message ID.</summary>
-        /// <returns>The <see cref="PagedMessage"/> respresenting the message ID, or null if a match was not found.</returns>
-        public static PagedMessage FromMessageId(GuildData guildData, ulong messageId) =>
-            guildData.PagedMessages.Find(m => m.SentMessage.Id == messageId);
-
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
-            if (Page == null)
-                return await base.SendAsync(channel);
+            if (Page != null)
+            {
+                Components = new ComponentBuilder()
+                    .WithButton("Left", PageLeftEmote.Name, ButtonStyle.Primary, emote: PageLeftEmote)
+                    .WithButton("Right", PageRightEmote.Name, ButtonStyle.Primary, emote: PageRightEmote)
+                    .WithButton("Stop", StopText, ButtonStyle.Danger);
+            }
 
-            Components = new ComponentBuilder()
-                .WithButton("Left", PageLeftEmote.Name, ButtonStyle.Primary, emote: PageLeftEmote)
-                .WithButton("Right", PageRightEmote.Name, ButtonStyle.Primary, emote: PageRightEmote)
-                .WithButton("Stop", StopText, ButtonStyle.Danger);
-
-            IUserMessage message = await base.SendAsync(channel);
-
-            List<PagedMessage> pagedMessages = DataManager.AllGuildData[message.GetGuild().Id].PagedMessages;
-            pagedMessages.Truncate(40);
-            pagedMessages.Add(this);
-
-            return message;
+            return await base.SendAsync(channel);
         }
 
         /// <summary>Modify the page and therefore the embed of this message.</summary>
@@ -103,20 +91,6 @@ namespace wow2.Bot.Verbose.Messages
                     message.Embed = EmbedBuilder?.Build();
                 });
             Logger.Log($"PagedMessage {SentMessage.Id} was changed to page {Page}.", LogSeverity.Debug);
-        }
-
-        /// <summary>Removes buttons, and stops ability to scroll through pages for this message.</summary>
-        public async Task StopAsync()
-        {
-            await SentMessage?.ModifyAsync(m => m.Components = null);
-            Dispose();
-        }
-
-        public void Dispose()
-        {
-            DataManager.AllGuildData[SentMessage.GetGuild().Id].PagedMessages.Remove(this);
-            Logger.Log($"PagedMessage {SentMessage.Id} was disposed.", LogSeverity.Debug);
-            GC.SuppressFinalize(this);
         }
 
         protected virtual void UpdateEmbed()

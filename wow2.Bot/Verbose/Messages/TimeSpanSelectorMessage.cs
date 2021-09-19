@@ -9,7 +9,7 @@ using wow2.Bot.Extensions;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public class TimeSpanSelectorMessage : Message
+    public class TimeSpanSelectorMessage : SavedMessage
     {
         public const string ConfirmString = "Confirm";
 
@@ -44,15 +44,15 @@ namespace wow2.Bot.Verbose.Messages
         public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
         {
             GuildData guildData = DataManager.AllGuildData[component.Channel.GetGuild().Id];
-            TimeSpanSelectorMessage message = guildData.TimeSpanSelectorMessages.Find(m => m.SentMessage.Id == component.Message.Id);
+            if (FromMessageId(guildData, component.Message.Id) is not TimeSpanSelectorMessage message)
+                return false;
 
             if (message == null)
                 return false;
 
             if (component.Data.CustomId == ConfirmString)
             {
-                guildData.TimeSpanSelectorMessages.Remove(message);
-                message.SentMessage?.ModifyAsync(m => m.Components = null);
+                await message.StopAsync();
                 await message.ConfirmFunc?.Invoke(message.TimeSpan);
                 return true;
             }
@@ -71,15 +71,7 @@ namespace wow2.Bot.Verbose.Messages
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             await UpdateEmbedAsync();
-
-            IUserMessage message = await base.SendAsync(channel);
-            var timeSpanSelectorMessages = DataManager
-                .AllGuildData[message.GetGuild().Id].TimeSpanSelectorMessages;
-
-            timeSpanSelectorMessages.Truncate(40);
-            timeSpanSelectorMessages.Add(this);
-
-            return message;
+            return await base.SendAsync(channel);
         }
 
         private async Task UpdateEmbedAsync()

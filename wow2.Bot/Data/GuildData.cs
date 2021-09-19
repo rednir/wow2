@@ -22,16 +22,7 @@ namespace wow2.Bot.Data
         public long DateTimeJoinedBinary { get; set; }
 
         [JsonIgnore]
-        public List<PagedMessage> PagedMessages { get; set; } = new();
-
-        [JsonIgnore]
-        public List<QuestionMessage> QuestionMessages { get; set; } = new();
-
-        [JsonIgnore]
-        public List<DateTimeSelectorMessage> DateTimeSelectorMessages { get; set; } = new();
-
-        [JsonIgnore]
-        public List<TimeSpanSelectorMessage> TimeSpanSelectorMessages { get; set; } = new();
+        public List<SavedMessage> SavedMessages { get; set; } = new();
 
         public MainModuleConfig Main { get; set; } = new();
 
