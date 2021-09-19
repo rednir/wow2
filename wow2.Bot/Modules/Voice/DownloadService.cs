@@ -32,7 +32,7 @@ namespace wow2.Bot.Modules.Voice
                 return metadataFromCache;
 
             Video video;
-            if (TryGetVideoIdFromUrl(searchOrUrl, out string id))
+            if (TryGetYoutubeVideoIdFromUrl(searchOrUrl, out string id))
             {
                 video = await YouTubeService.GetVideoAsync(id);
             }
@@ -99,7 +99,7 @@ namespace wow2.Bot.Modules.Voice
             return JsonSerializer.Deserialize<VideoMetadata>(standardOutput);
         }
 
-        private static bool TryGetVideoIdFromUrl(string url, out string id)
+        private static bool TryGetYoutubeVideoIdFromUrl(string url, out string id)
         {
             try
             {
