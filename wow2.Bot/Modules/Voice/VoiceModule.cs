@@ -90,7 +90,7 @@ namespace wow2.Bot.Modules.Voice
             }
 
             string successText = metadataList.Count > 1 ?
-                $"Added a playlist with {metadataList.Count} items. You can clear the queue with `{Context.Guild.GetCommandPrefix()} vc clear`, or save it for later with `{Context.Guild.GetCommandPrefix()} vc save-queue`" :
+                $"Added a playlist with {metadataList.Count} items. You can clear the queue with `{Context.Guild.GetCommandPrefix()} vc clear`, or save it for later with `{Context.Guild.GetCommandPrefix()} vc save-queue [NAME]`" :
                 $"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadataList[0].title}**\n{metadataList[0].webpage_url}";
 
             bool isDisconnected = CheckIfAudioClientDisconnected(Config.AudioClient);
