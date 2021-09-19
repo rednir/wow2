@@ -13,7 +13,7 @@ namespace wow2.Bot.Verbose.Messages
     {
         public const string ConfirmString = "Confirm";
 
-        public static readonly IReadOnlyDictionary<string, TimeSpan> DateTimeModifierEmotes = new Dictionary<string, TimeSpan>()
+        public static readonly IReadOnlyDictionary<string, TimeSpan> TimeSpanModifierEmotes = new Dictionary<string, TimeSpan>()
         {
             { "+1 week", TimeSpan.FromDays(7) },
             { "-1 week", TimeSpan.FromDays(-7) },
@@ -31,7 +31,7 @@ namespace wow2.Bot.Verbose.Messages
             ConfirmFunc = confirmFunc;
 
             Components = new ComponentBuilder().WithButton(ConfirmString, ConfirmString, ButtonStyle.Primary, row: 2);
-            foreach (string text in DateTimeModifierEmotes.Keys)
+            foreach (string text in TimeSpanModifierEmotes.Keys)
                 Components.WithButton(text, text, ButtonStyle.Secondary);
         }
 
@@ -56,9 +56,9 @@ namespace wow2.Bot.Verbose.Messages
                 await message.ConfirmFunc?.Invoke(message.TimeSpan);
                 return true;
             }
-            else if (DateTimeModifierEmotes.Any(p => p.Key == component.Data.CustomId))
+            else if (TimeSpanModifierEmotes.Any(p => p.Key == component.Data.CustomId))
             {
-                message.TimeSpan += DateTimeModifierEmotes[component.Data.CustomId];
+                message.TimeSpan += TimeSpanModifierEmotes[component.Data.CustomId];
                 await message.UpdateEmbedAsync();
                 return true;
             }
