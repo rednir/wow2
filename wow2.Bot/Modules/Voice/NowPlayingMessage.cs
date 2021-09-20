@@ -15,7 +15,7 @@ namespace wow2.Bot.Modules.Voice
             string iconUrl;
             if (request.VideoMetadata.extractor.StartsWith("twitch"))
                 iconUrl = twitchIconUrl;
-            if (request.VideoMetadata.extractor.StartsWith("spotify"))
+            else if (request.VideoMetadata.extractor.StartsWith("spotify"))
                 iconUrl = spotifyIconUrl;
             else
                 iconUrl = youtubeIconUrl;
