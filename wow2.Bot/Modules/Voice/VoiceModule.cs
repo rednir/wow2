@@ -414,13 +414,13 @@ namespace wow2.Bot.Modules.Voice
 
         private async Task PlayRequestAsync(UserSongRequest request, CancellationToken cancellationToken)
         {
-            if (request.VideoMetadata is VideoMetadataFromSpotify)
+            if (request.VideoMetadata.LookupTitleOnYoutube)
             {
-                // Convert spotify metadata to yt metadata.
                 var search = await YouTubeService.SearchForAsync(request.VideoMetadata.title, "videos");
                 request.VideoMetadata = new VideoMetadata(await YouTubeService.GetVideoAsync(search.Id.VideoId))
                 {
-                    extractor = "spotify",
+                    // Remember what the original source was.
+                    extractor = request.VideoMetadata.extractor,
                 };
             }
 

@@ -111,7 +111,7 @@ namespace wow2.Bot.Modules.Voice
             return JsonSerializer.Deserialize<VideoMetadata>(standardOutput);
         }
 
-        private static async Task<List<VideoMetadataFromSpotify>> GetMetadataFromSpotifyPlaylistAsync(string url)
+        private static async Task<List<VideoMetadata>> GetMetadataFromSpotifyPlaylistAsync(string url)
         {
             Paging<PlaylistTrack<IPlayableItem>> playlist;
             try
@@ -124,19 +124,19 @@ namespace wow2.Bot.Modules.Voice
                 return null;
             }
 
-            var videos = new List<VideoMetadataFromSpotify>();
+            var videos = new List<VideoMetadata>();
             foreach (var item in playlist.Items)
             {
                 if (item.Track.Type != ItemType.Track)
                     continue;
 
-                videos.Add(new VideoMetadataFromSpotify((FullTrack)item.Track));
+                videos.Add(new VideoMetadata((FullTrack)item.Track));
             }
 
             return videos;
         }
 
-        private static async Task<List<VideoMetadataFromSpotify>> GetMetadataFromSpotifyAlbumAsync(string url)
+        private static async Task<List<VideoMetadata>> GetMetadataFromSpotifyAlbumAsync(string url)
         {
             FullAlbum album;
             try
@@ -149,9 +149,9 @@ namespace wow2.Bot.Modules.Voice
                 return null;
             }
 
-            var videos = new List<VideoMetadataFromSpotify>();
+            var videos = new List<VideoMetadata>();
             foreach (var track in album.Tracks.Items)
-                videos.Add(new VideoMetadataFromSpotify(track));
+                videos.Add(new VideoMetadata(track));
 
             return videos;
         }
