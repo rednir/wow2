@@ -16,7 +16,7 @@ namespace wow2.Bot.Modules.Main
             GuildId = context.Guild.Id;
             ChannelId = context.Channel.Id;
             MessageId = context.Message.Id;
-            FileName = context.Message.Attachments.FirstOrDefault()?.Url.Split('/').Last();
+            FileName = context.Message.Attachments.FirstOrDefault()?.Url.Split('/').Last() ?? "<message>";
             AuthorMention = context.User.Mention;
             DateTime = context.Message.Timestamp.DateTime;
         }
