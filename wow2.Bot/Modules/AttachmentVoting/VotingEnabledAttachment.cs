@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Discord.Commands;
 
-namespace wow2.Bot.Modules.Main
+namespace wow2.Bot.Modules.AttachmentVoting
 {
     public class VotingEnabledAttachment
     {

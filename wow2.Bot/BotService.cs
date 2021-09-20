@@ -17,6 +17,7 @@ using SpotifyAPI.Web;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 using wow2.Bot.Modules;
+using wow2.Bot.Modules.AttachmentVoting;
 using wow2.Bot.Modules.Games.Counting;
 using wow2.Bot.Modules.Games.VerbalMemory;
 using wow2.Bot.Modules.Keywords;
@@ -235,7 +236,7 @@ namespace wow2.Bot
                 return;
 
             _ = !await ResponseMessage.ActOnReactionAddedAsync(reaction)
-                && !MainModule.ActOnReactionAdded(reaction);
+                && !AttachmentVotingModule.ActOnReactionAdded(reaction);
         }
 
         public static Task ReactionRemovedAsync(Cacheable<IUserMessage, ulong> cachedMessage, Cacheable<IMessageChannel, ulong> cachedChannel, SocketReaction reaction)
@@ -244,7 +245,7 @@ namespace wow2.Bot
                 return Task.CompletedTask;
 
             _ = !ResponseMessage.ActOnReactionRemoved(reaction)
-                && !MainModule.ActOnReactionRemoved(reaction);
+                && !AttachmentVotingModule.ActOnReactionRemoved(reaction);
 
             return Task.CompletedTask;
         }
@@ -397,7 +398,7 @@ namespace wow2.Bot
         {
             SocketUserMessage message = context.Message;
 
-            await MainModule.CheckMessageAsync(context);
+            await AttachmentVotingModule.CheckMessageAsync(context);
 
             // Only auto mod message if not related to a game.
             if (!await CountingGame.CheckMessageAsync(context))

@@ -1,6 +1,6 @@
 # List of commands (91 total)
 
-## Main (10)
+## Main (8)
 Stuff to do with the bot and other random stuff.
 
 |Command|Summary|
@@ -11,8 +11,6 @@ Stuff to do with the bot and other random stuff.
 |`!wow alias-list`|Displays a list of aliases.|
 |`!wow ping`|Checks the latency between the message that executes a command, and the response that the bot sends.|
 |`!wow say [MESSAGE]`|Sends a message. That's it.|
-|`!wow toggle-attachment-voting [CHANNEL]`|Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.|
-|`!wow attachment-list [optional:SORT] [optional:PAGE]`|Lists all attachments with voting enabled. SORT can be points/users/date/likes/deletions/values, default is likes.|
 |`!wow set-command-prefix [PREFIX]`|Change the prefix used to identify commands. '!wow' is the default.|
 |`!wow upload-raw-data`|Uploads a file containing all the data the bot stores about this server.|
 
@@ -162,4 +160,12 @@ Boring stuff for developers.
 |`!wow dev execute-manual-script`|Run the file at the environment variable WOW2_MANUAL_SCRIPT.|
 |`!wow dev stop-program [optional:EXIT]`|Prepares to stop the program.|
 |`!wow dev throw`|Throws an unhandled exception.|
+
+## Attachment Voting (2)
+Enable users to vote on attachments in messages.
+
+|Command|Summary|
+|---|---|
+|`!wow attachment toggle [CHANNEL]`|Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.|
+|`!wow attachment list [optional:SORT] [optional:PAGE]`|Lists all attachments with voting enabled. SORT can be points/users/date/likes/deletions/values, default is likes.|
 

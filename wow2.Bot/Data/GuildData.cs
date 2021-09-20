@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using wow2.Bot.Modules.AttachmentVoting;
 using wow2.Bot.Modules.Games;
 using wow2.Bot.Modules.Keywords;
 using wow2.Bot.Modules.Main;
@@ -35,6 +36,8 @@ namespace wow2.Bot.Data
         public ModeratorModuleConfig Moderator { get; set; } = new();
 
         public OsuModuleConfig Osu { get; set; } = new();
+
+        public AttachmentVotingModuleConfig AttachmentVoting { get; set; } = new();
 
         public ServerIconModuleConfig ServerIcon { get; set; } = new();
 

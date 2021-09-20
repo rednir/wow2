@@ -1,4 +1,4 @@
-namespace wow2.Bot.Modules.Main
+namespace wow2.Bot.Modules.AttachmentVoting
 {
     public enum AttachmentSorts
     {
