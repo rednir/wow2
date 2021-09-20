@@ -25,6 +25,8 @@ namespace wow2.Bot.Modules.Dev
     [Summary("Boring stuff for developers.")]
     public class DevModule : Module
     {
+        public IDataManager DataManager { get; set; }
+
         [Command("load-guild-data")]
         [Alias("load")]
         [Summary("Loads guild data from file to memory, discarding any unsaved changes.")]
@@ -94,7 +96,7 @@ namespace wow2.Bot.Modules.Dev
         public async Task GetGuildDataAsync(ulong id = 0)
         {
             await Context.Channel.SendFileAsync(
-                filePath: $"{DataManager.AppDataDirPath}/GuildData/{(id != 0 ? id : Context.Guild.Id)}.json");
+                filePath: $"{DataManager.GuildDataDirPath}/{(id != 0 ? id : Context.Guild.Id)}.json");
         }
 
         [Command("set-status")]

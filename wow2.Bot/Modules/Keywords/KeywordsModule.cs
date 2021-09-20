@@ -132,7 +132,7 @@ namespace wow2.Bot.Modules.Keywords
                         onConfirm: delete,
                         onDeny: async () =>
                         {
-                            await new InfoMessage($"You can do that by typing `{Context.Guild.GetCommandPrefix()} keywords remove {keyword} [VALUE]`", "Just want to remove one value?")
+                            await new InfoMessage($"You can do that by typing `{CommandPrefix} keywords remove {keyword} [VALUE]`", "Just want to remove one value?")
                                 .SendAsync(Context.Channel);
                         })
                             .SendAsync(Context.Channel);

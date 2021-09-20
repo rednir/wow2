@@ -14,9 +14,6 @@ namespace wow2.Bot.Extensions
         public static SocketGuild GetGuild(this ISocketMessageChannel messageChannel)
             => ((SocketGuildChannel)messageChannel).Guild;
 
-        public static string GetCommandPrefix(this IGuild guild) =>
-            DataManager.AllGuildData[guild.Id].Main.CommandPrefix;
-
         /// <summary>Creates a string from a list of commands, with newlines placed between each command.</summary>
         /// <returns>A string representing the list of commands.</returns>
         public static string MakeReadableString(this IEnumerable<CommandInfo> commands, string commandPrefix)

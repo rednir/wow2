@@ -35,7 +35,8 @@ namespace wow2.Bot.Modules.Dev
             }
         }
 
-        [Test("messages")]
+        // TODO: uncomment (or honestly just nuke this)
+        /*[Test("messages")]
         public static async Task MessagesTest(SocketCommandContext context)
         {
             await new SuccessMessage("This is a success message.", "Success").SendAsync(context.Channel);
@@ -295,6 +296,6 @@ namespace wow2.Bot.Modules.Dev
         {
             foreach (var assert in asserts)
                 await AssertAsync(context, assert.Key, assert.Value);
-        }
+        }*/
     }
 }

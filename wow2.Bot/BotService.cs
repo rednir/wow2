@@ -39,6 +39,8 @@ namespace wow2.Bot
 
         public static CommandService CommandService { get; set; }
 
+        public static IDataManager DataManager { get; set; }
+
         public static IServiceProvider Services { get; set; }
 
         public static bool IsDisabled { get; set; } = false;
@@ -75,6 +77,7 @@ namespace wow2.Bot
             }
 
             Services = new ServiceCollection()
+                .AddSingleton(DataManager)
                 .AddSingleton<IYoutubeModuleService>(new YoutubeModuleService(DataManager.Secrets.GoogleApiKey))
                 .AddSingleton<IOsuModuleService>(new OsuModuleService(DataManager.Secrets.OsuClientId, DataManager.Secrets.OsuClientSecret))
                 .AddSingleton<ISpotifyModuleService>(new SpotifyModuleService(DataManager.Secrets.SpotifyClientId, DataManager.Secrets.SpotifyClientSecret))
@@ -166,8 +169,7 @@ namespace wow2.Bot
             // Only set if it's the first time the bot has joined this guild.
             if (guildData.DateTimeJoinedBinary == 0)
             {
-                DataManager.AllGuildData[guild.Id]
-                    .DateTimeJoinedBinary = DateTime.Now.ToBinary();
+                DataManager.AllGuildData[guild.Id].DateTimeJoinedBinary = DateTime.Now.ToBinary();
             }
 
             // This could take a while.
@@ -325,7 +327,7 @@ namespace wow2.Bot
 
         public static async Task SendErrorMessageToChannel(CommandError? commandError, SocketCommandContext context)
         {
-            string commandPrefix = context.Guild.GetCommandPrefix();
+            string commandPrefix = DataManager.AllGuildData[context.Guild.Id].Main.CommandPrefix;
 
             var matchingCommands = await SearchCommandsAsync(
                 context, context.Message.Content.MakeCommandInput(commandPrefix));
@@ -406,7 +408,7 @@ namespace wow2.Bot
             }
 
             if (message.Content.StartsWithWord(
-                context.Guild.GetCommandPrefix(), true))
+                DataManager.AllGuildData[context.Guild.Id].Main.CommandPrefix, true))
             {
                 // The message starts with the command prefix and the prefix is not part of another word.
                 await ActOnMessageAsCommandAsync(context);
@@ -422,7 +424,7 @@ namespace wow2.Bot
 
         private static async Task ActOnMessageAsCommandAsync(SocketCommandContext context)
         {
-            string commandPrefix = context.Guild.GetCommandPrefix();
+            string commandPrefix = DataManager.AllGuildData[context.Guild.Id].Main.CommandPrefix;
 
             if (context.Message.Content == commandPrefix)
             {
