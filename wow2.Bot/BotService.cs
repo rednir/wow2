@@ -191,7 +191,7 @@ namespace wow2.Bot
 
                 if (logMessage.Exception is CommandException commandException)
                 {
-                    string errorMessageText = $"An unhandled exception was thrown.\nWant to report this bug? [Create an issue on Github.](https://github.com/rednir/wow2/issues/new/choose)\n```{commandException.InnerException.Message}\n```";
+                    string errorMessageText = $"An unhandled error occured when executing the command.```{commandException.InnerException.Message}\n```";
                     switch (commandException.InnerException)
                     {
                         case NotImplementedException:

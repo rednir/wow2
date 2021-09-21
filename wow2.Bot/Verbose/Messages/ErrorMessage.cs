@@ -14,6 +14,12 @@ namespace wow2.Bot.Verbose.Messages
                 Timestamp = DateTime.Now,
                 Color = new Color(0xE74C3C),
             };
+
+            Components = new ComponentBuilder()
+                .WithButton(
+                    label: "Make a bug report",
+                    style: ButtonStyle.Link,
+                    url: "https://github.com/rednir/wow2/issues/new?template=bug_report.md");
         }
     }
 }
