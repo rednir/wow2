@@ -438,12 +438,23 @@ namespace wow2.Bot.Modules.Voice
         {
             if (request.VideoMetadata.LookupTitleOnYoutube)
             {
-                var search = await YouTubeService.SearchForAsync(request.VideoMetadata.title, "videos");
-                request.VideoMetadata = new VideoMetadata(await YouTubeService.GetVideoAsync(search.Id.VideoId))
+                try
                 {
-                    // Remember what the original source was.
-                    extractor = request.VideoMetadata.extractor,
-                };
+                    var search = await YouTubeService.SearchForAsync(request.VideoMetadata.title, "videos");
+                    request.VideoMetadata = new VideoMetadata(await YouTubeService.GetVideoAsync(search.Id.VideoId))
+                    {
+                        // Remember what the original source was.
+                        extractor = request.VideoMetadata.extractor,
+                    };
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogException(ex, $"Lookup failed for {request.VideoMetadata.title}");
+                    await new ErrorMessage($"```{request.VideoMetadata.title}```", "Couldn't lookup song.")
+                        .SendAsync(Context.Channel);
+                    _ = ContinueAsync();
+                    return;
+                }
             }
 
             using (Process ffmpeg = DownloadService.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
