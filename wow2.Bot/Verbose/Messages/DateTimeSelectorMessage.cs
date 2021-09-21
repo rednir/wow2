@@ -1,38 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using Discord.WebSocket;
-using wow2.Bot.Data;
-using wow2.Bot.Extensions;
 
 namespace wow2.Bot.Verbose.Messages
 {
     public class DateTimeSelectorMessage : SavedMessage
     {
-        public const string ConfirmString = "Confirm";
-
-        public static readonly IReadOnlyDictionary<string, TimeSpan> DateTimeModifierEmotes = new Dictionary<string, TimeSpan>()
-        {
-            { "+1 week", TimeSpan.FromDays(7) },
-            { "-1 week", TimeSpan.FromDays(-7) },
-            { "+1 day", TimeSpan.FromDays(1) },
-            { "-1 day", TimeSpan.FromDays(-1) },
-            { "+1 hour", TimeSpan.FromHours(1) },
-            { "-1 hour", TimeSpan.FromHours(-1) },
-            { "+10 minutes", TimeSpan.FromMinutes(10) },
-            { "-10 minutes", TimeSpan.FromMinutes(-10) },
-        };
-
         public DateTimeSelectorMessage(Func<DateTime, Task> confirmFunc, string description = "Select a date and time.")
         {
             Description = description;
             ConfirmFunc = confirmFunc;
-
-            Components = new ComponentBuilder().WithButton(ConfirmString, ConfirmString, ButtonStyle.Primary, row: 2);
-            foreach (string text in DateTimeModifierEmotes.Keys)
-                Components.WithButton(text, text, ButtonStyle.Secondary);
         }
 
         public DateTime DateTime { get; set; } = DateTime.Now;
@@ -41,34 +18,94 @@ namespace wow2.Bot.Verbose.Messages
 
         private Func<DateTime, Task> ConfirmFunc { get; }
 
-        public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
+        protected override ActionButtons[] ActionButtons => new[]
         {
-            GuildData guildData = DataManager.AllGuildData[component.Channel.GetGuild().Id];
-            if (FromMessageId(guildData, component.Message.Id) is not DateTimeSelectorMessage message)
-                return false;
-
-            if (component.Data.CustomId == ConfirmString)
+            new ActionButtons()
             {
-                await message.StopAsync();
-                await message.ConfirmFunc?.Invoke(message.DateTime);
-                return true;
-            }
-            else if (DateTimeModifierEmotes.Any(p => p.Key == component.Data.CustomId))
+                Label = "Confirm",
+                Style = ButtonStyle.Primary,
+                Row = 0,
+                Action = async _ =>
+                {
+                    await StopAsync();
+                    await ConfirmFunc?.Invoke(DateTime);
+                },
+            },
+            new ActionButtons()
             {
-                message.DateTime += DateTimeModifierEmotes[component.Data.CustomId];
-                await message.UpdateEmbedAsync();
-                return true;
-            }
-            else
+                Label = "Cancel",
+                Style = ButtonStyle.Danger,
+                Row = 0,
+                Action = async _ => await StopAsync(),
+            },
+            new ActionButtons()
             {
-                return false;
-            }
-        }
+                Label = "+1 week",
+                Style = ButtonStyle.Secondary,
+                Row = 1,
+                Action = async _ => await AddTimeAsync(TimeSpan.FromDays(7)),
+            },
+            new ActionButtons()
+            {
+                Label = "-1 week",
+                Style = ButtonStyle.Secondary,
+                Row = 1,
+                Action = async _ => await AddTimeAsync(TimeSpan.FromDays(-7)),
+            },
+            new ActionButtons()
+            {
+                Label = "+1 day",
+                Style = ButtonStyle.Secondary,
+                Row = 1,
+                Action = async _ => await AddTimeAsync(TimeSpan.FromDays(1)),
+            },
+            new ActionButtons()
+            {
+                Label = "-1 day",
+                Style = ButtonStyle.Secondary,
+                Row = 1,
+                Action = async _ => await AddTimeAsync(TimeSpan.FromDays(-1)),
+            },
+            new ActionButtons()
+            {
+                Label = "+1 hour",
+                Style = ButtonStyle.Secondary,
+                Row = 2,
+                Action = async _ => await AddTimeAsync(TimeSpan.FromHours(1)),
+            },
+            new ActionButtons()
+            {
+                Label = "-1 hour",
+                Style = ButtonStyle.Secondary,
+                Row = 2,
+                Action = async _ => await AddTimeAsync(TimeSpan.FromHours(-1)),
+            },
+            new ActionButtons()
+            {
+                Label = "+10 minutes",
+                Style = ButtonStyle.Secondary,
+                Row = 2,
+                Action = async _ => await AddTimeAsync(TimeSpan.FromMinutes(10)),
+            },
+            new ActionButtons()
+            {
+                Label = "-10 minutes",
+                Style = ButtonStyle.Secondary,
+                Row = 2,
+                Action = async _ => await AddTimeAsync(TimeSpan.FromMinutes(-10)),
+            },
+        };
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             await UpdateEmbedAsync();
             return await base.SendAsync(channel);
+        }
+
+        private async Task AddTimeAsync(TimeSpan timeSpan)
+        {
+            DateTime += timeSpan;
+            await UpdateEmbedAsync();
         }
 
         private async Task UpdateEmbedAsync()
