@@ -56,7 +56,7 @@ namespace wow2.Bot.Verbose.Messages
         {
             Components = new ComponentBuilder();
             foreach (var button in ActionButtons)
-                Components.WithButton(button.Label, $"{GetHashCode()}:{button.Label}", button.Style, button.Emote, button.Url, button.Disabled, button.Row);
+                Components.WithButton(button.Label, button.Url == null ? $"{GetHashCode()}:{button.Label}" : null, button.Style, button.Emote, button.Url, button.Disabled, button.Row);
 
             IUserMessage message = await base.SendAsync(channel);
             if (!DontSave)
