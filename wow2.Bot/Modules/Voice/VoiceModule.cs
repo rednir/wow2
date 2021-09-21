@@ -228,7 +228,7 @@ namespace wow2.Bot.Modules.Voice
         [Summary("Leaves the voice channel.")]
         public async Task LeaveAsync()
         {
-            Config.CurrentlyPlayingSongRequest = null;
+            StopPlaying(Config);
 
             if (Config.AudioClient == null || Config.AudioClient?.ConnectionState == ConnectionState.Disconnected)
                 throw new CommandReturnException(Context, "I'm not currently in a voice channel.");
@@ -491,6 +491,16 @@ namespace wow2.Bot.Modules.Voice
 
             if (CheckIfAudioClientDisconnected(Config.AudioClient))
                 return;
+
+            var users = Context.Guild.GetUser(Context.Client.CurrentUser.Id)?.VoiceChannel?.Users;
+            if (users?.Count < 2)
+            {
+                StopPlaying(Config);
+                await Config.AudioClient.StopAsync();
+                await new InfoMessage("I left the voice channel since there's nobody here to listen.")
+                    .SendAsync(Context.Channel);
+                return;
+            }
 
             if (Config.IsLoopEnabled && Config.CurrentlyPlayingSongRequest != null)
             {
