@@ -30,9 +30,8 @@ namespace wow2.Bot.Verbose.Messages
         public MessageReference MessageReference =>
             ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null;
 
-        // TODO: this should probably be protected.
         [JsonIgnore]
-        public ComponentBuilder Components { get; set; }
+        protected ComponentBuilder Components { get; set; }
 
         [JsonIgnore]
         protected EmbedBuilder EmbedBuilder { get; set; }
