@@ -19,7 +19,7 @@ namespace wow2.Bot.Verbose.Messages
                 .WithButton(
                     label: "Make a bug report",
                     style: ButtonStyle.Link,
-                    url: "https://github.com/rednir/wow2/issues/new?template=bug_report.md");
+                    url: "https://github.com/rednir/wow2/issues/new?assignees=&labels=bug&template=bug_report.md&title=");
         }
     }
 }
