@@ -392,6 +392,7 @@ namespace wow2.Bot.Modules.Voice
             config.ListOfUserIdsThatVoteSkipped.Clear();
             config.CtsForAudioStreaming.Cancel();
             config.CtsForAudioStreaming = new CancellationTokenSource();
+            config.CurrentlyPlayingSongRequest = null;
         }
 
         private async Task JoinVoiceChannelAsync(IVoiceChannel channel)
