@@ -422,7 +422,7 @@ namespace wow2.Bot.Modules.Voice
 
             try
             {
-                await new NowPlayingMessage(Config.CurrentlyPlayingSongRequest)
+                await new NowPlayingMessage(Config.CurrentlyPlayingSongRequest, Config)
                     .SendAsync(Context.Channel);
             }
             catch (Exception ex)

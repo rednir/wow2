@@ -1,21 +1,50 @@
+using System;
 using System.Linq;
 using Discord;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Voice
 {
-    public class NowPlayingMessage : Message
+    public class NowPlayingMessage : SavedMessage
     {
-        public NowPlayingMessage(UserSongRequest request)
+        protected override ActionButtons[] ActionButtons => new[]
+        {
+            new ActionButtons()
+            {
+                Label = "More details",
+                Style = ButtonStyle.Link,
+                Url = Request.VideoMetadata.webpage_url,
+            },
+            new ActionButtons()
+            {
+                Label = "Skip this request",
+                Style = ButtonStyle.Secondary,
+                Action = async component =>
+                {
+                    if (Config.CurrentlyPlayingSongRequest != Request)
+                    {
+                        await component.FollowupAsync(embed: new WarningMessage("This request has already finished playing.").Embed, ephemeral: true);
+                        return;
+                    }
+
+                    throw new NotImplementedException();
+                },
+            },
+        };
+
+        public NowPlayingMessage(UserSongRequest request, VoiceModuleConfig config)
         {
             const string youtubeIconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png";
             const string twitchIconUrl = "https://www.net-aware.org.uk/siteassets/images-and-icons/application-icons/app-icons-twitch.png?w=585&scale=down";
             const string spotifyIconUrl = "https://www.techspot.com/images2/downloads/topdownload/2016/12/spotify-icon-18.png";
 
+            Request = request;
+            Config = config;
+
             string iconUrl;
-            if (request.VideoMetadata.extractor.StartsWith("twitch"))
+            if (Request.VideoMetadata.extractor.StartsWith("twitch"))
                 iconUrl = twitchIconUrl;
-            else if (request.VideoMetadata.extractor.StartsWith("spotify"))
+            else if (Request.VideoMetadata.extractor.StartsWith("spotify"))
                 iconUrl = spotifyIconUrl;
             else
                 iconUrl = youtubeIconUrl;
@@ -26,18 +55,22 @@ namespace wow2.Bot.Modules.Voice
                 {
                     Name = "Now Playing",
                     IconUrl = iconUrl,
-                    Url = request.VideoMetadata.webpage_url,
+                    Url = Request.VideoMetadata.webpage_url,
                 },
                 Footer = new EmbedFooterBuilder()
                 {
-                    Text = request.VideoMetadata.extractor.StartsWith("youtube") || request.VideoMetadata.extractor.StartsWith("spotify") ?
-                        $"👁️  {request.VideoMetadata.view_count ?? 0}      |      👍  {request.VideoMetadata.like_count ?? 0}      |      👎  {request.VideoMetadata.dislike_count ?? 0}      |      🕓  {VoiceModule.DurationAsString(request.VideoMetadata.duration)}" : string.Empty,
+                    Text = Request.VideoMetadata.extractor.StartsWith("youtube") || Request.VideoMetadata.extractor.StartsWith("spotify") ?
+                        $"👁️  {Request.VideoMetadata.view_count ?? 0}      |      👍  {Request.VideoMetadata.like_count ?? 0}      |      👎  {Request.VideoMetadata.dislike_count ?? 0}      |      🕓  {VoiceModule.DurationAsString(Request.VideoMetadata.duration)}" : string.Empty,
                 },
-                Title = (request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {request.VideoMetadata.description}" : request.VideoMetadata.title) + $" *({request.VideoMetadata.uploader})*",
-                ThumbnailUrl = request.VideoMetadata.thumbnails.LastOrDefault()?.url,
-                Description = $"Requested at {request.TimeRequested:HH:mm} by {request.RequestedBy?.Mention}",
+                Title = (Request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {Request.VideoMetadata.description}" : Request.VideoMetadata.title) + $" *({Request.VideoMetadata.uploader})*",
+                ThumbnailUrl = Request.VideoMetadata.thumbnails.LastOrDefault()?.url,
+                Description = $"Requested at {Request.TimeRequested:HH:mm} by {Request.RequestedBy?.Mention}",
                 Color = Color.LightGrey,
             };
         }
+
+        public UserSongRequest Request { get; }
+
+        public VoiceModuleConfig Config { get; }
     }
 }
