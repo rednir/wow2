@@ -12,31 +12,14 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 {
     public static class VerbalMemoryGame
     {
-        public const string SeenWordText = "Seen it.";
-        public const string NewWordText = "That's new!";
-
         public static VerbalMemoryGameConfig GetConfig(IGuild guild)
             => DataManager.AllGuildData[guild.Id].Games.VerbalMemory;
 
-        public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
+        public static async Task EvaluateChoiceAsync(Choice choice, VerbalMemoryGameConfig config)
         {
-            var config = GetConfig(component.Channel.GetGuild());
-
-            if (!config.IsGameStarted || config.GameMessage.Id != component.Message.Id)
-                return false;
-
-            if (component.Channel.Id != config.InitalContext.Channel.Id
-                || component.User.Id != config.InitalContext.User.Id)
+            switch (choice)
             {
-                await component.FollowupAsync(
-                    embed: new WarningMessage("You aren't playing this game, get out of here.").Embed,
-                    ephemeral: true);
-                return true;
-            }
-
-            switch (component.Data.CustomId)
-            {
-                case NewWordText:
+                case Choice.New:
                     if (config.SeenWords.Contains(config.CurrentWord))
                     {
                         await new InfoMessage(
@@ -44,7 +27,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
                             title: "Wrong!")
                                 .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
                         await EndGameAsync(config);
-                        return true;
+                        return;
                     }
                     else
                     {
@@ -53,7 +36,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
                         break;
                     }
 
-                case SeenWordText:
+                case Choice.Seen:
                     if (config.SeenWords.Contains(config.CurrentWord))
                     {
                         break;
@@ -65,16 +48,12 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
                             title: "Wrong!")
                                 .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
                         await EndGameAsync(config);
-                        return true;
+                        return;
                     }
-
-                default:
-                    return false;
             }
 
             config.Turns++;
             await NextWordAsync(config);
-            return true;
         }
 
         public static async Task StartGame(SocketCommandContext context)
@@ -92,15 +71,8 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             config.InitalContext = context;
             config.IsGameStarted = true;
 
-            config.GameMessage = await new InfoMessage(
-                description: "See the word below? Tell me if you've seen it yet or not by pressing the buttons.",
-                title: $"Verbal memory has started for {context.User.Mention}")
-            {
-                Components = new ComponentBuilder()
-                    .WithButton(SeenWordText, SeenWordText)
-                    .WithButton(NewWordText, NewWordText),
-            }
-            .SendAsync(context.Channel);
+            config.GameMessage = await new VerbalMemoryMessage(config)
+                .SendAsync(context.Channel);
 
             await NextWordAsync(config);
         }
