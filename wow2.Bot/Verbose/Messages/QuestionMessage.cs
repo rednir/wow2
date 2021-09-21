@@ -38,17 +38,28 @@ namespace wow2.Bot.Verbose.Messages
             if (FromMessageId(guildData, component.Message.Id) is not QuestionMessage message)
                 return false;
 
-            if (component.Data.CustomId == ConfirmText)
+            try
             {
-                await message.OnConfirm.Invoke();
+                if (component.Data.CustomId == ConfirmText)
+                {
+                    await message.OnConfirm.Invoke();
+                }
+                else if (component.Data.CustomId == DenyText)
+                {
+                    await message.OnDeny.Invoke();
+                }
+                else
+                {
+                    return false;
+                }
             }
-            else if (component.Data.CustomId == DenyText)
+            catch (Exception ex)
             {
-                await message.OnDeny.Invoke();
-            }
-            else
-            {
-                return false;
+                Logger.LogException(ex, "Exception thrown when trying to invoke question message.");
+
+                // TODO: make this message same as the command unhandled exception message.
+                await new ErrorMessage($"```{ex.Message}```", "The interaction couldn't be completed")
+                    .SendAsync(component.Channel);
             }
 
             await message.StopAsync();
