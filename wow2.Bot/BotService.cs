@@ -256,19 +256,10 @@ namespace wow2.Bot
             SavedMessage.FromMessageId(DataManager.AllGuildData[channel.GetGuild().Id], cachedMessage.Id)?.Dispose();
         }
 
-        public static async Task ButtonExecutedAsync(SocketMessageComponent component)
+        public static Task ButtonExecutedAsync(SocketMessageComponent component)
         {
-            _ = Task.WhenAll(
-                PagedMessage.ActOnButtonAsync(component),
-                QuestionMessage.ActOnButtonAsync(component),
-                DateTimeSelectorMessage.ActOnButtonAsync(component),
-                TimeSpanSelectorMessage.ActOnButtonAsync(component),
-                VerbalMemoryGame.ActOnButtonAsync(component))
-                    .ContinueWith(t =>
-                    {
-                        if (t.Exception != null)
-                            Logger.LogException(t.Exception, "ButtonExecuted handler threw an exception.");
-                    });
+            _ = SavedMessage.ActOnButtonAsync(component);
+            return Task.CompletedTask;
         }
 
         public static async Task MessageRecievedAsync(SocketMessage socketMessage)
