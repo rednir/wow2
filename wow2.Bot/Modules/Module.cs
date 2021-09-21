@@ -8,6 +8,10 @@ namespace wow2.Bot.Modules
 {
     public abstract class Module : ModuleBase<SocketCommandContext>
     {
+        public IDataManager DataManager { get; set; }
+
+        public string CommandPrefix => DataManager.AllGuildData[Context.Guild.Id].Main.CommandPrefix;
+
         public async Task SendToggleQuestionAsync(
             bool currentState,
             Action<bool> setter,

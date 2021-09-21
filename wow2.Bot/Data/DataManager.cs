@@ -10,25 +10,26 @@ using wow2.Bot.Verbose;
 
 namespace wow2.Bot.Data
 {
-    public static class DataManager
+    public class DataManager : IDataManager
     {
-        public static readonly string AppDataDirPath = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
         private static readonly JsonSerializerOptions SerializerOptions = new()
         {
             WriteIndented = true,
             ReferenceHandler = ReferenceHandler.Preserve,
         };
 
-        public static Dictionary<ulong, GuildData> AllGuildData { get; set; } = new Dictionary<ulong, GuildData>();
+        public string AppDataDirPath { get; } = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
 
-        public static Secrets Secrets { get; set; } = new Secrets();
+        public Secrets Secrets { get; set; } = new Secrets();
 
-        public static string GuildDataDirPath => $"{AppDataDirPath}/GuildData";
+        public string GuildDataDirPath => $"{AppDataDirPath}/GuildData";
 
-        public static string LogsDirPath => $"{AppDataDirPath}/Logs";
+        public string LogsDirPath => $"{AppDataDirPath}/Logs";
+
+        public Dictionary<ulong, GuildData> AllGuildData { get; } = new();
 
         /// <summary>Creates required directories if necessary and loads all guild data.</summary>
-        public static async Task InitializeAsync()
+        public async Task InitializeAsync()
         {
             try
             {
@@ -50,7 +51,7 @@ namespace wow2.Bot.Data
         }
 
         /// <summary>Deserializes the secrets.json file into the Secrets property. If it doesn't exist, creates one and stops the program.</summary>
-        public static async Task LoadSecretsFromFileAsync()
+        public async Task LoadSecretsFromFileAsync()
         {
             string fullPath = AppDataDirPath + "/secrets.json";
             if (!File.Exists(fullPath))
@@ -68,7 +69,7 @@ namespace wow2.Bot.Data
         }
 
         /// <summary>Load all guild data from all files, excluding the guilds the client is not in.</summary>
-        public static async Task LoadGuildDataFromFileAsync()
+        public async Task LoadGuildDataFromFileAsync()
         {
             Logger.Log("About to load all guild data.", LogSeverity.Verbose);
             foreach (FileInfo fileInfo in new DirectoryInfo(GuildDataDirPath).EnumerateFiles())
@@ -92,7 +93,7 @@ namespace wow2.Bot.Data
         }
 
         /// <summary>Load guild data from the corresponding file.</summary>
-        public static async Task LoadGuildDataFromFileAsync(ulong guildId)
+        public async Task LoadGuildDataFromFileAsync(ulong guildId)
         {
             try
             {
@@ -107,7 +108,7 @@ namespace wow2.Bot.Data
         }
 
         /// <summary>Write all guild data to corresponding files.</summary>
-        public static async Task SaveGuildDataToFileAsync()
+        public async Task SaveGuildDataToFileAsync()
         {
             Logger.Log("About to save all guild data.", LogSeverity.Verbose);
             foreach (ulong guildId in AllGuildData.Keys)
@@ -124,7 +125,7 @@ namespace wow2.Bot.Data
         }
 
         /// <summary>Write guild data to file for a specific guild.</summary>
-        public static async Task SaveGuildDataToFileAsync(ulong guildId)
+        public async Task SaveGuildDataToFileAsync(ulong guildId)
         {
             if (!AllGuildData.TryGetValue(guildId, out GuildData guildData))
                 throw new KeyNotFoundException($"The guild ID {guildId} was not found in the dictionary");
@@ -137,7 +138,7 @@ namespace wow2.Bot.Data
 
         /// <summary>If the GuildData for the specified guild does not exist, one will be created.</summary>
         /// <returns>The GuildData for the guild.</returns>
-        public static async Task<GuildData> EnsureGuildDataExistsAsync(ulong guildId)
+        public async Task<GuildData> EnsureGuildDataExistsAsync(ulong guildId)
         {
             if (File.Exists($"{GuildDataDirPath}/{guildId}.json"))
             {
@@ -155,14 +156,14 @@ namespace wow2.Bot.Data
             return AllGuildData[guildId];
         }
 
-        public static async Task UnloadGuildDataAsync(ulong guildId)
+        public async Task UnloadGuildDataAsync(ulong guildId)
         {
             await SaveGuildDataToFileAsync(guildId);
             AllGuildData.Remove(guildId);
             Logger.Log($"Unloaded guild data for {guildId}", LogSeverity.Verbose);
         }
 
-        public static void EnsureGuildNameExists(ulong guildId)
+        public void EnsureGuildNameExists(ulong guildId)
         {
             var guildData = AllGuildData[guildId];
             if (guildData?.NameOfGuild == null)
