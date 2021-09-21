@@ -90,6 +90,7 @@ namespace wow2.Bot.Modules.Voice
                     onConfirm: async () =>
                     {
                         Config.CurrentSongRequestQueue.Clear();
+                        StopPlaying(Config);
                         await next();
                     },
                     onDeny: next)
