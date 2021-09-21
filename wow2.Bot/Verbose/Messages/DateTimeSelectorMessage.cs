@@ -1,38 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using Discord.WebSocket;
-using wow2.Bot.Data;
-using wow2.Bot.Extensions;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public class DateTimeSelectorMessage : SavedMessage
+    public class DateTimeSelectorMessage : DateTimeSelectorMessageBase
     {
-        public const string ConfirmString = "Confirm";
-
-        public static readonly IReadOnlyDictionary<string, TimeSpan> DateTimeModifierEmotes = new Dictionary<string, TimeSpan>()
-        {
-            { "+1 week", TimeSpan.FromDays(7) },
-            { "-1 week", TimeSpan.FromDays(-7) },
-            { "+1 day", TimeSpan.FromDays(1) },
-            { "-1 day", TimeSpan.FromDays(-1) },
-            { "+1 hour", TimeSpan.FromHours(1) },
-            { "-1 hour", TimeSpan.FromHours(-1) },
-            { "+10 minutes", TimeSpan.FromMinutes(10) },
-            { "-10 minutes", TimeSpan.FromMinutes(-10) },
-        };
-
         public DateTimeSelectorMessage(Func<DateTime, Task> confirmFunc, string description = "Select a date and time.")
         {
             Description = description;
             ConfirmFunc = confirmFunc;
-
-            Components = new ComponentBuilder().WithButton(ConfirmString, ConfirmString, ButtonStyle.Primary, row: 2);
-            foreach (string text in DateTimeModifierEmotes.Keys)
-                Components.WithButton(text, text, ButtonStyle.Secondary);
         }
 
         public DateTime DateTime { get; set; } = DateTime.Now;
@@ -41,37 +18,16 @@ namespace wow2.Bot.Verbose.Messages
 
         private Func<DateTime, Task> ConfirmFunc { get; }
 
-        public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
+        protected override async Task AddTimeAsync(TimeSpan timeSpan)
         {
-            GuildData guildData = DataManager.AllGuildData[component.Channel.GetGuild().Id];
-            if (FromMessageId(guildData, component.Message.Id) is not DateTimeSelectorMessage message)
-                return false;
-
-            if (component.Data.CustomId == ConfirmString)
-            {
-                await message.StopAsync();
-                await message.ConfirmFunc?.Invoke(message.DateTime);
-                return true;
-            }
-            else if (DateTimeModifierEmotes.Any(p => p.Key == component.Data.CustomId))
-            {
-                message.DateTime += DateTimeModifierEmotes[component.Data.CustomId];
-                await message.UpdateEmbedAsync();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
-        {
+            DateTime += timeSpan;
             await UpdateEmbedAsync();
-            return await base.SendAsync(channel);
         }
 
-        private async Task UpdateEmbedAsync()
+        protected override async Task OnConfirmAsync()
+            => await ConfirmFunc?.Invoke(DateTime);
+
+        protected override async Task UpdateEmbedAsync()
         {
             EmbedBuilder = new EmbedBuilder()
             {
@@ -79,8 +35,7 @@ namespace wow2.Bot.Verbose.Messages
                 Color = new Color(0x9b59b6),
             };
 
-            if (SentMessage != null)
-                await SentMessage.ModifyAsync(m => m.Embed = Embed);
+            await base.UpdateEmbedAsync();
         }
     }
 }

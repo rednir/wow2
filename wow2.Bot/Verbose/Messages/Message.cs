@@ -27,11 +27,11 @@ namespace wow2.Bot.Verbose.Messages
         public Embed Embed => EmbedBuilder.Build();
 
         [JsonIgnore]
-        public ComponentBuilder Components { get; set; }
-
-        [JsonIgnore]
         public MessageReference MessageReference =>
             ReplyToMessageId != 0 ? new MessageReference(ReplyToMessageId) : null;
+
+        [JsonIgnore]
+        protected ComponentBuilder Components { get; set; }
 
         [JsonIgnore]
         protected EmbedBuilder EmbedBuilder { get; set; }

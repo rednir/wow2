@@ -1,21 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using Discord.WebSocket;
-using wow2.Bot.Data;
-using wow2.Bot.Extensions;
 
 namespace wow2.Bot.Verbose.Messages
 {
     /// <summary>Class for sending and building embeds with pages of fields.</summary>
     public class PagedMessage : SavedMessage
     {
-        public const string StopText = "Stop";
-        public static readonly IEmote PageLeftEmote = new Emoji("⏪");
-        public static readonly IEmote PageRightEmote = new Emoji("⏩");
-
         public PagedMessage()
         {
         }
@@ -40,44 +32,27 @@ namespace wow2.Bot.Verbose.Messages
 
         protected override bool DontSave => Page == null;
 
-        /// <summary>If the message has pages, modifies the page of the message.</summary>
-        public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
+        protected override ActionButtons[] ActionButtons => Page == null ? Array.Empty<ActionButtons>() : new[]
         {
-            if (FromMessageId(DataManager.AllGuildData[component.Channel.GetGuild().Id], component.Message.Id) is not PagedMessage message)
-                return false;
-
-            if (component.Data.CustomId == PageLeftEmote.Name)
+            new ActionButtons()
             {
-                await message.ChangePageByAsync(-1);
-            }
-            else if (component.Data.CustomId == PageRightEmote.Name)
+                Label = "« Left",
+                Style = ButtonStyle.Primary,
+                Action = async _ => await ChangePageByAsync(-1),
+            },
+            new ActionButtons()
             {
-                await message.ChangePageByAsync(1);
-            }
-            else if (component.Data.CustomId == StopText)
+                Label = "Right »",
+                Style = ButtonStyle.Primary,
+                Action = async _ => await ChangePageByAsync(1),
+            },
+            new ActionButtons()
             {
-                await message.StopAsync();
-            }
-            else
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
-        {
-            if (Page != null)
-            {
-                Components = new ComponentBuilder()
-                    .WithButton("Left", PageLeftEmote.Name, ButtonStyle.Primary, emote: PageLeftEmote)
-                    .WithButton("Right", PageRightEmote.Name, ButtonStyle.Primary, emote: PageRightEmote)
-                    .WithButton("Stop", StopText, ButtonStyle.Danger);
-            }
-
-            return await base.SendAsync(channel);
-        }
+                Label = "Stop",
+                Style = ButtonStyle.Danger,
+                Action = async _ => await StopAsync(),
+            },
+        };
 
         /// <summary>Modify the page and therefore the embed of this message.</summary>
         public async Task ChangePageByAsync(int increment)
