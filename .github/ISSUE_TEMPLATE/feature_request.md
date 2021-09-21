@@ -2,9 +2,9 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: ''
+labels: 'enhancement'
 assignees: ''
 
 ---
 
-**Feature request:**
+**Describe the new feature:**
