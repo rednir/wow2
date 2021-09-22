@@ -1,6 +1,4 @@
 using System;
-using System.Text.Json.Serialization;
-using Discord.WebSocket;
 
 namespace wow2.Bot.Modules.Voice
 {
@@ -10,7 +8,6 @@ namespace wow2.Bot.Modules.Voice
 
         public DateTime TimeRequested { get; set; }
 
-        [JsonIgnore]
-        public SocketUser RequestedBy { get; set; }
+        public string RequestedByMention { get; set; }
     }
 }

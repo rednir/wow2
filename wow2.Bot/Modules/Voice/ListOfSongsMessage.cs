@@ -18,7 +18,7 @@ namespace wow2.Bot.Modules.Voice
                 var fieldBuilderForSongRequest = new EmbedFieldBuilder()
                 {
                     Name = $"{i}) {songRequest.VideoMetadata.title}",
-                    Value = $"[More details]({songRequest.VideoMetadata.webpage_url}) • {VoiceModule.DurationAsString(songRequest.VideoMetadata.duration)} \nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedBy?.Mention}",
+                    Value = $"[More details]({songRequest.VideoMetadata.webpage_url}) • {VoiceModule.DurationAsString(songRequest.VideoMetadata.duration)} \nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedByMention}",
                 };
                 AllFieldBuilders.Add(fieldBuilderForSongRequest);
             }

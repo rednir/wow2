@@ -110,7 +110,7 @@ namespace wow2.Bot.Modules.Voice
                     {
                         VideoMetadata = metadata,
                         TimeRequested = DateTime.Now,
-                        RequestedBy = Context.User,
+                        RequestedByMention = Context.User.Mention,
                     });
                 }
 
