@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Discord;
+using Discord.WebSocket;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Voice
@@ -19,20 +21,11 @@ namespace wow2.Bot.Modules.Voice
             {
                 Label = "Skip this request",
                 Style = ButtonStyle.Secondary,
-                Action = async component =>
-                {
-                    if (Config.CurrentlyPlayingSongRequest != Request)
-                    {
-                        await component.FollowupAsync(embed: new WarningMessage("This request has already finished playing.").Embed, ephemeral: true);
-                        return;
-                    }
-
-                    throw new NotImplementedException();
-                },
+                Action = async component => await SkipButtonAction.Invoke(component, Request),
             },
         };
 
-        public NowPlayingMessage(UserSongRequest request, VoiceModuleConfig config)
+        public NowPlayingMessage(UserSongRequest request, VoiceModuleConfig config, Func<SocketMessageComponent, UserSongRequest, Task> skipButton)
         {
             const string youtubeIconUrl = "https://cdn4.iconfinder.com/data/icons/social-messaging-ui-color-shapes-2-free/128/social-youtube-circle-512.png";
             const string twitchIconUrl = "https://www.net-aware.org.uk/siteassets/images-and-icons/application-icons/app-icons-twitch.png?w=585&scale=down";
@@ -40,6 +33,7 @@ namespace wow2.Bot.Modules.Voice
 
             Request = request;
             Config = config;
+            SkipButtonAction = skipButton;
 
             string iconUrl;
             if (Request.VideoMetadata.extractor.StartsWith("twitch"))
@@ -72,5 +66,7 @@ namespace wow2.Bot.Modules.Voice
         public UserSongRequest Request { get; }
 
         public VoiceModuleConfig Config { get; }
+
+        public Func<SocketMessageComponent, UserSongRequest, Task> SkipButtonAction { get; }
     }
 }

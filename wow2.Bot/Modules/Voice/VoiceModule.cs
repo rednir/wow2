@@ -9,6 +9,7 @@ using Discord;
 using Discord.Audio;
 using Discord.Commands;
 using Discord.Net;
+using Discord.WebSocket;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 using wow2.Bot.Modules.YouTube;
@@ -192,7 +193,7 @@ namespace wow2.Bot.Modules.Voice
                 Config.ListOfUserIdsThatVoteSkipped.Add(Context.User.Id);
                 await new InfoMessage(
                     description: $"Waiting for `{Config.VoteSkipsNeeded - Config.ListOfUserIdsThatVoteSkipped.Count}` more vote(s) before skipping.\n",
-                    title: "Sent skip request")
+                    title: $"Sent skip request for {Context.User.Mention}")
                         .SendAsync(Context.Channel);
                 return;
             }
@@ -423,7 +424,7 @@ namespace wow2.Bot.Modules.Voice
 
             try
             {
-                await new NowPlayingMessage(Config.CurrentlyPlayingSongRequest, Config)
+                await new NowPlayingMessage(Config.CurrentlyPlayingSongRequest, Config, skipButton)
                     .SendAsync(Context.Channel);
             }
             catch (Exception ex)
@@ -432,6 +433,39 @@ namespace wow2.Bot.Modules.Voice
                 Logger.LogException(ex, errorText);
                 await new ErrorMessage(errorText)
                     .SendAsync(Context.Channel);
+            }
+
+            // Almost same implementation as SkipAsync()
+            async Task skipButton(SocketMessageComponent component, UserSongRequest request)
+            {
+                if (Config.CurrentlyPlayingSongRequest != request)
+                {
+                    await component.FollowupAsync(embed: new WarningMessage("This request has already finished playing.").Embed, ephemeral: true);
+                    return;
+                }
+
+                if (Config.ListOfUserIdsThatVoteSkipped.Count + 1 < Config.VoteSkipsNeeded)
+                {
+                    if (Config.ListOfUserIdsThatVoteSkipped.Contains(component.User.Id))
+                    {
+                        await component.FollowupAsync(embed: new WarningMessage("You've already sent a skip request.").Embed, ephemeral: true);
+                        return;
+                    }
+
+                    Config.ListOfUserIdsThatVoteSkipped.Add(component.User.Id);
+                    await new InfoMessage(
+                        description: $"Waiting for `{Config.VoteSkipsNeeded - Config.ListOfUserIdsThatVoteSkipped.Count}` more vote(s) before skipping.\n",
+                        title: $"Sent skip request for {component.User.Mention}")
+                            .SendAsync(Context.Channel);
+                    return;
+                }
+                else
+                {
+                    await new InfoMessage($"Skipping request on behalf of {component.User.Mention}")
+                        .SendAsync(Context.Channel);
+                    Config.IsLoopEnabled = false;
+                    _ = ContinueAsync();
+                }
             }
         }
 
