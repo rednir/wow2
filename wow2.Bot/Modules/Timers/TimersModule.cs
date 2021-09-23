@@ -48,8 +48,6 @@ namespace wow2.Bot.Modules.Timers
                         .SendAsync(Context.Channel);
                     return;
                 }
-                // temp
-                dt = DateTime.Now + TimeSpan.FromSeconds(30);
 
                 var timer = new UserTimer(Context, dt, message);
                 timer.Start();
