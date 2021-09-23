@@ -1,16 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Timers;
-using Discord;
-using Discord.WebSocket;
 using SpotifyAPI.Web;
-using wow2.Bot.Data;
 using wow2.Bot.Verbose;
 
 namespace wow2.Bot.Modules.Spotify
