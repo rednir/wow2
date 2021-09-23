@@ -12,7 +12,7 @@ namespace wow2.Bot
     {
         public static Dictionary<string, Timer> PollingServiceTimers { get; } = new();
 
-        public static void CreateService(Func<Task> action, int intervalMinutes)
+        public static void CreateService(Func<Task> action, int intervalMinutes, bool runImmediately = false)
         {
             var timer = new Timer(intervalMinutes * 60000)
             {
@@ -21,7 +21,16 @@ namespace wow2.Bot
 
             int consecutiveFailures = 0;
             const int maxConsecutiveFailures = 2;
-            timer.Elapsed += async (source, e) =>
+            timer.Elapsed += async (source, e) => await elapsed();
+
+            timer.Start();
+            PollingServiceTimers.Add(action.Method.Name, timer);
+            Logger.Log($"Started polling service '{action.Method.Name}', set to run every {intervalMinutes} minutes.", LogSeverity.Debug);
+
+            if (runImmediately)
+                _ = elapsed();
+
+            async Task elapsed()
             {
                 try
                 {
@@ -42,11 +51,7 @@ namespace wow2.Bot
                         Logger.LogException(ex, $"Exception thrown when running polling service '{action.Method.Name}'. This is failure number {consecutiveFailures}.");
                     }
                 }
-            };
-
-            timer.Start();
-            PollingServiceTimers.Add(action.Method.Name, timer);
-            Logger.Log($"Started polling service '{action.Method.Name}', set to run every {intervalMinutes} minutes.", LogSeverity.Debug);
+            }
         }
     }
 }
