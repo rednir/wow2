@@ -213,7 +213,7 @@ namespace wow2.Bot.Modules.Dev
                     .Append(pair.Key)
                     .Append('(')
                     .Append(pair.Value.Interval / 60000)
-                    .AppendLine(")    ")
+                    .AppendLine("min)    ")
                     .AppendLine(pair.Value.Enabled ? " - STARTED" : " - STOPPED")
                     .AppendLine();
             }
