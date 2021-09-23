@@ -181,6 +181,20 @@ namespace wow2.Bot.Modules.Dev
                 .SendAsync(Context.Channel);
         }
 
+        [Command("poll-run")]
+        [Alias("poll-invoke")]
+        [Summary("Runs a polling task.")]
+        public async Task PollRunAsync(string name)
+        {
+            PollingTask task = PollingService.PollingServiceTimers.Find(p => p.Name == name);
+            if (task == null)
+                throw new CommandReturnException(Context, "No matching polling task.");
+
+            await task.InvokeAsync();
+            await new SuccessMessage($"Run finished for `{name}`")
+                .SendAsync(Context.Channel);
+        }
+
         [Command("poll-unblock")]
         [Summary("Unblocks a polling task.")]
         public async Task PollStartAsync(string name)
