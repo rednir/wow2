@@ -229,12 +229,29 @@ namespace wow2.Bot.Modules.Dev
             foreach (PollingTask task in PollingService.PollingServiceTimers)
             {
                 stringBuilder
-                    .Append(task.Name)
-                    .Append('(')
-                    .Append(task.IntervalMinutes)
-                    .AppendLine("min)    ")
+                    .AppendLine(task.Name)
                     .AppendLine(task.Blocked ? " - BLOCKED" : " - UNBLOCKED")
-                    .AppendLine();
+                    .Append(" - INTERVAL ")
+                    .Append(task.IntervalMinutes)
+                    .AppendLine("m")
+                    .Append(" - LAST RUN: ");
+
+                if (task.LastRun == default)
+                {
+                    stringBuilder
+                        .AppendLine("never")
+                        .AppendLine();
+                }
+                else
+                {
+                    TimeSpan lastRun = DateTime.Now - task.LastRun;
+                    stringBuilder
+                        .Append(lastRun.Hours)
+                        .Append("h ")
+                        .Append(lastRun.Minutes)
+                        .AppendLine("m")
+                        .AppendLine();
+                }
             }
 
             await new GenericMessage($"```md\n{stringBuilder}\n```", "Polling services")

@@ -28,6 +28,8 @@ namespace wow2.Bot
 
         public bool Blocked { get; set; }
 
+        public DateTime LastRun { get; private set; }
+
         public async Task InvokeAsync()
         {
             if (Blocked)
@@ -51,6 +53,10 @@ namespace wow2.Bot
                 {
                     Logger.LogException(ex, $"Exception thrown when running polling service '{Name}'. This is failure number {ConsecutiveFailures}.");
                 }
+            }
+            finally
+            {
+                LastRun = DateTime.Now;
             }
         }
 
