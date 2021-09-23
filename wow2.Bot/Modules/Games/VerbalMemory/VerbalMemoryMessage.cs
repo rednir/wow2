@@ -20,15 +20,15 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 
         public VerbalMemoryGameConfig Config { get; }
 
-        protected override ActionButtons[] ActionButtons => new[]
+        protected override ActionButton[] ActionButtons => new[]
         {
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "Seen it!",
                 Style = ButtonStyle.Primary,
                 Action = async component => await ActOnButtonAsync(Choice.Seen, component),
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "That's new!",
                 Style = ButtonStyle.Primary,

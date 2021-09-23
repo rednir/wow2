@@ -17,9 +17,9 @@ namespace wow2.Bot.Verbose.Messages
             };
         }
 
-        protected override ActionButtons[] ActionButtons => new[]
+        protected override ActionButton[] ActionButtons => new[]
         {
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "Yeah!",
                 Style = ButtonStyle.Primary,
@@ -29,7 +29,7 @@ namespace wow2.Bot.Verbose.Messages
                     await OnConfirm();
                 },
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "Nah...",
                 Style = ButtonStyle.Secondary,

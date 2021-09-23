@@ -32,21 +32,21 @@ namespace wow2.Bot.Verbose.Messages
 
         protected override bool DontSave => Page == null;
 
-        protected override ActionButtons[] ActionButtons => Page == null ? Array.Empty<ActionButtons>() : new[]
+        protected override ActionButton[] ActionButtons => Page == null ? Array.Empty<ActionButton>() : new[]
         {
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "« Left",
                 Style = ButtonStyle.Primary,
                 Action = async _ => await ChangePageByAsync(-1),
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "Right »",
                 Style = ButtonStyle.Primary,
                 Action = async _ => await ChangePageByAsync(1),
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "Stop",
                 Style = ButtonStyle.Danger,

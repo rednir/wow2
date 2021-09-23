@@ -9,15 +9,15 @@ namespace wow2.Bot.Modules.Voice
 {
     public class NowPlayingMessage : SavedMessage
     {
-        protected override ActionButtons[] ActionButtons => new[]
+        protected override ActionButton[] ActionButtons => new[]
         {
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "More details",
                 Style = ButtonStyle.Link,
                 Url = Request.VideoMetadata.webpage_url,
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "Skip this request",
                 Style = ButtonStyle.Secondary,

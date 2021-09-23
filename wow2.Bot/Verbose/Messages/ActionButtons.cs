@@ -5,7 +5,7 @@ using Discord.WebSocket;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public class ActionButtons
+    public class ActionButton
     {
         public string Label { get; set; }
 

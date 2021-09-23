@@ -7,9 +7,9 @@ namespace wow2.Bot.Modules.Timers
 {
     public class TimerStartedMessage : SavedMessage
     {
-        protected override ActionButtons[] ActionButtons => new[]
+        protected override ActionButton[] ActionButtons => new[]
         {
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "Get notified for this timer",
                 Style = ButtonStyle.Primary,
@@ -30,7 +30,7 @@ namespace wow2.Bot.Modules.Timers
                     }
                 },
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "Delete timer",
                 Style = ButtonStyle.Danger,

@@ -48,7 +48,7 @@ namespace wow2.Bot.Verbose.Messages
 
         protected List<SavedMessage> SavedMessageList => DataManager.AllGuildData[SentMessage.GetGuild().Id].SavedMessages;
 
-        protected virtual ActionButtons[] ActionButtons => Array.Empty<ActionButtons>();
+        protected virtual ActionButton[] ActionButtons => Array.Empty<ActionButton>();
 
         protected virtual bool DontSave => false;
 

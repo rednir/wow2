@@ -6,9 +6,9 @@ namespace wow2.Bot.Verbose.Messages
 {
     public abstract class DateTimeSelectorMessageBase : SavedMessage
     {
-        protected override ActionButtons[] ActionButtons => new[]
+        protected override ActionButton[] ActionButtons => new[]
         {
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "Confirm",
                 Style = ButtonStyle.Primary,
@@ -19,63 +19,63 @@ namespace wow2.Bot.Verbose.Messages
                     await OnConfirmAsync();
                 },
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "Cancel",
                 Style = ButtonStyle.Danger,
                 Row = 0,
                 Action = async _ => await StopAsync(),
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "+1 week",
                 Style = ButtonStyle.Secondary,
                 Row = 1,
                 Action = async _ => await AddTimeAsync(TimeSpan.FromDays(7)),
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "-1 week",
                 Style = ButtonStyle.Secondary,
                 Row = 1,
                 Action = async _ => await AddTimeAsync(TimeSpan.FromDays(-7)),
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "+1 day",
                 Style = ButtonStyle.Secondary,
                 Row = 1,
                 Action = async _ => await AddTimeAsync(TimeSpan.FromDays(1)),
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "-1 day",
                 Style = ButtonStyle.Secondary,
                 Row = 1,
                 Action = async _ => await AddTimeAsync(TimeSpan.FromDays(-1)),
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "+1 hour",
                 Style = ButtonStyle.Secondary,
                 Row = 2,
                 Action = async _ => await AddTimeAsync(TimeSpan.FromHours(1)),
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "-1 hour",
                 Style = ButtonStyle.Secondary,
                 Row = 2,
                 Action = async _ => await AddTimeAsync(TimeSpan.FromHours(-1)),
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "+10 minutes",
                 Style = ButtonStyle.Secondary,
                 Row = 2,
                 Action = async _ => await AddTimeAsync(TimeSpan.FromMinutes(10)),
             },
-            new ActionButtons()
+            new ActionButton()
             {
                 Label = "-10 minutes",
                 Style = ButtonStyle.Secondary,
