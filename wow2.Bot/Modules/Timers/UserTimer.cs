@@ -16,11 +16,6 @@ namespace wow2.Bot.Modules.Timers
         {
         }
 
-        public UserTimer(SocketCommandContext context, DateTime dateTime, string message)
-            : this(context, dateTime - DateTime.Now, message)
-        {
-        }
-
         public UserTimer(SocketCommandContext context, TimeSpan timeSpan, string message)
         {
             if (timeSpan <= TimeSpan.Zero)

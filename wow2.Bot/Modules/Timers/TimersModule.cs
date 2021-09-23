@@ -50,7 +50,15 @@ namespace wow2.Bot.Modules.Timers
                     return;
                 }
 
-                var timer = new UserTimer(Context, dt, message);
+                TimeSpan timeSpan = dt - DateTime.Now;
+                if (timeSpan.TotalMilliseconds >= int.MaxValue)
+                {
+                    await new WarningMessage("Way too big.")
+                        .SendAsync(Context.Channel);
+                    return;
+                }
+
+                var timer = new UserTimer(Context, timeSpan, message);
                 timer.Start();
 
                 await new TimerStartedMessage(timer)
@@ -59,6 +67,7 @@ namespace wow2.Bot.Modules.Timers
             .SendAsync(Context.Channel);
         }
 
+        // TODO: would be nice to get rid of this.
         [Command("start-for")]
         [Summary("Starts a timer for a specific time span that will send a message when elapsed.")]
         public async Task StartForAsync(string time, [Remainder] string message = null)
