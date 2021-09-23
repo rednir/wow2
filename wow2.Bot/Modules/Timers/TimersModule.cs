@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Discord.Commands;
 using wow2.Bot.Data;
+using wow2.Bot.Extensions;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
@@ -56,6 +57,20 @@ namespace wow2.Bot.Modules.Timers
                     .SendAsync(Context.Channel);
             })
             .SendAsync(Context.Channel);
+        }
+
+        [Command("start-for")]
+        [Summary("Starts a timer for a specific time span that will send a message when elapsed.")]
+        public async Task StartForAsync(string time, [Remainder] string message = null)
+        {
+            if (time.TryConvertToTimeSpan(out TimeSpan timeSpan))
+                throw new CommandReturnException(Context, "Try something like `5m` or `30s`", "Invalid time.");
+
+            var timer = new UserTimer(Context, timeSpan, message);
+            timer.Start();
+
+            await new TimerStartedMessage(timer)
+                .SendAsync(Context.Channel);
         }
 
         [Command("stop")]
