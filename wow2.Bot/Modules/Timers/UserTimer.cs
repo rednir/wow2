@@ -48,7 +48,7 @@ namespace wow2.Bot.Modules.Timers
 
         public DateTime TargetDateTime { get; set; }
 
-        public List<string> NotifyUserMentions { get; set; }
+        public List<string> NotifyUserMentions { get; set; } = new();
 
         public void Start()
         {
@@ -74,12 +74,16 @@ namespace wow2.Bot.Modules.Timers
             Dispose();
             try
             {
+                var channel = (IMessageChannel)BotService.Client.GetChannel(ChannelId);
                 await new InfoMessage(MessageString, "Time up!")
                 {
                     ReplyToMessageId = UserMessageId,
                     AllowMentions = true,
                 }
-                .SendAsync((IMessageChannel)BotService.Client.GetChannel(ChannelId));
+                .SendAsync(channel);
+
+                if (NotifyUserMentions.Count > 0)
+                    await channel.SendMessageAsync(string.Join(' ', NotifyUserMentions));
             }
             catch (Exception ex)
             {
