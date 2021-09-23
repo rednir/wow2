@@ -213,11 +213,12 @@ namespace wow2.Bot.Modules.Dev
                     .Append(pair.Key)
                     .Append('(')
                     .Append(pair.Value.Interval / 60000)
-                    .Append(")    ")
-                    .AppendLine(pair.Value.Enabled ? "STARTED" : "STOPPED");
+                    .AppendLine(")    ")
+                    .AppendLine(pair.Value.Enabled ? " - STARTED" : " - STOPPED")
+                    .AppendLine();
             }
 
-            await new GenericMessage($"```{stringBuilder}```", "Polling services")
+            await new GenericMessage($"```md\n{stringBuilder}\n```", "Polling services")
                 .SendAsync(Context.Channel);
         }
 
