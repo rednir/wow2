@@ -55,7 +55,7 @@ Create and manage timers and reminders.
 
 |Command|Summary|
 |---|---|
-|`!wow timer start [TIME] [optional:MESSAGE]`|Starts a timer that will send a message when elapsed.|
+|`!wow timer start [optional:MESSAGE]`|Starts a timer that will send a message when elapsed.|
 |`!wow timer stop`|Stops the most recently created timer.|
 
 ## Text (3)

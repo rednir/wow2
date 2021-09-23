@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Discord.Commands;
 using wow2.Bot.Data;
-using wow2.Bot.Extensions;
+using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Timers
@@ -13,21 +13,51 @@ namespace wow2.Bot.Modules.Timers
     [Summary("Create and manage timers and reminders.")]
     public class TimersModule : Module
     {
+        public static void InitializeAllTimers()
+        {
+            lock (DataManager.AllGuildData)
+            {
+                foreach (var pair in DataManager.AllGuildData)
+                {
+                    try
+                    {
+                        var config = DataManager.AllGuildData[pair.Key].Timers;
+                        foreach (UserTimer timer in config.UserTimers)
+                            timer.Start();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogException(ex, $"Exception thrown when trying to initialize user timer for {pair.Value.NameOfGuild} ({pair.Key})");
+                    }
+                }
+            }
+        }
+
         public TimersModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Timers;
 
         [Command("start")]
         [Alias("new", "create")]
         [Summary("Starts a timer that will send a message when elapsed.")]
-        public async Task StartAsync(string time, [Remainder] string message = null)
+        public async Task StartAsync([Remainder] string message = null)
         {
-            if (time.TryConvertToTimeSpan(out TimeSpan timeSpan))
-                throw new CommandReturnException(Context, "Try something like `5m` or `30s`", "Invalid time.");
-            if (timeSpan > TimeSpan.FromDays(90) || timeSpan < TimeSpan.FromSeconds(1))
-                throw new CommandReturnException(Context, "Be sensible.");
+            await new DateTimeSelectorMessage(async dt =>
+            {
+                if (dt <= DateTime.Now)
+                {
+                    await new WarningMessage("Try a time in the future.")
+                        .SendAsync(Context.Channel);
+                    return;
+                }
+                // temp
+                dt = DateTime.Now + TimeSpan.FromSeconds(30);
 
-            _ = new UserTimer(Context, timeSpan.TotalMilliseconds, message);
-            await new SuccessMessage($"There are now `{Config.UserTimers.Count}` active timer(s)", "Started a new timer.")
-                .SendAsync(Context.Channel);
+                var timer = new UserTimer(Context, dt, message);
+                timer.Start();
+
+                await new SuccessMessage($"There are now `{Config.UserTimers.Count}` active timer(s)", "Started a new timer.")
+                    .SendAsync(Context.Channel);
+            })
+            .SendAsync(Context.Channel);
         }
 
         [Command("stop")]
@@ -43,11 +73,11 @@ namespace wow2.Bot.Modules.Timers
 
             await new SuccessMessage("Removed this timer.")
             {
-                ReplyToMessageId = timer.Context.Message.Id,
+                ReplyToMessageId = timer.UserMessageId,
             }
             .SendAsync(Context.Channel);
 
-            timer.Remove();
+            timer.Dispose();
         }
     }
 }

@@ -26,6 +26,7 @@ using wow2.Bot.Modules.Moderator;
 using wow2.Bot.Modules.Osu;
 using wow2.Bot.Modules.ServerIcon;
 using wow2.Bot.Modules.Spotify;
+using wow2.Bot.Modules.Timers;
 using wow2.Bot.Modules.YouTube;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
@@ -147,8 +148,9 @@ namespace wow2.Bot
             {
                 await DataManager.InitializeAsync();
 
-                // TODO: This server icon stuff needs to be moved out of here.
+                // TODO: This timer stuff needs to be moved out of here.
                 ServerIconModule.InitializeAllTimers();
+                TimersModule.InitializeAllTimers();
 
                 Client.ReactionAdded += ReactionAddedAsync;
                 Client.ReactionRemoved += ReactionRemovedAsync;
