@@ -156,16 +156,6 @@ namespace wow2.Bot.Modules.Osu
                 .SendAsync(Context.Channel);
         }
 
-        [Command("test-poll")]
-        [RequireOwner(Group = "Permission")]
-        [Summary("Check for new user milestones.")]
-        public async Task TestPollAsync()
-        {
-            await Service.CheckForUserMilestonesAsync();
-            await new SuccessMessage("Done!")
-                .SendAsync(Context.Channel);
-        }
-
         /// <summary>Finds the best matching gamemode based on a string.</summary>
         /// <returns>Returns the gamemode identifier as a string, or null if there was no best match.</returns>
         private static string ParseMode(string modeUserInput)

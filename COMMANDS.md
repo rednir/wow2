@@ -1,4 +1,4 @@
-# List of commands (93 total)
+# List of commands (91 total)
 
 ## Main (8)
 Stuff to do with the bot and other random stuff.
@@ -14,7 +14,7 @@ Stuff to do with the bot and other random stuff.
 |`!wow set-command-prefix [PREFIX]`|Change the prefix used to identify commands. '!wow' is the default.|
 |`!wow upload-raw-data`|Uploads a file containing all the data the bot stores about this server.|
 
-## YouTube (5)
+## YouTube (4)
 Integrations with YouTube, like getting notified for new videos.
 
 |Command|Summary|
@@ -23,7 +23,6 @@ Integrations with YouTube, like getting notified for new videos.
 |`!wow yt subscribe [CHANNEL]`|Toggle whether your server will get notified when CHANNEL uploads a new video.|
 |`!wow yt list-subs [optional:PAGE]`|Lists the channels your server will get notified about.|
 |`!wow yt set-announcements-channel [CHANNEL]`|Sets the channel where notifications about new videos will be sent.|
-|`!wow yt test-poll`|Check for new videos.|
 
 ## Voice (19)
 Play YouTube or Twitch audio in a voice channel.
@@ -88,7 +87,7 @@ View Reddit posts and other content.
 |`!wow reddit hot [SUBREDDIT]`|Gets the first post in hot from a given subreddit.|
 |`!wow reddit cont [SUBREDDIT]`|Gets the most controversial of all time from given subreddit.|
 
-## osu! (7)
+## osu! (6)
 Integrations with the osu!api
 
 |Command|Summary|
@@ -99,7 +98,6 @@ Integrations with the osu!api
 |`!wow osu subscribe [USER] [optional:MODE]`|Toggle whether your server will get notified about USER.|
 |`!wow osu list-subs [optional:PAGE]`|Lists the users your server will get notified about.|
 |`!wow osu set-announcements-channel [CHANNEL]`|Sets the channel where notifications about users will be sent.|
-|`!wow osu test-poll`|Check for new user milestones.|
 
 ## Moderator (5)
 Use tools to manage the server. This is still very rudimentary and unfinished.  Requires the 'Ban Members' permission.

@@ -103,16 +103,6 @@ namespace wow2.Bot.Modules.YouTube
                 .SendAsync(Context.Channel);
         }
 
-        [Command("test-poll")]
-        [RequireOwner(Group = "Permission")]
-        [Summary("Check for new videos.")]
-        public async Task TestPollAsync()
-        {
-            await Service.CheckForNewVideosAsync();
-            await new SuccessMessage("Done!")
-                .SendAsync(Context.Channel);
-        }
-
         private async Task<Embed> BuildChannelOverviewEmbedAsync(Channel channel)
         {
             var uploads = await Service.GetChannelUploadsAsync(channel);
