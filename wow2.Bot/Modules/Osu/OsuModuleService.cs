@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using System.Timers;
 using Discord;
 using Discord.WebSocket;
 using wow2.Bot.Data;
@@ -99,8 +98,6 @@ namespace wow2.Bot.Modules.Osu
             BaseAddress = new Uri("https://osu.ppy.sh/"),
         };
 
-        private readonly Timer RefreshAccessTokenTimer = new(18 * 3600000);
-
         private readonly string ClientId;
 
         private readonly string ClientSecret;
@@ -112,9 +109,7 @@ namespace wow2.Bot.Modules.Osu
 
             if (!string.IsNullOrWhiteSpace(clientId) && !string.IsNullOrEmpty(clientSecret))
             {
-                _ = AuthenticateHttpClient();
-                RefreshAccessTokenTimer.Elapsed += (sender, e) => _ = AuthenticateHttpClient();
-                RefreshAccessTokenTimer.Start();
+                PollingService.CreateService(AuthenticateHttpClient, 1200, true);
                 PollingService.CreateService(CheckForUserMilestonesAsync, 10);
             }
         }

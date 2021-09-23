@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using System.Timers;
 using SpotifyAPI.Web;
 using wow2.Bot.Verbose;
 
@@ -16,8 +15,6 @@ namespace wow2.Bot.Modules.Spotify
             BaseAddress = new Uri("https://accounts.spotify.com/"),
         };
 
-        private readonly Timer RefreshAccessTokenTimer = new(3600 * 1000);
-
         private readonly string ClientId;
 
         private readonly string ClientSecret;
@@ -28,11 +25,7 @@ namespace wow2.Bot.Modules.Spotify
             ClientSecret = clientSecret;
 
             if (!string.IsNullOrWhiteSpace(clientId) && !string.IsNullOrEmpty(clientSecret))
-            {
-                _ = AuthenticateHttpClient();
-                RefreshAccessTokenTimer.Elapsed += (sender, e) => _ = AuthenticateHttpClient();
-                RefreshAccessTokenTimer.Start();
-            }
+                PollingService.CreateService(AuthenticateHttpClient, 60, true);
         }
 
         public ISpotifyClient Client { get; set; }
