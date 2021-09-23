@@ -19,13 +19,14 @@ namespace wow2.Bot
                 AutoReset = true,
             };
 
-            int consecutiveFailures = 0;
             const int maxConsecutiveFailures = 2;
+            int consecutiveFailures = 0;
+            string name = $"{action.Method.DeclaringType.Name}.{action.Method.Name}";
             timer.Elapsed += async (source, e) => await elapsed();
 
             timer.Start();
-            PollingServiceTimers.Add(action.Method.Name, timer);
-            Logger.Log($"Started polling service '{action.Method.Name}', set to run every {intervalMinutes} minutes.", LogSeverity.Debug);
+            PollingServiceTimers.Add(name, timer);
+            Logger.Log($"Started polling service '{name}', set to run every {intervalMinutes} minutes.", LogSeverity.Debug);
 
             if (runImmediately)
                 _ = elapsed();
@@ -36,19 +37,19 @@ namespace wow2.Bot
                 {
                     await action.Invoke();
                     consecutiveFailures = 0;
-                    Logger.Log($"Finished running polling service '{action.Method.Name}'.", LogSeverity.Debug);
+                    Logger.Log($"Finished running polling service '{name}'.", LogSeverity.Debug);
                 }
                 catch (Exception ex)
                 {
                     consecutiveFailures++;
                     if (consecutiveFailures > maxConsecutiveFailures)
                     {
-                        Logger.LogException(ex, $"Polling service '{action.Method.Name}' has failed {consecutiveFailures} times in a row and will be terminated.");
+                        Logger.LogException(ex, $"Polling service '{name}' has failed {consecutiveFailures} times in a row and will be terminated.");
                         timer.Stop();
                     }
                     else
                     {
-                        Logger.LogException(ex, $"Exception thrown when running polling service '{action.Method.Name}'. This is failure number {consecutiveFailures}.");
+                        Logger.LogException(ex, $"Exception thrown when running polling service '{name}'. This is failure number {consecutiveFailures}.");
                     }
                 }
             }
