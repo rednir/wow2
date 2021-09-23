@@ -52,7 +52,7 @@ namespace wow2.Bot.Modules.Timers
                 var timer = new UserTimer(Context, dt, message);
                 timer.Start();
 
-                await new SuccessMessage($"There are now `{Config.UserTimers.Count}` active timer(s)", "Started a new timer.")
+                await new TimerStartedMessage()
                     .SendAsync(Context.Channel);
             })
             .SendAsync(Context.Channel);
