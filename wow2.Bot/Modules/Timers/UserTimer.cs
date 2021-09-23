@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
 using Discord;
@@ -46,6 +47,8 @@ namespace wow2.Bot.Modules.Timers
         public ulong GuildId { get; set; }
 
         public DateTime TargetDateTime { get; set; }
+
+        public List<string> NotifyUserMentions { get; set; }
 
         public void Start()
         {

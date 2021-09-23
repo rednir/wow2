@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Discord;
-using Discord.WebSocket;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Timers
@@ -16,9 +15,15 @@ namespace wow2.Bot.Modules.Timers
                 Style = ButtonStyle.Primary,
                 Action = async component =>
                 {
-                    bool userWillBeNotified = await NotifyUserButton.Invoke(component.User);
-                    if (userWillBeNotified)
+                    if (Timer.NotifyUserMentions.Remove(component.User.Mention))
                     {
+                        await component.FollowupAsync(
+                            embed: new SuccessMessage("You'll no longer be notified about this timer.").Embed,
+                            ephemeral: true);
+                    }
+                    else
+                    {
+                        Timer.NotifyUserMentions.Add(component.User.Mention);
                         await component.FollowupAsync(
                             embed: new SuccessMessage("Changed your mind? Click the button again.", "You'll be notified when this timer elapses").Embed,
                             ephemeral: true);
@@ -31,7 +36,7 @@ namespace wow2.Bot.Modules.Timers
                 Style = ButtonStyle.Danger,
                 Action = async component =>
                 {
-                    await DeleteTimerButton.Invoke();
+                    Timer.Dispose();
                     await StopAsync();
                     await new SuccessMessage($"Timer was deleted on request of {component.User.Mention}")
                         .SendAsync(component.Channel);
@@ -39,7 +44,7 @@ namespace wow2.Bot.Modules.Timers
             },
         };
 
-        public TimerStartedMessage(Func<SocketUser, Task<bool>> notifyUserButton = null, Func<Task> deleteTimerButton = null)
+        public TimerStartedMessage(UserTimer timer)
         {
             EmbedBuilder = new EmbedBuilder()
             {
@@ -47,12 +52,9 @@ namespace wow2.Bot.Modules.Timers
                 Color = new Color(0x2ECC71),
             };
 
-            NotifyUserButton = notifyUserButton;
-            DeleteTimerButton = deleteTimerButton;
+            Timer = timer;
         }
 
-        private Func<SocketUser, Task<bool>> NotifyUserButton { get; }
-
-        private Func<Task> DeleteTimerButton { get; }
+        private UserTimer Timer { get; }
     }
 }

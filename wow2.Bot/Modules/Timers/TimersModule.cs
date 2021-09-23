@@ -52,7 +52,7 @@ namespace wow2.Bot.Modules.Timers
                 var timer = new UserTimer(Context, dt, message);
                 timer.Start();
 
-                await new TimerStartedMessage()
+                await new TimerStartedMessage(timer)
                     .SendAsync(Context.Channel);
             })
             .SendAsync(Context.Channel);
