@@ -27,7 +27,7 @@ namespace wow2.Bot.Modules.YouTube
             });
 
             if (!string.IsNullOrWhiteSpace(apiKey))
-                PollingService.CreateService(CheckForNewVideosAsync, 15);
+                PollingService.CreateTask(CheckForNewVideosAsync, 15);
         }
 
         public async Task<Channel> GetChannelAsync(string channelIdOrUsername)

@@ -25,7 +25,7 @@ namespace wow2.Bot.Modules.Spotify
             ClientSecret = clientSecret;
 
             if (!string.IsNullOrWhiteSpace(clientId) && !string.IsNullOrEmpty(clientSecret))
-                PollingService.CreateService(AuthenticateHttpClient, 60, true);
+                PollingService.CreateTask(AuthenticateHttpClient, 60, true);
         }
 
         public ISpotifyClient Client { get; set; }

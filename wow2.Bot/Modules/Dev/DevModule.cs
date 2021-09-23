@@ -181,24 +181,29 @@ namespace wow2.Bot.Modules.Dev
                 .SendAsync(Context.Channel);
         }
 
-        [Command("poll-start")]
-        [Summary("Enables the bot for all.")]
+        [Command("poll-unblock")]
+        [Summary("Unblocks a polling task.")]
         public async Task PollStartAsync(string name)
         {
-            Timer timer = PollingService.PollingServiceTimers[name];
-            timer.Start();
+            PollingTask task = PollingService.PollingServiceTimers.Find(p => p.Name == name);
+            if (task == null)
+                throw new CommandReturnException(Context, "No matching polling task.");
 
-            await new SuccessMessage($"Started `{name}` with interval {timer.Interval / 60000}min.")
+            task.Blocked = false;
+            await new SuccessMessage($"Unblocked `{name}` with interval {task.IntervalMinutes}min")
                 .SendAsync(Context.Channel);
         }
 
-        [Command("poll-stop")]
-        [Summary("Stops a polling service.")]
+        [Command("poll-block")]
+        [Summary("Blocks a polling service.")]
         public async Task PollStopAsync(string name)
         {
-            PollingService.PollingServiceTimers[name].Stop();
+            PollingTask task = PollingService.PollingServiceTimers.Find(p => p.Name == name);
+            if (task == null)
+                throw new CommandReturnException(Context, "No matching polling task.");
 
-            await new SuccessMessage("Stopped.")
+            task.Blocked = true;
+            await new SuccessMessage($"Blocked `{name}`")
                 .SendAsync(Context.Channel);
         }
 
@@ -207,14 +212,14 @@ namespace wow2.Bot.Modules.Dev
         public async Task PollListAsync()
         {
             StringBuilder stringBuilder = new();
-            foreach (var pair in PollingService.PollingServiceTimers)
+            foreach (PollingTask task in PollingService.PollingServiceTimers)
             {
                 stringBuilder
-                    .Append(pair.Key)
+                    .Append(task.Name)
                     .Append('(')
-                    .Append(pair.Value.Interval / 60000)
+                    .Append(task.IntervalMinutes)
                     .AppendLine("min)    ")
-                    .AppendLine(pair.Value.Enabled ? " - STARTED" : " - STOPPED")
+                    .AppendLine(task.Blocked ? " - BLOCKED" : " - UNBLOCKED")
                     .AppendLine();
             }
 

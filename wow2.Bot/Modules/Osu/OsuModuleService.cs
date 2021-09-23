@@ -109,8 +109,8 @@ namespace wow2.Bot.Modules.Osu
 
             if (!string.IsNullOrWhiteSpace(clientId) && !string.IsNullOrEmpty(clientSecret))
             {
-                PollingService.CreateService(AuthenticateHttpClient, 1200, true);
-                PollingService.CreateService(CheckForUserMilestonesAsync, 10);
+                PollingService.CreateTask(AuthenticateHttpClient, 1200, true);
+                PollingService.CreateTask(CheckForUserMilestonesAsync, 10);
             }
         }
 

@@ -63,7 +63,7 @@ namespace wow2.Bot
 
             await Client.SetStatusAsync(UserStatus.Online);
             await Client.SetGameAsync("!wow help");
-            PollingService.CreateService(DataManager.SaveGuildDataToFileAsync, 1800);
+            PollingService.CreateTask(DataManager.SaveGuildDataToFileAsync, 1800);
 
             ApplicationInfo = await Client.GetApplicationInfoAsync();
         }
