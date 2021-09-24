@@ -92,12 +92,8 @@ namespace wow2.Bot.Modules.Timers
             try
             {
                 var channel = (IMessageChannel)BotService.Client.GetChannel(SendToChannelId);
-                await new InfoMessage(MessageString, "Time up!")
-                {
-                    ReplyToMessageId = UserMessageId,
-                    AllowMentions = true,
-                }
-                .SendAsync(channel);
+                await new InfoMessage($"[Click here to see the original message]({UserMessageUrl})", string.IsNullOrWhiteSpace(MessageString) ? $"A timer without a name elapsed!" : MessageString)
+                    .SendAsync(channel);
 
                 if (NotifyUserMentions.Count > 0)
                     await channel.SendMessageAsync(string.Join(' ', NotifyUserMentions));

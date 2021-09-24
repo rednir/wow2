@@ -1,4 +1,4 @@
-# List of commands (92 total)
+# List of commands (93 total)
 
 ## Main (8)
 Stuff to do with the bot and other random stuff.
@@ -49,7 +49,7 @@ Play YouTube or Twitch audio in a voice channel.
 |`!wow vc toggle-auto-join`|Toggles whether the bot will try join when a new song is added to the queue.|
 |`!wow vc set-vote-skips-needed [NUMBER]`|Sets the number of votes needed to skip a song request to NUMBER.|
 
-## Timers (4)
+## Timers (5)
 Create and manage timers and reminders.
 
 |Command|Summary|
@@ -58,6 +58,7 @@ Create and manage timers and reminders.
 |`!wow timer start-legacy [TIME] [optional:MESSAGE]`|Starts a timer for a specific time span that will send a message when elapsed.|
 |`!wow timer list [optional:PAGE]`|Lists all active timers|
 |`!wow timer stop [ID]`|Stops the timer from its place in the list.|
+|`!wow timer set-announcements-channel [optional:CHANNEL]`|Sets the channel where all timer notifications will be sent.|
 
 ## Text (3)
 Change and manipulate text.
