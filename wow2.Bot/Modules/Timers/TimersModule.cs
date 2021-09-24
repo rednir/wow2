@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
@@ -105,6 +107,31 @@ namespace wow2.Bot.Modules.Timers
 
             await new TimerStartedMessage(timer)
                 .SendAsync(Context.Channel);
+        }
+
+        [Command("list")]
+        [Summary("Lists all active timers")]
+        public async Task ListAsync(int page = 1)
+        {
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+
+            int num = 1;
+            foreach (UserTimer timer in Config.UserTimers)
+            {
+                listOfFieldBuilders.Add(new EmbedFieldBuilder()
+                {
+                    Name = $"{num}) " + (timer.MessageString ?? "<unnamed timer>"),
+                    Value = $"[See message]({timer.UserMessageUrl}) • Scheduled for {timer.TargetDateTime}{(timer.RepeatEvery == null ? null : $" • Repeats every {timer.RepeatEvery.Value}")}",
+                });
+                num++;
+            }
+
+            await new PagedMessage(
+                fieldBuilders: listOfFieldBuilders,
+                description: $"*There are {Config.UserTimers.Count} timers in total, as listed below.*",
+                title: "⏰ Timers",
+                page: page)
+                    .SendAsync(Context.Channel);
         }
 
         [Command("stop")]

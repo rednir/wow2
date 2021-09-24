@@ -38,6 +38,8 @@ namespace wow2.Bot.Modules.Timers
 
         public string MessageString { get; set; }
 
+        public string UserMessageUrl => $"https://cdn.discordapp.com/channels/{GuildId}/{ChannelId}/{UserMessageId}";
+
         public ulong UserMessageId { get; set; }
 
         public ulong ChannelId { get; set; }
