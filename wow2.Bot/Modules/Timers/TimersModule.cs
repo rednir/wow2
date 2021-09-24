@@ -136,22 +136,15 @@ namespace wow2.Bot.Modules.Timers
 
         [Command("stop")]
         [Alias("cancel", "remove", "delete")]
-        [Summary("Stops the most recently created timer.")]
-        public async Task StopAsync()
+        [Summary("Stops the timer from its place in the list.")]
+        public async Task StopAsync(int id)
         {
-            if (Config.UserTimers.Count == 0)
-                throw new CommandReturnException(Context, "There are no active timers to remove.");
+            if (id > Config.UserTimers.Count || id < 1)
+                throw new CommandReturnException(Context, "No such icon with that ID.");
 
-            int index = Config.UserTimers.Count - 1;
-            UserTimer timer = Config.UserTimers[index];
-
-            await new SuccessMessage("Removed this timer.")
-            {
-                ReplyToMessageId = timer.UserMessageId,
-            }
-            .SendAsync(Context.Channel);
-
-            timer.Dispose();
+            Config.UserTimers[id - 1].Dispose();
+            await new SuccessMessage("Stopped timer.")
+                .SendAsync(Context.Channel);
         }
     }
 }
