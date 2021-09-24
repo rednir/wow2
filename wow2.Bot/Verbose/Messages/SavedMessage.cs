@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
@@ -54,9 +55,7 @@ namespace wow2.Bot.Verbose.Messages
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
-            Components = new ComponentBuilder();
-            foreach (var button in ActionButtons)
-                Components.WithButton(button.Label, button.Url == null ? $"{GetHashCode()}:{button.Label}" : null, button.Style, button.Emote, button.Url, button.Disabled, button.Row);
+            Components = GetComponentBuilder(ActionButtons);
 
             IUserMessage message = await base.SendAsync(channel);
             if (!DontSave)
@@ -71,8 +70,10 @@ namespace wow2.Bot.Verbose.Messages
         /// <summary>Removes all interactive elements from the sent message and disposes it.</summary>
         public async virtual Task StopAsync()
         {
+            Components = GetComponentBuilder(ActionButtons, true);
+
             if (SentMessage.Components.Count > 0)
-                await SentMessage.ModifyAsync(m => m.Components = null);
+                await SentMessage.ModifyAsync(m => m.Components = Components.Build());
 
             Dispose();
         }
@@ -83,6 +84,14 @@ namespace wow2.Bot.Verbose.Messages
             SavedMessageList.Remove(this);
             Logger.Log($"SavedMessage {SentMessage.Id} was disposed.", LogSeverity.Debug);
             GC.SuppressFinalize(this);
+        }
+
+        private ComponentBuilder GetComponentBuilder(IEnumerable<ActionButton> actionButtons, bool forceDisable = false)
+        {
+            var components = new ComponentBuilder();
+            foreach (var button in actionButtons)
+                components.WithButton(button.Label, button.Url == null ? $"{GetHashCode()}:{button.Label}" : null, button.Style, button.Emote, button.Url, forceDisable || button.Disabled, button.Row);
+            return components;
         }
     }
 }
