@@ -17,16 +17,17 @@ namespace wow2.Bot.Modules.Timers
         {
         }
 
-        public UserTimer(SocketCommandContext context, TimeSpan timeSpan, string message, TimeSpan? repeatEvery)
+        public UserTimer(SocketCommandContext context, TimeSpan timeSpan, ulong sendToChannelId, string messageString, TimeSpan? repeatEvery)
         {
             if (timeSpan <= TimeSpan.Zero)
                 throw new ArgumentException("Time span is too small (less than zero)");
 
-            MessageString = message;
+            MessageString = messageString;
             RepeatEverySeconds = repeatEvery?.TotalSeconds;
             UserMessageId = context.Message.Id;
             GuildId = context.Guild.Id;
-            ChannelId = context.Channel.Id;
+            UserMessageChannelId = context.Channel.Id;
+            SendToChannelId = sendToChannelId;
             TargetDateTime = DateTime.Now + timeSpan;
         }
 
@@ -40,13 +41,15 @@ namespace wow2.Bot.Modules.Timers
 
         public string MessageString { get; set; }
 
-        public string UserMessageUrl => $"https://cdn.discordapp.com/channels/{GuildId}/{ChannelId}/{UserMessageId}";
+        public string UserMessageUrl => $"https://cdn.discordapp.com/channels/{GuildId}/{UserMessageChannelId}/{UserMessageId}";
 
         public ulong UserMessageId { get; set; }
 
-        public ulong ChannelId { get; set; }
+        public ulong UserMessageChannelId { get; set; }
 
         public ulong GuildId { get; set; }
+
+        public ulong SendToChannelId { get; set; }
 
         public DateTime TargetDateTime { get; set; }
 
@@ -88,7 +91,7 @@ namespace wow2.Bot.Modules.Timers
 
             try
             {
-                var channel = (IMessageChannel)BotService.Client.GetChannel(ChannelId);
+                var channel = (IMessageChannel)BotService.Client.GetChannel(SendToChannelId);
                 await new InfoMessage(MessageString, "Time up!")
                 {
                     ReplyToMessageId = UserMessageId,

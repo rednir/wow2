@@ -41,7 +41,7 @@ namespace wow2.Bot.Modules.Timers
         [Command("start")]
         [Alias("new", "create")]
         [Summary("Starts a timer that will send a message when elapsed.")]
-        public async Task StartAsync([Remainder] string message = null)
+        public async Task StartAsync([Name("MESSAGE")][Remainder] string messageString = null)
         {
             await new DateTimeSelectorMessage(async dt =>
             {
@@ -86,9 +86,14 @@ namespace wow2.Bot.Modules.Timers
 
             async Task startTimer(TimeSpan timeSpan, TimeSpan? repeatEvery)
             {
-                var timer = new UserTimer(Context, timeSpan, message, repeatEvery);
-                timer.Start();
+                var timer = new UserTimer(
+                    context: Context,
+                    timeSpan: timeSpan,
+                    sendToChannelId: Config.AnnouncementsChannelId != default ? Config.AnnouncementsChannelId : Context.Channel.Id,
+                    messageString: messageString,
+                    repeatEvery: repeatEvery);
 
+                timer.Start();
                 await new TimerStartedMessage(timer)
                     .SendAsync(Context.Channel);
             }
