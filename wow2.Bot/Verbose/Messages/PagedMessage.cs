@@ -30,6 +30,8 @@ namespace wow2.Bot.Verbose.Messages
 
         public int? Page { get; protected set; }
 
+        public string StoppedByUsername { get; set; }
+
         protected override ActionButton[] ActionButtons => Page == null ? Array.Empty<ActionButton>() : new[]
         {
             new ActionButton()
@@ -46,9 +48,13 @@ namespace wow2.Bot.Verbose.Messages
             },
             new ActionButton()
             {
-                Label = "Stop",
+                Label = StoppedByUsername == null ? "Stop" : $"Stopped by {StoppedByUsername}",
                 Style = ButtonStyle.Danger,
-                Action = async _ => await StopAsync(),
+                Action = async component =>
+                {
+                    StoppedByUsername = component.User.Username;
+                    await StopAsync();
+                },
             },
         };
 
