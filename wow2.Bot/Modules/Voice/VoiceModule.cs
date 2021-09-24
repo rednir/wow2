@@ -422,10 +422,11 @@ namespace wow2.Bot.Modules.Voice
             if (Config.CurrentlyPlayingSongRequest == null)
                 return;
 
+            NowPlayingMessage nowPlayingMessage = null;
             try
             {
-                await new NowPlayingMessage(Config.CurrentlyPlayingSongRequest, Config, skipButton)
-                    .SendAsync(Context.Channel);
+                nowPlayingMessage = new NowPlayingMessage(Config.CurrentlyPlayingSongRequest, Config, skipButton);
+                await nowPlayingMessage.SendAsync(Context.Channel);
             }
             catch (Exception ex)
             {
@@ -461,8 +462,13 @@ namespace wow2.Bot.Modules.Voice
                 }
                 else
                 {
-                    await new InfoMessage($"Skipping request on behalf of {component.User.Mention}")
-                        .SendAsync(Context.Channel);
+                    // TODO: preferably I want this logic contained inside the message.
+                    if (nowPlayingMessage != null)
+                    {
+                        nowPlayingMessage.UsernameWhoSkipped = component.User.Username;
+                        await nowPlayingMessage.StopAsync();
+                    }
+
                     Config.IsLoopEnabled = false;
                     _ = ContinueAsync();
                 }

@@ -32,17 +32,19 @@ namespace wow2.Bot.Modules.Keywords
 
         protected override ActionButton[] ActionButtons => base.ActionButtons.Append(new ActionButton()
         {
-            Label = "Show values in gallery",
+            Label = UsernameWhoClickedButton == null ? "Show values in gallery" : $"Gallery requested by {UsernameWhoClickedButton}",
             Style = ButtonStyle.Secondary,
-            Action = async _ =>
+            Action = async component =>
             {
-                // TODO: show user that invoked this in the button(?)
-                await StopAsync();
+                UsernameWhoClickedButton = component.User.Username;
                 await GalleryButton.Invoke();
+                await StopAsync();
             },
         })
         .ToArray();
 
         private readonly Func<Task> GalleryButton;
+
+        private string UsernameWhoClickedButton { get; set; }
     }
 }

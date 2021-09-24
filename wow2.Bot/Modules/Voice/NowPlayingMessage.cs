@@ -19,7 +19,7 @@ namespace wow2.Bot.Modules.Voice
             },
             new ActionButton()
             {
-                Label = "Skip this request",
+                Label = UsernameWhoSkipped == null ? "Skip this request" : $"Skipped request on behalf of {UsernameWhoSkipped}",
                 Style = ButtonStyle.Secondary,
                 Action = async component => await SkipButtonAction.Invoke(component, Request),
             },
@@ -68,5 +68,7 @@ namespace wow2.Bot.Modules.Voice
         public VoiceModuleConfig Config { get; }
 
         public Func<SocketMessageComponent, UserSongRequest, Task> SkipButtonAction { get; }
+
+        public string UsernameWhoSkipped { get; set; }
     }
 }
