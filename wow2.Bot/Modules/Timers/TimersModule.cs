@@ -93,9 +93,9 @@ namespace wow2.Bot.Modules.Timers
         }
 
         // TODO: would be nice to get rid of this.
-        [Command("start-for")]
+        [Command("start-legacy")]
         [Summary("Starts a timer for a specific time span that will send a message when elapsed.")]
-        public async Task StartForAsync(string time, [Remainder] string message = null)
+        public async Task StartLegacyAsync(string time, [Remainder] string message = null)
         {
             if (time.TryConvertToTimeSpan(out TimeSpan timeSpan))
                 throw new CommandReturnException(Context, "Try something like `5m` or `30s`", "Invalid time.");
