@@ -34,7 +34,7 @@ namespace wow2.Bot.Modules.Timers
 
         private Timer Timer { get; set; }
 
-        public TimeSpan? RepeatEvery { get; }
+        public TimeSpan? RepeatEvery { get; set; }
 
         public string MessageString { get; set; }
 
@@ -50,9 +50,6 @@ namespace wow2.Bot.Modules.Timers
 
         public void Start()
         {
-            if (Timer != null)
-                throw new InvalidOperationException("Timer already started");
-
             Timer = new(DateTime.Now >= TargetDateTime ? 500 : (TargetDateTime - DateTime.Now).TotalMilliseconds);
             Timer.AutoReset = false;
             Timer.Elapsed += async (source, e) => await OnElapsedAsync();
@@ -69,7 +66,16 @@ namespace wow2.Bot.Modules.Timers
 
         private async Task OnElapsedAsync()
         {
-            Dispose();
+            if (RepeatEvery == null)
+            {
+                Dispose();
+            }
+            else
+            {
+                TargetDateTime = DateTime.Now + RepeatEvery.Value;
+                Timer.Start();
+            }
+
             try
             {
                 var channel = (IMessageChannel)BotService.Client.GetChannel(ChannelId);
