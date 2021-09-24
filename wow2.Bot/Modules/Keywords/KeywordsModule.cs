@@ -224,28 +224,8 @@ namespace wow2.Bot.Modules.Keywords
             if (!keywordsDictionary.TryGetValue(keyword, out List<KeywordValue> values))
                 throw new CommandReturnException(Context, "If you want to list all keywords available, don't specify a keyword in the command.", "No such keyword");
 
-            var fieldBuildersForValueList = new List<EmbedFieldBuilder>();
-            foreach (KeywordValue value in values)
-            {
-                var user = value.AddedByUserId == 0 ?
-                    "[UNKNOWN USER]" : BotService.Client.GetUser(value.AddedByUserId).Username;
-                var date = value.DateTimeAddedBinary == 0 ?
-                    "[UNKNOWN DATE]" : DateTime.FromBinary(value.DateTimeAddedBinary).ToShortDateString();
-
-                fieldBuildersForValueList.Add(
-                    new EmbedFieldBuilder()
-                    {
-                        Name = $"Added by {user} at {date}",
-                        Value = $"{value.TimesLiked} times liked, {value.TimesDeleted} times deleted.\n```{value.Content}```",
-                    });
-            }
-
-            await new PagedMessage(
-                fieldBuilders: fieldBuildersForValueList,
-                description: $"*There are {values.Count} values in total, as listed below.*",
-                title: $"📒 Values for '{keyword}'",
-                page: page)
-                    .SendAsync(Context.Channel);
+            await new ValueListMessage(keyword, values, async () => await GalleryAsync(keyword), page)
+                .SendAsync(Context.Channel);
         }
 
         [Command("gallery")]
