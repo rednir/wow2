@@ -37,7 +37,7 @@ namespace wow2.Bot.Verbose.Messages
             {
                 Label = "-1 week",
                 Style = ButtonStyle.Secondary,
-                Row = 1,
+                Row = 2,
                 Action = async _ => await AddTimeAsync(TimeSpan.FromDays(-7)),
             },
             new ActionButton()
@@ -51,14 +51,28 @@ namespace wow2.Bot.Verbose.Messages
             {
                 Label = "-1 day",
                 Style = ButtonStyle.Secondary,
-                Row = 1,
+                Row = 2,
                 Action = async _ => await AddTimeAsync(TimeSpan.FromDays(-1)),
+            },
+            new ActionButton()
+            {
+                Label = "+6 hour",
+                Style = ButtonStyle.Secondary,
+                Row = 1,
+                Action = async _ => await AddTimeAsync(TimeSpan.FromHours(6)),
+            },
+            new ActionButton()
+            {
+                Label = "-6 hour",
+                Style = ButtonStyle.Secondary,
+                Row = 2,
+                Action = async _ => await AddTimeAsync(TimeSpan.FromHours(-6)),
             },
             new ActionButton()
             {
                 Label = "+1 hour",
                 Style = ButtonStyle.Secondary,
-                Row = 2,
+                Row = 1,
                 Action = async _ => await AddTimeAsync(TimeSpan.FromHours(1)),
             },
             new ActionButton()
@@ -72,7 +86,7 @@ namespace wow2.Bot.Verbose.Messages
             {
                 Label = "+10 minutes",
                 Style = ButtonStyle.Secondary,
-                Row = 2,
+                Row = 1,
                 Action = async _ => await AddTimeAsync(TimeSpan.FromMinutes(10)),
             },
             new ActionButton()
