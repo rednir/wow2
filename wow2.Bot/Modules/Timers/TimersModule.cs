@@ -102,7 +102,7 @@ namespace wow2.Bot.Modules.Timers
             if (time.TryConvertToTimeSpan(out TimeSpan timeSpan))
                 throw new CommandReturnException(Context, "Try something like `5m` or `30s`", "Invalid time.");
 
-            var timer = new UserTimer(Context, timeSpan, message, null);
+            var timer = new UserTimer(Context, timeSpan, message);
             timer.Start();
 
             await new TimerStartedMessage(timer)
@@ -142,7 +142,7 @@ namespace wow2.Bot.Modules.Timers
             if (id > Config.UserTimers.Count || id < 1)
                 throw new CommandReturnException(Context, "No such icon with that ID.");
 
-            Config.UserTimers[id - 1].Dispose();
+            Config.UserTimers[id - 1].Stop();
             await new SuccessMessage("Stopped timer.")
                 .SendAsync(Context.Channel);
         }

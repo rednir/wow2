@@ -30,14 +30,22 @@ namespace wow2.Bot.Modules.Timers
             },
             new ActionButton()
             {
-                Label = "Delete timer",
+                Label = Timer.IsDeleted ? "Restore this deleted timer" : "Delete timer",
                 Style = ButtonStyle.Danger,
                 Action = async component =>
                 {
-                    Timer.Dispose();
-                    await StopAsync();
-                    await new SuccessMessage($"Timer was deleted on request of {component.User.Mention}")
-                        .SendAsync(component.Channel);
+                    if (Timer.IsDeleted)
+                    {
+                        Timer.Start();
+                        await new SuccessMessage($"Timer was restarted on request of {component.User.Mention}")
+                            .SendAsync(component.Channel);
+                    }
+                    else
+                    {
+                        Timer.Stop();
+                        await new SuccessMessage($"Timer was deleted on request of {component.User.Mention}")
+                            .SendAsync(component.Channel);
+                    }
                 },
             },
         };

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Timers;
 using Discord;
@@ -10,7 +11,7 @@ using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Timers
 {
-    public class UserTimer : IDisposable
+    public class UserTimer
     {
         public UserTimer()
         {
@@ -22,19 +23,20 @@ namespace wow2.Bot.Modules.Timers
                 throw new ArgumentException("Time span is too small (less than zero)");
 
             MessageString = message;
-            RepeatEvery = repeatEvery;
+            RepeatEverySeconds = repeatEvery?.TotalSeconds;
             UserMessageId = context.Message.Id;
             GuildId = context.Guild.Id;
             ChannelId = context.Channel.Id;
             TargetDateTime = DateTime.Now + timeSpan;
-
-            var config = DataManager.AllGuildData[context.Guild.Id].Timers;
-            config.UserTimers.Add(this);
         }
 
         private Timer Timer { get; set; }
 
-        public TimeSpan? RepeatEvery { get; set; }
+        // This is required as TimeSpans cannot be deserialized from json.
+        public double? RepeatEverySeconds { get; set; }
+
+        [JsonIgnore]
+        public TimeSpan? RepeatEvery => RepeatEverySeconds == null ? null : TimeSpan.FromSeconds(RepeatEverySeconds.Value);
 
         public string MessageString { get; set; }
 
@@ -50,32 +52,38 @@ namespace wow2.Bot.Modules.Timers
 
         public List<string> NotifyUserMentions { get; set; } = new();
 
+        public bool IsDeleted => !DataManager.AllGuildData[GuildId].Timers.UserTimers.Contains(this);
+
+        /// <summary>Creates the timer and adds it to the guild's config.</summary>
         public void Start()
         {
             Timer = new(DateTime.Now >= TargetDateTime ? 500 : (TargetDateTime - DateTime.Now).TotalMilliseconds);
             Timer.AutoReset = false;
             Timer.Elapsed += async (source, e) => await OnElapsedAsync();
             Timer.Start();
+
+            var timers = DataManager.AllGuildData[GuildId].Timers.UserTimers;
+            if (!timers.Contains(this))
+                timers.Add(this);
         }
 
-        /// <summary>Disposes of the timer and removes it from the guild's config.</summary>
-        public void Dispose()
+        /// <summary>Disposes the timer and removes it from the guild's config.</summary>
+        public void Stop()
         {
             Timer.Dispose();
             DataManager.AllGuildData[GuildId].Timers.UserTimers.Remove(this);
-            GC.SuppressFinalize(this);
         }
 
         private async Task OnElapsedAsync()
         {
             if (RepeatEvery == null)
             {
-                Dispose();
+                Stop();
             }
             else
             {
                 TargetDateTime = DateTime.Now + RepeatEvery.Value;
-                Timer.Start();
+                Start();
             }
 
             try
