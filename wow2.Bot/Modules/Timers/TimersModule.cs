@@ -57,7 +57,6 @@ namespace wow2.Bot.Modules.Timers
                         .SendAsync(Context.Channel);
                     return;
                 }
-                timeSpan = TimeSpan.FromSeconds(2);
 
                 await new QuestionMessage(
                     description: "Want the timer to repeat?",
@@ -72,7 +71,6 @@ namespace wow2.Bot.Modules.Timers
                                         .SendAsync(Context.Channel);
                                     return;
                                 }
-                                ts = TimeSpan.FromSeconds(6);
 
                                 await startTimer(timeSpan, ts);
                             },
