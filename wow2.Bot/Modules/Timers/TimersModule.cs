@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 using wow2.Bot.Verbose;
@@ -107,7 +108,7 @@ namespace wow2.Bot.Modules.Timers
             if (time.TryConvertToTimeSpan(out TimeSpan timeSpan))
                 throw new CommandReturnException(Context, "Try something like `5m` or `30s`", "Invalid time.");
 
-            var timer = new UserTimer(Context, timeSpan, message, null);
+            var timer = new UserTimer(Context, timeSpan, Config.AnnouncementsChannelId != default ? Config.AnnouncementsChannelId : Context.Channel.Id, message, null);
             timer.Start();
 
             await new TimerStartedMessage(timer)
@@ -150,6 +151,25 @@ namespace wow2.Bot.Modules.Timers
             Config.UserTimers[id - 1].Stop();
             await new SuccessMessage("Stopped timer.")
                 .SendAsync(Context.Channel);
+        }
+
+        [Command("set-announcements-channel")]
+        [Alias("announcements-channel", "set-announce-channel", "set-channel")]
+        [Summary("Sets the channel where all timer notifications will be sent.")]
+        public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel = null)
+        {
+            if (channel == null)
+            {
+                Config.AnnouncementsChannelId = default;
+                await new SuccessMessage("Timer notifications will be sent in the same channel they were requested.")
+                    .SendAsync(Context.Channel);
+            }
+            else
+            {
+                Config.AnnouncementsChannelId = channel.Id;
+                await new SuccessMessage($"All timer notifications will be sent in {channel.Mention}")
+                    .SendAsync(Context.Channel);
+            }
         }
     }
 }
