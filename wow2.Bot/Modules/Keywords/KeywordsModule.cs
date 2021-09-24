@@ -94,7 +94,7 @@ namespace wow2.Bot.Modules.Keywords
                 DateTimeAddedBinary = DateTime.Now.ToBinary(),
             });
 
-            await new SuccessMessage($"Added a value to `{keyword}`\nIt now has `{keywordsDictionary[keyword].Count}` total values.")
+            await new SuccessMessage($"It now has `{keywordsDictionary[keyword].Count}` total values.", $"Added a value to `{keyword}`")
                 .SendAsync(Context.Channel);
         }
 
@@ -128,7 +128,7 @@ namespace wow2.Bot.Modules.Keywords
                     // Warn the user about deleting multiple values.
                     await new QuestionMessage(
                         description: $"You are about to delete `{keyword}` and its {Config.KeywordsDictionary[keyword].Count} values.\nAre you okay with that?",
-                        title: $"Here be dragons...",
+                        title: "Here be dragons...",
                         onConfirm: delete,
                         onDeny: async () =>
                         {
