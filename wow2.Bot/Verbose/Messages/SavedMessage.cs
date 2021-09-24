@@ -50,7 +50,7 @@ namespace wow2.Bot.Verbose.Messages
 
         protected virtual ActionButton[] ActionButtons => Array.Empty<ActionButton>();
 
-        protected virtual bool DontSave => false;
+        protected bool DontSave => ActionButtons.Length == 0;
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {

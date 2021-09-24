@@ -30,8 +30,6 @@ namespace wow2.Bot.Verbose.Messages
 
         public int? Page { get; protected set; }
 
-        protected override bool DontSave => Page == null;
-
         protected override ActionButton[] ActionButtons => Page == null ? Array.Empty<ActionButton>() : new[]
         {
             new ActionButton()
