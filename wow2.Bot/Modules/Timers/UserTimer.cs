@@ -16,12 +16,13 @@ namespace wow2.Bot.Modules.Timers
         {
         }
 
-        public UserTimer(SocketCommandContext context, TimeSpan timeSpan, string message)
+        public UserTimer(SocketCommandContext context, TimeSpan timeSpan, string message, TimeSpan? repeatEvery)
         {
             if (timeSpan <= TimeSpan.Zero)
                 throw new ArgumentException("Time span is too small (less than zero)");
 
             MessageString = message;
+            RepeatEvery = repeatEvery;
             UserMessageId = context.Message.Id;
             GuildId = context.Guild.Id;
             ChannelId = context.Channel.Id;
@@ -32,6 +33,8 @@ namespace wow2.Bot.Modules.Timers
         }
 
         private Timer Timer { get; set; }
+
+        public TimeSpan? RepeatEvery { get; }
 
         public string MessageString { get; set; }
 

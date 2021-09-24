@@ -58,13 +58,38 @@ namespace wow2.Bot.Modules.Timers
                     return;
                 }
 
-                var timer = new UserTimer(Context, timeSpan, message);
+                await new QuestionMessage(
+                    description: "Want the timer to repeat?",
+                    onConfirm: async () =>
+                    {
+                        await new TimeSpanSelectorMessage(
+                            confirmFunc: async ts =>
+                            {
+                                if (ts < TimeSpan.FromMinutes(30))
+                                {
+                                    await new WarningMessage("A timer repeating that often sounds nothing but annoying.", "Try something longer")
+                                        .SendAsync(Context.Channel);
+                                    return;
+                                }
+
+                                await startTimer(timeSpan, ts);
+                            },
+                            description: "The timer will repeat every...")
+                                .SendAsync(Context.Channel);
+                    },
+                    onDeny: async () => await startTimer(timeSpan, null))
+                        .SendAsync(Context.Channel);
+            })
+            .SendAsync(Context.Channel);
+
+            async Task startTimer(TimeSpan timeSpan, TimeSpan? repeatEvery)
+            {
+                var timer = new UserTimer(Context, timeSpan, message, repeatEvery);
                 timer.Start();
 
                 await new TimerStartedMessage(timer)
                     .SendAsync(Context.Channel);
-            })
-            .SendAsync(Context.Channel);
+            }
         }
 
         // TODO: would be nice to get rid of this.
@@ -75,7 +100,7 @@ namespace wow2.Bot.Modules.Timers
             if (time.TryConvertToTimeSpan(out TimeSpan timeSpan))
                 throw new CommandReturnException(Context, "Try something like `5m` or `30s`", "Invalid time.");
 
-            var timer = new UserTimer(Context, timeSpan, message);
+            var timer = new UserTimer(Context, timeSpan, message, null);
             timer.Start();
 
             await new TimerStartedMessage(timer)
