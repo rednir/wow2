@@ -91,11 +91,21 @@ namespace wow2.Bot.Verbose.Messages
             GC.SuppressFinalize(this);
         }
 
-        private ComponentBuilder GetComponentBuilder(bool forceDisable = false)
+        private ComponentBuilder GetComponentBuilder(bool forceDisableActions = false)
         {
             var components = new ComponentBuilder();
             foreach (var button in GetActionButtons())
-                components.WithButton(button.Label, button.Url == null ? $"{GetHashCode()}:{button.Label}" : null, button.Style, button.Emote, button.Url, forceDisable || button.Disabled, button.Row);
+            {
+                components.WithButton(
+                    label: button.Label,
+                    customId: button.Url == null ? $"{GetHashCode()}:{button.Label}" : null,
+                    style: button.Style,
+                    emote: button.Emote,
+                    url: button.Url,
+                    disabled: (forceDisableActions && button.Action != null) || button.Disabled,
+                    row: button.Row);
+            }
+
             return components;
         }
     }
