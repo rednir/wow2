@@ -90,7 +90,7 @@ namespace wow2.Bot.Modules.Voice
             });
         }
 
-        private static async Task<string> GetYoutubeAudioUrlAsync(string videoId)
+        public static async Task<string> GetYoutubeAudioUrlAsync(string videoId)
         {
             var streams = await YoutubeExplodeClient.Videos.Streams.GetManifestAsync(videoId);
             return streams.GetAudioOnlyStreams().LastOrDefault(v => v.AudioCodec == "opus")?.Url;

@@ -493,10 +493,12 @@ namespace wow2.Bot.Modules.Voice
                 try
                 {
                     var search = await YouTubeService.SearchForAsync(request.VideoMetadata.title, "videos");
-                    request.VideoMetadata = new VideoMetadata(await YouTubeService.GetVideoAsync(search.Id.VideoId))
+                    var video = await YouTubeService.GetVideoAsync(search.Id.VideoId);
+                    request.VideoMetadata = new VideoMetadata()
                     {
                         // Remember what the original source was.
                         extractor = request.VideoMetadata.extractor,
+                        DirectAudioUrl = await DownloadService.GetYoutubeAudioUrlAsync(video.Id),
                     };
                 }
                 catch (Exception ex)
