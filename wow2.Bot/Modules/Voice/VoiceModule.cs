@@ -509,9 +509,9 @@ namespace wow2.Bot.Modules.Voice
                 }
             }
 
-            using (Process ffmpeg = DownloadService.CreateStreamFromVideoUrl(request.VideoMetadata.webpage_url))
+            using (Process ffmpeg = DownloadService.CreateStream(request.VideoMetadata))
             using (Stream output = ffmpeg.StandardOutput.BaseStream)
-            using (AudioOutStream discord = Config.AudioClient.CreatePCMStream(AudioApplication.Mixed))
+            using (AudioOutStream discord = Config.AudioClient.CreatePCMStream(AudioApplication.Music))
             {
                 try
                 {

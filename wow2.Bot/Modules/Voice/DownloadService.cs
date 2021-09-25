@@ -11,6 +11,7 @@ using SpotifyAPI.Web;
 using wow2.Bot.Modules.Spotify;
 using wow2.Bot.Modules.YouTube;
 using wow2.Bot.Verbose;
+using YoutubeExplode;
 
 namespace wow2.Bot.Modules.Voice
 {
@@ -22,6 +23,8 @@ namespace wow2.Bot.Modules.Voice
         public static IYoutubeModuleService YouTubeService { get; set; }
 
         public static ISpotifyModuleService SpotifyService { get; set; }
+
+        public static YoutubeClient YoutubeExplodeClient { get; } = new();
 
         public static Cache<List<VideoMetadata>> VideoMetadataCache { get; } = new(120);
 
@@ -35,6 +38,7 @@ namespace wow2.Bot.Modules.Voice
                 return metadataFromCache;
 
             // TODO: this seems like its getting a little bloated, could do with a lookover.
+            // TODO: cache harder.
             Video video;
             if (TryGetYoutubeVideoIdFromUrl(searchOrUrl, out string youtubeVideoId))
             {
@@ -58,19 +62,25 @@ namespace wow2.Bot.Modules.Voice
                 video = await YouTubeService.GetVideoAsync(searchResult.Id.VideoId);
             }
 
-            var videoMetadata = new List<VideoMetadata>() { new VideoMetadata(video) };
-            VideoMetadataCache.Add(searchOrUrl, videoMetadata);
-            return videoMetadata;
+            var result = new List<VideoMetadata>()
+            {
+                new VideoMetadata(video) { DirectAudioUrl = await GetYoutubeAudioUrlAsync(video.Id) },
+            };
+
+            VideoMetadataCache.Add(searchOrUrl, result);
+            return result;
         }
 
-        /// <summary>Creates a new FFmpeg process that creates an audio stream from youtube-dl.</summary>
+        /// <summary>Creates a new FFmpeg process that creates an audio stream from url.</summary>
         /// <returns>The FFmpeg process.</returns>
-        public static Process CreateStreamFromVideoUrl(string url)
+        public static Process CreateStream(VideoMetadata metadata)
         {
-            const string youtubeDlArgs = "-q -f worstaudio --no-playlist --no-warnings";
-            string shellCommand = $"{YouTubeDlPath} {url} {youtubeDlArgs} -o - | {FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1";
-            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            // Use direct audio url if it exists.
+            string shellCommand = metadata.DirectAudioUrl == null ?
+                $"{YouTubeDlPath} {metadata.webpage_url} -q -f worstaudio --no-playlist --no-warnings -o - | {FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1" :
+                $"{FFmpegPath} -hide_banner -loglevel panic -i '{metadata.DirectAudioUrl}' -ac 2 -f s16le -ar 48000 pipe:1";
 
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             return Process.Start(new ProcessStartInfo
             {
                 FileName = isWindows ? "cmd" : "bash",
@@ -78,6 +88,12 @@ namespace wow2.Bot.Modules.Voice
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
             });
+        }
+
+        private static async Task<string> GetYoutubeAudioUrlAsync(string videoId)
+        {
+            var streams = await YoutubeExplodeClient.Videos.Streams.GetManifestAsync(videoId);
+            return streams.GetAudioOnlyStreams().LastOrDefault(v => v.AudioCodec == "opus")?.Url;
         }
 
         private static async Task<VideoMetadata> GetMetadataFromYoutubeDlAsync(string input)

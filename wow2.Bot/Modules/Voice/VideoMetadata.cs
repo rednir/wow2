@@ -16,6 +16,7 @@ namespace wow2.Bot.Modules.Voice
         public VideoMetadata(Video video)
         {
             title = video.Snippet.Title;
+            id = video.Id;
             uploader = video.Snippet.ChannelTitle;
             webpage_url = "https://www.youtube.com/watch?v=" + video.Id;
             description = video.Snippet.Description;
@@ -49,7 +50,11 @@ namespace wow2.Bot.Modules.Voice
 
         public bool LookupTitleOnYoutube { get; set; }
 
+        public string DirectAudioUrl { get; set; }
+
         public string title { get; set; }
+
+        public string id { get; set; }
 
         public string uploader { get; set; }
 
