@@ -22,14 +22,14 @@ namespace wow2.Bot.Verbose.Messages
             if (savedMessage == null)
                 return false;
 
-            foreach (var actionButton in savedMessage.ActionButtons)
+            foreach (var actionButton in savedMessage.GetActionButtons())
             {
                 string[] idParts = component.Data.CustomId.Split(":", 2);
                 if (idParts[0] == savedMessage.GetHashCode().ToString() && idParts[1] == actionButton.Label)
                 {
                     try
                     {
-                        await actionButton.Action.Invoke(component);
+                        await actionButton.Action?.Invoke(component);
                     }
                     catch (Exception ex)
                     {
@@ -47,15 +47,20 @@ namespace wow2.Bot.Verbose.Messages
             return false;
         }
 
-        protected List<SavedMessage> SavedMessageList => DataManager.AllGuildData[SentMessage.GetGuild().Id].SavedMessages;
+        public List<ActionButton> ExtraActionButtons { get; set; } = new();
 
         protected virtual ActionButton[] ActionButtons => Array.Empty<ActionButton>();
 
-        protected bool DontSave => ActionButtons.Length == 0;
+        /// <summary>Gets all the <see cref="ActionButton" /> objects that will be sent with the message.</summary>
+        public ActionButton[] GetActionButtons() => ActionButtons.Concat(ExtraActionButtons).ToArray();
+
+        protected List<SavedMessage> SavedMessageList => DataManager.AllGuildData[SentMessage.GetGuild().Id].SavedMessages;
+
+        protected bool DontSave => GetActionButtons().Length == 0;
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
-            Components = GetComponentBuilder(ActionButtons);
+            Components = GetComponentBuilder();
 
             IUserMessage message = await base.SendAsync(channel);
             if (!DontSave)
@@ -70,7 +75,7 @@ namespace wow2.Bot.Verbose.Messages
         /// <summary>Removes all interactive elements from the sent message and disposes it.</summary>
         public async virtual Task StopAsync()
         {
-            Components = GetComponentBuilder(ActionButtons, true);
+            Components = GetComponentBuilder(true);
 
             if (SentMessage.Components.Count > 0)
                 await SentMessage.ModifyAsync(m => m.Components = Components.Build());
@@ -86,10 +91,10 @@ namespace wow2.Bot.Verbose.Messages
             GC.SuppressFinalize(this);
         }
 
-        private ComponentBuilder GetComponentBuilder(IEnumerable<ActionButton> actionButtons, bool forceDisable = false)
+        private ComponentBuilder GetComponentBuilder(bool forceDisable = false)
         {
             var components = new ComponentBuilder();
-            foreach (var button in actionButtons)
+            foreach (var button in GetActionButtons())
                 components.WithButton(button.Label, button.Url == null ? $"{GetHashCode()}:{button.Label}" : null, button.Style, button.Emote, button.Url, forceDisable || button.Disabled, button.Row);
             return components;
         }
