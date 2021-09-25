@@ -102,6 +102,11 @@ namespace wow2.Bot.Extensions
         public static string Humanize(this int input, char separator = ',') =>
             Humanize((long)input, separator);
 
+        /// <summary>Adds a <typeparamref name="separator"/> throughout an ulong.</summary>
+        /// <returns>The ulong as a string with <typeparamref name="separator"/> placed throughout it.</returns>
+        public static string Humanize(this ulong input, char separator = ',') =>
+            Humanize((long)input, separator);
+
         /// <summary>Adds a <typeparamref name="separator"/> throughout an long.</summary>
         /// <returns>The number as a string with <typeparamref name="separator"/> placed throughout it.</returns>
         public static string Humanize(this long input, char separator = ',')

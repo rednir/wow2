@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using wow2.Bot.Extensions;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Voice
@@ -54,7 +55,7 @@ namespace wow2.Bot.Modules.Voice
                 Footer = new EmbedFooterBuilder()
                 {
                     Text = Request.VideoMetadata.extractor.StartsWith("youtube") || Request.VideoMetadata.extractor.StartsWith("spotify") ?
-                        $"👁️  {Request.VideoMetadata.view_count ?? 0}      |      👍  {Request.VideoMetadata.like_count ?? 0}      |      👎  {Request.VideoMetadata.dislike_count ?? 0}      |      🕓  {VoiceModule.DurationAsString(Request.VideoMetadata.duration)}" : string.Empty,
+                        $"👁️  {Request.VideoMetadata.view_count?.Humanize() ?? "0"}      |      👍  {Request.VideoMetadata.like_count?.Humanize() ?? "0"}      |      👎  {Request.VideoMetadata.dislike_count?.Humanize() ?? "0"}      |      🕓  {VoiceModule.DurationAsString(Request.VideoMetadata.duration)}" : string.Empty,
                 },
                 Title = (Request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {Request.VideoMetadata.description}" : Request.VideoMetadata.title) + $" *({Request.VideoMetadata.uploader})*",
                 ThumbnailUrl = Request.VideoMetadata.thumbnails.LastOrDefault()?.url,
