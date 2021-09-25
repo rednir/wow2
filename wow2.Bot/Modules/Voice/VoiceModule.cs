@@ -494,7 +494,7 @@ namespace wow2.Bot.Modules.Voice
                 {
                     var search = await YouTubeService.SearchForAsync(request.VideoMetadata.title, "videos");
                     var video = await YouTubeService.GetVideoAsync(search.Id.VideoId);
-                    request.VideoMetadata = new VideoMetadata()
+                    request.VideoMetadata = new VideoMetadata(video)
                     {
                         // Remember what the original source was.
                         extractor = request.VideoMetadata.extractor,
