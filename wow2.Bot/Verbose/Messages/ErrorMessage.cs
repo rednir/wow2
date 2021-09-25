@@ -3,7 +3,7 @@ using Discord;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public class ErrorMessage : Message
+    public class ErrorMessage : SavedMessage
     {
         public ErrorMessage(string description, string title = null)
         {

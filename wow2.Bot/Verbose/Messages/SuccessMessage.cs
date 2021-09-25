@@ -2,7 +2,7 @@ using Discord;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public class SuccessMessage : Message
+    public class SuccessMessage : SavedMessage
     {
         public SuccessMessage(string description, string title = null)
         {

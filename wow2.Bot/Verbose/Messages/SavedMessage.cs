@@ -60,7 +60,7 @@ namespace wow2.Bot.Verbose.Messages
             IUserMessage message = await base.SendAsync(channel);
             if (!DontSave)
             {
-                SavedMessageList.Truncate(70);
+                SavedMessageList.Truncate(120);
                 SavedMessageList.Add(this);
             }
 
