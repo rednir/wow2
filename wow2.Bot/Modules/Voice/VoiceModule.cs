@@ -47,7 +47,7 @@ namespace wow2.Bot.Modules.Voice
         }
 
         [Command("clear")]
-        [Alias("empty", "remove", "reset")]
+        [Alias("empty", "reset")]
         [Summary("Clears the song request queue.")]
         public async Task ClearAsync()
         {
@@ -161,6 +161,17 @@ namespace wow2.Bot.Modules.Voice
 
             await new SuccessMessage("Removed from the queue.")
                 .SendAsync(Context.Channel);
+        }
+
+        [Command("remove-last")]
+        [Alias("pop")]
+        [Summary("Removes the last song request that was added.")]
+        public async Task RemoveLastAsync()
+        {
+            if (Config.CurrentSongRequestQueue.Count == 0)
+                throw new CommandReturnException(Context, "The queue is empty, add some songs first!", "Nothing to remove.");
+
+            await RemoveAsync(Config.CurrentSongRequestQueue.Count);
         }
 
         [Command("remove-many")]
@@ -314,7 +325,7 @@ namespace wow2.Bot.Modules.Voice
         }
 
         [Command("pop-queue")]
-        [Alias("pop", "popqueue")]
+        [Alias("popqueue")]
         [Summary("Replaces the current song request queue with a saved queue. The saved queue will also be deleted.")]
         public async Task PopQueueAsync([Remainder] string name)
         {
