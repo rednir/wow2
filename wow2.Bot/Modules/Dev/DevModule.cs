@@ -313,7 +313,6 @@ namespace wow2.Bot.Modules.Dev
                     try
                     {
                         await message.StopAsync();
-                        Logger.Log($"Stopped SavedMessage {message.SentMessage?.Id}", LogSeverity.Debug);
                     }
                     catch
                     {
