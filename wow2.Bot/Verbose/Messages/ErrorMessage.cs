@@ -5,6 +5,16 @@ namespace wow2.Bot.Verbose.Messages
 {
     public class ErrorMessage : SavedMessage
     {
+        protected override ActionButton[] ActionButtons => new[]
+        {
+            new ActionButton()
+            {
+                Label = "Make a bug report",
+                Style = ButtonStyle.Link,
+                Url = "https://github.com/rednir/wow2/issues/new?assignees=&labels=bug&template=bug_report.md&title=",
+            },
+        };
+
         public ErrorMessage(string description, string title = null)
         {
             EmbedBuilder = new EmbedBuilder()
@@ -14,12 +24,6 @@ namespace wow2.Bot.Verbose.Messages
                 Timestamp = DateTime.Now,
                 Color = new Color(0xE74C3C),
             };
-
-            Components = new ComponentBuilder()
-                .WithButton(
-                    label: "Make a bug report",
-                    style: ButtonStyle.Link,
-                    url: "https://github.com/rednir/wow2/issues/new?assignees=&labels=bug&template=bug_report.md&title=");
         }
     }
 }
