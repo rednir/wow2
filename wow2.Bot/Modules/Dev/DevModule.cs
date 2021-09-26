@@ -1,19 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
 using Discord;
 using Discord.Commands;
-using Discord.Rest;
-using Discord.WebSocket;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
 using wow2.Bot.Modules.Keywords;
-using wow2.Bot.Modules.Main;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
