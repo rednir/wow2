@@ -58,7 +58,7 @@ namespace wow2.Bot.Modules.Voice
                         $"👁️  {Request.VideoMetadata.view_count?.Humanize() ?? "0"}      |      👍  {Request.VideoMetadata.like_count?.Humanize() ?? "0"}      |      👎  {Request.VideoMetadata.dislike_count?.Humanize() ?? "0"}      |      🕓  {VoiceModule.DurationAsString(Request.VideoMetadata.duration)}" : string.Empty,
                 },
                 Title = (Request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {Request.VideoMetadata.description}" : Request.VideoMetadata.title) + $" *({Request.VideoMetadata.uploader})*",
-                ThumbnailUrl = Request.VideoMetadata.thumbnails.LastOrDefault()?.url,
+                ThumbnailUrl = Request.VideoMetadata.thumbnails.FirstOrDefault()?.url,
                 Description = $"Requested at {Request.TimeRequested:HH:mm} by {Request.RequestedByMention}",
                 Color = Color.LightGrey,
             };
