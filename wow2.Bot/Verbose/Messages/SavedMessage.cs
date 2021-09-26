@@ -31,10 +31,11 @@ namespace wow2.Bot.Verbose.Messages
                     try
                     {
                         await actionButton.Action?.Invoke(component);
+                        Logger.Log($"Handled button press {component.Data.CustomId} by {component.User}", LogSeverity.Debug);
                     }
                     catch (Exception ex) when (ex is not CommandReturnException)
                     {
-                        Logger.LogException(ex, $"Button {component.Data.CustomId} threw an exception when invoked.");
+                        Logger.LogException(ex, $"Button press {component.Data.CustomId} by {component.User} threw an exception when invoked.");
 
                         // TODO: make this message same as the command unhandled exception message.
                         await new ErrorMessage($"```{ex.Message}```", "The interaction couldn't be completed")
