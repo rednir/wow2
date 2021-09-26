@@ -58,7 +58,7 @@ namespace wow2.Bot.Verbose.Messages
 
         protected List<SavedMessage> SavedMessageList => DataManager.AllGuildData[SentMessage.GetGuild().Id].SavedMessages;
 
-        protected bool DontSave => GetActionButtons().Length == 0;
+        protected bool DontSave => !GetActionButtons().Any(b => b.Style != ButtonStyle.Link);
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
