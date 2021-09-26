@@ -12,10 +12,11 @@ namespace wow2.Bot.Verbose.Messages
         {
         }
 
-        public PagedMessage(List<EmbedFieldBuilder> fieldBuilders, string description = "", string title = "", int? page = null)
+        public PagedMessage(List<EmbedFieldBuilder> fieldBuilders, string description = "", string title = "", int? page = null, int maxFieldsPerPage = 8)
         {
             AllFieldBuilders = fieldBuilders;
             Page = page;
+            MaxFieldsPerPage = maxFieldsPerPage;
             EmbedBuilder = new EmbedBuilder()
             {
                 Title = title,
@@ -30,21 +31,37 @@ namespace wow2.Bot.Verbose.Messages
 
         public int? Page { get; protected set; }
 
+        public int MaxFieldsPerPage { get; }
+
+        public int TotalNumberOfPages => (int)Math.Ceiling((float)AllFieldBuilders.Count / MaxFieldsPerPage);
+
         public string StoppedByUsername { get; set; }
 
         protected override ActionButton[] ActionButtons => Page == null ? Array.Empty<ActionButton>() : new[]
         {
             new ActionButton()
             {
-                Label = "« Left",
+                Label = "«",
+                Style = ButtonStyle.Primary,
+                Action = async _ => await ChangePageToAsync(0),
+            },
+            new ActionButton()
+            {
+                Label = "Left",
                 Style = ButtonStyle.Primary,
                 Action = async _ => await ChangePageByAsync(-1),
             },
             new ActionButton()
             {
-                Label = "Right »",
+                Label = "Right",
                 Style = ButtonStyle.Primary,
                 Action = async _ => await ChangePageByAsync(1),
+            },
+            new ActionButton()
+            {
+                Label = "»",
+                Style = ButtonStyle.Primary,
+                Action = async _ => await ChangePageToAsync(TotalNumberOfPages),
             },
             new ActionButton()
             {
@@ -59,9 +76,13 @@ namespace wow2.Bot.Verbose.Messages
         };
 
         /// <summary>Modify the page and therefore the embed of this message.</summary>
-        public async Task ChangePageByAsync(int increment)
+        public Task ChangePageByAsync(int increment)
+            => ChangePageToAsync((int)Page + increment);
+
+        /// <summary>Modify the page and therefore the embed of this message.</summary>
+        public async Task ChangePageToAsync(int page)
         {
-            Page += increment;
+            Page = page;
             UpdateEmbed();
             await SentMessage.ModifyAsync(
                 message =>
@@ -74,20 +95,16 @@ namespace wow2.Bot.Verbose.Messages
 
         protected virtual void UpdateEmbed()
         {
-            const int maxFieldsPerPage = 8;
-
             // Check if the fields don't fit on one page.
-            if (AllFieldBuilders.Count > maxFieldsPerPage)
+            if (AllFieldBuilders.Count > MaxFieldsPerPage)
             {
-                int totalNumberOfPages = (int)Math.Ceiling((float)AllFieldBuilders.Count / maxFieldsPerPage);
-
                 // Pages are not used if page number is negative.
                 if (Page == null)
                 {
                     EmbedBuilder.Footer = new EmbedFooterBuilder()
                     {
                         IconUrl = $"https://cdn.discordapp.com/emojis/{WarningEmoteId}.png",
-                        Text = $"{AllFieldBuilders.Count - maxFieldsPerPage} items were excluded",
+                        Text = $"{AllFieldBuilders.Count - MaxFieldsPerPage} items were excluded",
                     };
 
                     EmbedBuilder.Fields = AllFieldBuilders.GetRange(0, AllFieldBuilders.Count > 25 ? 25 : AllFieldBuilders.Count);
@@ -95,21 +112,21 @@ namespace wow2.Bot.Verbose.Messages
                 else
                 {
                     // Ensure page number is within bounds.
-                    Page = Math.Min(totalNumberOfPages, Math.Max(Page ?? 0, 1));
+                    Page = Math.Min(TotalNumberOfPages, Math.Max(Page ?? 0, 1));
 
                     EmbedBuilder.Footer = new EmbedFooterBuilder()
                     {
                         IconUrl = $"https://cdn.discordapp.com/emojis/{InfoEmoteId}.png",
-                        Text = $"Page {Page}/{totalNumberOfPages}",
+                        Text = $"Page {Page}/{TotalNumberOfPages}",
                     };
 
                     // Page 0 and 1 should have the same starting index (never negative).
-                    int startIndex = maxFieldsPerPage * Math.Max((int)Page - 1, 0);
+                    int startIndex = MaxFieldsPerPage * Math.Max((int)Page - 1, 0);
 
                     // Get the fields that are within the page and set the embed's fields to that.
-                    bool isFinalPage = Page == totalNumberOfPages;
+                    bool isFinalPage = Page == TotalNumberOfPages;
                     EmbedBuilder.Fields = AllFieldBuilders.GetRange(startIndex,
-                        isFinalPage ? (AllFieldBuilders.Count - startIndex) : maxFieldsPerPage);
+                        isFinalPage ? (AllFieldBuilders.Count - startIndex) : MaxFieldsPerPage);
                 }
             }
             else
