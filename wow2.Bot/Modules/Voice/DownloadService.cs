@@ -37,8 +37,6 @@ namespace wow2.Bot.Modules.Voice
             if (VideoMetadataCache.TryFetch(searchOrUrl, out var metadataFromCache))
                 return metadataFromCache;
 
-            // TODO: this seems like its getting a little bloated, could do with a lookover.
-            // TODO: cache harder.
             Video video;
             if (TryGetYoutubeVideoIdFromUrl(searchOrUrl, out string youtubeVideoId))
             {
@@ -46,15 +44,21 @@ namespace wow2.Bot.Modules.Voice
             }
             else if (searchOrUrl.Contains("twitch.tv/"))
             {
-                return new List<VideoMetadata>() { await GetMetadataFromYoutubeDlAsync(searchOrUrl) };
+                var twitchMetadata = new List<VideoMetadata>() { await GetMetadataFromYoutubeDlAsync(searchOrUrl) };
+                VideoMetadataCache.Add(searchOrUrl, twitchMetadata);
+                return twitchMetadata;
             }
             else if (searchOrUrl.Contains("open.spotify.com/playlist/"))
             {
-                return new List<VideoMetadata>(await GetMetadataFromSpotifyPlaylistAsync(searchOrUrl));
+                var spotifyPlaylistMetadata = await GetMetadataFromSpotifyPlaylistAsync(searchOrUrl);
+                VideoMetadataCache.Add(searchOrUrl, spotifyPlaylistMetadata);
+                return new List<VideoMetadata>(spotifyPlaylistMetadata);
             }
             else if (searchOrUrl.Contains("open.spotify.com/album/"))
             {
-                return new List<VideoMetadata>(await GetMetadataFromSpotifyAlbumAsync(searchOrUrl));
+                var spotifyAlbumMetadata = await GetMetadataFromSpotifyAlbumAsync(searchOrUrl);
+                VideoMetadataCache.Add(searchOrUrl, spotifyAlbumMetadata);
+                return new List<VideoMetadata>(spotifyAlbumMetadata);
             }
             else
             {
