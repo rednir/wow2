@@ -300,9 +300,11 @@ namespace wow2.Bot.Modules.Dev
                     try
                     {
                         await message.SentMessage.RemoveAllReactionsAsync();
+                        Logger.Log($"Removed reactions from {message.SentMessage.Id}", LogSeverity.Debug);
                     }
                     catch
                     {
+                        Logger.Log($"Failed to remove reactions from {message.SentMessage?.Id}", LogSeverity.Debug);
                     }
                 }
 
@@ -311,9 +313,11 @@ namespace wow2.Bot.Modules.Dev
                     try
                     {
                         await message.StopAsync();
+                        Logger.Log($"Stopped SavedMessage {message.SentMessage?.Id}", LogSeverity.Debug);
                     }
                     catch
                     {
+                        Logger.Log($"Failed to stop SavedMessage {message.SentMessage?.Id}", LogSeverity.Debug);
                     }
                 }
             }
