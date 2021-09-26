@@ -47,19 +47,11 @@ namespace wow2.Bot.Modules.Timers
             await new DateTimeSelectorMessage(async dt =>
             {
                 if (dt <= DateTime.Now)
-                {
-                    await new WarningMessage("Try a time in the future.")
-                        .SendAsync(Context.Channel);
-                    return;
-                }
+                    throw new CommandReturnException(Context, "Try a time in the future.");
 
                 TimeSpan timeSpan = dt - DateTime.Now;
                 if (timeSpan.TotalMilliseconds >= int.MaxValue)
-                {
-                    await new WarningMessage("Way too big.")
-                        .SendAsync(Context.Channel);
-                    return;
-                }
+                    throw new CommandReturnException(Context, "Way too big.");
 
                 await new QuestionMessage(
                     description: "Want the timer to repeat?",
@@ -69,11 +61,7 @@ namespace wow2.Bot.Modules.Timers
                             confirmFunc: async ts =>
                             {
                                 if (ts < TimeSpan.FromMinutes(30))
-                                {
-                                    await new WarningMessage("A timer repeating that often sounds nothing but annoying.", "Try something longer")
-                                        .SendAsync(Context.Channel);
-                                    return;
-                                }
+                                    throw new CommandReturnException(Context, "A timer repeating that often sounds nothing but annoying.", "Try something longer");
 
                                 await startTimer(timeSpan, ts);
                             },

@@ -6,6 +6,7 @@ using Discord;
 using Discord.WebSocket;
 using wow2.Bot.Data;
 using wow2.Bot.Extensions;
+using wow2.Bot.Modules;
 
 namespace wow2.Bot.Verbose.Messages
 {
@@ -31,7 +32,7 @@ namespace wow2.Bot.Verbose.Messages
                     {
                         await actionButton.Action?.Invoke(component);
                     }
-                    catch (Exception ex)
+                    catch (Exception ex) when (ex is not CommandReturnException)
                     {
                         Logger.LogException(ex, $"Button {component.Data.CustomId} threw an exception when invoked.");
 
