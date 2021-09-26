@@ -17,7 +17,7 @@ namespace wow2.Bot
 
         public static string RuntimeDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-        public static bool IsDebug { get; private set; }
+        public static bool IsDebug { get; set; }
 
         public static CommandLineOptions Options { get; } = new();
 

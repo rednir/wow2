@@ -30,5 +30,12 @@ namespace wow2.Bot
             File.WriteAllText("COMMANDS.md", md);
             Logger.Log($"Wrote to {Path.GetFullPath("COMMANDS.md")}", LogSeverity.Info);
         }
+
+        [MethodOption("debug", 'd', Description = "Enables more verbose logging.")]
+        public void EnableDebugLogging()
+        {
+            Program.IsDebug = true;
+            Logger.Log("Debug logging is enabled", LogSeverity.Info);
+        }
     }
 }
