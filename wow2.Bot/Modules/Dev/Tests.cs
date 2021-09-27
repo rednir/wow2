@@ -49,7 +49,7 @@ namespace wow2.Bot.Modules.Dev
         public static async Task PagedMessageTest(SocketCommandContext context)
         {
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 100; i++)
             {
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
