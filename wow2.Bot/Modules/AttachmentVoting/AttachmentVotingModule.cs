@@ -211,22 +211,23 @@ namespace wow2.Bot.Modules.AttachmentVoting
                 ["Most controversial"] = () =>
                 {
                     string userMention = null;
-                    decimal rating = decimal.MaxValue;
+                    double rating = 0;
                     foreach (var user in groupedUsers)
                     {
                         int interactions = user.SelectMany(u => u.UsersLikedIds).Concat(user.SelectMany(u => u.UsersDislikedIds)).Distinct().Count();
                         if (interactions != 0)
                         {
-                            decimal thisRating = Math.Abs((decimal)user.Sum(a => a.Points) / interactions);
-                            if (thisRating <= rating)
+                            double thisRawRating = Math.Abs((double)user.Sum(a => a.Points) / interactions);
+                            double thisNormalizedRating = 1 - (Math.Atan(thisRawRating) / (Math.PI / 2));
+                            if (thisNormalizedRating >= rating)
                             {
                                 userMention = user.Key;
-                                rating = thisRating;
+                                rating = thisNormalizedRating;
                             }
                         }
                     }
 
-                    return $"{userMention} with a controversial rating of `{Math.Round(rating * 100, 2)}`";
+                    return $"{userMention} with a controversial rating of `{Math.Round(rating, 2) * 100}%`";
                 },
             };
 
