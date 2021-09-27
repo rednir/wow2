@@ -235,7 +235,7 @@ namespace wow2.Bot.Modules.AttachmentVoting
             {
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
-                    Name = stat.Key,
+                    Name = $"*{stat.Key}*",
                     Value = stat.Value.Invoke(),
                     IsInline = true,
                 });
