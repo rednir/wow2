@@ -81,7 +81,7 @@ namespace wow2.Bot.Modules.AttachmentVoting
 
         [Command("toggle")]
         [Summary("Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.")]
-        public async Task ToggleVotingInChannelAsync(SocketTextChannel channel)
+        public async Task ToggleAsync(SocketTextChannel channel)
         {
             bool currentlyOn = Config.VotingEnabledChannelIds.Contains(channel.Id);
             await SendToggleQuestionAsync(
@@ -99,7 +99,7 @@ namespace wow2.Bot.Modules.AttachmentVoting
 
         [Command("list")]
         [Summary("Lists all attachments with voting enabled. SORT can be points/users/date/likes/deletions/values, default is likes.")]
-        public async Task AttachmentListAsync(AttachmentSorts sort = AttachmentSorts.Points, int page = 1)
+        public async Task ListAsync(AttachmentSorts sort = AttachmentSorts.Points, int page = 1)
         {
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             var attachmentsCollection = getAttachments();
