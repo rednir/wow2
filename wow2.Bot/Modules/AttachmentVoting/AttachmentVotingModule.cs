@@ -101,7 +101,10 @@ namespace wow2.Bot.Modules.AttachmentVoting
         [Summary("Lists all attachments with voting enabled. SORT can be points/users/date/likes/deletions/values, default is likes.")]
         public async Task ListAsync(AttachmentSorts sort = AttachmentSorts.Points, int page = 1)
         {
-            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+            if (Config.VotingEnabledAttachments.Count < 1)
+                throw new CommandReturnException(Context, "There are no voting enabled attachments in this server.", "Nothing to show");
+
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>(GetStatisticsFieldBuilders());
             var attachmentsCollection = getAttachments();
 
             int num = 1;
@@ -117,7 +120,7 @@ namespace wow2.Bot.Modules.AttachmentVoting
 
             await new PagedMessage(
                 fieldBuilders: listOfFieldBuilders,
-                description: $"*There are {attachmentsCollection.Length} attachments with voting enabled, as listed below.*",
+                description: $"**Total attachments: **{Config.VotingEnabledAttachments.Count}\n**Total likes: **{Config.VotingEnabledAttachments.Sum(a => a.UsersLikedIds.Count)}\n**Total dislikes: **{Config.VotingEnabledAttachments.Sum(a => a.UsersDislikedIds.Count)}\n**Total contributing users: **{Config.VotingEnabledAttachments.GroupBy(a => a.AuthorMention).Count()}\n",
                 title: "🖼 Voting-enabled Attachments",
                 page: page)
                     .SendAsync(Context.Channel);
@@ -133,6 +136,112 @@ namespace wow2.Bot.Modules.AttachmentVoting
                     _ => Config.VotingEnabledAttachments.ToArray(),
                 };
             }
+        }
+
+        private List<EmbedFieldBuilder> GetStatisticsFieldBuilders()
+        {
+            var groupedUsers = Config.VotingEnabledAttachments.GroupBy(a => a.AuthorMention);
+
+            var statBuilders = new Dictionary<string, Func<string>>()
+            {
+                ["Most loved"] = () =>
+                {
+                    string userMention = null;
+                    decimal averageLikes = 0;
+                    foreach (var user in groupedUsers)
+                    {
+                        decimal thisAverageLikes = user.Select(a => (decimal)a.UsersLikedIds.Count).Average();
+                        if (thisAverageLikes >= averageLikes)
+                        {
+                            userMention = user.Key;
+                            averageLikes = thisAverageLikes;
+                        }
+                    }
+
+                    return $"{userMention} with an average of `{Math.Round(averageLikes, 2)}` likes per attachment";
+                },
+                ["Most hated"] = () =>
+                {
+                    string userMention = null;
+                    decimal averageDislikes = 0;
+                    foreach (var user in groupedUsers)
+                    {
+                        decimal thisAverageDislikes = user.Select(a => (decimal)a.UsersDislikedIds.Count).Average();
+                        if (thisAverageDislikes >= averageDislikes)
+                        {
+                            userMention = user.Key;
+                            averageDislikes = thisAverageDislikes;
+                        }
+                    }
+
+                    return $"{userMention} with an average of `{Math.Round(averageDislikes, 2)}` dislikes per attachment";
+                },
+                ["Most prolific"] = () =>
+                {
+                    string userMention = null;
+                    int count = 0;
+                    foreach (var user in groupedUsers)
+                    {
+                        int thisCount = user.Count();
+                        if (thisCount >= count)
+                        {
+                            userMention = user.Key;
+                            count = thisCount;
+                        }
+                    }
+
+                    return $"{userMention} with `{count}` attachments sent";
+                },
+                ["Most ignored"] = () =>
+                {
+                    string userMention = null;
+                    int ignored = 0;
+                    foreach (var user in groupedUsers)
+                    {
+                        int thisIgnored = user.Count(a => a.UsersLikedIds.Count == 0 && a.UsersDislikedIds.Count == 0);
+                        if (thisIgnored >= ignored)
+                        {
+                            userMention = user.Key;
+                            ignored = thisIgnored;
+                        }
+                    }
+
+                    return $"{userMention} with `{ignored}` attachments that have no likes or dislikes";
+                },
+                ["Most controversial"] = () =>
+                {
+                    string userMention = null;
+                    decimal rating = decimal.MaxValue;
+                    foreach (var user in groupedUsers)
+                    {
+                        int interactions = user.SelectMany(u => u.UsersLikedIds).Concat(user.SelectMany(u => u.UsersDislikedIds)).Distinct().Count();
+                        if (interactions != 0)
+                        {
+                            decimal thisRating = Math.Abs((decimal)user.Sum(a => a.Points) / interactions);
+                            if (thisRating <= rating)
+                            {
+                                userMention = user.Key;
+                                rating = thisRating;
+                            }
+                        }
+                    }
+
+                    return $"{userMention} with a controversial rating of `{Math.Round(rating * 100, 2)}`";
+                },
+            };
+
+            var listOfFieldBuilders = new List<EmbedFieldBuilder>();
+            foreach (var stat in statBuilders)
+            {
+                listOfFieldBuilders.Add(new EmbedFieldBuilder()
+                {
+                    Name = stat.Key,
+                    Value = stat.Value.Invoke(),
+                    IsInline = true,
+                });
+            }
+
+            return listOfFieldBuilders;
         }
     }
 }
