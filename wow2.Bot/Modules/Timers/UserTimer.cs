@@ -60,7 +60,7 @@ namespace wow2.Bot.Modules.Timers
         /// <summary>Creates the timer and adds it to the guild's config.</summary>
         public void Start()
         {
-            Timer = new(DateTime.Now >= TargetDateTime ? 500 : (TargetDateTime - DateTime.Now).TotalMilliseconds);
+            Timer = new(DateTime.Now >= TargetDateTime ? 1000 : (TargetDateTime - DateTime.Now).TotalMilliseconds);
             Timer.AutoReset = false;
             Timer.Elapsed += async (source, e) => await OnElapsedAsync();
             Timer.Start();
@@ -85,7 +85,7 @@ namespace wow2.Bot.Modules.Timers
             }
             else
             {
-                TargetDateTime = DateTime.Now + RepeatEvery.Value;
+                TargetDateTime += RepeatEvery.Value;
                 Start();
             }
 
