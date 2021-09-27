@@ -93,10 +93,10 @@ namespace wow2.Bot.Modules.Timers
             {
                 var channel = (IMessageChannel)BotService.Client.GetChannel(SendToChannelId);
                 await new InfoMessage($"[Click here to see the original message]({UserMessageUrl})", string.IsNullOrWhiteSpace(MessageString) ? $"A timer without a name elapsed!" : MessageString)
-                    .SendAsync(channel);
-
-                if (NotifyUserMentions.Count > 0)
-                    await channel.SendMessageAsync(string.Join(' ', NotifyUserMentions));
+                {
+                    Text = NotifyUserMentions.Count > 0 ? string.Join(' ', NotifyUserMentions) : null,
+                }
+                .SendAsync(channel);
             }
             catch (Exception ex)
             {
