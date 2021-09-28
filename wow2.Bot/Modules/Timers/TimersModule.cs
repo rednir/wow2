@@ -115,7 +115,7 @@ namespace wow2.Bot.Modules.Timers
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
                     Name = $"{num}) " + (timer.MessageString ?? "<unnamed timer>"),
-                    Value = $"[See message]({timer.UserMessageUrl}) • Scheduled for {timer.TargetDateTime}{(timer.RepeatEvery == null ? null : $" • Repeats every {timer.RepeatEvery.Value}")}",
+                    Value = $"[See message]({timer.UserMessageUrl}) • Scheduled for {timer.TargetDateTime.ToDiscordTimestamp("F")}{(timer.RepeatEvery == null ? null : $" • Repeats every {timer.RepeatEvery.Value}")}",
                 });
                 num++;
             }
