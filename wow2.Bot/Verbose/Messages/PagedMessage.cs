@@ -43,7 +43,7 @@ namespace wow2.Bot.Verbose.Messages
             {
                 Label = "«",
                 Style = ButtonStyle.Primary,
-                Action = async _ => await ChangePageToAsync(0),
+                Action = async _ => await ChangePageToAsync(1),
             },
             new ActionButton()
             {
