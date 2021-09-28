@@ -176,6 +176,11 @@ namespace wow2.Bot.Extensions
             return messageContent.RemoveUnnecessaryWhiteSpace()[(commandPrefix.Length + 1)..];
         }
 
+        /// <summary>Converts a <see cref="DateTime" /> object to a string that will show as a formatted timestamp in Discord. Type can be F, f, D, d, T, t, or R.</summary>
+        /// <returns>The timestamp as a string.</return>
+        public static string ToDiscordTimestamp(this DateTime dateTime, string type = "f")
+            => $"<t:{((DateTimeOffset)dateTime).ToUnixTimeSeconds()}:{type}>";
+
         /// <summary>Replaces all instances of some characters with a new character.</summary>
         /// <returns>The string with the list of characters removed.</returns>
         public static string ReplaceAll(this string stringToChange, char[] charsToReplace, char? replacementChar)
