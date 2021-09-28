@@ -13,7 +13,7 @@
     <PackageReference Include="Reddit" Version="1.5.0"/>
     <PackageReference Include="CliOptions" Version="0.1.0"/>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2"/>
-    <PackageReference Include="Discord.Net.Labs" Version="3.0.3"/>
+    <PackageReference Include="Discord.Net.Labs" Version="3.1.1"/>
     <PackageReference Include="SpotifyAPI.Web" Version="6.2.1"/>
     <PackageReference Include="YoutubeExplode" Version="6.0.5"/>
   </ItemGroup>
