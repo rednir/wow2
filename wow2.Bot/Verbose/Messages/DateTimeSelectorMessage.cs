@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Discord;
+using wow2.Bot.Extensions;
 
 namespace wow2.Bot.Verbose.Messages
 {
@@ -31,7 +32,7 @@ namespace wow2.Bot.Verbose.Messages
         {
             EmbedBuilder = new EmbedBuilder()
             {
-                Description = $"{new Emoji($"<:wowquestion:{QuestionEmoteId}>")} {Description}\n`{DateTime.ToLongDateString()} / {DateTime.ToShortTimeString()}`",
+                Description = $"{new Emoji($"<:wowquestion:{QuestionEmoteId}>")} {Description}\n{DateTime.ToDiscordTimestamp("F")}",
                 Color = new Color(0x9b59b6),
             };
 

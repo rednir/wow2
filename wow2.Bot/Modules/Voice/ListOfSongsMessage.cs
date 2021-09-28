@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Discord;
+using wow2.Bot.Extensions;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Voice
@@ -19,7 +20,7 @@ namespace wow2.Bot.Modules.Voice
                 var fieldBuilderForSongRequest = new EmbedFieldBuilder()
                 {
                     Name = $"{i}) {songRequest.VideoMetadata.title}",
-                    Value = $"[More details]({songRequest.VideoMetadata.webpage_url}) • {VoiceModule.DurationAsString(songRequest.VideoMetadata.duration)} \nRequested at {songRequest.TimeRequested:HH:mm} by {songRequest.RequestedByMention}",
+                    Value = $"[More details]({songRequest.VideoMetadata.webpage_url}) • {VoiceModule.DurationAsString(songRequest.VideoMetadata.duration)} \nRequested {songRequest.TimeRequested.ToDiscordTimestamp("R")} by {songRequest.RequestedByMention}",
                 };
                 AllFieldBuilders.Add(fieldBuilderForSongRequest);
             }

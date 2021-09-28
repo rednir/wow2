@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using wow2.Bot.Verbose.Messages;
+using wow2.Bot.Extensions;
 
 namespace wow2.Bot.Modules.Keywords
 {
@@ -17,7 +18,7 @@ namespace wow2.Bot.Modules.Keywords
                 var user = value.AddedByUserId == 0 ?
                     "[UNKNOWN USER]" : BotService.Client.GetUser(value.AddedByUserId).Username;
                 var date = value.DateTimeAddedBinary == 0 ?
-                    "[UNKNOWN DATE]" : DateTime.FromBinary(value.DateTimeAddedBinary).ToShortDateString();
+                    "[UNKNOWN DATE]" : DateTime.FromBinary(value.DateTimeAddedBinary).ToDiscordTimestamp("D");
 
                 AllFieldBuilders.Add(
                     new EmbedFieldBuilder()

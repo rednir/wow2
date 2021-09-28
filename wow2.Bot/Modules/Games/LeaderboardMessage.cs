@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Discord;
+using wow2.Bot.Extensions;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Games
@@ -21,7 +22,7 @@ namespace wow2.Bot.Modules.Games
                 AllFieldBuilders.Add(new EmbedFieldBuilder()
                 {
                     Name = $"{i + 1}) {entry.Points} points",
-                    Value = $"Game started by {entry.PlayedByMention} at {entry.PlayedAt.ToShortDateString()}\n{detailsPredicate.Invoke(entry)}",
+                    Value = $"Game started by {entry.PlayedByMention} at {entry.PlayedAt.ToDiscordTimestamp("f")}\n{detailsPredicate.Invoke(entry)}",
                 });
             }
 

@@ -9,6 +9,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using wow2.Bot.Data;
+using wow2.Bot.Extensions;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
 
@@ -190,7 +191,7 @@ namespace wow2.Bot.Modules.ServerIcon
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
                     Name = $"ID: {id}",
-                    Value = $"[View image]({icon.Url}) • Added by {icon.AddedByMention} at {icon.DateTimeAdded.ToShortDateString()}",
+                    Value = $"[View image]({icon.Url}) • Added by {icon.AddedByMention} at {icon.DateTimeAdded.ToDiscordTimestamp("D")}",
                 });
                 id++;
             }
