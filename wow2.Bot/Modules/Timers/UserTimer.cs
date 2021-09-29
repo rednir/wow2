@@ -33,6 +33,9 @@ namespace wow2.Bot.Modules.Timers
 
         private Timer Timer { get; set; }
 
+        /// <summary>Gets or sets the timer used when the time span is too long, starting the normal timer when time span is short enough.</summary>
+        private Timer RelayTimer { get; set; }
+
         // This is required as TimeSpans cannot be deserialized from json.
         public double? RepeatEverySeconds { get; set; }
 
@@ -67,16 +70,20 @@ namespace wow2.Bot.Modules.Timers
             if (TargetDateTime - DateTime.Now >= TimeSpan.FromMilliseconds(int.MaxValue))
             {
                 // Run relay timer every 14 days
-                Timer = new Timer(1209600000);
-                Timer.Elapsed += (source, e) =>
+                RelayTimer = new Timer(1209600000);
+                RelayTimer.Elapsed += (source, e) =>
                 {
                     if (TargetDateTime - DateTime.Now < TimeSpan.FromMilliseconds(int.MaxValue))
                     {
                         startActual();
-                        Timer.Dispose();
+                        RelayTimer.Dispose();
                     }
                 };
-                Timer.Start();
+                RelayTimer.Start();
+            }
+            else
+            {
+                startActual();
             }
 
             void startActual()
@@ -91,7 +98,8 @@ namespace wow2.Bot.Modules.Timers
         /// <summary>Disposes the timer and removes it from the guild's config.</summary>
         public void Stop()
         {
-            Timer.Dispose();
+            RelayTimer?.Dispose();
+            Timer?.Dispose();
             DataManager.AllGuildData[GuildId].Timers.UserTimers.Remove(this);
         }
 

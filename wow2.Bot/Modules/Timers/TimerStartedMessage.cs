@@ -46,6 +46,8 @@ namespace wow2.Bot.Modules.Timers
                         await new SuccessMessage($"Timer was deleted on request of {component.User.Mention}")
                             .SendAsync(component.Channel);
                     }
+
+                    await UpdateMessageAsync();
                 },
             },
         };
