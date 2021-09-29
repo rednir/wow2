@@ -93,6 +93,12 @@ namespace wow2.Bot.Verbose.Messages
             GC.SuppressFinalize(this);
         }
 
+        public async override Task UpdateMessageAsync()
+        {
+            Components = GetComponentBuilder();
+            await base.UpdateMessageAsync();
+        }
+
         private ComponentBuilder GetComponentBuilder(bool forceDisableActions = false)
         {
             var components = new ComponentBuilder();

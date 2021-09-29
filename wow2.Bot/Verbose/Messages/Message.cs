@@ -57,6 +57,16 @@ namespace wow2.Bot.Verbose.Messages
             return SentMessage;
         }
 
+        public virtual async Task UpdateMessageAsync()
+        {
+            await SentMessage.ModifyAsync(m =>
+            {
+                m.Components = Components.Build();
+                m.Content = Text;
+                m.Embed = EmbedBuilder.Build();
+            });
+        }
+
         protected static string GetStatusMessageFormattedDescription(string description, string title)
             => (title == null ? null : $"**{title}**\n") + description;
     }
