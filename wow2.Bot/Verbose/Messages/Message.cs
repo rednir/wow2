@@ -59,6 +59,9 @@ namespace wow2.Bot.Verbose.Messages
 
         public virtual async Task UpdateMessageAsync()
         {
+            if (SentMessage == null)
+                return;
+
             await SentMessage.ModifyAsync(m =>
             {
                 m.Components = Components.Build();
