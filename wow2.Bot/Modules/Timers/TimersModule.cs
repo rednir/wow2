@@ -44,32 +44,26 @@ namespace wow2.Bot.Modules.Timers
         [Summary("Starts a timer that will send a message when elapsed.")]
         public async Task StartAsync([Name("MESSAGE")][Remainder] string messageString = null)
         {
-            await new DateTimeSelectorMessage(async dt =>
-            {
-                if (dt <= DateTime.Now)
-                    throw new CommandReturnException(Context, "Try a time in the future.");
+            await new DateTimeSelectorMessage(
+                confirmFunc: async dt =>
+                {
+                    TimeSpan timeSpan = dt - DateTime.Now;
 
-                TimeSpan timeSpan = dt - DateTime.Now;
-
-                await new QuestionMessage(
-                    description: "Want the timer to repeat?",
-                    onConfirm: async () =>
-                    {
-                        await new TimeSpanSelectorMessage(
-                            confirmFunc: async ts =>
-                            {
-                                if (ts < TimeSpan.FromMinutes(30))
-                                    throw new CommandReturnException(Context, "A timer repeating that often sounds nothing but annoying.", "Try something longer");
-
-                                await startTimer(timeSpan, ts);
-                            },
-                            description: "The timer will repeat every...")
-                                .SendAsync(Context.Channel);
-                    },
-                    onDeny: async () => await startTimer(timeSpan, null))
-                        .SendAsync(Context.Channel);
-            })
-            .SendAsync(Context.Channel);
+                    await new QuestionMessage(
+                        description: "Want the timer to repeat?",
+                        onConfirm: async () =>
+                        {
+                            await new TimeSpanSelectorMessage(
+                                confirmFunc: async ts => await startTimer(timeSpan, ts),
+                                description: "The timer will repeat every...",
+                                min: TimeSpan.FromMinutes(30))
+                                    .SendAsync(Context.Channel);
+                        },
+                        onDeny: async () => await startTimer(timeSpan, null))
+                            .SendAsync(Context.Channel);
+                },
+                min: DateTime.Now)
+                    .SendAsync(Context.Channel);
 
             async Task startTimer(TimeSpan timeSpan, TimeSpan? repeatEvery)
             {

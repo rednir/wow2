@@ -113,9 +113,6 @@ namespace wow2.Bot.Modules.ServerIcon
                         await new TimeSpanSelectorMessage(
                             confirmFunc: async ts =>
                             {
-                                if (ts < TimeSpan.FromHours(1))
-                                    throw new CommandReturnException(Context, "Time span is too short. Try something a bit longer.");
-
                                 await new DateTimeSelectorMessage(
                                     confirmFunc: async dt =>
                                     {
@@ -131,7 +128,8 @@ namespace wow2.Bot.Modules.ServerIcon
                                     description: "You can also schedule when you want the first icon rotate to take place.\nNot sure? Just ignore this and press confirm.")
                                         .SendAsync(Context.Channel);
                             },
-                            description: "Cool! Now you need to set how many days you want in between each rotation.")
+                            description: "Cool! Now you need to set how many days you want in between each rotation.",
+                            min: TimeSpan.FromHours(1))
                         {
                             TimeSpan = TimeSpan.FromMilliseconds(Config.IconRotateTimerInterval ?? 0),
                         }
