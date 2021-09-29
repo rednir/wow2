@@ -49,9 +49,20 @@ namespace wow2.Bot.Verbose.Messages
             return false;
         }
 
+        public static async Task<bool> ActOnSelectMenuAsync(SocketMessageComponent component)
+        {
+            var interactiveMessage = FromMessageId(DataManager.AllGuildData[component.Channel.GetGuild().Id], component.Message.Id);
+            if (interactiveMessage == null)
+                return false;
+
+            return false;
+        }
+
         public List<ActionButton> ExtraActionButtons { get; set; } = new();
 
         protected virtual ActionButton[] ActionButtons => Array.Empty<ActionButton>();
+
+        protected virtual ActionSelectMenu[] ActionSelectMenu => Array.Empty<ActionSelectMenu>();
 
         /// <summary>Gets all the <see cref="ActionButton" /> objects that will be sent with the message.</summary>
         public ActionButton[] GetActionButtons() => ActionButtons.Concat(ExtraActionButtons).ToArray();
@@ -109,6 +120,24 @@ namespace wow2.Bot.Verbose.Messages
                     url: button.Url,
                     disabled: (forceDisableActions && button.Action != null) || button.Disabled,
                     row: button.Row);
+            }
+
+            foreach (var select in ActionSelectMenu)
+            {
+                components.WithSelectMenu(
+                    label: "This is a label!",
+                    customId: GetHashCode().ToString(),
+                    options: select.Options.ConvertAll(o => new SelectMenuOptionBuilder(
+                        label: o.Label,
+                        value: o.Value,
+                        description: o.Description,
+                        emote: o.Emote,
+                        @default: o.Default)),
+                    placeholder: select.Placeholder,
+                    minValues: select.MinValues,
+                    maxValues: select.MaxValues,
+                    disabled: select.Disabled,
+                    row: select.Row);
             }
 
             return components;

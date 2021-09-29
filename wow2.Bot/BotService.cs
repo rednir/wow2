@@ -159,6 +159,7 @@ namespace wow2.Bot
                 Client.JoinedGuild += JoinedGuildAsync;
                 Client.LeftGuild += LeftGuildAsync;
                 Client.ButtonExecuted += ButtonExecutedAsync;
+                Client.SelectMenuExecuted += SelectMenuExecuted;
             }
         }
 
@@ -261,6 +262,12 @@ namespace wow2.Bot
         public static Task ButtonExecutedAsync(SocketMessageComponent component)
         {
             _ = InteractiveMessage.ActOnButtonAsync(component);
+            return Task.CompletedTask;
+        }
+
+        public static Task SelectMenuExecuted(SocketMessageComponent component)
+        {
+            _ = InteractiveMessage.ActOnSelectMenuAsync(component);
             return Task.CompletedTask;
         }
 
