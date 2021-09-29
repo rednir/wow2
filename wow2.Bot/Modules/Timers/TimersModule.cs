@@ -75,7 +75,7 @@ namespace wow2.Bot.Modules.Timers
             {
                 var timer = new UserTimer(
                     context: Context,
-                    timeSpan: timeSpan + TimeSpan.FromDays(100000),
+                    timeSpan: timeSpan,
                     sendToChannelId: Config.AnnouncementsChannelId != default ? Config.AnnouncementsChannelId : Context.Channel.Id,
                     messageString: messageString,
                     repeatEvery: repeatEvery);
