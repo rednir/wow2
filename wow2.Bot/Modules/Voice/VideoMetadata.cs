@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Xml;
 using Google.Apis.YouTube.v3.Data;
 using SpotifyAPI.Web;
@@ -51,6 +52,21 @@ namespace wow2.Bot.Modules.Voice
         public bool LookupTitleOnYoutube { get; set; }
 
         public string DirectAudioUrl { get; set; }
+
+        public DateTimeOffset DirectAudioExpiryDate
+        {
+            get
+            {
+                if (DirectAudioUrl == null)
+                    return DateTimeOffset.MaxValue;
+
+                var query = HttpUtility.ParseQueryString(new Uri(DirectAudioUrl).Query);
+                if (long.TryParse(query.Get("expire"), out long unixTime))
+                    return DateTimeOffset.FromUnixTimeSeconds(unixTime);
+
+                return DateTimeOffset.MaxValue;
+            }
+        }
 
         public string title { get; set; }
 

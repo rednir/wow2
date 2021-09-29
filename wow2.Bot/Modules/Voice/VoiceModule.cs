@@ -511,6 +511,9 @@ namespace wow2.Bot.Modules.Voice
                 }
             }
 
+            if (DateTime.Now + TimeSpan.FromSeconds(request.VideoMetadata.duration) > request.VideoMetadata.DirectAudioExpiryDate)
+                request.VideoMetadata.DirectAudioUrl = await DownloadService.GetYoutubeAudioUrlAsync(request.VideoMetadata.id);
+
             using (Process ffmpeg = DownloadService.CreateStream(request.VideoMetadata))
             using (Stream output = ffmpeg.StandardOutput.BaseStream)
             using (AudioOutStream discord = Config.AudioClient.CreatePCMStream(AudioApplication.Music))
