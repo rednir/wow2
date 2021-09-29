@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using wow2.Bot.Verbose.Messages;
 using wow2.Bot.Extensions;
+using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Keywords
 {
