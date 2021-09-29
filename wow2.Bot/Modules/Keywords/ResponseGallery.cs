@@ -15,6 +15,8 @@ namespace wow2.Bot.Modules.Keywords
             UpdateProperties();
         }
 
+        public override int TotalNumberOfPages => Values.Count;
+
         private List<KeywordValue> Values { get; }
 
         protected override void UpdateProperties()
@@ -22,11 +24,6 @@ namespace wow2.Bot.Modules.Keywords
             // This method is called in the ctor of PagedMessage when Page is not set yet.
             if (Page == null)
                 return;
-
-            if (Page > Values.Count)
-                Page = 1;
-            else if (Page < 1)
-                Page = Values.Count;
 
             KeywordValue value = Values[Page.Value - 1];
             Text = $"**⋘ page {Page}/{Values.Count} ⋙**\n";

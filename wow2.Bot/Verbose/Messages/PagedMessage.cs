@@ -33,7 +33,7 @@ namespace wow2.Bot.Verbose.Messages
 
         public int MaxFieldsPerPage { get; }
 
-        public int TotalNumberOfPages => (int)Math.Ceiling((float)AllFieldBuilders.Count / MaxFieldsPerPage);
+        public virtual int TotalNumberOfPages => (int)Math.Ceiling((float)AllFieldBuilders.Count / MaxFieldsPerPage);
 
         public string StoppedByUsername { get; set; }
 
