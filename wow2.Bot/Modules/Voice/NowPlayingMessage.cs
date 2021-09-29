@@ -8,7 +8,7 @@ using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Voice
 {
-    public class NowPlayingMessage : SavedMessage
+    public class NowPlayingMessage : InteractiveMessage
     {
         protected override ActionButton[] ActionButtons => new[]
         {

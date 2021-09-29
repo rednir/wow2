@@ -4,7 +4,7 @@ using Discord;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public class QuestionMessage : SavedMessage
+    public class QuestionMessage : InteractiveMessage
     {
         public QuestionMessage(string description, string title = null, Func<Task> onConfirm = null, Func<Task> onDeny = null)
         {

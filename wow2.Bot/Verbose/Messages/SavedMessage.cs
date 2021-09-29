@@ -10,23 +10,23 @@ using wow2.Bot.Modules;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public class SavedMessage : Message, IDisposable
+    public class InteractiveMessage : Message, IDisposable
     {
-        /// <summary>Finds the <see cref="PagedMessage"/> with the matching message ID.</summary>
-        /// <returns>The <see cref="PagedMessage"/> respresenting the message ID, or null if a match was not found.</returns>
-        public static SavedMessage FromMessageId(GuildData guildData, ulong messageId) =>
-                guildData.SavedMessages.Find(m => m.SentMessage.Id == messageId);
+        /// <summary>Finds the <see cref="InteractiveMessage"/> with the matching message ID.</summary>
+        /// <returns>The <see cref="InteractiveMessage"/> respresenting the message ID, or null if a match was not found.</returns>
+        public static InteractiveMessage FromMessageId(GuildData guildData, ulong messageId) =>
+                guildData.InteractiveMessages.Find(m => m.SentMessage.Id == messageId);
 
         public static async Task<bool> ActOnButtonAsync(SocketMessageComponent component)
         {
-            var savedMessage = FromMessageId(DataManager.AllGuildData[component.Channel.GetGuild().Id], component.Message.Id);
-            if (savedMessage == null)
+            var interactiveMessage = FromMessageId(DataManager.AllGuildData[component.Channel.GetGuild().Id], component.Message.Id);
+            if (interactiveMessage == null)
                 return false;
 
-            foreach (var actionButton in savedMessage.GetActionButtons())
+            foreach (var actionButton in interactiveMessage.GetActionButtons())
             {
                 string[] idParts = component.Data.CustomId.Split(":", 2);
-                if (idParts[0] == savedMessage.GetHashCode().ToString() && idParts[1] == actionButton.Label)
+                if (idParts[0] == interactiveMessage.GetHashCode().ToString() && idParts[1] == actionButton.Label)
                 {
                     try
                     {
@@ -56,7 +56,7 @@ namespace wow2.Bot.Verbose.Messages
         /// <summary>Gets all the <see cref="ActionButton" /> objects that will be sent with the message.</summary>
         public ActionButton[] GetActionButtons() => ActionButtons.Concat(ExtraActionButtons).ToArray();
 
-        protected List<SavedMessage> SavedMessageList => DataManager.AllGuildData[SentMessage.GetGuild().Id].SavedMessages;
+        protected List<InteractiveMessage> InteractiveMessageList => DataManager.AllGuildData[SentMessage.GetGuild().Id].InteractiveMessages;
 
         protected bool DontSave => !GetActionButtons().Any(b => b.Style != ButtonStyle.Link);
 
@@ -67,8 +67,8 @@ namespace wow2.Bot.Verbose.Messages
             IUserMessage message = await base.SendAsync(channel);
             if (!DontSave)
             {
-                SavedMessageList.Truncate(120);
-                SavedMessageList.Add(this);
+                InteractiveMessageList.Truncate(120);
+                InteractiveMessageList.Add(this);
             }
 
             return message;
@@ -85,8 +85,8 @@ namespace wow2.Bot.Verbose.Messages
         /// <summary>Releases the message from the saved message list.</summary>
         public void Dispose()
         {
-            SavedMessageList.Remove(this);
-            Logger.Log($"SavedMessage {SentMessage.Id} was disposed.", LogSeverity.Debug);
+            InteractiveMessageList.Remove(this);
+            Logger.Log($"Interactive message {SentMessage.Id} was disposed.", LogSeverity.Debug);
             GC.SuppressFinalize(this);
         }
 

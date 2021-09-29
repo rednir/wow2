@@ -23,7 +23,7 @@ namespace wow2.Bot.Data
         public long DateTimeJoinedBinary { get; set; }
 
         [JsonIgnore]
-        public List<SavedMessage> SavedMessages { get; set; } = new();
+        public List<InteractiveMessage> InteractiveMessages { get; set; } = new();
 
         public MainModuleConfig Main { get; set; } = new();
 

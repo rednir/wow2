@@ -6,7 +6,7 @@ using wow2.Bot.Extensions;
 namespace wow2.Bot.Verbose.Messages
 {
     /// <summary>Basic message, nothing special.</summary>
-    public class GenericMessage : SavedMessage
+    public class GenericMessage : InteractiveMessage
     {
         private readonly MemoryStream DescriptionAsStream;
 

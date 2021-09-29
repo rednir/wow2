@@ -5,7 +5,7 @@ using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Games.VerbalMemory
 {
-    public class VerbalMemoryMessage : SavedMessage
+    public class VerbalMemoryMessage : InteractiveMessage
     {
         public VerbalMemoryMessage(VerbalMemoryGameConfig config)
         {

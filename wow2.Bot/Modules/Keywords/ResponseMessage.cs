@@ -8,7 +8,7 @@ using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Keywords
 {
-    // This should really be a SavedMessage.
+    // This should really be a InteractiveMessage.
     public class ResponseMessage : GenericMessage
     {
         public static readonly IEmote DeleteReactionEmote = new Emoji("🗑");

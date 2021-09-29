@@ -6,7 +6,7 @@ using Discord;
 namespace wow2.Bot.Verbose.Messages
 {
     /// <summary>Class for sending and building embeds with pages of fields.</summary>
-    public class PagedMessage : SavedMessage
+    public class PagedMessage : InteractiveMessage
     {
         public PagedMessage()
         {

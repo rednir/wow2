@@ -4,7 +4,7 @@ using Discord;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public abstract class DateTimeSelectorMessageBase : SavedMessage
+    public abstract class DateTimeSelectorMessageBase : InteractiveMessage
     {
         protected override ActionButton[] ActionButtons => new[]
         {

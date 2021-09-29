@@ -3,7 +3,7 @@ using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Timers
 {
-    public class TimerStartedMessage : SavedMessage
+    public class TimerStartedMessage : InteractiveMessage
     {
         protected override ActionButton[] ActionButtons => new[]
         {

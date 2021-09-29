@@ -3,7 +3,7 @@ using Discord;
 
 namespace wow2.Bot.Verbose.Messages
 {
-    public class ErrorMessage : SavedMessage
+    public class ErrorMessage : InteractiveMessage
     {
         protected override ActionButton[] ActionButtons => new[]
         {

@@ -308,7 +308,7 @@ namespace wow2.Bot.Modules.Dev
                     }
                 }
 
-                foreach (SavedMessage message in guildData.SavedMessages.ToArray())
+                foreach (InteractiveMessage message in guildData.InteractiveMessages.ToArray())
                 {
                     try
                     {
@@ -316,7 +316,7 @@ namespace wow2.Bot.Modules.Dev
                     }
                     catch
                     {
-                        Logger.Log($"Failed to stop SavedMessage {message.SentMessage?.Id}", LogSeverity.Debug);
+                        Logger.Log($"Failed to stop interactive message {message.SentMessage?.Id}", LogSeverity.Debug);
                     }
                 }
             }
