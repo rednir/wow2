@@ -100,18 +100,12 @@ namespace wow2.Bot.Verbose.Messages
 
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
-            await UpdateEmbedAsync();
+            await UpdateMessageAsync();
             return await base.SendAsync(channel);
         }
 
         protected abstract Task AddTimeAsync(TimeSpan timeSpan);
 
         protected abstract Task OnConfirmAsync();
-
-        protected virtual async Task UpdateEmbedAsync()
-        {
-            if (SentMessage != null)
-                await SentMessage.ModifyAsync(m => m.Embed = Embed);
-        }
     }
 }

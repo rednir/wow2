@@ -12,12 +12,12 @@ namespace wow2.Bot.Modules.Keywords
         {
             Values = values ?? throw new ArgumentNullException(nameof(values));
             Page = 1;
-            UpdateEmbed();
+            UpdateProperties();
         }
 
         private List<KeywordValue> Values { get; }
 
-        protected override void UpdateEmbed()
+        protected override void UpdateProperties()
         {
             // This method is called in the ctor of PagedMessage when Page is not set yet.
             if (Page == null)

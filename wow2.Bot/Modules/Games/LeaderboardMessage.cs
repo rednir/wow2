@@ -27,7 +27,7 @@ namespace wow2.Bot.Modules.Games
             }
 
             Page = page;
-            UpdateEmbed();
+            UpdateProperties();
         }
     }
 }

@@ -78,10 +78,7 @@ namespace wow2.Bot.Verbose.Messages
         public async virtual Task StopAsync()
         {
             Components = GetComponentBuilder(true);
-
-            if (SentMessage.Components.Count > 0)
-                await SentMessage.ModifyAsync(m => m.Components = Components.Build());
-
+            await base.UpdateMessageAsync();
             Dispose();
         }
 

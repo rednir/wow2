@@ -26,7 +26,7 @@ namespace wow2.Bot.Modules.Voice
             }
 
             Page = page;
-            UpdateEmbed();
+            UpdateProperties();
         }
     }
 }

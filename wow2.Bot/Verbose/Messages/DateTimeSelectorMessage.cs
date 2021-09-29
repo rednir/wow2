@@ -19,16 +19,7 @@ namespace wow2.Bot.Verbose.Messages
 
         private Func<DateTime, Task> ConfirmFunc { get; }
 
-        protected override async Task AddTimeAsync(TimeSpan timeSpan)
-        {
-            DateTime += timeSpan;
-            await UpdateEmbedAsync();
-        }
-
-        protected override async Task OnConfirmAsync()
-            => await ConfirmFunc?.Invoke(DateTime);
-
-        protected override async Task UpdateEmbedAsync()
+        public override async Task UpdateMessageAsync()
         {
             EmbedBuilder = new EmbedBuilder()
             {
@@ -36,7 +27,16 @@ namespace wow2.Bot.Verbose.Messages
                 Color = new Color(0x9b59b6),
             };
 
-            await base.UpdateEmbedAsync();
+            await base.UpdateMessageAsync();
         }
+
+        protected override async Task AddTimeAsync(TimeSpan timeSpan)
+        {
+            DateTime += timeSpan;
+            await UpdateMessageAsync();
+        }
+
+        protected override async Task OnConfirmAsync()
+            => await ConfirmFunc?.Invoke(DateTime);
     }
 }
