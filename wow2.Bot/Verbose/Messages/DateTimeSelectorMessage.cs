@@ -7,10 +7,10 @@ namespace wow2.Bot.Verbose.Messages
 {
     public class DateTimeSelectorMessage : DateTimeSelectorMessageBase
     {
-        public DateTimeSelectorMessage(Func<DateTime, Task> confirmFunc, string description = "Select a date and time.", DateTime? min = null, DateTime? max = null)
+        public DateTimeSelectorMessage(Func<DateTime, Task> onConfirm, string description = "Select a date and time.", DateTime? min = null, DateTime? max = null)
         {
             Description = description;
-            ConfirmFunc = confirmFunc;
+            OnConfirm = onConfirm;
             MinValue = min;
             MaxValue = max;
         }
@@ -25,7 +25,7 @@ namespace wow2.Bot.Verbose.Messages
 
         private string Description { get; }
 
-        private Func<DateTime, Task> ConfirmFunc { get; }
+        private Func<DateTime, Task> OnConfirm { get; }
 
         public override async Task UpdateMessageAsync()
         {
@@ -45,6 +45,6 @@ namespace wow2.Bot.Verbose.Messages
         }
 
         protected override async Task OnConfirmAsync()
-            => await ConfirmFunc?.Invoke(DateTime);
+            => await OnConfirm?.Invoke(DateTime);
     }
 }

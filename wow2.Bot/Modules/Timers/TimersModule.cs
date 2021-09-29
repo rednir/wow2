@@ -45,7 +45,7 @@ namespace wow2.Bot.Modules.Timers
         public async Task StartAsync([Name("MESSAGE")][Remainder] string messageString = null)
         {
             await new DateTimeSelectorMessage(
-                confirmFunc: async dt =>
+                onConfirm: async dt =>
                 {
                     TimeSpan timeSpan = dt - DateTime.Now;
 
@@ -54,7 +54,7 @@ namespace wow2.Bot.Modules.Timers
                         onConfirm: async () =>
                         {
                             await new TimeSpanSelectorMessage(
-                                confirmFunc: async ts => await startTimer(timeSpan, ts),
+                                onConfirm: async ts => await startTimer(timeSpan, ts),
                                 description: "The timer will repeat every...",
                                 min: TimeSpan.FromMinutes(30))
                                     .SendAsync(Context.Channel);

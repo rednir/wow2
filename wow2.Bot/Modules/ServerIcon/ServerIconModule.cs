@@ -111,10 +111,10 @@ namespace wow2.Bot.Modules.ServerIcon
                     if (x)
                     {
                         await new TimeSpanSelectorMessage(
-                            confirmFunc: async ts =>
+                            onConfirm: async ts =>
                             {
                                 await new DateTimeSelectorMessage(
-                                    confirmFunc: async dt =>
+                                    onConfirm: async dt =>
                                     {
                                         Config.IconRotateTimerInterval = ts.TotalMilliseconds;
                                         await new SuccessMessage($"The server icon will rotate periodically{(Config.IconsToRotate.Count < 2 ? " once you add more than 2 icons to the list" : null)}.")

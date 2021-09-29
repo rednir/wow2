@@ -6,10 +6,10 @@ namespace wow2.Bot.Verbose.Messages
 {
     public class TimeSpanSelectorMessage : DateTimeSelectorMessageBase
     {
-        public TimeSpanSelectorMessage(Func<TimeSpan, Task> confirmFunc, string description = "Select a time span.", TimeSpan? min = null, TimeSpan? max = null)
+        public TimeSpanSelectorMessage(Func<TimeSpan, Task> onConfirm, string description = "Select a time span.", TimeSpan? min = null, TimeSpan? max = null)
         {
             Description = description;
-            ConfirmFunc = confirmFunc;
+            OnConfirm = onConfirm;
             MinValue = min;
             MaxValue = max;
         }
@@ -24,7 +24,7 @@ namespace wow2.Bot.Verbose.Messages
 
         private string Description { get; }
 
-        private Func<TimeSpan, Task> ConfirmFunc { get; }
+        private Func<TimeSpan, Task> OnConfirm { get; }
 
         public override async Task UpdateMessageAsync()
         {
@@ -44,6 +44,6 @@ namespace wow2.Bot.Verbose.Messages
         }
 
         protected override async Task OnConfirmAsync()
-            => await ConfirmFunc?.Invoke(TimeSpan);
+            => await OnConfirm?.Invoke(TimeSpan);
     }
 }
