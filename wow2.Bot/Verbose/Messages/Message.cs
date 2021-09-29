@@ -64,9 +64,9 @@ namespace wow2.Bot.Verbose.Messages
 
             await SentMessage.ModifyAsync(m =>
             {
-                m.Components = Components.Build();
+                m.Components = Components?.Build();
                 m.Content = Text;
-                m.Embed = EmbedBuilder.Build();
+                m.Embed = EmbedBuilder?.Build();
             });
         }
 

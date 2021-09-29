@@ -43,24 +43,28 @@ namespace wow2.Bot.Verbose.Messages
             {
                 Label = "«",
                 Style = ButtonStyle.Primary,
+                Disabled = Page == 1,
                 Action = async _ => await ChangePageToAsync(1),
             },
             new ActionButton()
             {
                 Label = "Left",
                 Style = ButtonStyle.Primary,
+                Disabled = Page == 1,
                 Action = async _ => await ChangePageByAsync(-1),
             },
             new ActionButton()
             {
                 Label = "Right",
                 Style = ButtonStyle.Primary,
+                Disabled = Page == TotalNumberOfPages,
                 Action = async _ => await ChangePageByAsync(1),
             },
             new ActionButton()
             {
                 Label = "»",
                 Style = ButtonStyle.Primary,
+                Disabled = Page == TotalNumberOfPages,
                 Action = async _ => await ChangePageToAsync(TotalNumberOfPages),
             },
             new ActionButton()
