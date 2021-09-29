@@ -238,7 +238,7 @@ namespace wow2.Bot.Modules.Keywords
             if (!keywordsDictionary.TryGetValue(keyword, out List<KeywordValue> values))
                 throw new CommandReturnException(Context, "No such keyword.");
 
-            await new ResponseGallery(values)
+            await new ResponseGalleryMessage(values)
                 .SendAsync(Context.Channel);
         }
 

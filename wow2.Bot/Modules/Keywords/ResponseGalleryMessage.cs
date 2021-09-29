@@ -5,9 +5,9 @@ using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Keywords
 {
-    public class ResponseGallery : PagedMessage
+    public class ResponseGalleryMessage : PagedMessage
     {
-        public ResponseGallery(List<KeywordValue> values)
+        public ResponseGalleryMessage(List<KeywordValue> values)
             : base(new List<EmbedFieldBuilder>(), "INITIAL STATE", string.Empty)
         {
             Values = values ?? throw new ArgumentNullException(nameof(values));
