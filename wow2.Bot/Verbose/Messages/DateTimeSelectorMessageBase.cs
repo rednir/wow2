@@ -13,6 +13,7 @@ namespace wow2.Bot.Verbose.Messages
                 Label = "Confirm",
                 Style = ButtonStyle.Primary,
                 Row = 0,
+                Disabled = ValueIsInvalid,
                 Action = async _ =>
                 {
                     await StopAsync();
@@ -103,6 +104,22 @@ namespace wow2.Bot.Verbose.Messages
             await UpdateMessageAsync();
             return await base.SendAsync(channel);
         }
+
+        public override async Task UpdateMessageAsync()
+        {
+            if (EmbedBuilder != null)
+            {
+                EmbedBuilder.Footer = !ValueIsInvalid ? null : new EmbedFooterBuilder()
+                {
+                    IconUrl = $"https://cdn.discordapp.com/emojis/{WarningEmoteId}.png",
+                    Text = "This time is invalid, try something else.",
+                };
+            }
+
+            await base.UpdateMessageAsync();
+        }
+
+        protected abstract bool ValueIsInvalid { get; }
 
         protected abstract Task AddTimeAsync(TimeSpan timeSpan);
 

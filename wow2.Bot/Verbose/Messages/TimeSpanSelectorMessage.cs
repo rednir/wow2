@@ -6,13 +6,21 @@ namespace wow2.Bot.Verbose.Messages
 {
     public class TimeSpanSelectorMessage : DateTimeSelectorMessageBase
     {
-        public TimeSpanSelectorMessage(Func<TimeSpan, Task> confirmFunc, string description = "Select a time span.")
+        public TimeSpanSelectorMessage(Func<TimeSpan, Task> confirmFunc, string description = "Select a time span.", TimeSpan? min = null, TimeSpan? max = null)
         {
             Description = description;
             ConfirmFunc = confirmFunc;
+            MinValue = min;
+            MaxValue = max;
         }
 
         public TimeSpan TimeSpan { get; set; } = TimeSpan.Zero;
+
+        protected override bool ValueIsInvalid => TimeSpan > MaxValue || TimeSpan < MinValue;
+
+        private TimeSpan? MinValue { get; set; }
+
+        private TimeSpan? MaxValue { get; set; }
 
         private string Description { get; }
 

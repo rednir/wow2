@@ -7,13 +7,21 @@ namespace wow2.Bot.Verbose.Messages
 {
     public class DateTimeSelectorMessage : DateTimeSelectorMessageBase
     {
-        public DateTimeSelectorMessage(Func<DateTime, Task> confirmFunc, string description = "Select a date and time.")
+        public DateTimeSelectorMessage(Func<DateTime, Task> confirmFunc, string description = "Select a date and time.", DateTime? min = null, DateTime? max = null)
         {
             Description = description;
             ConfirmFunc = confirmFunc;
+            MinValue = min;
+            MaxValue = max;
         }
 
         public DateTime DateTime { get; set; } = DateTime.Now;
+
+        protected override bool ValueIsInvalid => DateTime > MaxValue || DateTime < MinValue;
+
+        private DateTime? MinValue { get; set; }
+
+        private DateTime? MaxValue { get; set; }
 
         private string Description { get; }
 
