@@ -60,14 +60,32 @@ namespace wow2.Bot.Modules.Timers
         /// <summary>Creates the timer and adds it to the guild's config.</summary>
         public void Start()
         {
-            Timer = new(DateTime.Now >= TargetDateTime ? 1000 : (TargetDateTime - DateTime.Now).TotalMilliseconds);
-            Timer.AutoReset = false;
-            Timer.Elapsed += async (source, e) => await OnElapsedAsync();
-            Timer.Start();
-
             var timers = DataManager.AllGuildData[GuildId].Timers.UserTimers;
             if (!timers.Contains(this))
                 timers.Add(this);
+
+            if (TargetDateTime - DateTime.Now >= TimeSpan.FromMilliseconds(int.MaxValue))
+            {
+                // Run relay timer every 14 days
+                Timer = new Timer(1209600000);
+                Timer.Elapsed += (source, e) =>
+                {
+                    if (TargetDateTime - DateTime.Now < TimeSpan.FromMilliseconds(int.MaxValue))
+                    {
+                        startActual();
+                        Timer.Dispose();
+                    }
+                };
+                Timer.Start();
+            }
+
+            void startActual()
+            {
+                Timer = new(DateTime.Now >= TargetDateTime ? 1000 : (TargetDateTime - DateTime.Now).TotalMilliseconds);
+                Timer.AutoReset = false;
+                Timer.Elapsed += async (source, e) => await OnElapsedAsync();
+                Timer.Start();
+            }
         }
 
         /// <summary>Disposes the timer and removes it from the guild's config.</summary>

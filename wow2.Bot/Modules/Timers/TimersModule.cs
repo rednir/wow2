@@ -50,8 +50,6 @@ namespace wow2.Bot.Modules.Timers
                     throw new CommandReturnException(Context, "Try a time in the future.");
 
                 TimeSpan timeSpan = dt - DateTime.Now;
-                if (timeSpan.TotalMilliseconds >= int.MaxValue)
-                    throw new CommandReturnException(Context, "Way too big.");
 
                 await new QuestionMessage(
                     description: "Want the timer to repeat?",
@@ -77,7 +75,7 @@ namespace wow2.Bot.Modules.Timers
             {
                 var timer = new UserTimer(
                     context: Context,
-                    timeSpan: timeSpan,
+                    timeSpan: timeSpan + TimeSpan.FromDays(100000),
                     sendToChannelId: Config.AnnouncementsChannelId != default ? Config.AnnouncementsChannelId : Context.Channel.Id,
                     messageString: messageString,
                     repeatEvery: repeatEvery);
