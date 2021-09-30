@@ -1,3 +1,4 @@
+using System;
 using Discord.Commands;
 using wow2.Bot.Verbose.Messages;
 
@@ -5,6 +6,13 @@ namespace wow2.Bot.Modules.Games
 {
     public abstract class GameMessage : InteractiveMessage
     {
-        public SocketCommandContext InitialContext { get; set; }
+        protected GameMessage(SocketCommandContext context)
+        {
+            InitialContext = context;
+        }
+
+        public SocketCommandContext InitialContext { get; }
+
+        public Action OnGameFinished { get; set; }
     }
 }

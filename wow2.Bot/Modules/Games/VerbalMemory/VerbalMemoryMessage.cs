@@ -11,8 +11,8 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
     public class VerbalMemoryMessage : GameMessage
     {
         public VerbalMemoryMessage(SocketCommandContext context)
+            : base(context)
         {
-            InitialContext = context;
             EmbedBuilder = new EmbedBuilder()
             {
                 Description = "See the word below? Tell me if you've seen it yet or not by pressing the buttons.",
@@ -31,6 +31,19 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
         public string CurrentWord { get; set; }
 
         private Random Random { get; } = new Random();
+
+        public override async Task StopAsync()
+        {
+            // TODO: add place in leaderboard
+            await new GenericMessage(
+                description: $"You got `{Turns}` points, with `{SeenWords.Count}` unique words.",
+                title: "📈 Final Stats")
+                    .SendAsync(InitialContext.Channel);
+
+            OnGameFinished();
+            await base.StopAsync();
+            return;
+        }
 
         protected override ActionButton[] ActionButtons => new[]
         {

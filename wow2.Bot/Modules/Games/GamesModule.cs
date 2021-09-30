@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Discord.Commands;
 using wow2.Bot.Data;
@@ -35,8 +36,14 @@ namespace wow2.Bot.Modules.Games
         [Summary("Try remember as many words as you can.")]
         public async Task VerbalMemoryAsync()
         {
-            await new VerbalMemoryMessage(Context)
-                .SendAsync(Context.Channel);
+            var message = new VerbalMemoryMessage(Context);
+            message.OnGameFinished = () =>
+            {
+                Config.VerbalMemoryLeaderboardEntries.Add(new VerbalMemoryLeaderboardEntry(message));
+                Config.VerbalMemoryLeaderboardEntries = Config.VerbalMemoryLeaderboardEntries.OrderByDescending(e => e.Points).ToList();
+            };
+
+            await message.SendAsync(Context.Channel);
         }
 
         [Command("verbal-memory-leaderboard")]
