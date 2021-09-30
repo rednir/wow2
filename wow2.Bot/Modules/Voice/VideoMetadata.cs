@@ -26,7 +26,7 @@ namespace wow2.Bot.Modules.Voice
             view_count = video.Statistics.ViewCount;
             like_count = video.Statistics.LikeCount;
             dislike_count = video.Statistics.DislikeCount;
-            thumbnails.Add(new() { url = video.Snippet.Thumbnails.Maxres.Url });
+            thumbnails.Add(new() { url = video.Snippet.Thumbnails.Default__.Url });
         }
 
         public VideoMetadata(FullTrack spotifyTrack)
