@@ -6,7 +6,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
         {
         }
 
-        public VerbalMemoryLeaderboardEntry(VerbalMemoryMessage gameMessage)
+        public VerbalMemoryLeaderboardEntry(VerbalMemoryGameMessage gameMessage)
             : base(gameMessage.InitialContext.User)
         {
             Points = gameMessage.Turns;

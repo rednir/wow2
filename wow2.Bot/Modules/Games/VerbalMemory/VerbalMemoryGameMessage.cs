@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Games.VerbalMemory
 {
-    public class VerbalMemoryMessage : GameMessage
+    public class VerbalMemoryGameMessage : GameMessage
     {
-        public VerbalMemoryMessage(SocketCommandContext context)
+        public VerbalMemoryGameMessage(SocketCommandContext context)
             : base(context)
         {
             EmbedBuilder = new EmbedBuilder()
@@ -34,7 +33,6 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 
         public override async Task StopAsync()
         {
-            // TODO: add place in leaderboard
             await new GenericMessage(
                 description: $"You got `{Turns}` points, with `{SeenWords.Count}` unique words.",
                 title: "📈 Final Stats")

@@ -6,8 +6,8 @@ namespace wow2.Bot.Modules.Games
 {
     public class GamesModuleConfig
     {
-        public List<CountingLeaderboardEntry> CountingLeaderboardEntries { get; set; } = new();
+        public List<CountingLeaderboardEntry> CountingLeaderboard { get; set; } = new();
 
-        public List<VerbalMemoryLeaderboardEntry> VerbalMemoryLeaderboardEntries { get; set; } = new();
+        public List<VerbalMemoryLeaderboardEntry> VerbalMemoryLeaderboard { get; set; } = new();
     }
 }

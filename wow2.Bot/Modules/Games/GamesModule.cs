@@ -27,7 +27,7 @@ namespace wow2.Bot.Modules.Games
         [Summary("Shows the leaderboard for the counting game.")]
         public async Task CountingLeaderboardAsync(int page = 1)
         {
-            await new CountingLeaderboardMessage(Config.CountingLeaderboardEntries, page)
+            await new CountingLeaderboardMessage(Config.CountingLeaderboard, page)
                 .SendAsync(Context.Channel);
         }
 
@@ -36,11 +36,11 @@ namespace wow2.Bot.Modules.Games
         [Summary("Try remember as many words as you can.")]
         public async Task VerbalMemoryAsync()
         {
-            var message = new VerbalMemoryMessage(Context);
+            var message = new VerbalMemoryGameMessage(Context);
             message.OnGameFinished = () =>
             {
-                Config.VerbalMemoryLeaderboardEntries.Add(new VerbalMemoryLeaderboardEntry(message));
-                Config.VerbalMemoryLeaderboardEntries = Config.VerbalMemoryLeaderboardEntries.OrderByDescending(e => e.Points).ToList();
+                Config.VerbalMemoryLeaderboard.Add(new VerbalMemoryLeaderboardEntry(message));
+                Config.VerbalMemoryLeaderboard = Config.VerbalMemoryLeaderboard.OrderByDescending(e => e.Points).ToList();
             };
 
             await message.SendAsync(Context.Channel);
@@ -51,7 +51,7 @@ namespace wow2.Bot.Modules.Games
         [Summary("Shows the leaderboard for the counting game.")]
         public async Task VerbalMemoryLeaderboardAsync(int page = 1)
         {
-            await new VerbalMemoryLeaderboardMessage(Config.VerbalMemoryLeaderboardEntries, page)
+            await new VerbalMemoryLeaderboardMessage(Config.VerbalMemoryLeaderboard, page)
                 .SendAsync(Context.Channel);
         }
     }
