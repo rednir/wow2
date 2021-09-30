@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -179,40 +180,40 @@ namespace wow2.Bot.Modules.Dev
         [Command("poll-run")]
         [Alias("poll-invoke")]
         [Summary("Runs a polling task.")]
-        public async Task PollRunAsync(string name)
+        public async Task PollRunAsync(int id)
         {
-            PollingTask task = PollingService.PollingServiceTimers.Find(p => p.Name == name);
+            PollingTask task = PollingService.PollingServiceTimers.ElementAtOrDefault(id + 1);
             if (task == null)
                 throw new CommandReturnException(Context, "No matching polling task.");
 
             await task.InvokeAsync();
-            await new SuccessMessage($"Run finished for `{name}`")
+            await new SuccessMessage($"Run finished for `{task.Name}`")
                 .SendAsync(Context.Channel);
         }
 
         [Command("poll-unblock")]
         [Summary("Unblocks a polling task.")]
-        public async Task PollStartAsync(string name)
+        public async Task PollUnblockAsync(int id)
         {
-            PollingTask task = PollingService.PollingServiceTimers.Find(p => p.Name == name);
+            PollingTask task = PollingService.PollingServiceTimers.ElementAtOrDefault(id + 1);
             if (task == null)
                 throw new CommandReturnException(Context, "No matching polling task.");
 
             task.Blocked = false;
-            await new SuccessMessage($"Unblocked `{name}` with interval {task.IntervalMinutes}min")
+            await new SuccessMessage($"Unblocked `{task.Name}` with interval {task.IntervalMinutes}min")
                 .SendAsync(Context.Channel);
         }
 
         [Command("poll-block")]
         [Summary("Blocks a polling service.")]
-        public async Task PollStopAsync(string name)
+        public async Task PollBlockAsync(int id)
         {
-            PollingTask task = PollingService.PollingServiceTimers.Find(p => p.Name == name);
+            PollingTask task = PollingService.PollingServiceTimers.ElementAtOrDefault(id + 1);
             if (task == null)
                 throw new CommandReturnException(Context, "No matching polling task.");
 
             task.Blocked = true;
-            await new SuccessMessage($"Blocked `{name}`")
+            await new SuccessMessage($"Blocked `{task.Name}`")
                 .SendAsync(Context.Channel);
         }
 
@@ -221,9 +222,12 @@ namespace wow2.Bot.Modules.Dev
         public async Task PollListAsync()
         {
             StringBuilder stringBuilder = new();
+            int num = 1;
             foreach (PollingTask task in PollingService.PollingServiceTimers)
             {
                 stringBuilder
+                    .Append(num)
+                    .Append(". ")
                     .AppendLine(task.Name)
                     .AppendLine(task.Blocked ? " - BLOCKED" : " - UNBLOCKED")
                     .Append(" - INTERVAL ")
@@ -247,6 +251,8 @@ namespace wow2.Bot.Modules.Dev
                         .AppendLine("m")
                         .AppendLine();
                 }
+
+                num++;
             }
 
             await new GenericMessage($"```md\n{stringBuilder}\n```", "Polling services")
