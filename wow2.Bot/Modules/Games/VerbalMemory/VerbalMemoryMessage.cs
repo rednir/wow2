@@ -45,6 +45,12 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             return;
         }
 
+        public override async Task<IUserMessage> SendAsync(IMessageChannel channel)
+        {
+            await NextWordAsync();
+            return await base.SendAsync(channel);
+        }
+
         protected override ActionButton[] ActionButtons => new[]
         {
             new ActionButton()
