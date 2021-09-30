@@ -7,7 +7,7 @@ namespace wow2.Bot.Modules.Games.Counting
         }
 
         public CountingLeaderboardEntry(CountingGameConfig gameConfig)
-            : base(gameConfig.InitalContext.User)
+            : base(gameConfig.InitialContext.User)
         {
             Points = gameConfig.ListOfMessages.Count - 1;
             Increment = gameConfig.Increment;

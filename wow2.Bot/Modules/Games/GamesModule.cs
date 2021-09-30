@@ -19,7 +19,6 @@ namespace wow2.Bot.Modules.Games
         [Summary("Start counting in a text channel. INCREMENT is the number that will be added each time.")]
         public async Task CountingAsync(float increment = 1)
         {
-            await CountingGame.StartGame(Context, increment);
         }
 
         [Command("counting-leaderboard")]
@@ -27,7 +26,7 @@ namespace wow2.Bot.Modules.Games
         [Summary("Shows the leaderboard for the counting game.")]
         public async Task CountingLeaderboardAsync(int page = 1)
         {
-            await new CountingLeaderboardMessage(Config.Counting.LeaderboardEntries, page)
+            await new CountingLeaderboardMessage(Config.CountingLeaderboardEntries, page)
                 .SendAsync(Context.Channel);
         }
 
@@ -36,7 +35,8 @@ namespace wow2.Bot.Modules.Games
         [Summary("Try remember as many words as you can.")]
         public async Task VerbalMemoryAsync()
         {
-            await VerbalMemoryGame.StartGame(Context);
+            await new VerbalMemoryMessage(Context)
+                .SendAsync(Context.Channel);
         }
 
         [Command("verbal-memory-leaderboard")]
@@ -44,7 +44,7 @@ namespace wow2.Bot.Modules.Games
         [Summary("Shows the leaderboard for the counting game.")]
         public async Task VerbalMemoryLeaderboardAsync(int page = 1)
         {
-            await new VerbalMemoryLeaderboardMessage(Config.VerbalMemory.LeaderboardEntries, page)
+            await new VerbalMemoryLeaderboardMessage(Config.VerbalMemoryLeaderboardEntries, page)
                 .SendAsync(Context.Channel);
         }
     }

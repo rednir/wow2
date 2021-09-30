@@ -13,14 +13,14 @@ namespace wow2.Bot.Modules.Games.Counting
 {
     public static class CountingGame
     {
-        public static CountingGameConfig GetConfig(IGuild guild)
+        /*public static CountingGameConfig GetConfig(IGuild guild)
             => DataManager.AllGuildData[guild.Id].Games.Counting;
 
         public static async Task StartGame(SocketCommandContext context, float increment)
         {
             var config = GetConfig(context.Guild);
 
-            config.InitalContext = context;
+            config.InitialContext = context;
             config.Increment = increment;
             config.NextNumber = increment;
             config.ListOfMessages = new List<SocketMessage>();
@@ -42,7 +42,7 @@ namespace wow2.Bot.Modules.Games.Counting
 
             if (context.User.IsBot ||
                 !config.IsGameStarted ||
-                config.InitalContext.Channel != context.Channel)
+                config.InitialContext.Channel != context.Channel)
             {
                 return false;
             }
@@ -114,7 +114,7 @@ namespace wow2.Bot.Modules.Games.Counting
                 fieldBuilders: listOfFieldBuilders,
                 title: "📈 Final Stats",
                 description: $"*You counted up to* `{config.NextNumber - config.Increment}`\n*{commentOnFinalNumber}*")
-                    .SendAsync((ISocketMessageChannel)config.InitalContext.Channel);
+                    .SendAsync((ISocketMessageChannel)config.InitialContext.Channel);
 
             config.IsGameStarted = false;
             config.LeaderboardEntries.Add(new CountingLeaderboardEntry(config));
@@ -150,6 +150,6 @@ namespace wow2.Bot.Modules.Games.Counting
             }
 
             return false;
-        }
+        }*/
     }
 }
