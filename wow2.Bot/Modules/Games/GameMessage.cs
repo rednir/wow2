@@ -13,6 +13,6 @@ namespace wow2.Bot.Modules.Games
 
         public SocketCommandContext InitialContext { get; }
 
-        public Action OnGameFinished { get; set; }
+        public Func<int> SubmitGame { get; set; }
     }
 }

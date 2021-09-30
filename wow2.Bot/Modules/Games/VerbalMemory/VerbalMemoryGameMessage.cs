@@ -33,12 +33,12 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 
         public override async Task StopAsync()
         {
+            int index = SubmitGame();
             await new GenericMessage(
-                description: $"You got `{Turns}` points, with `{SeenWords.Count}` unique words.",
+                description: $"You got `{Turns}` points, with `{SeenWords.Count}` unique words.\nYou're number {index + 1} on the leaderboard!",
                 title: "📈 Final Stats")
                     .SendAsync(InitialContext.Channel);
 
-            OnGameFinished();
             await base.StopAsync();
             return;
         }

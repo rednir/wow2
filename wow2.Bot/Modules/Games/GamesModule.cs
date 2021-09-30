@@ -37,10 +37,12 @@ namespace wow2.Bot.Modules.Games
         public async Task VerbalMemoryAsync()
         {
             var message = new VerbalMemoryGameMessage(Context);
-            message.OnGameFinished = () =>
+            message.SubmitGame = () =>
             {
-                Config.VerbalMemoryLeaderboard.Add(new VerbalMemoryLeaderboardEntry(message));
+                var entry = new VerbalMemoryLeaderboardEntry(message);
+                Config.VerbalMemoryLeaderboard.Add(entry);
                 Config.VerbalMemoryLeaderboard = Config.VerbalMemoryLeaderboard.OrderByDescending(e => e.Points).ToList();
+                return Config.VerbalMemoryLeaderboard.IndexOf(entry);
             };
 
             await message.SendAsync(Context.Channel);
