@@ -24,6 +24,8 @@ namespace wow2.Bot.Modules.Games.Counting
             };
         }
 
+        public override int Points => ListOfMessages.Count - 1;
+
         public float Increment { get; }
 
         public List<SocketMessage> ListOfMessages { get; } = new();

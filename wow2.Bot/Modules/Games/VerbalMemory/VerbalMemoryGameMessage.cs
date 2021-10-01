@@ -17,8 +17,6 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 
         public List<string> SeenWords { get; set; } = new List<string>();
 
-        public int Turns { get; set; }
-
         public string CurrentWord { get; set; }
 
         private Random Random { get; } = new Random();
@@ -27,7 +25,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
         {
             int index = SubmitGame();
             await new GenericMessage(
-                description: $"You got `{Turns}` points, with `{SeenWords.Count}` unique words.\nYou're number {index + 1} on the leaderboard!",
+                description: $"You got `{Points}` points, with `{SeenWords.Count}` unique words.\nYou're number {index + 1} on the leaderboard!",
                 title: "📈 Final Stats")
                     .SendAsync(InitialContext.Channel);
 
@@ -115,7 +113,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
                     }
             }
 
-            Turns++;
+            Points++;
             await NextWordAsync();
         }
 
@@ -133,23 +131,8 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
                 SeenWords[Random.Next(SeenWords.Count)] :
                 ResourceService.GetRandomWord();
 
-            Text = $"**{Turns + 1}.** {CurrentWord}";
+            Text = $"**{Points + 1}.** {CurrentWord}";
             await UpdateMessageAsync();
-        }
-
-        private int PlaceInLeaderboard
-        {
-            get
-            {
-                int place;
-                for (place = 1; place <= Leaderboard.Length; place++)
-                {
-                    if (Leaderboard[place - 1].Points < Turns)
-                        break;
-                }
-
-                return place;
-            }
         }
     }
 }

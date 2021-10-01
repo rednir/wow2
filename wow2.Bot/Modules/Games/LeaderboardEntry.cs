@@ -5,10 +5,11 @@ namespace wow2.Bot.Modules.Games
 {
     public abstract class LeaderboardEntry
     {
-        protected LeaderboardEntry(IUser user = null)
+        protected LeaderboardEntry(GameMessage gameMessage)
         {
+            Points = gameMessage?.Points ?? default;
             PlayedAt = DateTime.Now;
-            PlayedByMention = user?.Mention;
+            PlayedByMention = gameMessage?.InitialContext.User.Mention;
         }
 
         public int Points { get; set; }

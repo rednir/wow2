@@ -14,9 +14,26 @@ namespace wow2.Bot.Modules.Games
             ResourceService = resourceService;
         }
 
+        protected int PlaceInLeaderboard
+        {
+            get
+            {
+                int place;
+                for (place = 1; place <= Leaderboard.Length; place++)
+                {
+                    if (Leaderboard[place - 1].Points < Points)
+                        break;
+                }
+
+                return place;
+            }
+        }
+
         public SocketCommandContext InitialContext { get; }
 
         public Func<int> SubmitGame { get; set; }
+
+        public virtual int Points { get; protected set; }
 
         protected LeaderboardEntry[] Leaderboard { get; }
 

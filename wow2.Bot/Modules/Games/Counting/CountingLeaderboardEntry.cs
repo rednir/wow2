@@ -3,13 +3,13 @@ namespace wow2.Bot.Modules.Games.Counting
     public class CountingLeaderboardEntry : LeaderboardEntry
     {
         public CountingLeaderboardEntry()
+            : base(null)
         {
         }
 
         public CountingLeaderboardEntry(CountingGameMessage gameMessage)
-            : base(gameMessage.InitialContext.User)
+            : base(gameMessage)
         {
-            Points = gameMessage.ListOfMessages.Count - 1;
             Increment = gameMessage.Increment;
             FinalNumber = gameMessage.NextNumber - gameMessage.Increment;
         }
