@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -9,15 +10,10 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 {
     public class VerbalMemoryGameMessage : GameMessage
     {
-        public VerbalMemoryGameMessage(SocketCommandContext context, GameResourceService resourceService)
+        public VerbalMemoryGameMessage(SocketCommandContext context, GameResourceService resourceService, List<VerbalMemoryLeaderboardEntry> leaderboard)
             : base(context, resourceService)
         {
-            EmbedBuilder = new EmbedBuilder()
-            {
-                Description = "See the word below? Tell me if you've seen it yet or not by pressing the buttons.",
-                Title = $"Verbal memory has started for {InitialContext.User.Username}",
-                Color = Color.LightGrey,
-            };
+            Leaderboard = leaderboard;
         }
 
         // TODO: put this in seperate file.
@@ -30,6 +26,8 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
         public string CurrentWord { get; set; }
 
         private Random Random { get; } = new Random();
+
+        private List<VerbalMemoryLeaderboardEntry> Leaderboard { get; }
 
         public override async Task StopAsync()
         {
@@ -130,6 +128,13 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 
         private async Task NextWordAsync()
         {
+            EmbedBuilder = new EmbedBuilder()
+            {
+                Description = $"**You are currently number `{PlaceInLeaderboard}` on the leaderboard\n**See the word below? Tell me if you've seen it yet or not by pressing the buttons.",
+                Title = $"Verbal memory has started for {InitialContext.User.Username}",
+                Color = Color.LightGrey,
+            };
+
             bool pickSeenWord = (Random.NextDouble() >= 0.5) && (SeenWords.Count > 3);
             CurrentWord = pickSeenWord ?
                 SeenWords[Random.Next(SeenWords.Count)] :
@@ -137,6 +142,21 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 
             Text = $"**{Turns + 1}.** {CurrentWord}";
             await UpdateMessageAsync();
+        }
+
+        private int PlaceInLeaderboard
+        {
+            get
+            {
+                int place;
+                for (place = 1; place <= Leaderboard.Count; place++)
+                {
+                    if (Leaderboard[place - 1].Points < Turns)
+                        break;
+                }
+
+                return place;
+            }
         }
     }
 }
