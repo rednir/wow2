@@ -1,6 +1,6 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using wow2.Resources;
 
 namespace wow2.Bot.Modules.Games
@@ -9,14 +9,14 @@ namespace wow2.Bot.Modules.Games
     {
         private readonly Random Random = new();
 
-        private List<string> WordListBag { get; set; } = new();
+        private Queue<string> WordListBag { get; set; } = new();
 
         public string GetRandomWord()
         {
             if (WordListBag.Count == 0)
-                WordListBag = Resource.WordList.OrderBy(_ => Random.Next()).ToList();
+                WordListBag = new Queue<string>(Resource.WordList.OrderBy(_ => Random.Next()));
 
-            return WordListBag[Random.Next(WordListBag.Count)];
+            return WordListBag.Dequeue();
         }
     }
 }
