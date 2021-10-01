@@ -5,16 +5,16 @@
     <CodeAnalysisRuleSet>..\wow2.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3"/>
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4"/>
     <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta15"/>
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta13"/>
-    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.55.0.2440"/>
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.55.0.2449"/>
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333"/>
     <PackageReference Include="Reddit" Version="1.5.0"/>
     <PackageReference Include="CliOptions" Version="0.1.0"/>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2"/>
     <PackageReference Include="Discord.Net.Labs" Version="3.0.3"/>
-    <PackageReference Include="SpotifyAPI.Web" Version="6.2.1"/>
+    <PackageReference Include="SpotifyAPI.Web" Version="6.2.2"/>
     <PackageReference Include="YoutubeExplode" Version="6.0.5"/>
   </ItemGroup>
   <ItemGroup>

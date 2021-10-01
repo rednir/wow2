@@ -7,7 +7,7 @@ A Discord bot written in C# using the [Discord.NET](https://github.com/discord-n
 
 ## Using the bot
 Invite the bot to a server with this link:
- - https://discord.com/api/oauth2/authorize?client_id=818156344594792451&permissions=37022788&scope=bot
+ - https://discord.com/api/oauth2/authorize?client_id=818156344594792451&permissions=8&scope=bot
 
 Then type `!wow help` in that server to get started, or view [COMMANDS.md](COMMANDS.md)
 
