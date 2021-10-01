@@ -6,11 +6,11 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
         {
         }
 
-        public VerbalMemoryLeaderboardEntry(VerbalMemoryGameConfig gameConfig)
-            : base(gameConfig.InitalContext.User)
+        public VerbalMemoryLeaderboardEntry(VerbalMemoryGameMessage gameMessage)
+            : base(gameMessage.InitialContext.User)
         {
-            Points = gameConfig.Turns;
-            UniqueWords = gameConfig.SeenWords.Count;
+            Points = gameMessage.Turns;
+            UniqueWords = gameMessage.SeenWords.Count;
         }
 
         public int UniqueWords { get; set; }
