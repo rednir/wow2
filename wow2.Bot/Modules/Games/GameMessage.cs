@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Discord;
 using Discord.Commands;
+using wow2.Bot.Extensions;
 using wow2.Bot.Verbose.Messages;
 
 namespace wow2.Bot.Modules.Games
@@ -30,11 +32,48 @@ namespace wow2.Bot.Modules.Games
             }
         }
 
-        protected EmbedFieldBuilder PlayingGameField => new()
+        protected List<EmbedFieldBuilder> MiniLeaderboardFields
         {
-            Name = $"{PlaceInLeaderboard}) {Points} points",
-            Value = $"{InitialContext.User.Mention} is currently playing...",
-        };
+            get
+            {
+                var result = new List<EmbedFieldBuilder>();
+                int placeInLeaderboard = PlaceInLeaderboard;
+
+                if (placeInLeaderboard == 1)
+                {
+                    add();
+                    add(2);
+                    add(3);
+                }
+                else if (placeInLeaderboard == Leaderboard.Length + 1)
+                {
+                    add(placeInLeaderboard - 2);
+                    add(placeInLeaderboard - 1);
+                    add();
+                }
+                else
+                {
+                    add(placeInLeaderboard - 1);
+                    add();
+                    add(placeInLeaderboard + 1);
+                }
+
+                return result;
+
+                void add(int place = 0)
+                {
+                    var entry = Leaderboard.ElementAtOrDefault(place - 1);
+                    if (entry == null && place != 0)
+                        return;
+
+                    result.Add(new EmbedFieldBuilder()
+                    {
+                        Name = place == 0 ? $"{placeInLeaderboard}) {Points} points" : $"{place}) {entry.Points} points",
+                        Value = place == 0 ? $"{InitialContext.User.Mention} is currently playing..." : $"{entry.PlayedByMention} at {entry.PlayedAt.ToDiscordTimestamp("f")}",
+                    });
+                }
+            }
+        }
 
         public SocketCommandContext InitialContext { get; }
 

@@ -123,7 +123,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             {
                 Description = "**See the word above? Tell me if you've seen it yet or not by pressing the buttons.**",
                 Title = "🔡 Verbal memory",
-                Fields = new List<EmbedFieldBuilder>() { PlayingGameField },
+                Fields = MiniLeaderboardFields,
                 Color = Color.LightGrey,
             };
 
