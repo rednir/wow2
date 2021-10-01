@@ -52,7 +52,6 @@ namespace wow2.Bot.Modules.Games
                 var entry = new VerbalMemoryLeaderboardEntry(message);
                 Config.VerbalMemoryLeaderboard.Add(entry);
                 Config.VerbalMemoryLeaderboard = Config.VerbalMemoryLeaderboard.OrderByDescending(e => e.Points).ToList();
-                return Config.VerbalMemoryLeaderboard.IndexOf(entry);
             };
 
             await message.SendAsync(Context.Channel);

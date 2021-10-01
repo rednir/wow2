@@ -38,7 +38,7 @@ namespace wow2.Bot.Modules.Games
 
         public SocketCommandContext InitialContext { get; }
 
-        public Func<int> SubmitGame { get; set; }
+        public Action SubmitGame { get; set; }
 
         public virtual int Points { get; protected set; }
 

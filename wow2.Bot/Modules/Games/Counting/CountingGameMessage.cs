@@ -61,15 +61,15 @@ namespace wow2.Bot.Modules.Games.Counting
                 });
             }
 
-            int index = SubmitGame();
+            SubmitGame();
             await new PagedMessage(
                 fieldBuilders: listOfFieldBuilders,
                 title: "📈 Final Stats",
-                description: $"*You counted up to* `{NextNumber - Increment}`\n*{getComment()}*\nYou made it to number `{index + 1}` on the leaderboards!")
+                description: $"*You counted up to* `{NextNumber - Increment}`\n*{getComment()}*\nYou made it to number `TODO` on the leaderboards!")
                     .SendAsync(InitialContext.Channel);
 
             await base.StopAsync();
-            return; 
+            return;
 
             string getComment()
             {
