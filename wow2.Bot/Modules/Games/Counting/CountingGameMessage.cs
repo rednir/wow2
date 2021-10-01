@@ -12,7 +12,7 @@ namespace wow2.Bot.Modules.Games.Counting
     public class CountingGameMessage : GameMessage
     {
         public CountingGameMessage(SocketCommandContext context, float increment)
-            : base(context, null)
+            : base(context, null, null)
         {
             Increment = increment;
             NextNumber = increment;

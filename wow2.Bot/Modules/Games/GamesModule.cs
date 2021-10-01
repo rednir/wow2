@@ -46,7 +46,7 @@ namespace wow2.Bot.Modules.Games
         [Summary("Try remember as many words as you can.")]
         public async Task VerbalMemoryAsync()
         {
-            var message = new VerbalMemoryGameMessage(Context, Config.GameResourceService, Config.VerbalMemoryLeaderboard);
+            var message = new VerbalMemoryGameMessage(Context, Config.VerbalMemoryLeaderboard, Config.GameResourceService);
             message.SubmitGame = () =>
             {
                 var entry = new VerbalMemoryLeaderboardEntry(message);

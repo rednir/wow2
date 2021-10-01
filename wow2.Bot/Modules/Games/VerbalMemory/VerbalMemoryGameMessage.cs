@@ -10,10 +10,9 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 {
     public class VerbalMemoryGameMessage : GameMessage
     {
-        public VerbalMemoryGameMessage(SocketCommandContext context, GameResourceService resourceService, List<VerbalMemoryLeaderboardEntry> leaderboard)
-            : base(context, resourceService)
+        public VerbalMemoryGameMessage(SocketCommandContext context, List<VerbalMemoryLeaderboardEntry> leaderboard, GameResourceService resourceService)
+            : base(context, leaderboard.Cast<LeaderboardEntry>().ToArray(), resourceService)
         {
-            Leaderboard = leaderboard;
         }
 
         public List<string> SeenWords { get; set; } = new List<string>();
@@ -23,8 +22,6 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
         public string CurrentWord { get; set; }
 
         private Random Random { get; } = new Random();
-
-        private List<VerbalMemoryLeaderboardEntry> Leaderboard { get; }
 
         public override async Task StopAsync()
         {
@@ -145,7 +142,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             get
             {
                 int place;
-                for (place = 1; place <= Leaderboard.Count; place++)
+                for (place = 1; place <= Leaderboard.Length; place++)
                 {
                     if (Leaderboard[place - 1].Points < Turns)
                         break;
