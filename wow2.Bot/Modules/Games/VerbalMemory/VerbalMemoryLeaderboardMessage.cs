@@ -18,5 +18,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
                 page: page)
         {
         }
+
+        protected override bool OnlyShowUsersBestScore => true;
     }
 }
