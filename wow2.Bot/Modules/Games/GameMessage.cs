@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Discord;
 using Discord.Commands;
 using wow2.Bot.Verbose.Messages;
 
@@ -28,6 +29,12 @@ namespace wow2.Bot.Modules.Games
                 return place;
             }
         }
+
+        protected EmbedFieldBuilder PlayingGameField => new()
+        {
+            Name = $"{PlaceInLeaderboard}) {Points} points",
+            Value = $"{InitialContext.User.Mention} is currently playing...",
+        };
 
         public SocketCommandContext InitialContext { get; }
 

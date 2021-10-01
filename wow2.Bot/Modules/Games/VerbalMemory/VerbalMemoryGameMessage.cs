@@ -121,8 +121,9 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
         {
             EmbedBuilder = new EmbedBuilder()
             {
-                Description = $"**You are currently number `{PlaceInLeaderboard}` on the leaderboard\n**See the word below? Tell me if you've seen it yet or not by pressing the buttons.",
-                Title = $"Verbal memory has started for {InitialContext.User.Username}",
+                Description = "**See the word above? Tell me if you've seen it yet or not by pressing the buttons.**",
+                Title = "🔡 Verbal memory",
+                Fields = new List<EmbedFieldBuilder>() { PlayingGameField },
                 Color = Color.LightGrey,
             };
 
