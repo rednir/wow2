@@ -6,12 +6,12 @@ namespace wow2.Bot.Modules.Games.Counting
         {
         }
 
-        public CountingLeaderboardEntry(CountingGameConfig gameConfig)
-            : base(gameConfig.InitialContext.User)
+        public CountingLeaderboardEntry(CountingGameMessage gameMessage)
+            : base(gameMessage.InitialContext.User)
         {
-            Points = gameConfig.ListOfMessages.Count - 1;
-            Increment = gameConfig.Increment;
-            FinalNumber = gameConfig.NextNumber - gameConfig.Increment;
+            Points = gameMessage.ListOfMessages.Count - 1;
+            Increment = gameMessage.Increment;
+            FinalNumber = gameMessage.NextNumber - gameMessage.Increment;
         }
 
         public float Increment { get; set; }

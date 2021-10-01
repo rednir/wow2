@@ -20,6 +20,16 @@ namespace wow2.Bot.Modules.Games
         [Summary("Start counting in a text channel. INCREMENT is the number that will be added each time.")]
         public async Task CountingAsync(float increment = 1)
         {
+            var message = new CountingGameMessage(Context, increment);
+            message.SubmitGame = () =>
+            {
+                var entry = new CountingLeaderboardEntry(message);
+                Config.CountingLeaderboard.Add(entry);
+                Config.CountingLeaderboard = Config.CountingLeaderboard.OrderByDescending(e => e.Points).ToList();
+                return Config.CountingLeaderboard.IndexOf(entry);
+            };
+
+            await message.SendAsync(Context.Channel);
         }
 
         [Command("counting-leaderboard")]
