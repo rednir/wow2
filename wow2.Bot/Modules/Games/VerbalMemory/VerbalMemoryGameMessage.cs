@@ -9,8 +9,8 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 {
     public class VerbalMemoryGameMessage : GameMessage
     {
-        public VerbalMemoryGameMessage(SocketCommandContext context)
-            : base(context)
+        public VerbalMemoryGameMessage(SocketCommandContext context, GameResourceService resourceService)
+            : base(context, resourceService)
         {
             EmbedBuilder = new EmbedBuilder()
             {
@@ -133,7 +133,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
             bool pickSeenWord = (Random.NextDouble() >= 0.5) && (SeenWords.Count > 3);
             CurrentWord = pickSeenWord ?
                 SeenWords[Random.Next(SeenWords.Count)] :
-                UnseenWords[Random.Next(UnseenWords.Count)];
+                ResourceService.GetRandomWord();
 
             Text = $"**{Turns + 1}.** {CurrentWord}";
             await UpdateMessageAsync();
