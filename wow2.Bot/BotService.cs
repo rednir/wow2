@@ -392,12 +392,7 @@ namespace wow2.Bot
             SocketUserMessage message = context.Message;
 
             await AttachmentVotingModule.CheckMessageAsync(context);
-
-            // Only auto mod message if not related to a game.
-            //if (!await CountingGame.CheckMessageAsync(context))
-            //{
-                await ModeratorModule.CheckMessageWithAutoMod(context);
-            //}
+            await ModeratorModule.CheckMessageWithAutoMod(context);
 
             if (message.Content.StartsWithWord(
                 context.Guild.GetCommandPrefix(), true))

@@ -1,5 +1,4 @@
 using System;
-using Discord;
 
 namespace wow2.Bot.Modules.Games
 {

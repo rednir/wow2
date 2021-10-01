@@ -26,7 +26,6 @@ namespace wow2.Bot.Modules.Games
                 var entry = new CountingLeaderboardEntry(message);
                 Config.CountingLeaderboard.Add(entry);
                 Config.CountingLeaderboard = Config.CountingLeaderboard.OrderByDescending(e => e.Points).ToList();
-                return Config.CountingLeaderboard.IndexOf(entry);
             };
 
             await message.SendAsync(Context.Channel);
