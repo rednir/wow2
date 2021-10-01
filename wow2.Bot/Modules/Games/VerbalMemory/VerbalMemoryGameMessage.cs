@@ -121,7 +121,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
         {
             EmbedBuilder = new EmbedBuilder()
             {
-                Description = "**See the word above? Tell me if you've seen it yet or not by pressing the buttons.**",
+                Description = "See the word above? Tell me if you've seen it yet or not by pressing the buttons.",
                 Title = "🔡 Verbal memory",
                 Fields = MiniLeaderboardFields,
                 Color = Color.LightGrey,
