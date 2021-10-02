@@ -1,4 +1,4 @@
-# List of commands (94 total)
+# List of commands (95 total)
 
 ## Main (8)
 Stuff to do with the bot and other random stuff.
@@ -24,7 +24,7 @@ Integrations with YouTube, like getting notified for new videos.
 |`!wow yt list-subs [optional:PAGE]`|Lists the channels your server will get notified about.|
 |`!wow yt set-announcements-channel [CHANNEL]`|Sets the channel where notifications about new videos will be sent.|
 
-## Voice (20)
+## Voice (21)
 Play YouTube or Twitch audio in a voice channel.
 
 |Command|Summary|
@@ -35,7 +35,8 @@ Play YouTube or Twitch audio in a voice channel.
 |`!wow vc remove [NUMBER]`|Removes a song request from the queue at the given index.|
 |`!wow vc remove-last`|Removes the last song request that was added.|
 |`!wow vc remove-many [START] [END]`|Removes all song requests from START to END inclusive.|
-|`!wow vc skip`|Stops the currently playing request and starts the next request if it exists.|
+|`!wow vc skip`|Sends a skip request for the currently playing song.|
+|`!wow vc force-skip`|Stops the currently playing request immediately and starts the next request if it exists.|
 |`!wow vc join`|Joins the voice channel of the person that executed the command.|
 |`!wow vc leave`|Leaves the voice channel.|
 |`!wow vc shuffle`|Randomly shuffles the song request queue.|
