@@ -89,7 +89,7 @@ namespace wow2.Bot
             var config = new CommandServiceConfig()
             {
                 IgnoreExtraArgs = true,
-                LogLevel = LogSeverity.Verbose,
+                LogLevel = LogSeverity.Info,
                 DefaultRunMode = RunMode.Async,
             };
 
@@ -311,6 +311,8 @@ namespace wow2.Bot
                 context: context,
                 input: input,
                 services: Services);
+
+            Logger.Log($"Executed command '{input}' for {context.User} in {context.Guild.Name}/{context.Channel}", LogSeverity.Verbose);
 
             if (result.Error.HasValue)
                 await SendErrorMessageToChannel(result.Error, context);
