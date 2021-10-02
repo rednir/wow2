@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Timers;
@@ -100,7 +101,7 @@ namespace wow2.Bot.Modules.Timers
         {
             RelayTimer?.Dispose();
             Timer?.Dispose();
-            DataManager.AllGuildData[GuildId].Timers.UserTimers.Remove(this);
+            DataManager.AllGuildData.GetValueOrDefault(GuildId)?.Timers.UserTimers.Remove(this);
         }
 
         private async Task OnElapsedAsync()
