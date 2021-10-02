@@ -84,6 +84,7 @@ namespace wow2.Bot.Modules.Osu
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified about USER.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task SubscribeAsync([Name("USER")] string userInput, string mode = null)
         {
             mode = ParseMode(mode);
@@ -149,6 +150,7 @@ namespace wow2.Bot.Modules.Osu
         [Command("set-announcements-channel")]
         [Alias("announcements-channel", "set-announce-channel", "set-channel")]
         [Summary("Sets the channel where notifications about users will be sent.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
         {
             Config.AnnouncementsChannelId = channel.Id;

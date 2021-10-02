@@ -41,6 +41,7 @@ namespace wow2.Bot.Modules.YouTube
         [Command("subscribe")]
         [Alias("sub")]
         [Summary("Toggle whether your server will get notified when CHANNEL uploads a new video.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task SubscribeAsync([Name("CHANNEL")][Remainder] string userInput)
         {
             var channel = await Service.GetChannelAsync(userInput.Trim('\"'));
@@ -96,6 +97,7 @@ namespace wow2.Bot.Modules.YouTube
         [Command("set-announcements-channel")]
         [Alias("announcements-channel", "set-announce-channel", "set-channel")]
         [Summary("Sets the channel where notifications about new videos will be sent.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel)
         {
             Config.AnnouncementsChannelId = channel.Id;

@@ -80,6 +80,7 @@ namespace wow2.Bot.Modules.Main
         [Command("alias")]
         [Alias("aliases")]
         [Summary("Sets an alias. Typing the NAME of an alias will execute '!wow DEFINITION' as a command. Set the DEFINITION of an alias to blank to remove it.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task AliasAsync(string name, [Name("DEFINITION")] params string[] definitionSplit)
         {
             string removeAliasText = $"To remove the alias, type `{Config.CommandPrefix} alias \"{name}\"`";
@@ -161,6 +162,7 @@ namespace wow2.Bot.Modules.Main
         [Command("set-command-prefix")]
         [Alias("set-prefix", "setprefix")]
         [Summary("Change the prefix used to identify commands. '!wow' is the default.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task SetCommandPrefixAsync(string prefix)
         {
             if (prefix.Contains(' ') || string.IsNullOrWhiteSpace(prefix))
@@ -214,6 +216,7 @@ namespace wow2.Bot.Modules.Main
         [Command("upload-raw-data")]
         [Alias("raw-data", "upload-raw")]
         [Summary("Uploads a file containing all the data the bot stores about this server.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task UploadRawGuildDataAsync()
         {
             await Context.Channel.SendFileAsync(

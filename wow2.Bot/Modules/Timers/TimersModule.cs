@@ -136,6 +136,7 @@ namespace wow2.Bot.Modules.Timers
         [Command("set-announcements-channel")]
         [Alias("announcements-channel", "set-announce-channel", "set-channel")]
         [Summary("Sets the channel where all timer notifications will be sent.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task SetAnnoucementsChannelAsync(SocketTextChannel channel = null)
         {
             if (channel == null)

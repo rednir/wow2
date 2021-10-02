@@ -57,6 +57,7 @@ namespace wow2.Bot.Modules.Keywords
 
         [Command("add")]
         [Summary("Adds value(s) to a keyword, creating a new keyword if it doesn't exist.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task AddAsync(string keyword, [Name("value")][Remainder] string valueContent)
         {
             var keywordsDictionary = Config.KeywordsDictionary;
@@ -101,6 +102,7 @@ namespace wow2.Bot.Modules.Keywords
         [Command("remove")]
         [Alias("delete")]
         [Summary("Removes value(s) from a keyword, or if none are specified, removes all values and the keyword.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task RemoveAsync(string keyword, [Name("value")][Remainder] string valueContent = null)
         {
             keyword = keyword.ToLower();
@@ -164,6 +166,7 @@ namespace wow2.Bot.Modules.Keywords
         [Command("rename")]
         [Alias("edit", "change")]
         [Summary("Renames a keyword, leaving its values unchanged.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task RenameAsync(string oldKeyword, [Remainder] string newKeyword)
         {
             var keywordsDictionary = Config.KeywordsDictionary;
@@ -244,6 +247,7 @@ namespace wow2.Bot.Modules.Keywords
 
         [Command("restore")]
         [Summary("Restores a previously deleted keyword from its name.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task RestoreAsync([Remainder] string keyword)
         {
             if (!Config.DeletedKeywordsDictionary.ContainsKey(keyword))
@@ -259,6 +263,7 @@ namespace wow2.Bot.Modules.Keywords
         [Command("set-chance")]
         [Alias("chance")]
         [Summary("Sets the chance of the bot replying to a keyword with a response.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task SetChanceAsync(int percentage)
         {
             if (percentage <= 0)
@@ -273,6 +278,7 @@ namespace wow2.Bot.Modules.Keywords
 
         [Command("toggle-delete-reaction")]
         [Summary("Toggles whether bot responses to keywords should have a wastebasket reaction, allowing a user to delete the message.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task ToggleDeleteReactionAsync()
         {
             await SendToggleQuestionAsync(
@@ -284,6 +290,7 @@ namespace wow2.Bot.Modules.Keywords
 
         [Command("toggle-like-reaction")]
         [Summary("Toggles whether bot responses to keywords should have a thumbs up reaction.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task ToggleLikeReactionAsync()
         {
             await SendToggleQuestionAsync(
@@ -296,6 +303,7 @@ namespace wow2.Bot.Modules.Keywords
         [Command("toggle-responses")]
         [Alias("toggle-response", "toggle")]
         [Summary("Toggles whether the bot will respond to keywords.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task ToggleResponsesAsync()
         {
             await SendToggleQuestionAsync(

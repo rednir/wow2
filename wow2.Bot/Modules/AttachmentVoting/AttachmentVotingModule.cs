@@ -81,6 +81,7 @@ namespace wow2.Bot.Modules.AttachmentVoting
 
         [Command("toggle")]
         [Summary("Toggles whether the specified text channel will have thumbs up/down reactions for each new message with attachment posted there.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task ToggleAsync(SocketTextChannel channel)
         {
             bool currentlyOn = Config.VotingEnabledChannelIds.Contains(channel.Id);

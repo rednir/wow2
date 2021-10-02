@@ -366,6 +366,7 @@ namespace wow2.Bot.Modules.Voice
 
         [Command("toggle-auto-np")]
         [Summary("Toggles whether the np command will be executed everytime a new song is playing.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task ToggleAutoNpAsync()
         {
             await SendToggleQuestionAsync(
@@ -377,6 +378,7 @@ namespace wow2.Bot.Modules.Voice
 
         [Command("toggle-auto-join")]
         [Summary("Toggles whether the bot will try join when a new song is added to the queue.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task ToggleAutoJoinAsync()
         {
             await SendToggleQuestionAsync(
@@ -388,6 +390,7 @@ namespace wow2.Bot.Modules.Voice
 
         [Command("set-vote-skips-needed")]
         [Summary("Sets the number of votes needed to skip a song request to NUMBER.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task SetVoteSkipsNeededAsync([Name("NUMBER")] int newNumberOfSkips)
         {
             if (newNumberOfSkips > Context.Guild.MemberCount)

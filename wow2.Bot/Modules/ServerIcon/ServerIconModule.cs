@@ -102,6 +102,7 @@ namespace wow2.Bot.Modules.ServerIcon
         [Command("toggle-icon-rotate")]
         [Alias("toggle-icon-rotation", "toggle-icon", "toggle-rotate", "toggle")]
         [Summary("Toggles whether this server's icon will rotate periodically. You can configure what images are in the rotation.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task ToggleIconRotateAsync()
         {
             await SendToggleQuestionAsync(
@@ -147,6 +148,7 @@ namespace wow2.Bot.Modules.ServerIcon
 
         [Command("add")]
         [Summary("Adds an image for server icon rotation. IMAGEURL must contain an image only.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task AddAsync(string imageUrl)
         {
             if (!imageUrl.StartsWith("http://") && !imageUrl.StartsWith("https://"))
@@ -166,6 +168,7 @@ namespace wow2.Bot.Modules.ServerIcon
         [Command("remove")]
         [Alias("delete")]
         [Summary("Removes an image from the server icon rotation from ID.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         public async Task RemoveAsync(int id)
         {
             if (id > Config.IconsToRotate.Count || id < 1)
