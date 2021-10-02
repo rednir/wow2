@@ -190,7 +190,7 @@ namespace wow2.Bot.Modules.Voice
 
         [Command("skip")]
         [Alias("next")]
-        [Summary("Stops the currently playing request and starts the next request if it exists.")]
+        [Summary("Sends a skip request for the currently playing song.")]
         public async Task SkipAsync()
         {
             if (Config.CurrentlyPlayingSongRequest == null)
@@ -214,6 +214,21 @@ namespace wow2.Bot.Modules.Voice
                 Config.IsLoopEnabled = false;
                 _ = ContinueAsync();
             }
+        }
+
+        [Command("force-skip")]
+        [Alias("fs", "forceskip", "force")]
+        [Summary("Stops the currently playing request immediately and starts the next request if it exists.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
+        public Task ForceSkipAsync()
+        {
+            if (Config.CurrentlyPlayingSongRequest == null)
+                throw new CommandReturnException(Context, "There's nothing playing right now.");
+
+            Config.IsLoopEnabled = false;
+            _ = ContinueAsync();
+
+            return Task.CompletedTask;
         }
 
         [Command("join")]
