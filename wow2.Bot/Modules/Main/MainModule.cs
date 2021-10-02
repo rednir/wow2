@@ -236,10 +236,13 @@ namespace wow2.Bot.Modules.Main
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             foreach (CommandInfo command in listOfCommandInfo)
             {
+                var perms = command.Preconditions.Where(p => p is RequireUserPermissionAttribute)
+                    .Select(p => ((RequireUserPermissionAttribute)p).GuildPermission);
+
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
                     Name = command.MakeFullCommandString(commandPrefix),
-                    Value = $"*{(string.IsNullOrWhiteSpace(command.Summary) ? "No description provided." : command.Summary)}*",
+                    Value = (perms.Any() ? $"**REQUIRES PERMISSION: {string.Join(", ", perms)}**\n" : string.Empty) + (string.IsNullOrWhiteSpace(command.Summary) ? "No description provided." : command.Summary),
                 });
             }
 

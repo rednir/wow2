@@ -354,7 +354,7 @@ namespace wow2.Bot
 
                 case CommandError.UnmetPrecondition:
                     await new WarningMessage(
-                        description: "You most likely don't have the correct permissions to use this command.",
+                        description: "You most likely don't have sufficient permissions to use this command.",
                         title: "Unmet precondition")
                             .SendAsync(context.Channel);
                     return;
