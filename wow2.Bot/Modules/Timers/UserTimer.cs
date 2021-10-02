@@ -70,8 +70,7 @@ namespace wow2.Bot.Modules.Timers
 
             if (TargetDateTime - DateTime.Now >= TimeSpan.FromMilliseconds(int.MaxValue))
             {
-                // Run relay timer every 14 days
-                RelayTimer = new Timer(1209600000);
+                RelayTimer = new Timer(int.MaxValue);
                 RelayTimer.Elapsed += (source, e) =>
                 {
                     if (TargetDateTime - DateTime.Now < TimeSpan.FromMilliseconds(int.MaxValue))
