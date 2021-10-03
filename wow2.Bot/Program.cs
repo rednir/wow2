@@ -11,7 +11,7 @@ namespace wow2.Bot
     public class Program
     {
         public static readonly DateTime TimeStarted = DateTime.Now;
-        private const string ReleaseVersion = "v4.0";
+        private const string ReleaseVersion = "v5.0";
 
         public static string Version => IsDebug ? "DEBUG BUILD" : ReleaseVersion;
 
