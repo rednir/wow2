@@ -12,9 +12,7 @@ namespace wow2.Bot.Modules.Games.Typing
 
         public string Content { get; }
 
-        public int TotalWords => Content.Count(c => c == ' ') + 1;
-
-        public double Wpm => TotalWords / TimeSpent.TotalMinutes;
+        public double Wpm => Content.Length / 5 / TimeSpent.TotalMinutes;
 
         public TimeSpan TimeSpent { get; set; }
 

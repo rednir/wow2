@@ -76,7 +76,7 @@ namespace wow2.Bot.Modules.Games.Typing
 
         public override int Points => (int)(Wpm * Accuracy);
 
-        private double Wpm => Segments.Sum(s => s.TotalWords) / (LastSegmentCompletedAt - SentMessage?.Timestamp)?.TotalMinutes ?? 0;
+        private double Wpm => Segments.Sum(s => s.Content.Length) / 5 / (LastSegmentCompletedAt - SentMessage?.Timestamp)?.TotalMinutes ?? 0;
 
         private double Accuracy => Segments.Count == 0 ? 1 : Segments.Average(x => x.Accuracy);
 
