@@ -40,6 +40,8 @@ namespace wow2.Bot.Modules.Games.Counting
 
         public override async Task StopAsync()
         {
+            BotService.Client.MessageReceived -= ActOnMessageAsync;
+
             var listOfFieldBuilders = new List<EmbedFieldBuilder>();
             var dictionaryOfParticipants = new Dictionary<SocketUser, int>();
 
