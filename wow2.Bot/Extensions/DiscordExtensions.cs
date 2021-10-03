@@ -9,10 +9,10 @@ namespace wow2.Bot.Extensions
     public static class DiscordExtensions
     {
         public static SocketGuild GetGuild(this IMessage userMessage)
-            => ((SocketGuildChannel)userMessage.Channel).Guild;
+            => (userMessage.Channel as SocketGuildChannel)?.Guild;
 
         public static SocketGuild GetGuild(this ISocketMessageChannel messageChannel)
-            => ((SocketGuildChannel)messageChannel).Guild;
+            => (messageChannel as SocketGuildChannel)?.Guild;
 
         public static string GetCommandPrefix(this IGuild guild) =>
             DataManager.AllGuildData[guild.Id].Main.CommandPrefix;
