@@ -240,7 +240,7 @@ namespace wow2.Bot.Extensions
                 for (int j = 1; j <= m; j++)
                 {
                     // Compute cost.
-                    int cost = (string2[j - 1] == string1[i - 1]) ? 0 : 1;
+                    int cost = string2[j - 1].ToString().Equals(string1[i - 1].ToString(), StringComparison.OrdinalIgnoreCase) ? 0 : 1;
                     d[i, j] = Math.Min(
                     Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
                     d[i - 1, j - 1] + cost);
