@@ -115,7 +115,7 @@ namespace wow2.Bot.Modules.Games.Typing
             // Set info about the completed segment.
             double levenshteinDistance = Segments[CurrentIndexInSegments].Content.LevenshteinDistanceWith(socketMessage.Content);
             double maxDistance = Math.Max(socketMessage.Content.Length, Segments[CurrentIndexInSegments].Content.Length);
-            segment.Accuracy = 1 - (levenshteinDistance / maxDistance);
+            segment.Accuracy = Math.Pow(1 - (levenshteinDistance / maxDistance), 2);
             segment.TimeSpent = socketMessage.Timestamp - LastSegmentCompletedAt;
             segment.TimeCompleted = socketMessage.Timestamp;
 
