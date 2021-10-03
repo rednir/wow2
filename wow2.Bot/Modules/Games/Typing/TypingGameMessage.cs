@@ -38,7 +38,7 @@ namespace wow2.Bot.Modules.Games.Typing
 
                 if ((i % SegmentSize == 0 && i != 0) || i == NumberOfWords - 1)
                 {
-                    Segments.Add(stringBuilder.ToString());
+                    Segments.Add(new Segment(stringBuilder.ToString()));
                     stringBuilder.Clear();
                 }
                 else
@@ -60,13 +60,13 @@ namespace wow2.Bot.Modules.Games.Typing
         public override Task UpdateMessageAsync()
         {
             Text = string.Empty;
-            foreach (string segment in Segments)
-                Text += $"`{GetAlternativeText(segment)} ⏎`\n";
+            foreach (var segment in Segments)
+                Text += segment.CompletedInfo != null ? $"`{segment.CompletedInfo}`\n" : $"`{GetAlternativeText(segment.Content)} ⏎`\n";
 
             EmbedBuilder = new EmbedBuilder()
             {
                 Description = "Type the above text as fast as you can. When you see a `⏎`, send the message!",
-                Title = "Typing game has started.",
+                Title = "⌨ Typing game has started.",
                 Fields = MiniLeaderboardFields,
                 Color = Color.LightGrey,
             };
@@ -76,24 +76,22 @@ namespace wow2.Bot.Modules.Games.Typing
 
         public override int Points => (int)(Wpm * Accuracy);
 
-        private double Wpm => Segments.Sum(s => s.Count(c => c == ' ') + 1) / (LastSegmentCompletedAt - SentMessage?.Timestamp)?.TotalMinutes ?? 0;
+        private double Wpm => Segments.Sum(s => s.TotalWords) / (LastSegmentCompletedAt - SentMessage?.Timestamp)?.TotalMinutes ?? 0;
 
-        private double Accuracy { get; set; } = 1;
+        private double Accuracy => Segments.Count == 0 ? 1 : Segments.Average(x => x.Accuracy);
 
-        private List<string> Segments { get; } = new();
+        private List<Segment> Segments { get; } = new();
 
         private int CurrentIndexInSegments { get; set; }
 
-        private DateTimeOffset LastSegmentCompletedAt { get; set; }
+        private DateTimeOffset LastSegmentCompletedAt => Segments.LastOrDefault(s => s.TimeCompleted != default)?.TimeCompleted ?? SentMessage?.Timestamp ?? default;
 
         public override async Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             BotService.Client.MessageReceived += ActOnMessageAsync;
             await UpdateMessageAsync();
 
-            var message = await base.SendAsync(channel);
-            LastSegmentCompletedAt = message.Timestamp;
-            return message;
+            return await base.SendAsync(channel);
         }
 
         public override async Task StopAsync()
@@ -112,18 +110,14 @@ namespace wow2.Bot.Modules.Games.Typing
             if (socketMessage.Author.IsBot || InitialContext.Channel != socketMessage.Channel)
                 return;
 
-            // Get info about the current segment.
-            TimeSpan segmentTime = socketMessage.Timestamp - LastSegmentCompletedAt;
-            double wpm = (Segments[CurrentIndexInSegments].Count(c => c == ' ') + 1) / segmentTime.TotalMinutes;
+            var segment = Segments[CurrentIndexInSegments];
 
-            double levenshteinDistance = Segments[CurrentIndexInSegments].LevenshteinDistanceWith(socketMessage.Content);
-            double maxDistance = Math.Max(socketMessage.Content.Length, Segments[CurrentIndexInSegments].Length);
-            double accuracy = 1 - (levenshteinDistance / maxDistance);
-
-            // Update info about the completed segment.
-            Segments[CurrentIndexInSegments] = $"{(accuracy > 0.92 ? "😄" : "😕")} {Math.Round(segmentTime.TotalSeconds, 1)}sec / {Math.Round(wpm)}wpm / {Math.Round(accuracy * 100)}%";
-            Accuracy *= accuracy;
-            LastSegmentCompletedAt = socketMessage.Timestamp;
+            // Set info about the completed segment.
+            double levenshteinDistance = Segments[CurrentIndexInSegments].Content.LevenshteinDistanceWith(socketMessage.Content);
+            double maxDistance = Math.Max(socketMessage.Content.Length, Segments[CurrentIndexInSegments].Content.Length);
+            segment.Accuracy = 1 - (levenshteinDistance / maxDistance);
+            segment.TimeSpent = socketMessage.Timestamp - LastSegmentCompletedAt;
+            segment.TimeCompleted = socketMessage.Timestamp;
 
             CurrentIndexInSegments++;
             if (CurrentIndexInSegments >= Segments.Count)
