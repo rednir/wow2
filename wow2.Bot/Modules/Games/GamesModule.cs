@@ -71,7 +71,7 @@ namespace wow2.Bot.Modules.Games
         [Summary("Try to type a set set of words as fast as you can.")]
         public async Task TypingAsync()
         {
-            var message = new TypingGameMessage(Context, Config.GameResourceService);
+            var message = new TypingGameMessage(Context, Config.TypingLeaderboard, Config.GameResourceService);
             message.SubmitGame = () =>
             {
                 var entry = new TypingLeaderboardEntry(message);

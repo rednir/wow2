@@ -27,16 +27,9 @@ namespace wow2.Bot.Modules.Games.Typing
             { 'y', "𝘺" }, { 'z', "𝘻" },
         };
 
-        public TypingGameMessage(SocketCommandContext context, GameResourceService resourceService)
-            : base(context, null, resourceService)
+        public TypingGameMessage(SocketCommandContext context, List<TypingLeaderboardEntry> leaderboard, GameResourceService resourceService)
+            : base(context, leaderboard.Cast<LeaderboardEntry>().ToArray(), resourceService)
         {
-            EmbedBuilder = new EmbedBuilder()
-            {
-                Description = "Type the above text as fast as you can. When you see a `⏎`, send the message!",
-                Title = "Typing game has started.",
-                Color = Color.LightGrey,
-            };
-
             // Add segments to the list.
             var stringBuilder = new StringBuilder();
             for (int i = 0; i < NumberOfWords; i++)
@@ -70,12 +63,20 @@ namespace wow2.Bot.Modules.Games.Typing
             foreach (string segment in Segments)
                 Text += $"`{GetAlternativeText(segment)} ⏎`\n";
 
+            EmbedBuilder = new EmbedBuilder()
+            {
+                Description = "Type the above text as fast as you can. When you see a `⏎`, send the message!",
+                Title = "Typing game has started.",
+                Fields = MiniLeaderboardFields,
+                Color = Color.LightGrey,
+            };
+
             return base.UpdateMessageAsync();
         }
 
         public override int Points => (int)(Wpm * Accuracy);
 
-        private double Wpm => Segments.Sum(s => s.Count(c => c == ' ') + 1) / (LastSegmentCompletedAt - SentMessage.Timestamp).TotalMinutes;
+        private double Wpm => Segments.Sum(s => s.Count(c => c == ' ') + 1) / (LastSegmentCompletedAt - SentMessage?.Timestamp)?.TotalMinutes ?? 0;
 
         private double Accuracy { get; set; } = 1;
 
