@@ -23,7 +23,6 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 
         public override async Task StopAsync()
         {
-            SubmitGame();
             await new GenericMessage(
                 description: $"You got `{Points}` points, with `{SeenWords.Count}` unique words.",
                 title: "📈 Final Stats")

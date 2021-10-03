@@ -61,7 +61,6 @@ namespace wow2.Bot.Modules.Games.Counting
                 });
             }
 
-            SubmitGame();
             await new PagedMessage(
                 fieldBuilders: listOfFieldBuilders,
                 title: "📈 Final Stats",

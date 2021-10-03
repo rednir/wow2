@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using wow2.Bot.Extensions;
@@ -15,6 +16,12 @@ namespace wow2.Bot.Modules.Games
             InitialContext = context;
             Leaderboard = leaderboard;
             ResourceService = resourceService;
+        }
+
+        public override Task StopAsync()
+        {
+            SubmitGame();
+            return base.StopAsync();
         }
 
         protected int PlaceInLeaderboard
