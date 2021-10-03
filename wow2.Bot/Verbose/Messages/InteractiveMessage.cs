@@ -60,6 +60,8 @@ namespace wow2.Bot.Verbose.Messages
 
         protected bool DontSave => !GetActionButtons().Any(b => b.Style != ButtonStyle.Link);
 
+        private bool IsStopped { get; set; }
+
         public async override Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
             Components = GetComponentBuilder();
@@ -77,8 +79,8 @@ namespace wow2.Bot.Verbose.Messages
         /// <summary>Removes all interactive elements from the sent message and disposes it.</summary>
         public async virtual Task StopAsync()
         {
-            Components = GetComponentBuilder(true);
-            await base.UpdateMessageAsync();
+            IsStopped = true;
+            await UpdateMessageAsync();
             Dispose();
         }
 
@@ -92,7 +94,7 @@ namespace wow2.Bot.Verbose.Messages
 
         public async override Task UpdateMessageAsync()
         {
-            Components = GetComponentBuilder();
+            Components = GetComponentBuilder(IsStopped);
             await base.UpdateMessageAsync();
         }
 

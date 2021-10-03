@@ -210,6 +210,47 @@ namespace wow2.Bot.Extensions
         public static MemoryStream ToMemoryStream(this string inputString)
             => new(Encoding.ASCII.GetBytes(inputString));
 
+        /// <summary>Calculate the difference between 2 strings using the Levenshtein distance algorithm. Taken from https://www.dotnetperls.com/levenshtein.</summary>
+        /// <returns>The Levenshtein distance between the two strings.</returns>
+        public static int LevenshteinDistanceWith(this string string1, string string2)
+        {
+            int n = string1.Length;
+            int m = string2.Length;
+            int[,] d = new int[n + 1, m + 1];
+
+            // Verify arguments.
+            if (n == 0)
+                return m;
+
+            if (m == 0)
+                return n;
+
+            // Initialize arrays.
+            for (int i = 0; i <= n; d[i, 0] = i++)
+            {
+            }
+
+            for (int j = 0; j <= m; d[0, j] = j++)
+            {
+            }
+
+            // Begin looping.
+            for (int i = 1; i <= n; i++)
+            {
+                for (int j = 1; j <= m; j++)
+                {
+                    // Compute cost.
+                    int cost = (string2[j - 1] == string1[i - 1]) ? 0 : 1;
+                    d[i, j] = Math.Min(
+                    Math.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
+                    d[i - 1, j - 1] + cost);
+                }
+            }
+
+            // Return cost.
+            return d[n, m];
+        }
+
         /// <summary>Parses the string into a TimeSpan where the last character is the units.</summary>
         /// <returns>Whether the conversion was successful.</returns>
         public static bool TryConvertToTimeSpan(this string inputString, out TimeSpan timeSpan)

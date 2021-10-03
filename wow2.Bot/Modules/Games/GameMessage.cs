@@ -46,23 +46,24 @@ namespace wow2.Bot.Modules.Games
                 var result = new List<EmbedFieldBuilder>();
                 int placeInLeaderboard = PlaceInLeaderboard;
 
+                // TODO: make this logic more simple.
                 if (placeInLeaderboard == 1)
                 {
                     add();
+                    add(1);
                     add(2);
-                    add(3);
                 }
-                else if (placeInLeaderboard == Leaderboard.Length + 1)
+                else if (placeInLeaderboard == 2)
+                {
+                    add(1);
+                    add();
+                    add(2);
+                }
+                else
                 {
                     add(placeInLeaderboard - 2);
                     add(placeInLeaderboard - 1);
                     add();
-                }
-                else
-                {
-                    add(placeInLeaderboard - 1);
-                    add();
-                    add(placeInLeaderboard + 1);
                 }
 
                 return result;
@@ -75,7 +76,7 @@ namespace wow2.Bot.Modules.Games
 
                     result.Add(new EmbedFieldBuilder()
                     {
-                        Name = place == 0 ? $" • {placeInLeaderboard}) {Points} points" : $"{place}) {entry.Points} points",
+                        Name = place == 0 ? $" • {placeInLeaderboard}) {Points} points" : $"{(placeInLeaderboard > place ? place : place + 1)}) {entry.Points} points",
                         Value = place == 0 ? $"{InitialContext.User.Mention} is currently playing..." : $"{entry.PlayedByMention} at {entry.PlayedAt.ToDiscordTimestamp("f")}",
                     });
                 }
