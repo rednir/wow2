@@ -4,14 +4,6 @@
     <TargetFramework>net5.0</TargetFramework>
     <CodeAnalysisRuleSet>..\wow2.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(os)' == 'Release|Windows_NT'">
-    <ConfigurationGroup>Release</ConfigurationGroup>
-    <OutputPath>bin\WindowsRelease\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(os)' == 'Release|UNIX'">
-    <ConfigurationGroup>Release</ConfigurationGroup>
-    <OutputPath>bin\UnixRelease\</OutputPath>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4"/>
     <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta15"/>
