@@ -21,6 +21,6 @@ namespace wow2.Bot.Modules.Games.Typing
         public double Accuracy { get; set; }
 
         public string CompletedInfo => TimeCompleted == default ? null :
-            $"{(Accuracy > 0.92 ? "😄" : "😕")} {Math.Round(TimeSpent.TotalSeconds, 1)}sec / {Math.Round(Wpm)}wpm / {Math.Round(Accuracy * 100)}%";
+            $"{(Accuracy > 0.9 ? "😄" : (Accuracy > 0.65 ? "😡" : "💥"))} {Math.Round(TimeSpent.TotalSeconds, 1)}sec / {Math.Round(Wpm)}wpm / {Math.Round(Accuracy * 100)}%";
     }
 }
