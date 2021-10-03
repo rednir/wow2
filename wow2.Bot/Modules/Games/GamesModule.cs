@@ -4,6 +4,7 @@ using Discord.Commands;
 using wow2.Bot.Data;
 using wow2.Bot.Modules.Games.Counting;
 using wow2.Bot.Modules.Games.VerbalMemory;
+using wow2.Bot.Modules.Games.Typing;
 
 namespace wow2.Bot.Modules.Games
 {
@@ -62,6 +63,31 @@ namespace wow2.Bot.Modules.Games
         public async Task VerbalMemoryLeaderboardAsync(int page = 1)
         {
             await new VerbalMemoryLeaderboardMessage(Config.VerbalMemoryLeaderboard, page)
+                .SendAsync(Context.Channel);
+        }
+
+        [Command("typing")]
+        [Alias("typingtest", "typing-test", "type")]
+        [Summary("Try to type a set set of words as fast as you can.")]
+        public async Task TypingAsync()
+        {
+            var message = new TypingGameMessage(Context, Config.GameResourceService);
+            message.SubmitGame = () =>
+            {
+                var entry = new TypingLeaderboardEntry(message);
+                Config.TypingLeaderboard.Add(entry);
+                Config.TypingLeaderboard = Config.TypingLeaderboard.OrderByDescending(e => e.Points).ToList();
+            };
+
+            await message.SendAsync(Context.Channel);
+        }
+
+        [Command("typing-leaderboard")]
+        [Alias("typingleaderboard")]
+        [Summary("Shows the leaderboard for the typing game.")]
+        public async Task TypingLeaderboardAsync(int page = 1)
+        {
+            await new TypingLeaderboardMessage(Config.TypingLeaderboard, page)
                 .SendAsync(Context.Channel);
         }
     }

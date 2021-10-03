@@ -1,4 +1,4 @@
-# List of commands (95 total)
+# List of commands (97 total)
 
 ## Main (8)
 Stuff to do with the bot and other random stuff.
@@ -131,7 +131,7 @@ Automatically respond to keywords in user messages.
 |`!wow keywords toggle-like-reaction`|Toggles whether bot responses to keywords should have a thumbs up reaction.|
 |`!wow keywords toggle-responses`|Toggles whether the bot will respond to keywords.|
 
-## Games (4)
+## Games (6)
 For having a bit of fun.
 
 |Command|Summary|
@@ -140,6 +140,8 @@ For having a bit of fun.
 |`!wow games counting-leaderboard [optional:PAGE]`|Shows the leaderboard for the counting game.|
 |`!wow games verbal-memory`|Try remember as many words as you can.|
 |`!wow games verbal-memory-leaderboard [optional:PAGE]`|Shows the leaderboard for the counting game.|
+|`!wow games typing`|Try to type a set set of words as fast as you can.|
+|`!wow games typing-leaderboard [optional:PAGE]`|Shows the leaderboard for the typing game.|
 
 ## Developer (18)
 Boring stuff for developers.
