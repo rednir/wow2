@@ -11,5 +11,9 @@ namespace wow2.Bot.Modules.Games.Typing
             : base(gameMessage)
         {
         }
+
+        public double Wpm { get; set; }
+
+        public double Accuracy { get; set; }
     }
 }

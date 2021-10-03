@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,10 +12,10 @@ namespace wow2.Bot.Modules.Games.Typing
                 detailsPredicate: e =>
                 {
                     var entry = (TypingLeaderboardEntry)e;
-                    return "todo";
+                    return $"{Math.Round(entry.Wpm)} wpm, {Math.Round(entry.Accuracy * 100)}% accuracy";
                 },
                 title: "⌨ Typing leaderboard",
-                description: "*The number of points is the words per minute.*",
+                description: "*The number of points is the words per minute multiplied by the accuracy.*",
                 page: page)
         {
         }
