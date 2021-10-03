@@ -31,7 +31,7 @@ namespace wow2.Bot.Verbose.Messages
                     try
                     {
                         await actionButton.Action?.Invoke(component);
-                        Logger.Log($"Handled button press {component.Data.CustomId} by {component.User}", LogSeverity.Debug);
+                        Logger.Log($"Handled button press '{actionButton.Label}' for {component.User} in {component.Channel.GetGuild()?.Name}/{component.Channel.Name}", LogSeverity.Verbose);
                     }
                     catch (Exception ex) when (ex is not CommandReturnException)
                     {
