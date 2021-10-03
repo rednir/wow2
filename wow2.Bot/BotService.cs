@@ -144,9 +144,10 @@ namespace wow2.Bot
 
         public static async Task ReadyAsync()
         {
+            // TODO: better checking of whether its the first time ready handler is called.
             if (DataManager.AllGuildData.Count == 0)
             {
-                await DataManager.InitializeAsync();
+                await DataManager.LoadGuildDataFromFileAsync();
 
                 // TODO: This timer stuff needs to be moved out of here.
                 ServerIconModule.InitializeAllTimers();

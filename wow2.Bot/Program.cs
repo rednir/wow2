@@ -30,7 +30,7 @@ namespace wow2.Bot
             IsDebug = true;
 #endif
             await Logger.LogInitialize();
-            await DataManager.LoadSecretsFromFileAsync();
+            await DataManager.InitializeAsync();
 
             Options.Parse(args);
 

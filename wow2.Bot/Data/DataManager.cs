@@ -27,7 +27,7 @@ namespace wow2.Bot.Data
 
         public static string LogsDirPath => $"{AppDataDirPath}/Logs";
 
-        /// <summary>Creates required directories if necessary and loads all guild data.</summary>
+        /// <summary>Creates required directories if necessary.</summary>
         public static async Task InitializeAsync()
         {
             try
@@ -42,10 +42,10 @@ namespace wow2.Bot.Data
             {
                 Logger.LogException(ex);
                 Logger.Log($"Could not initialize folders in {AppDataDirPath}, the program may lack sufficient privileges.", LogSeverity.Critical);
+                Console.Read();
                 Environment.Exit(-1);
             }
 
-            await LoadGuildDataFromFileAsync();
             Logger.Log("Data manager has finished initialising.", LogSeverity.Verbose);
         }
 
