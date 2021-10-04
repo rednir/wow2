@@ -84,7 +84,7 @@ namespace wow2.Bot.Modules.Games.Typing
 
         private int CurrentIndexInSegments { get; set; }
 
-        private DateTimeOffset LastSegmentCompletedAt => Segments.LastOrDefault(s => s.TimeCompleted != default)?.TimeCompleted ?? SentMessage?.Timestamp ?? default;
+        private DateTimeOffset LastSegmentCompletedAt => Segments.LastOrDefault(s => s.TimeCompleted != default)?.TimeCompleted ?? SentMessage?.Timestamp ?? DateTimeOffset.Now;
 
         public override async Task<IUserMessage> SendAsync(IMessageChannel channel)
         {
