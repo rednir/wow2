@@ -87,7 +87,7 @@ namespace wow2.Bot.Modules.ServerIcon
                 {
                     // TODO: probably want to get rid of invalid urls here after a couple failed tries...
                     byte[] imageBytes = WebClient.DownloadData(config.IconsToRotate[config.IconsToRotateIndex].Url);
-                    await guild.ModifyAsync(g => g.Icon = new Image(new MemoryStream(imageBytes)));
+                    await guild.ModifyAsync(g => g.Icon = new Image(new MemoryStream(imageBytes)), new RequestOptions() { AuditLogReason = "Automatic server icon rotation is turned on." });
                     Logger.Log($"Rotated guild icon to index {config.IconsToRotateIndex} for {guild.Name} ({guild.Id})", LogSeverity.Debug);
                 }
                 catch (Exception ex)
