@@ -76,9 +76,9 @@ namespace wow2.Bot.Modules.Games.Typing
 
         public override int Points => (int)(Wpm * Accuracy);
 
-        private double Wpm => Segments.Sum(s => s.Content.Length) / 5 / (LastSegmentCompletedAt - SentMessage?.Timestamp)?.TotalMinutes ?? 0;
+        public double Wpm => Segments.Sum(s => s.Content.Length) / 5 / (LastSegmentCompletedAt - SentMessage?.Timestamp)?.TotalMinutes ?? 0;
 
-        private double Accuracy => Segments.Count == 0 ? 1 : Segments.Average(x => x.Accuracy);
+        public double Accuracy => Segments.Count == 0 ? 1 : Segments.Average(x => x.Accuracy);
 
         private List<Segment> Segments { get; } = new();
 
@@ -107,7 +107,7 @@ namespace wow2.Bot.Modules.Games.Typing
 
         private async Task ActOnMessageAsync(SocketMessage socketMessage)
         {
-            if (socketMessage.Author.IsBot || InitialContext.Channel != socketMessage.Channel)
+            if (socketMessage.Author.IsBot || InitialContext.Channel != socketMessage.Channel || InitialContext.User != socketMessage.Author)
                 return;
 
             var segment = Segments[CurrentIndexInSegments];
@@ -115,7 +115,7 @@ namespace wow2.Bot.Modules.Games.Typing
             // Set info about the completed segment.
             double levenshteinDistance = Segments[CurrentIndexInSegments].Content.LevenshteinDistanceWith(socketMessage.Content);
             double maxDistance = Math.Max(socketMessage.Content.Length, Segments[CurrentIndexInSegments].Content.Length);
-            segment.Accuracy = Math.Pow(1 - (levenshteinDistance / maxDistance), 2);
+            segment.Accuracy = Math.Pow(1 - (levenshteinDistance / maxDistance), 3);
             segment.TimeSpent = socketMessage.Timestamp - LastSegmentCompletedAt;
             segment.TimeCompleted = socketMessage.Timestamp;
 
