@@ -10,6 +10,8 @@ namespace wow2.Bot.Modules.Games.Typing
         public TypingLeaderboardEntry(TypingGameMessage gameMessage)
             : base(gameMessage)
         {
+            Wpm = gameMessage.Wpm;
+            Accuracy = gameMessage.Accuracy;
         }
 
         public double Wpm { get; set; }
