@@ -158,9 +158,9 @@ Boring stuff for developers.
 |`!wow dev get-logs`|Sends the log file for this session.|
 |`!wow dev panic`|Disables the bot for non-owner and changes the bot's Discord status.|
 |`!wow dev unpanic`|Enables the bot for all.|
-|`!wow dev poll-run [NAME]`|Runs a polling task.|
-|`!wow dev poll-unblock [NAME]`|Unblocks a polling task.|
-|`!wow dev poll-block [NAME]`|Blocks a polling service.|
+|`!wow dev poll-run [ID]`|Runs a polling task.|
+|`!wow dev poll-unblock [ID]`|Unblocks a polling task.|
+|`!wow dev poll-block [ID]`|Blocks a polling service.|
 |`!wow dev poll-list`|Lists all polling services.|
 |`!wow dev reconnect`|Disconnect and reconnect the bot.|
 |`!wow dev execute-manual-script`|Run the file at the environment variable WOW2_MANUAL_SCRIPT.|
