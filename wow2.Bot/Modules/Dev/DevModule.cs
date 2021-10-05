@@ -182,7 +182,7 @@ namespace wow2.Bot.Modules.Dev
         [Summary("Runs a polling task.")]
         public async Task PollRunAsync(int id)
         {
-            PollingTask task = PollingService.PollingServiceTimers.ElementAtOrDefault(id + 1);
+            PollingTask task = PollingService.PollingServiceTimers.ElementAtOrDefault(id - 1);
             if (task == null)
                 throw new CommandReturnException(Context, "No matching polling task.");
 
@@ -195,7 +195,7 @@ namespace wow2.Bot.Modules.Dev
         [Summary("Unblocks a polling task.")]
         public async Task PollUnblockAsync(int id)
         {
-            PollingTask task = PollingService.PollingServiceTimers.ElementAtOrDefault(id + 1);
+            PollingTask task = PollingService.PollingServiceTimers.ElementAtOrDefault(id - 1);
             if (task == null)
                 throw new CommandReturnException(Context, "No matching polling task.");
 
@@ -208,7 +208,7 @@ namespace wow2.Bot.Modules.Dev
         [Summary("Blocks a polling service.")]
         public async Task PollBlockAsync(int id)
         {
-            PollingTask task = PollingService.PollingServiceTimers.ElementAtOrDefault(id + 1);
+            PollingTask task = PollingService.PollingServiceTimers.ElementAtOrDefault(id - 1);
             if (task == null)
                 throw new CommandReturnException(Context, "No matching polling task.");
 
