@@ -192,6 +192,10 @@ namespace wow2.Bot
                 if (logMessage.Exception.InnerException is CommandReturnException)
                     return;
 
+                // Suppress audio client task canceled exceptions (thrown on 'vc leave' command)
+                if (logMessage.Exception is TaskCanceledException && logMessage.Source.StartsWith("Audio"))
+                    return;
+
                 if (logMessage.Exception is CommandException commandException)
                 {
                     string errorMessageText = $"An unhandled error occured when executing the command.```{commandException.InnerException.Message}\n```";
