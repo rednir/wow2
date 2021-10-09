@@ -9,7 +9,7 @@ namespace wow2.Bot
     /// <summary>Represents a collection of recently accessed objects.</summary>
     public class Cache<T>
     {
-        public Cache(int oldestCachedObjectAllowedInMinutes = 30, int maxAmountOfCachedObjects = 10)
+        public Cache(int oldestCachedObjectAllowedInMinutes = 30, int maxAmountOfCachedObjects = 100)
         {
             MaxAmountOfCachedObjects = maxAmountOfCachedObjects;
             OldestCachedObjectAllowed = TimeSpan.FromMinutes(oldestCachedObjectAllowedInMinutes);
