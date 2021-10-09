@@ -532,10 +532,14 @@ namespace wow2.Bot.Modules.Voice
             if (DateTime.Now + TimeSpan.FromSeconds(request.VideoMetadata.duration) > request.VideoMetadata.DirectAudioExpiryDate)
                 request.VideoMetadata.DirectAudioUrl = await DownloadService.GetYoutubeAudioUrlAsync(request.VideoMetadata.id);
 
-            using (Process ffmpeg = DownloadService.CreateStream(request.VideoMetadata))
-            using (Stream output = ffmpeg.StandardOutput.BaseStream)
-            using (AudioOutStream discord = Config.AudioClient.CreatePCMStream(AudioApplication.Music))
+            await play(true);
+
+            async Task play(bool retry)
             {
+                using Process ffmpeg = DownloadService.CreateStream(request.VideoMetadata);
+                using Stream output = ffmpeg.StandardOutput.BaseStream;
+                using AudioOutStream discord = Config.AudioClient.CreatePCMStream(AudioApplication.Music);
+
                 try
                 {
                     // No need to np if loop is enabled, and it is not the first time the song is playing.
@@ -547,7 +551,19 @@ namespace wow2.Bot.Modules.Voice
                             await DisplayCurrentlyPlayingRequestAsync();
                     }
 
+                    // Sometimes you would get an expired YouTube audio stream even though its expiry date is in the future.
+                    // This is a hacky workaround, retrying playback if the audio stream is empty (assumed by actual playback time)
+                    var stopwatch = new Stopwatch();
+                    stopwatch.Start();
                     await output.CopyToAsync(discord, cancellationToken);
+
+                    stopwatch.Stop();
+                    if (retry && stopwatch.ElapsedMilliseconds * 4 < request.VideoMetadata.duration * 1000)
+                    {
+                        Logger.Log($"Audio playback was too short for '{request.VideoMetadata.DirectAudioUrl}' and the direct audio URL will be refetched.", LogSeverity.Info);
+                        request.VideoMetadata.DirectAudioUrl = await DownloadService.GetYoutubeAudioUrlAsync(request.VideoMetadata.id);
+                        await play(false);
+                    }
                 }
                 finally
                 {
