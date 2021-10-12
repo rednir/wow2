@@ -221,6 +221,7 @@ namespace wow2.Bot.Modules.Dev
         [Summary("Lists all polling services.")]
         public async Task PollListAsync()
         {
+            // Would make more sense to build fields here instead.
             StringBuilder stringBuilder = new();
             int num = 1;
             foreach (PollingTask task in PollingService.PollingServiceTimers)
@@ -230,7 +231,7 @@ namespace wow2.Bot.Modules.Dev
                     .Append(". ")
                     .AppendLine(task.Name)
                     .AppendLine(task.Blocked ? " - BLOCKED" : " - UNBLOCKED")
-                    .Append(" - INTERVAL ")
+                    .Append(" - INTERVAL: ")
                     .Append(task.IntervalMinutes)
                     .AppendLine("m")
                     .Append(" - LAST RUN: ");
@@ -245,9 +246,7 @@ namespace wow2.Bot.Modules.Dev
                 {
                     TimeSpan lastRun = DateTime.Now - task.LastRun;
                     stringBuilder
-                        .Append(lastRun.Hours)
-                        .Append("h ")
-                        .Append(lastRun.Minutes)
+                        .Append(Math.Floor(lastRun.TotalMinutes))
                         .AppendLine("m")
                         .AppendLine();
                 }
