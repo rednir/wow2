@@ -1,9 +1,16 @@
 <p align="center"><img src="Assets/banner.png"></p>
 
-A Discord bot written in C# using the [Discord.NET](https://github.com/discord-net/Discord.Net) library.
-
-[![Discord Bots](https://top.gg/api/widget/status/818156344594792451.svg)](https://top.gg/bot/818156344594792451)
-[![CodeFactor](https://www.codefactor.io/repository/github/rednir/wow2/badge/master)](https://www.codefactor.io/repository/github/rednir/wow2/overview/master)
+<p align="center">
+    A Discord bot written in C# using <a href="https://github.com/discord-net/Discord.Net">Discord.NET</a>
+</p>
+<p align="center">
+    <a href="https://top.gg/bot/818156344594792451">
+        <img alt="Discord Bots" src="https://top.gg/api/widget/status/818156344594792451.svg">
+    </a>
+    <a href="https://www.codefactor.io/repository/github/rednir/wow2/overview/master">
+        <img alt="Discord Bots" src="https://www.codefactor.io/repository/github/rednir/wow2/badge/master">
+    </a>
+</p>
 
 ## Using the bot
 Invite the bot to a server with this link:
