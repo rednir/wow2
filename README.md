@@ -1,7 +1,7 @@
 <p align="center"><img src="Assets/banner.png"></p>
 
 <p align="center">
-    A Discord bot written in C# using <a href="https://github.com/discord-net/Discord.Net">Discord.NET</a>
+    <i>A Discord bot written in C# using <a href="https://github.com/discord-net/Discord.Net">Discord.NET</a></i>
 </p>
 <p align="center">
     <a href="https://top.gg/bot/818156344594792451">
