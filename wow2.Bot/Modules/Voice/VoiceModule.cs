@@ -193,11 +193,11 @@ namespace wow2.Bot.Modules.Voice
             if (Config.CurrentlyPlayingSongRequest == null)
                 throw new CommandReturnException(Context, "There's nothing playing right now.");
 
+            if (Config.ListOfUserIdsThatVoteSkipped.Contains(Context.User.Id))
+                throw new CommandReturnException(Context, "You've already sent a skip request.");
+
             if (Config.ListOfUserIdsThatVoteSkipped.Count + 1 < Config.VoteSkipsNeeded)
             {
-                if (Config.ListOfUserIdsThatVoteSkipped.Contains(Context.User.Id))
-                    throw new CommandReturnException(Context, "You've already sent a skip request.");
-
                 Config.ListOfUserIdsThatVoteSkipped.Add(Context.User.Id);
                 await new InfoMessage(
                     description: $"Waiting for `{Config.VoteSkipsNeeded - Config.ListOfUserIdsThatVoteSkipped.Count}` more vote(s) before skipping.\n",
@@ -490,14 +490,14 @@ namespace wow2.Bot.Modules.Voice
                     return;
                 }
 
+                if (Config.ListOfUserIdsThatVoteSkipped.Contains(component.User.Id))
+                {
+                    await component.FollowupAsync(embed: new WarningMessage("You've already sent a skip request.").Embed, ephemeral: true);
+                    return;
+                }
+
                 if (Config.ListOfUserIdsThatVoteSkipped.Count + 1 < Config.VoteSkipsNeeded)
                 {
-                    if (Config.ListOfUserIdsThatVoteSkipped.Contains(component.User.Id))
-                    {
-                        await component.FollowupAsync(embed: new WarningMessage("You've already sent a skip request.").Embed, ephemeral: true);
-                        return;
-                    }
-
                     Config.ListOfUserIdsThatVoteSkipped.Add(component.User.Id);
                     await new InfoMessage(
                         description: $"Waiting for `{Config.VoteSkipsNeeded - Config.ListOfUserIdsThatVoteSkipped.Count}` more vote(s) before skipping.\n",
