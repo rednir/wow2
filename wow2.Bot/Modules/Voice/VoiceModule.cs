@@ -105,14 +105,7 @@ namespace wow2.Bot.Modules.Voice
             async Task next()
             {
                 foreach (var metadata in metadataList)
-                {
-                    Config.CurrentSongRequestQueue.Enqueue(new UserSongRequest()
-                    {
-                        VideoMetadata = metadata,
-                        TimeRequested = DateTime.Now,
-                        RequestedByMention = Context.User.Mention,
-                    });
-                }
+                    Config.CurrentSongRequestQueue.Enqueue(new UserSongRequest(metadata, Context.User));
 
                 string successText = metadataList.Count > 1 ?
                     $"Added a playlist with {metadataList.Count} items.\nYou can clear this queue with `{Context.Guild.GetCommandPrefix()} vc clear`, or save it for later with `{Context.Guild.GetCommandPrefix()} vc save-queue [NAME]`" :
