@@ -66,22 +66,7 @@ namespace wow2.Bot.Modules.Voice
             /*if (((SocketGuildUser)Context.User).VoiceChannel == null)
                 throw new CommandReturnException(Context, "Join a voice channel first before adding song requests.");*/
 
-            List<VideoMetadata> metadataList;
-            try
-            {
-                metadataList = await DownloadService.GetMetadataAsync(songRequest);
-            }
-            catch (ArgumentException ex)
-            {
-                throw new CommandReturnException(Context, $"{ex.Message}", "Invalid input");
-            }
-            catch (Exception ex)
-            {
-                Logger.LogException(ex, "Could not fetch video metadata");
-                await new ErrorMessage("One or more errors were returned.", "Could not fetch video metadata")
-                    .SendAsync(Context.Channel);
-                return;
-            }
+            List<VideoMetadata> metadataList = await GetMetadataForRequestAsync(songRequest);
 
             if (metadataList.Count > 1)
             {
@@ -138,6 +123,25 @@ namespace wow2.Bot.Modules.Voice
                         _ = ContinueAsync();
                 }
             }
+        }
+
+        [Command("play-now")]
+        [Alias("playnow")]
+        [Summary("Plays a request immediately, stopping the currently playing request.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
+        public async Task PlayNowAsync([Name("REQUEST")][Remainder] string songRequest)
+        {
+            if (CheckIfAudioClientDisconnected(Config.AudioClient))
+                throw new CommandReturnException(Context, "I'm not in a voice channel.");
+
+            List<VideoMetadata> metadataList = await GetMetadataForRequestAsync(songRequest);
+
+            if (metadataList.Count > 1)
+                throw new CommandReturnException(Context, "Try clear the current queue and add the playlist normally.", "Can't use this command with playlists");
+
+            Config.PlayNowRequest = new UserSongRequest(metadataList.Single(), Context.User);
+
+            _ = ContinueAsync();
         }
 
         [Command("remove")]
@@ -418,6 +422,25 @@ namespace wow2.Bot.Modules.Voice
             config.CurrentlyPlayingSongRequest = null;
         }
 
+        private async Task<List<VideoMetadata>> GetMetadataForRequestAsync(string request)
+        {
+            try
+            {
+                return await DownloadService.GetMetadataAsync(request);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new CommandReturnException(Context, $"{ex.Message}", "Invalid input");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "Could not fetch video metadata");
+                await new ErrorMessage("One or more errors were returned.", "Could not fetch video metadata")
+                    .SendAsync(Context.Channel);
+                throw new CommandReturnException();
+            }
+        }
+
         private async Task JoinVoiceChannelAsync(IVoiceChannel channel)
         {
             if (!CheckIfAudioClientDisconnected(Config.AudioClient))
@@ -585,6 +608,12 @@ namespace wow2.Bot.Modules.Voice
                 return;
             }
 
+            if (Config.PlayNowRequest != null)
+            {
+                var playNow = Config.PlayNowRequest;
+                Config.PlayNowRequest = null;
+                await PlayRequestAsync(playNow, Config.CtsForAudioStreaming.Token);
+            }
             if (Config.IsLoopEnabled && Config.CurrentlyPlayingSongRequest != null)
             {
                 await PlayRequestAsync(Config.CurrentlyPlayingSongRequest, Config.CtsForAudioStreaming.Token);

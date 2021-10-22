@@ -24,6 +24,9 @@ namespace wow2.Bot.Modules.Voice
         public UserSongRequest CurrentlyPlayingSongRequest { get; set; }
 
         [JsonIgnore]
+        public UserSongRequest PlayNowRequest { get; set; }
+
+        [JsonIgnore]
         public bool IsLoopEnabled { get; set; } = false;
 
         [JsonIgnore]
