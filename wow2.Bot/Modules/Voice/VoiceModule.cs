@@ -548,7 +548,15 @@ namespace wow2.Bot.Modules.Voice
             if (DateTime.Now + TimeSpan.FromSeconds(request.VideoMetadata.duration) > request.VideoMetadata.DirectAudioExpiryDate)
                 request.VideoMetadata.DirectAudioUrl = await DownloadService.GetYoutubeAudioUrlAsync(request.VideoMetadata.id);
 
-            await play(true);
+            Config.CurrentlyPlayingSongRequest = request;
+            if (Config.IsAutoNpOn)
+                await DisplayCurrentlyPlayingRequestAsync();
+
+            do
+            {
+                await play(true);
+            }
+            while (Config.IsLoopEnabled);
 
             async Task play(bool retry)
             {
@@ -562,9 +570,7 @@ namespace wow2.Bot.Modules.Voice
                     if ((Config.IsLoopEnabled && Config.CurrentlyPlayingSongRequest != request) ||
                         !Config.IsLoopEnabled)
                     {
-                        Config.CurrentlyPlayingSongRequest = request;
-                        if (Config.IsAutoNpOn)
-                            await DisplayCurrentlyPlayingRequestAsync();
+
                     }
 
                     // Sometimes you would get an expired YouTube audio stream even though its expiry date is in the future.
@@ -574,10 +580,10 @@ namespace wow2.Bot.Modules.Voice
                     await output.CopyToAsync(discord, cancellationToken);
 
                     stopwatch.Stop();
-                    if (retry && stopwatch.ElapsedMilliseconds * 4 < request.VideoMetadata.duration * 1000)
+                    if (retry && stopwatch.ElapsedMilliseconds * 4 < Config.CurrentlyPlayingSongRequest.VideoMetadata.duration * 1000)
                     {
-                        Logger.Log($"Audio playback was too short for '{request.VideoMetadata.DirectAudioUrl}' and the direct audio URL will be refetched.", LogSeverity.Info);
-                        request.VideoMetadata.DirectAudioUrl = await DownloadService.GetYoutubeAudioUrlAsync(request.VideoMetadata.id);
+                        Logger.Log($"Audio playback was too short for '{Config.CurrentlyPlayingSongRequest.VideoMetadata.DirectAudioUrl}' and the direct audio URL will be refetched.", LogSeverity.Info);
+                        Config.CurrentlyPlayingSongRequest.VideoMetadata.DirectAudioUrl = await DownloadService.GetYoutubeAudioUrlAsync(Config.CurrentlyPlayingSongRequest.VideoMetadata.id);
                         await play(false);
                     }
                 }
@@ -613,10 +619,6 @@ namespace wow2.Bot.Modules.Voice
                 var playNow = Config.PlayNowRequest;
                 Config.PlayNowRequest = null;
                 await PlayRequestAsync(playNow, Config.CtsForAudioStreaming.Token);
-            }
-            if (Config.IsLoopEnabled && Config.CurrentlyPlayingSongRequest != null)
-            {
-                await PlayRequestAsync(Config.CurrentlyPlayingSongRequest, Config.CtsForAudioStreaming.Token);
             }
             else if (Config.CurrentSongRequestQueue.TryDequeue(out UserSongRequest nextRequest))
             {
