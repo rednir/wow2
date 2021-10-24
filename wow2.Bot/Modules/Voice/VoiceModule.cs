@@ -48,7 +48,7 @@ namespace wow2.Bot.Modules.Voice
 
         [Command("clear")]
         [Alias("empty", "reset")]
-        [Summary("Clears the song request queue.")]
+        [Summary("Clears the song request queue and stops the currently playing request.")]
         public async Task ClearAsync()
         {
             Config.CurrentSongRequestQueue.Clear();

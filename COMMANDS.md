@@ -30,7 +30,7 @@ Play YouTube or Twitch audio in a voice channel.
 |Command|Summary|
 |---|---|
 |`!wow vc list [optional:PAGE]`|Show the song request queue.|
-|`!wow vc clear`|Clears the song request queue.|
+|`!wow vc clear`|Clears the song request queue and stops the currently playing request.|
 |`!wow vc add [REQUEST]`|Adds REQUEST to the song request queue. REQUEST can be a video URL or a youtube search term.|
 |`!wow vc play-now [REQUEST]`|Plays a request immediately, stopping the currently playing request.|
 |`!wow vc remove [NUMBER]`|Removes a song request from the queue at the given index.|
