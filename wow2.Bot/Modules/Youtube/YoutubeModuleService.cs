@@ -86,7 +86,6 @@ namespace wow2.Bot.Modules.YouTube
         {
             try
             {
-                throw new GoogleApiException("Videos", "message") {HttpStatusCode = HttpStatusCode.Forbidden};
                 var listRequest = Service.Videos.List("snippet, contentDetails, statistics");
                 listRequest.Id = id;
                 listRequest.MaxResults = 1;
@@ -122,14 +121,7 @@ namespace wow2.Bot.Modules.YouTube
                         ChannelId = video.Author.ChannelId,
                         Description = video.Description,
                         PublishedAt = video.UploadDate.DateTime,
-                        Thumbnails = video.Thumbnails.Count == 0 ? new ThumbnailDetails() : new ThumbnailDetails()
-                        {
-                            Default__ = new Thumbnail() { Url = video.Thumbnails[0].Url, Width = video.Thumbnails[0].Resolution.Width, Height = video.Thumbnails[0].Resolution.Height },
-                            High = new Thumbnail() { Url = video.Thumbnails[0].Url, Width = video.Thumbnails[0].Resolution.Width, Height = video.Thumbnails[0].Resolution.Height },
-                            Medium = new Thumbnail() { Url = video.Thumbnails[0].Url, Width = video.Thumbnails[0].Resolution.Width, Height = video.Thumbnails[0].Resolution.Height },
-                            Standard = new Thumbnail() { Url = video.Thumbnails[0].Url, Width = video.Thumbnails[0].Resolution.Width, Height = video.Thumbnails[0].Resolution.Height },
-                            Maxres = new Thumbnail() { Url = video.Thumbnails[video.Thumbnails.Count - 1].Url, Width = video.Thumbnails[video.Thumbnails.Count - 1].Resolution.Width, Height = video.Thumbnails[video.Thumbnails.Count - 1].Resolution.Height },
-                        },
+                        Thumbnails = ExplodeToGoogleThumbnails(video.Thumbnails),
                     },
                 };
             }
@@ -137,16 +129,48 @@ namespace wow2.Bot.Modules.YouTube
 
         public async Task<SearchResult> SearchForAsync(string term, string type)
         {
-            var listRequest = Service.Search.List("snippet");
-            listRequest.Q = term;
-            listRequest.MaxResults = 1;
-            listRequest.Type = type;
-            var listResponse = await listRequest.ExecuteAsync();
+            try
+            {
+                var listRequest = Service.Search.List("snippet");
+                listRequest.Q = term;
+                listRequest.MaxResults = 1;
+                listRequest.Type = type;
+                var listResponse = await listRequest.ExecuteAsync();
 
-            if (listResponse.Items.Count == 0)
-                throw new ArgumentException("No videos found");
+                if (listResponse.Items.Count == 0)
+                    throw new ArgumentException("No videos found");
 
-            return listResponse.Items[0];
+                return listResponse.Items[0];
+            }
+            catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
+            {
+                Logger.Log($"Google API request '{ex.ServiceName}' returned 403, probably because your quota has been exceeded. Falling back to alternative library...", LogSeverity.Verbose);
+
+                switch (type)
+                {
+                    case "video":
+                        var searchCollection = ExplodeClient.Search.GetVideosAsync(term);
+                        var result = await searchCollection.FirstAsync();
+                        return new SearchResult()
+                        {
+                            Kind = "youtube#searchListResponse",
+                            Id = new ResourceId()
+                            {
+                                VideoId = result.Id,
+                            },
+                            Snippet = new SearchResultSnippet()
+                            {
+                                Title = result.Title,
+                                ChannelTitle = result.Author.Title,
+                                ChannelId = result.Author.ChannelId,
+                                Thumbnails = ExplodeToGoogleThumbnails(result.Thumbnails),
+                            },
+                        };
+
+                    default:
+                        throw new NotImplementedException($"The search type {type} is not implemented for fallback.");
+                }
+            }
         }
 
         public async Task CheckForNewVideosAsync()
@@ -204,6 +228,18 @@ namespace wow2.Bot.Modules.YouTube
         {
             await channel.SendMessageAsync(
                 $"**{video.Snippet.ChannelTitle}** just uploaded a new video! Check it out:\nhttps://www.youtube.com/watch?v={video.Id}");
+        }
+
+        private static ThumbnailDetails ExplodeToGoogleThumbnails(IReadOnlyList<YoutubeExplode.Common.Thumbnail> thumbnails)
+        {
+            return thumbnails.Count == 0 ? new ThumbnailDetails() : new ThumbnailDetails()
+            {
+                Default__ = new Thumbnail() { Url = thumbnails[0].Url, Width = thumbnails[0].Resolution.Width, Height = thumbnails[0].Resolution.Height },
+                High = new Thumbnail() { Url = thumbnails[0].Url, Width = thumbnails[0].Resolution.Width, Height = thumbnails[0].Resolution.Height },
+                Medium = new Thumbnail() { Url = thumbnails[0].Url, Width = thumbnails[0].Resolution.Width, Height = thumbnails[0].Resolution.Height },
+                Standard = new Thumbnail() { Url = thumbnails[0].Url, Width = thumbnails[0].Resolution.Width, Height = thumbnails[0].Resolution.Height },
+                Maxres = new Thumbnail() { Url = thumbnails[thumbnails.Count - 1].Url, Width = thumbnails[thumbnails.Count - 1].Resolution.Width, Height = thumbnails[thumbnails.Count - 1].Resolution.Height },
+            };
         }
     }
 }
