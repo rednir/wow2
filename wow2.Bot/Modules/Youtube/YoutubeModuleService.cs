@@ -70,6 +70,7 @@ namespace wow2.Bot.Modules.YouTube
             var listRequest = Service.PlaylistItems.List("snippet, contentDetails");
             listRequest.PlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
             listRequest.MaxResults = maxResults;
+
             try
             {
                 var listResponse = await listRequest.ExecuteAsync();
@@ -79,6 +80,32 @@ namespace wow2.Bot.Modules.YouTube
             {
                 // Assume the channel has no uploaded videos.
                 return new List<PlaylistItem>();
+            }
+            catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
+            {
+                Logger.Log($"Google API request '{ex.ServiceName}' returned 403, probably because your quota has been exceeded. Falling back to alternative library...", LogSeverity.Verbose);
+
+                var playlist = ExplodeClient.Channels.GetUploadsAsync(channel.Id);
+                var result = new List<PlaylistItem>();
+                await foreach (var video in playlist)
+                {
+                    if (result.Count >= maxResults)
+                        break;
+
+                    result.Add(new PlaylistItem()
+                    {
+                        Id = video.Id,
+                        Snippet = new PlaylistItemSnippet()
+                        {
+                            Title = video.Title,
+                            ChannelId = video.Author.ChannelId,
+                            ChannelTitle = video.Author.Title,
+                            Thumbnails = ExplodeToGoogleThumbnails(video.Thumbnails),
+                        },
+                    });
+                }
+
+                return result;
             }
         }
 

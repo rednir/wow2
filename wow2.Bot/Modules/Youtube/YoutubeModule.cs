@@ -115,7 +115,7 @@ namespace wow2.Bot.Modules.YouTube
                 fieldBuilders.Add(new EmbedFieldBuilder()
                 {
                     Name = upload.Snippet.Title,
-                    Value = $"[{upload.Snippet.PublishedAt.Value:dd MMM yyyy}](https://www.youtube.com/watch?v={upload.Id})",
+                    Value = $"[{(upload.Snippet.PublishedAt.HasValue ? upload.Snippet.PublishedAt.Value.ToString("dd MMM yyyy") : "Unknown date")}](https://www.youtube.com/watch?v={upload.Id})",
                     IsInline = true,
                 });
             }
