@@ -57,12 +57,39 @@ namespace wow2.Bot.Modules.YouTube
                 listRequest.ForUsername = channelIdOrUsername;
             }
 
-            var listResponse = await listRequest.ExecuteAsync();
+            try
+            {
+                var listResponse = await listRequest.ExecuteAsync();
+                throw new GoogleApiException("", "") {HttpStatusCode = HttpStatusCode.Forbidden};
+                if (listResponse.Items == null)
+                    throw new ArgumentException("No channels found");
 
-            if (listResponse.Items == null)
-                throw new ArgumentException("No channels found");
+                return listResponse.Items[0];
+            }
+            catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
+            {
+                Logger.Log($"Google API request '{ex.ServiceName}' returned 403, probably because your quota has been exceeded. Falling back to alternative library...", LogSeverity.Verbose);
 
-            return listResponse.Items[0];
+                YoutubeExplode.Channels.Channel channel;
+                if (listRequest.Id != null)
+                {
+                    channel = await ExplodeClient.Channels.GetAsync(listRequest.Id.ToString());
+                }
+                else
+                {
+                    channel = await ExplodeClient.Channels.GetByUserAsync(listRequest.ForUsername);
+                }
+
+                return new Channel()
+                {
+                    Id = channel.Id,
+                    Snippet = new ChannelSnippet()
+                    {
+                        Title = channel.Title,
+                        Thumbnails = ExplodeToGoogleThumbnails(channel.Thumbnails),
+                    },
+                };
+            }
         }
 
         public async Task<IList<PlaylistItem>> GetChannelUploadsAsync(Channel channel, long maxResults)
