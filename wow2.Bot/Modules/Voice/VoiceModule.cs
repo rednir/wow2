@@ -526,7 +526,7 @@ namespace wow2.Bot.Modules.Voice
             {
                 try
                 {
-                    var search = await YouTubeService.SearchForAsync(request.VideoMetadata.title, "videos");
+                    var search = await YouTubeService.SearchForAsync(request.VideoMetadata.title, "video");
                     var video = await YouTubeService.GetVideoAsync(search.Id.VideoId);
                     request.VideoMetadata = new VideoMetadata(video)
                     {
