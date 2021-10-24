@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using System.Xml;
+using Discord;
 using Discord.WebSocket;
 using Google;
 using Google.Apis.Services;
@@ -9,12 +12,15 @@ using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using wow2.Bot.Data;
 using wow2.Bot.Verbose;
+using YoutubeExplode;
 
 namespace wow2.Bot.Modules.YouTube
 {
     public class YoutubeModuleService : IYoutubeModuleService
     {
         private readonly YouTubeService Service;
+
+        public static YoutubeClient ExplodeClient { get; } = new();
 
         private DateTime TimeOfLastVideoCheck = DateTime.Now;
 
@@ -78,15 +84,55 @@ namespace wow2.Bot.Modules.YouTube
 
         public async Task<Video> GetVideoAsync(string id)
         {
-            var listRequest = Service.Videos.List("snippet, contentDetails, statistics");
-            listRequest.Id = id;
-            listRequest.MaxResults = 1;
-            var listResponse = await listRequest.ExecuteAsync();
+            try
+            {
+                throw new GoogleApiException("Videos", "message") {HttpStatusCode = HttpStatusCode.Forbidden};
+                var listRequest = Service.Videos.List("snippet, contentDetails, statistics");
+                listRequest.Id = id;
+                listRequest.MaxResults = 1;
+                var listResponse = await listRequest.ExecuteAsync();
 
-            if (listResponse.Items.Count == 0)
-                throw new ArgumentException("No videos found");
+                if (listResponse.Items.Count == 0)
+                    throw new ArgumentException("No videos found");
 
-            return listResponse.Items[0];
+                return listResponse.Items[0];
+            }
+            catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
+            {
+                Logger.Log($"Google API request '{ex.ServiceName}' returned 403, probably because your quota has been exceeded. Falling back to alternative library...", LogSeverity.Verbose);
+
+                var video = await ExplodeClient.Videos.GetAsync(id);
+                return new Video()
+                {
+                    Id = video.Id,
+                    ContentDetails = new VideoContentDetails()
+                    {
+                        Duration = video.Duration.HasValue ? $"PT{video.Duration.Value.Minutes}M{video.Duration.Value.Seconds}S" : null,
+                    },
+                    Statistics = new VideoStatistics()
+                    {
+                        LikeCount = (ulong)video.Engagement.LikeCount,
+                        DislikeCount = (ulong)video.Engagement.DislikeCount,
+                        ViewCount = (ulong)video.Engagement.ViewCount,
+                    },
+                    Snippet = new VideoSnippet()
+                    {
+                        Title = video.Title,
+                        ChannelTitle = video.Author.Title,
+                        ChannelId = video.Author.ChannelId,
+                        Description = video.Description,
+                        PublishedAt = video.UploadDate.DateTime,
+                        Thumbnails = video.Thumbnails.Count == 0 ? new ThumbnailDetails() : new ThumbnailDetails()
+                        {
+                            Default__ = new Thumbnail() { Url = video.Thumbnails[0].Url, Width = video.Thumbnails[0].Resolution.Width, Height = video.Thumbnails[0].Resolution.Height },
+                            High = new Thumbnail() { Url = video.Thumbnails[0].Url, Width = video.Thumbnails[0].Resolution.Width, Height = video.Thumbnails[0].Resolution.Height },
+                            Medium = new Thumbnail() { Url = video.Thumbnails[0].Url, Width = video.Thumbnails[0].Resolution.Width, Height = video.Thumbnails[0].Resolution.Height },
+                            Standard = new Thumbnail() { Url = video.Thumbnails[0].Url, Width = video.Thumbnails[0].Resolution.Width, Height = video.Thumbnails[0].Resolution.Height },
+                            Maxres = new Thumbnail() { Url = video.Thumbnails[video.Thumbnails.Count - 1].Url, Width = video.Thumbnails[video.Thumbnails.Count - 1].Resolution.Width, Height = video.Thumbnails[video.Thumbnails.Count - 1].Resolution.Height },
+                        },
+                    },
+                };
+            }
         }
 
         public async Task<SearchResult> SearchForAsync(string term, string type)
