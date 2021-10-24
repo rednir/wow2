@@ -60,7 +60,6 @@ namespace wow2.Bot.Modules.YouTube
             try
             {
                 var listResponse = await listRequest.ExecuteAsync();
-                throw new GoogleApiException("", "") {HttpStatusCode = HttpStatusCode.Forbidden};
                 if (listResponse.Items == null)
                     throw new ArgumentException("No channels found");
 
