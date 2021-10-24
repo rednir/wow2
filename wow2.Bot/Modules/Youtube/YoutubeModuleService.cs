@@ -75,9 +75,9 @@ namespace wow2.Bot.Modules.YouTube
                 var listResponse = await listRequest.ExecuteAsync();
                 return listResponse.Items;
             }
-            catch (GoogleApiException)
+            catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.NotFound)
             {
-                // Empty list, assume the channel has no uploads
+                // Assume the channel has no uploaded videos.
                 return new List<PlaylistItem>();
             }
         }
