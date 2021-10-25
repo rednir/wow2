@@ -72,7 +72,7 @@ namespace wow2.Bot.Modules.YouTube
                 YoutubeExplode.Channels.Channel channel;
                 if (listRequest.Id != null)
                 {
-                    channel = await ExplodeClient.Channels.GetAsync(listRequest.Id.ToString());
+                    channel = await ExplodeClient.Channels.GetAsync(listRequest.Id.First());
                 }
                 else
                 {
@@ -93,46 +93,60 @@ namespace wow2.Bot.Modules.YouTube
 
         public async Task<IList<PlaylistItem>> GetChannelUploadsAsync(Channel channel, long maxResults)
         {
-            var listRequest = Service.PlaylistItems.List("snippet, contentDetails");
-            listRequest.PlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
-            listRequest.MaxResults = maxResults;
-
-            try
+            if (channel.ContentDetails?.RelatedPlaylists?.Uploads == null)
             {
-                var listResponse = await listRequest.ExecuteAsync();
-                return listResponse.Items;
+                Logger.Log("Youtube channel object does not contain a upload playlist ID to query. Falling back to alternative library...", LogSeverity.Verbose);
             }
-            catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.NotFound)
+            else
             {
-                // Assume the channel has no uploaded videos.
-                return new List<PlaylistItem>();
-            }
-            catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
-            {
-                Logger.Log($"Google API request '{ex.ServiceName}' returned 403, probably because your quota has been exceeded. Falling back to alternative library...", LogSeverity.Verbose);
+                var listRequest = Service.PlaylistItems.List("snippet, contentDetails");
+                listRequest.PlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
+                listRequest.MaxResults = maxResults;
 
-                var playlist = ExplodeClient.Channels.GetUploadsAsync(channel.Id);
-                var result = new List<PlaylistItem>();
-                await foreach (var video in playlist)
+                try
                 {
-                    if (result.Count >= maxResults)
-                        break;
-
-                    result.Add(new PlaylistItem()
-                    {
-                        Id = video.Id,
-                        Snippet = new PlaylistItemSnippet()
-                        {
-                            Title = video.Title,
-                            ChannelId = video.Author.ChannelId,
-                            ChannelTitle = video.Author.Title,
-                            Thumbnails = ExplodeToGoogleThumbnails(video.Thumbnails),
-                        },
-                    });
+                    var listResponse = await listRequest.ExecuteAsync();
+                    return listResponse.Items;
                 }
-
-                return result;
+                catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.NotFound)
+                {
+                    // Assume the channel has no uploaded videos.
+                    return new List<PlaylistItem>();
+                }
+                catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
+                {
+                    Logger.Log($"Google API request '{ex.ServiceName}' returned 403, probably because your quota has been exceeded. Falling back to alternative library...", LogSeverity.Verbose);
+                }
             }
+
+            var playlist = ExplodeClient.Channels.GetUploadsAsync(channel.Id);
+            var result = new List<PlaylistItem>();
+            await foreach (var playlistVideo in playlist)
+            {
+                if (result.Count >= maxResults)
+                    break;
+
+                // Need to make another request to get PublishedAt unfortunately...
+                var video = await GetVideoAsync(playlistVideo.Id);
+
+                result.Add(new PlaylistItem()
+                {
+                    Snippet = new PlaylistItemSnippet()
+                    {
+                        Title = playlistVideo.Title,
+                        ChannelId = playlistVideo.Author.ChannelId,
+                        ChannelTitle = playlistVideo.Author.Title,
+                        Thumbnails = ExplodeToGoogleThumbnails(playlistVideo.Thumbnails),
+                        PublishedAt = video.Snippet.PublishedAt,
+                    },
+                    ContentDetails = new PlaylistItemContentDetails()
+                    {
+                        VideoId = video.Id,
+                    },
+                });
+            }
+
+            return result;
         }
 
         public async Task<Video> GetVideoAsync(string id)
@@ -241,7 +255,6 @@ namespace wow2.Bot.Modules.YouTube
                 var subscribedChannelIds = config.SubscribedChannels;
                 foreach (string id in subscribedChannelIds.Select(c => c.Id))
                 {
-                    // TODO: proper error handling.
                     IList<PlaylistItem> uploads = await GetChannelUploadsAsync(await GetChannelAsync(id), 1);
                     if (uploads.Count == 0)
                         continue;
