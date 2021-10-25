@@ -566,13 +566,6 @@ namespace wow2.Bot.Modules.Voice
 
                 try
                 {
-                    // No need to np if loop is enabled, and it is not the first time the song is playing.
-                    if ((Config.IsLoopEnabled && Config.CurrentlyPlayingSongRequest != request) ||
-                        !Config.IsLoopEnabled)
-                    {
-
-                    }
-
                     // Sometimes you would get an expired YouTube audio stream even though its expiry date is in the future.
                     // This is a hacky workaround, retrying playback if the audio stream is empty (assumed by actual playback time)
                     var stopwatch = new Stopwatch();
