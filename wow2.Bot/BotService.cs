@@ -296,6 +296,7 @@ namespace wow2.Bot
         {
             if (IsDisabled && context.User.Id != ApplicationInfo.Owner.Id)
             {
+                Logger.Log($"Blocked command {input} for {context.User} in {context.Guild.Name}/{context.Channel}", LogSeverity.Verbose);
                 await new WarningMessage("You can't use any commands right now. Check my Discord status to see when I go back online, or shoot me a DM.", "The bot is under maintenance.")
                     .SendAsync(context.Channel);
                 return null;
@@ -420,6 +421,7 @@ namespace wow2.Bot
 
             if (context.Message.Content == commandPrefix)
             {
+                Logger.Log($"Executed blank command for {context.User} in {context.Guild.Name}/{context.Channel}", LogSeverity.Verbose);
                 await new AboutMessage(commandPrefix)
                     .SendAsync(context.Channel);
                 return;
