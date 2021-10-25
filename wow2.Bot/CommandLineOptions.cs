@@ -31,6 +31,17 @@ namespace wow2.Bot
             Logger.Log($"Wrote to {Path.GetFullPath("COMMANDS.md")}", LogSeverity.Info);
         }
 
+        [MethodOption("disabled", 'd', Description = "Starts the bot disabled to all except bot owner.")]
+        public async void Disabled()
+        {
+            BotService.IsDisabled = true;
+            BotService.Client.Ready += async () =>
+            {
+                await BotService.Client.SetGameAsync("RESTARTING...");
+                await BotService.Client.SetStatusAsync(UserStatus.DoNotDisturb);
+            };
+        }
+
         [MethodOption("debug", 'd', Description = "Enables more verbose logging.")]
         public void EnableDebugLogging()
         {

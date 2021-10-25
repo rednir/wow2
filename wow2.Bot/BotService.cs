@@ -35,7 +35,10 @@ namespace wow2.Bot
 {
     public static class BotService
     {
-        public static DiscordSocketClient Client { get; set; }
+        public static DiscordSocketClient Client { get; set; } = new DiscordSocketClient(new DiscordSocketConfig()
+        {
+            AlwaysDownloadUsers = true,
+        });
 
         public static RestApplication ApplicationInfo { get; set; }
 
@@ -50,11 +53,6 @@ namespace wow2.Bot
 
         public static async Task InitializeAndStartClientAsync()
         {
-            Client = new DiscordSocketClient(new DiscordSocketConfig()
-            {
-                AlwaysDownloadUsers = true,
-            });
-
             Client.Ready += ReadyAsync;
             Client.Log += DiscordLogRecievedAsync;
 
