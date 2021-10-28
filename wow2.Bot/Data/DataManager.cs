@@ -129,7 +129,15 @@ namespace wow2.Bot.Data
             if (!AllGuildData.TryGetValue(guildId, out GuildData guildData))
                 throw new KeyNotFoundException($"The guild ID {guildId} was not found in the dictionary");
 
-            EnsureGuildNameExists(guildId);
+            try
+            {
+                guildData.NameOfGuild = BotService.Client.GetGuild(guildId).Name;
+            }
+            catch
+            {
+                Logger.Log($"Could not fetch name of guild {guildId}", LogSeverity.Warning);
+            }
+
             await File.WriteAllTextAsync(
                 $"{GuildDataDirPath}/{guildId}.json", JsonSerializer.Serialize(guildData, SerializerOptions));
             Logger.Log($"Saved guild data for {AllGuildData[guildId]?.NameOfGuild} ({guildId})", LogSeverity.Verbose);
@@ -160,22 +168,6 @@ namespace wow2.Bot.Data
             await SaveGuildDataToFileAsync(guildId);
             AllGuildData.Remove(guildId);
             Logger.Log($"Unloaded guild data for {guildId}", LogSeverity.Verbose);
-        }
-
-        public static void EnsureGuildNameExists(ulong guildId)
-        {
-            var guildData = AllGuildData[guildId];
-            if (guildData?.NameOfGuild == null)
-            {
-                try
-                {
-                    guildData.NameOfGuild = BotService.Client.GetGuild(guildId).Name;
-                }
-                catch
-                {
-                    Logger.Log($"Could not get name of guild {guildId}", LogSeverity.Warning);
-                }
-            }
         }
     }
 }
