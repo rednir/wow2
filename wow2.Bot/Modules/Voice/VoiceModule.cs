@@ -575,7 +575,7 @@ namespace wow2.Bot.Modules.Voice
                     stopwatch.Stop();
                     if (retry && stopwatch.ElapsedMilliseconds * 4 < Config.CurrentlyPlayingSongRequest.VideoMetadata.duration * 1000)
                     {
-                        Logger.Log($"Audio playback was too short for '{Config.CurrentlyPlayingSongRequest.VideoMetadata.DirectAudioUrl}' and the direct audio URL will be refetched.", LogSeverity.Info);
+                        Logger.Log($"Audio playback was too short for request '{Config.CurrentlyPlayingSongRequest.VideoMetadata.title}' ({stopwatch.ElapsedMilliseconds}/{Config.CurrentlyPlayingSongRequest.VideoMetadata.duration * 1000}ms) and the direct audio URL will be refetched.", LogSeverity.Info);
                         Config.CurrentlyPlayingSongRequest.VideoMetadata.DirectAudioUrl = await DownloadService.GetYoutubeAudioUrlAsync(Config.CurrentlyPlayingSongRequest.VideoMetadata.id);
                         await play(false);
                     }
