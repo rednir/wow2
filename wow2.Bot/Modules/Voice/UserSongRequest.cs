@@ -15,7 +15,7 @@ namespace wow2.Bot.Modules.Voice
             TimeRequested = DateTime.Now;
             RequestedByMention = requestedBy.Mention;
         }
-        
+
         public VideoMetadata VideoMetadata { get; set; }
 
         public DateTime TimeRequested { get; set; }

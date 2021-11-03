@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using wow2.Bot.Modules.Games.Counting;
-using wow2.Bot.Modules.Games.VerbalMemory;
 using wow2.Bot.Modules.Games.Typing;
+using wow2.Bot.Modules.Games.VerbalMemory;
 
 namespace wow2.Bot.Modules.Games
 {

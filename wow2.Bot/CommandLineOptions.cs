@@ -32,7 +32,7 @@ namespace wow2.Bot
         }
 
         [MethodOption("disabled", 'd', Description = "Starts the bot disabled to all except bot owner.")]
-        public async void Disabled()
+        public void Disabled()
         {
             BotService.IsDisabled = true;
             BotService.Client.Ready += async () =>
