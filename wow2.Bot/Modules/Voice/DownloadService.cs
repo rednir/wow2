@@ -147,7 +147,7 @@ namespace wow2.Bot.Modules.Voice
             var videos = new List<VideoMetadata>();
             foreach (var item in playlist.Items)
             {
-                if (item.Track.Type != ItemType.Track)
+                if (item.Track?.Type != ItemType.Track)
                     continue;
 
                 videos.Add(new VideoMetadata((FullTrack)item.Track));
