@@ -15,6 +15,7 @@ using wow2.Bot.Extensions;
 using wow2.Bot.Modules.YouTube;
 using wow2.Bot.Verbose;
 using wow2.Bot.Verbose.Messages;
+using YoutubeExplode.Exceptions;
 
 namespace wow2.Bot.Modules.Voice
 {
@@ -431,6 +432,10 @@ namespace wow2.Bot.Modules.Voice
             catch (ArgumentException ex)
             {
                 throw new CommandReturnException(Context, $"{ex.Message}", "Invalid input");
+            }
+            catch (VideoUnplayableException)
+            {
+                throw new CommandReturnException(Context, "The video is most likely age-restricted.", "Video is unplayable");
             }
             catch (Exception ex)
             {
