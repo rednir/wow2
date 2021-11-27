@@ -22,7 +22,7 @@ namespace wow2.Bot.Modules.Voice
     [Name("Voice")]
     [Group("vc")]
     [Alias("voice")]
-    [Summary("Play YouTube or Twitch audio in a voice channel.")]
+    [Summary("Play YouTube, Twitch or Spotify audio in a voice channel.")]
     public class VoiceModule : Module
     {
         public VoiceModuleConfig Config => DataManager.AllGuildData[Context.Guild.Id].Voice;

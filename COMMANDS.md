@@ -25,7 +25,7 @@ Integrations with YouTube, like getting notified for new videos.
 |`!wow yt set-announcements-channel [CHANNEL]`|Sets the channel where notifications about new videos will be sent.|
 
 ## Voice (22)
-Play YouTube or Twitch audio in a voice channel.
+Play YouTube, Twitch or Spotify audio in a voice channel.
 
 |Command|Summary|
 |---|---|
