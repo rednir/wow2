@@ -59,7 +59,7 @@ namespace wow2.Bot.Modules.Voice
                 },
                 Title = (Request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {Request.VideoMetadata.description}" : Request.VideoMetadata.title) + $" *({Request.VideoMetadata.uploader})*",
                 ThumbnailUrl = Request.VideoMetadata.thumbnails.FirstOrDefault()?.url,
-                Description = $"Requested at {Request.TimeRequested.ToDiscordTimestamp("R")} by {Request.RequestedByMention}",
+                Description = $"Requested {Request.TimeRequested.ToDiscordTimestamp("R")} by {Request.RequestedByMention}",
                 Color = Color.LightGrey,
             };
         }
