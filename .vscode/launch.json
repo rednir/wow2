@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/wow2.Bot/bin/Debug/net5.0/wow2.Bot.dll",
+            "program": "${workspaceFolder}/wow2.Bot/bin/Debug/net6.0/wow2.Bot.dll",
             "env": {
                 "WOW2_APPDATA_FOLDER": "./DebugAppdata"
             },
