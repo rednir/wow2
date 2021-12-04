@@ -77,7 +77,7 @@ namespace wow2.Bot.Modules.Games
                     result.Add(new EmbedFieldBuilder()
                     {
                         Name = place == 0 ? $" • {placeInLeaderboard}) {Points} points" : $"{(placeInLeaderboard > place ? place : place + 1)}) {entry.Points} points",
-                        Value = place == 0 ? $"{InitialContext.User.Mention} is currently playing..." : $"{entry.PlayedByMention} at {entry.PlayedAt.ToDiscordTimestamp("f")}",
+                        Value = place == 0 ? $"{InitialContext.User.Mention} is currently playing..." : $"{entry.PlayedByMention} {entry.PlayedAt.ToDiscordTimestamp("R")}",
                     });
                 }
             }

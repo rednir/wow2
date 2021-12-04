@@ -72,7 +72,7 @@ namespace wow2.Bot.Modules.Dev
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
                     Name = $"{guild.Name} *({guild.Id})*",
-                    Value = $"Joined {DateTime.FromBinary(guildData?.DateTimeJoinedBinary ?? default).ToLongDateString()} with {guild.MemberCount} members.",
+                    Value = $"Joined {DateTime.FromBinary(guildData?.DateTimeJoinedBinary ?? default).ToDiscordTimestamp("F")} with {guild.MemberCount} members.",
                 });
             }
 
