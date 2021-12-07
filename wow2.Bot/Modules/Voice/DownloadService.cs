@@ -133,27 +133,31 @@ namespace wow2.Bot.Modules.Voice
 
         private static async Task<List<VideoMetadata>> GetMetadataFromSpotifyPlaylistAsync(string url)
         {
-            Paging<PlaylistTrack<IPlayableItem>> playlist;
-            try
-            {
-                var uri = new Uri(url);
-                playlist = await SpotifyService.Client.Playlists.GetItems(uri.Segments.Last());
-            }
-            catch (UriFormatException)
-            {
-                return null;
-            }
+            var result = new List<VideoMetadata>();
+            await helper(0);
+            return result;
 
-            var videos = new List<VideoMetadata>();
-            foreach (var item in playlist.Items)
+            async Task helper(int offset)
             {
-                if (item.Track?.Type != ItemType.Track)
-                    continue;
+                if (!Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var uri))
+                    return;
 
-                videos.Add(new VideoMetadata((FullTrack)item.Track));
+                Paging<PlaylistTrack<IPlayableItem>> playlist = await SpotifyService.Client.Playlists.GetItems(
+                    uri.Segments.Last(), new PlaylistGetItemsRequest() { Limit = 100, Offset = offset });
+
+                foreach (var item in playlist.Items)
+                {
+                    if (item.Track?.Type != ItemType.Track)
+                        continue;
+
+                    result.Add(new VideoMetadata((FullTrack)item.Track));
+                }
+
+                // The max amount of playlist items returned by the spotify api is 100.
+                // Make another request if there are still more songs to discover (but avoid too many requests).
+                if (result.Count % 100 == 0 && offset < 1000)
+                    await helper(offset + 100);
             }
-
-            return videos;
         }
 
         private static async Task<List<VideoMetadata>> GetMetadataFromSpotifyAlbumAsync(string url)
