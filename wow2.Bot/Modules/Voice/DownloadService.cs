@@ -48,6 +48,12 @@ namespace wow2.Bot.Modules.Voice
                 VideoMetadataCache.Add(searchOrUrl, twitchMetadata);
                 return twitchMetadata;
             }
+            else if (searchOrUrl.Contains("open.spotify.com/track/"))
+            {
+                var spotifyTrackMetadata = new List<VideoMetadata>() { await GetMetadataFromSpotifyTrackAsync(searchOrUrl) };
+                VideoMetadataCache.Add(searchOrUrl, spotifyTrackMetadata);
+                return spotifyTrackMetadata;
+            }
             else if (searchOrUrl.Contains("open.spotify.com/playlist/"))
             {
                 var spotifyPlaylistMetadata = await GetMetadataFromSpotifyPlaylistAsync(searchOrUrl);
@@ -131,6 +137,15 @@ namespace wow2.Bot.Modules.Voice
             return JsonSerializer.Deserialize<VideoMetadata>(standardOutput);
         }
 
+        private static async Task<VideoMetadata> GetMetadataFromSpotifyTrackAsync(string url)
+        {
+            if (!Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out var uri))
+                return null;
+
+            var track = await SpotifyService.Client.Tracks.Get(uri.Segments.Last());
+            return new VideoMetadata(track);
+        }
+
         private static async Task<List<VideoMetadata>> GetMetadataFromSpotifyPlaylistAsync(string url)
         {
             var result = new List<VideoMetadata>();
@@ -162,6 +177,7 @@ namespace wow2.Bot.Modules.Voice
 
         private static async Task<List<VideoMetadata>> GetMetadataFromSpotifyAlbumAsync(string url)
         {
+            // TODO: use try create method.
             FullAlbum album;
             try
             {
