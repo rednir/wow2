@@ -440,7 +440,7 @@ namespace wow2.Bot.Modules.Voice
             catch (Exception ex)
             {
                 Logger.LogException(ex, "Could not fetch video metadata");
-                await new ErrorMessage("One or more errors were returned.", "Could not fetch video metadata")
+                await new ErrorMessage($"```{ex}```", "Could not fetch video metadata")
                     .SendAsync(Context.Channel);
                 throw new CommandReturnException();
             }
