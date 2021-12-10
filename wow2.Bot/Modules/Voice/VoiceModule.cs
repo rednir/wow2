@@ -529,9 +529,12 @@ namespace wow2.Bot.Modules.Voice
         {
             if (request.VideoMetadata.LookupTitleOnYoutube)
             {
+                string searchTerm = request.VideoMetadata.title + " audio";
+                Logger.Log($"About to lookup spotify request {searchTerm} on youtube.", LogSeverity.Debug);
+
                 try
                 {
-                    var search = await YouTubeService.SearchForAsync(request.VideoMetadata.title, "video");
+                    var search = await YouTubeService.SearchForAsync(searchTerm, "video");
                     var video = await YouTubeService.GetVideoAsync(search.Id.VideoId);
                     request.VideoMetadata = new VideoMetadata(video)
                     {
