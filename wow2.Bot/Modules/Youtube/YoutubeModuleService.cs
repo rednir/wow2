@@ -240,6 +240,12 @@ namespace wow2.Bot.Modules.YouTube
             }
         }
 
+        public async Task<string> GetYoutubeAudioUrlAsync(string videoId)
+        {
+            var streams = await ExplodeClient.Videos.Streams.GetManifestAsync(videoId);
+            return streams.GetAudioOnlyStreams().LastOrDefault(v => v.AudioCodec == "opus")?.Url;
+        }
+
         public async Task CheckForNewVideosAsync()
         {
             // Dictionary where the key is the video ID, and the

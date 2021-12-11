@@ -24,8 +24,6 @@ namespace wow2.Bot.Modules.Voice
 
         public static ISpotifyModuleService SpotifyService { get; set; }
 
-        public static YoutubeClient YoutubeExplodeClient { get; } = new();
-
         public static Cache<List<VideoMetadata>> VideoMetadataCache { get; } = new(120);
 
         /// <summary>Looks up a URL or search term and gets the video metadata.</summary>
@@ -74,7 +72,7 @@ namespace wow2.Bot.Modules.Voice
 
             var result = new List<VideoMetadata>()
             {
-                new VideoMetadata(video) { DirectAudioUrl = await GetYoutubeAudioUrlAsync(video.Id) },
+                new VideoMetadata(video) { DirectAudioUrl = await YouTubeService.GetYoutubeAudioUrlAsync(video.Id) },
             };
 
             VideoMetadataCache.Add(searchOrUrl, result);
@@ -98,12 +96,6 @@ namespace wow2.Bot.Modules.Voice
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
             });
-        }
-
-        public static async Task<string> GetYoutubeAudioUrlAsync(string videoId)
-        {
-            var streams = await YoutubeExplodeClient.Videos.Streams.GetManifestAsync(videoId);
-            return streams.GetAudioOnlyStreams().LastOrDefault(v => v.AudioCodec == "opus")?.Url;
         }
 
         private static async Task<VideoMetadata> GetMetadataFromYoutubeDlAsync(string input)

@@ -540,7 +540,7 @@ namespace wow2.Bot.Modules.Voice
                     {
                         // Remember what the original source was.
                         extractor = request.VideoMetadata.extractor,
-                        DirectAudioUrl = await DownloadService.GetYoutubeAudioUrlAsync(video.Id),
+                        DirectAudioUrl = await YouTubeService.GetYoutubeAudioUrlAsync(video.Id),
                     };
                 }
                 catch (Exception ex)
@@ -554,7 +554,7 @@ namespace wow2.Bot.Modules.Voice
             }
 
             if (DateTime.Now + TimeSpan.FromSeconds(request.VideoMetadata.duration) > request.VideoMetadata.DirectAudioExpiryDate)
-                request.VideoMetadata.DirectAudioUrl = await DownloadService.GetYoutubeAudioUrlAsync(request.VideoMetadata.id);
+                request.VideoMetadata.DirectAudioUrl = await YouTubeService.GetYoutubeAudioUrlAsync(request.VideoMetadata.id);
 
             Config.CurrentlyPlayingSongRequest = request;
             if (Config.IsAutoNpOn)
@@ -584,7 +584,7 @@ namespace wow2.Bot.Modules.Voice
                     if (retry && stopwatch.ElapsedMilliseconds * 4 < Config.CurrentlyPlayingSongRequest.VideoMetadata.duration * 1000)
                     {
                         Logger.Log($"Audio playback was too short for request '{Config.CurrentlyPlayingSongRequest.VideoMetadata.title}' ({stopwatch.ElapsedMilliseconds}/{Config.CurrentlyPlayingSongRequest.VideoMetadata.duration * 1000}ms) and the direct audio URL will be refetched.", LogSeverity.Info);
-                        Config.CurrentlyPlayingSongRequest.VideoMetadata.DirectAudioUrl = await DownloadService.GetYoutubeAudioUrlAsync(Config.CurrentlyPlayingSongRequest.VideoMetadata.id);
+                        Config.CurrentlyPlayingSongRequest.VideoMetadata.DirectAudioUrl = await YouTubeService.GetYoutubeAudioUrlAsync(Config.CurrentlyPlayingSongRequest.VideoMetadata.id);
                         await play(false);
                     }
                 }
