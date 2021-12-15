@@ -53,7 +53,7 @@ namespace wow2.Bot.Modules.Voice
         public async Task ClearAsync()
         {
             Config.CurrentSongRequestQueue.Clear();
-            StopPlaying(Config);
+            StopPlaying();
             await new SuccessMessage("The song request queue was cleared.")
                 .SendAsync(Context.Channel);
         }
@@ -77,7 +77,7 @@ namespace wow2.Bot.Modules.Voice
                     onConfirm: async () =>
                     {
                         Config.CurrentSongRequestQueue.Clear();
-                        StopPlaying(Config);
+                        StopPlaying();
                         await next();
                     },
                     onDeny: next)
@@ -253,7 +253,7 @@ namespace wow2.Bot.Modules.Voice
         [Summary("Leaves the voice channel.")]
         public async Task LeaveAsync()
         {
-            StopPlaying(Config);
+            StopPlaying();
 
             if (Config.AudioClient == null || Config.AudioClient?.ConnectionState == ConnectionState.Disconnected)
                 throw new CommandReturnException(Context, "I'm not currently in a voice channel.");
@@ -415,12 +415,12 @@ namespace wow2.Bot.Modules.Voice
                 .SendAsync(Context.Channel);
         }
 
-        private static void StopPlaying(VoiceModuleConfig config)
+        private void StopPlaying()
         {
-            config.ListOfUserIdsThatVoteSkipped.Clear();
-            config.CtsForAudioStreaming.Cancel();
-            config.CtsForAudioStreaming = new CancellationTokenSource();
-            config.CurrentlyPlayingSongRequest = null;
+            Config.ListOfUserIdsThatVoteSkipped.Clear();
+            Config.CtsForAudioStreaming.Cancel();
+            Config.CtsForAudioStreaming = new CancellationTokenSource();
+            Config.CurrentlyPlayingSongRequest = null;
         }
 
         private async Task<List<VideoMetadata>> GetMetadataForRequestAsync(string request)
@@ -600,7 +600,7 @@ namespace wow2.Bot.Modules.Voice
         /// <summary>Continue to the next song request, if it exists. Otherwise notify the user that the queue is empty.</summary>
         private async Task ContinueAsync()
         {
-            StopPlaying(Config);
+            StopPlaying();
 
             if (CheckIfAudioClientDisconnected(Config.AudioClient))
                 return;
@@ -608,7 +608,7 @@ namespace wow2.Bot.Modules.Voice
             var users = Context.Guild.GetUser(Context.Client.CurrentUser.Id)?.VoiceChannel?.Users;
             if (users?.Count < 2)
             {
-                StopPlaying(Config);
+                StopPlaying();
                 await Config.AudioClient.StopAsync();
                 await new InfoMessage("I left the voice channel since there's nobody here to listen.")
                     .SendAsync(Context.Channel);
