@@ -8,7 +8,7 @@ namespace wow2.Bot.Modules.Games.Typing
     {
         public TypingLeaderboardMessage(List<TypingLeaderboardEntry> leaderboardEntries, int? page = null)
             : base(
-                leaderboardEntries: leaderboardEntries.Cast<LeaderboardEntry>().ToArray(),
+                leaderboardEntries: leaderboardEntries.Cast<LeaderboardEntry>().DistinctBy(e => e.PlayedByMention),
                 detailsPredicate: e =>
                 {
                     var entry = (TypingLeaderboardEntry)e;
@@ -19,7 +19,5 @@ namespace wow2.Bot.Modules.Games.Typing
                 page: page)
         {
         }
-
-        protected override bool OnlyShowUsersBestScore => true;
     }
 }

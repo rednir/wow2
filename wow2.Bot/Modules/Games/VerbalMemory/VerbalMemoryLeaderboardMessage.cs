@@ -7,7 +7,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
     {
         public VerbalMemoryLeaderboardMessage(List<VerbalMemoryLeaderboardEntry> leaderboardEntries, int? page = null)
             : base(
-                leaderboardEntries: leaderboardEntries.Cast<LeaderboardEntry>().ToArray(),
+                leaderboardEntries: leaderboardEntries.Cast<LeaderboardEntry>().DistinctBy(e => e.PlayedByMention).ToArray(),
                 detailsPredicate: e =>
                 {
                     var entry = (VerbalMemoryLeaderboardEntry)e;
@@ -18,7 +18,5 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
                 page: page)
         {
         }
-
-        protected override bool OnlyShowUsersBestScore => true;
     }
 }

@@ -37,7 +37,7 @@ namespace wow2.Bot.Modules.Games
         [Summary("Shows the leaderboard for the counting game.")]
         public async Task CountingLeaderboardAsync(int page = 1)
         {
-            await new CountingLeaderboardMessage(Config.CountingLeaderboard, page)
+            await new CountingLeaderboardMessage(Config.CountingLeaderboard.DistinctBy(e => e.PlayedByMention), page)
                 .SendAsync(Context.Channel);
         }
 
@@ -46,7 +46,7 @@ namespace wow2.Bot.Modules.Games
         [Summary("Try remember as many words as you can.")]
         public async Task VerbalMemoryAsync()
         {
-            var message = new VerbalMemoryGameMessage(Context, Config.VerbalMemoryLeaderboard, Config.GameResourceService);
+            var message = new VerbalMemoryGameMessage(Context, Config.VerbalMemoryLeaderboard.DistinctBy(e => e.PlayedByMention), Config.GameResourceService);
             message.SubmitGame = () =>
             {
                 var entry = new VerbalMemoryLeaderboardEntry(message);

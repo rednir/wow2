@@ -10,7 +10,7 @@ namespace wow2.Bot.Modules.Games.VerbalMemory
 {
     public class VerbalMemoryGameMessage : GameMessage
     {
-        public VerbalMemoryGameMessage(SocketCommandContext context, List<VerbalMemoryLeaderboardEntry> leaderboard, GameResourceService resourceService)
+        public VerbalMemoryGameMessage(SocketCommandContext context, IEnumerable<VerbalMemoryLeaderboardEntry> leaderboard, GameResourceService resourceService)
             : base(context, leaderboard.Cast<LeaderboardEntry>().ToArray(), resourceService)
         {
         }
