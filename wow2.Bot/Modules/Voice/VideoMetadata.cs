@@ -31,8 +31,10 @@ namespace wow2.Bot.Modules.Voice
 
         public VideoMetadata(FullTrack spotifyTrack)
         {
+            string artist = spotifyTrack.Artists.FirstOrDefault()?.Name;
+
             LookupTitleOnYoutube = true;
-            Title = $"{spotifyTrack.Artists.FirstOrDefault()?.Name} - {spotifyTrack.Name}";
+            Title = string.IsNullOrWhiteSpace(artist) ? spotifyTrack.Name : $"{artist} - {spotifyTrack.Name}";
             Uploader = "Spotify";
             WebpageUrl = "https://open.spotify.com/track/" + spotifyTrack.Id;
             Extractor = "spotify";
@@ -41,8 +43,10 @@ namespace wow2.Bot.Modules.Voice
 
         public VideoMetadata(SimpleTrack spotifyTrack)
         {
+            string artist = spotifyTrack.Artists.FirstOrDefault()?.Name;
+
             LookupTitleOnYoutube = true;
-            Title = $"{spotifyTrack.Artists.FirstOrDefault()?.Name} - {spotifyTrack.Name}";
+            Title = string.IsNullOrWhiteSpace(artist) ? spotifyTrack.Name : $"{artist} - {spotifyTrack.Name}";
             Uploader = "Spotify";
             WebpageUrl = "https://open.spotify.com/track/" + spotifyTrack.Id;
             Extractor = "spotify";
