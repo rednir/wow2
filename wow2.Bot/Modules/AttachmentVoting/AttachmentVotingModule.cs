@@ -114,7 +114,7 @@ namespace wow2.Bot.Modules.AttachmentVoting
                 listOfFieldBuilders.Add(new EmbedFieldBuilder()
                 {
                     Name = $"{num}) {attachment.Points} points",
-                    Value = $"[{attachment.FileName}]({attachment.MessageUrl}) by {attachment.AuthorMention} at {attachment.DateTime.ToShortDateString()}\n{attachment.UsersLikedIds.Count} {LikeReactionEmote}   |   {attachment.UsersDislikedIds.Count} {DislikeReactionEmote}",
+                    Value = $"[{attachment.FileName}]({attachment.MessageUrl}) by {attachment.AuthorMention} at {attachment.DateTime.ToDiscordTimestamp("d")}\n{attachment.UsersLikedIds.Count} {LikeReactionEmote}   |   {attachment.UsersDislikedIds.Count} {DislikeReactionEmote}",
                 });
                 num++;
             }
