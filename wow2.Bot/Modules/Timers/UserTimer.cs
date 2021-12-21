@@ -59,14 +59,16 @@ namespace wow2.Bot.Modules.Timers
 
         public List<string> NotifyUserMentions { get; set; } = new();
 
-        public bool IsDeleted => !DataManager.AllGuildData[GuildId].Timers.UserTimers.Contains(this);
+        public bool IsDeleted => !Config.UserTimers.Contains(this);
+
+        [JsonIgnore]
+        private TimersModuleConfig Config => DataManager.AllGuildData[GuildId].Timers;
 
         /// <summary>Creates the timer and adds it to the guild's config.</summary>
         public void Start()
         {
-            var timers = DataManager.AllGuildData[GuildId].Timers.UserTimers;
-            if (!timers.Contains(this))
-                timers.Add(this);
+            if (!Config.UserTimers.Contains(this))
+                Config.UserTimers.Add(this);
 
             if (TargetDateTime - DateTime.Now >= TimeSpan.FromMilliseconds(int.MaxValue))
             {
@@ -115,10 +117,13 @@ namespace wow2.Bot.Modules.Timers
                 Start();
             }
 
+            if (!Config.IsTimerElapsedMessagesOn)
+                return;
+
             try
             {
                 var channel = (IMessageChannel)BotService.Client.GetChannel(SendToChannelId);
-                await new InfoMessage($"[Click here to see the original message]({UserMessageUrl})", string.IsNullOrWhiteSpace(MessageString) ? $"A timer without a name elapsed!" : MessageString)
+                await new InfoMessage($"[Click here to see the original message]({UserMessageUrl})", string.IsNullOrWhiteSpace(MessageString) ? "A timer without a name elapsed!" : MessageString)
                 {
                     Text = NotifyUserMentions.Count > 0 ? string.Join(' ', NotifyUserMentions) : null,
                 }

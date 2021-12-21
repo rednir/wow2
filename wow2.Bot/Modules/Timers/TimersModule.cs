@@ -133,6 +133,19 @@ namespace wow2.Bot.Modules.Timers
                 .SendAsync(Context.Channel);
         }
 
+        [Command("toggle-elapsed-message")]
+        [Alias("toggle", "toggle-message")]
+        [Summary("Toggles whether timer elapsed notifications will be sent.")]
+        [RequireUserPermission(GuildPermission.ManageGuild)]
+        public async Task ToggleAsync()
+        {
+            await SendToggleQuestionAsync(
+                currentState: Config.IsTimerElapsedMessagesOn,
+                setter: x => Config.IsTimerElapsedMessagesOn = x,
+                toggledOnMessage: "You will get notified when a timer elapses.",
+                toggledOffMessage: "You will no longer get notified when a timer elapses.");
+        }
+
         [Command("set-announcements-channel")]
         [Alias("announcements-channel", "set-announce-channel", "set-channel")]
         [Summary("Sets the channel where all timer notifications will be sent.")]
