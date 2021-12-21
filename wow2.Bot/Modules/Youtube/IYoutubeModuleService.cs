@@ -12,7 +12,7 @@ namespace wow2.Bot.Modules.YouTube
 
         Task<Video> GetVideoAsync(string id);
 
-        Task<SearchResult> SearchForAsync(string term, string type);
+        Task<SearchResult> SearchForAsync(string term, string type, bool preferFallback = false);
 
         Task<string> GetYoutubeAudioUrlAsync(string videoId);
 

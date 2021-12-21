@@ -195,49 +195,54 @@ namespace wow2.Bot.Modules.YouTube
             }
         }
 
-        public async Task<SearchResult> SearchForAsync(string term, string type)
+        public async Task<SearchResult> SearchForAsync(string term, string type, bool preferFallback = false)
         {
-            try
+            // Bit hacky and haven't really given much thought to other places in the bot, but
+            // searching with YoutubeExplode yields better results for spotify requests in vc.
+            if (!preferFallback)
             {
-                var listRequest = Service.Search.List("snippet");
-                listRequest.Q = term;
-                listRequest.MaxResults = 1;
-                listRequest.Type = type;
-                var listResponse = await listRequest.ExecuteAsync();
-
-                if (listResponse.Items.Count == 0)
-                    throw new ArgumentException("No videos found");
-
-                return listResponse.Items[0];
-            }
-            catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
-            {
-                Logger.Log($"Google API request '{ex.ServiceName}' returned 403, probably because your quota has been exceeded. Falling back to alternative library...", LogSeverity.Verbose);
-
-                switch (type)
+                try
                 {
-                    case "video":
-                        var searchCollection = ExplodeClient.Search.GetVideosAsync(term);
-                        var result = await searchCollection.FirstAsync();
-                        return new SearchResult()
-                        {
-                            Kind = "youtube#searchListResponse",
-                            Id = new ResourceId()
-                            {
-                                VideoId = result.Id,
-                            },
-                            Snippet = new SearchResultSnippet()
-                            {
-                                Title = result.Title,
-                                ChannelTitle = result.Author.Title,
-                                ChannelId = result.Author.ChannelId,
-                                Thumbnails = ExplodeToGoogleThumbnails(result.Thumbnails),
-                            },
-                        };
+                    var listRequest = Service.Search.List("snippet");
+                    listRequest.Q = term;
+                    listRequest.MaxResults = 1;
+                    listRequest.Type = type;
+                    var listResponse = await listRequest.ExecuteAsync();
 
-                    default:
-                        throw new NotImplementedException($"The search type {type} is not implemented for fallback.");
+                    if (listResponse.Items.Count == 0)
+                        throw new ArgumentException("No videos found");
+
+                    return listResponse.Items[0];
                 }
+                catch (GoogleApiException ex) when (ex.HttpStatusCode == HttpStatusCode.Forbidden)
+                {
+                    Logger.Log($"Google API request '{ex.ServiceName}' returned 403, probably because your quota has been exceeded. Falling back to alternative library...", LogSeverity.Verbose);
+                }
+            }
+
+            switch (type)
+            {
+                case "video":
+                    var searchCollection = ExplodeClient.Search.GetVideosAsync(term);
+                    var result = await searchCollection.FirstAsync();
+                    return new SearchResult()
+                    {
+                        Kind = "youtube#searchListResponse",
+                        Id = new ResourceId()
+                        {
+                            VideoId = result.Id,
+                        },
+                        Snippet = new SearchResultSnippet()
+                        {
+                            Title = result.Title,
+                            ChannelTitle = result.Author.Title,
+                            ChannelId = result.Author.ChannelId,
+                            Thumbnails = ExplodeToGoogleThumbnails(result.Thumbnails),
+                        },
+                    };
+
+                default:
+                    throw new NotImplementedException($"The search type {type} is not implemented for fallback.");
             }
         }
 
