@@ -55,7 +55,7 @@ namespace wow2.Bot.Modules.Voice
                 Footer = new EmbedFooterBuilder()
                 {
                     Text = Request.VideoMetadata.Extractor.StartsWith("youtube") || Request.VideoMetadata.Extractor.StartsWith("spotify") ?
-                        $"👁️  {Request.VideoMetadata.ViewCount?.Humanize() ?? "0"}      |      👍  {Request.VideoMetadata.LikeCount?.Humanize() ?? "0"}      |      👎  {Request.VideoMetadata.DislikeCount?.Humanize() ?? "0"}      |      🕓  {VoiceModule.DurationAsString(Request.VideoMetadata.Duration)}" : string.Empty,
+                        $"👁️  {Request.VideoMetadata.ViewCount?.Humanize() ?? "0"}      |      👍  {Request.VideoMetadata.LikeCount?.Humanize() ?? "0"}      |      🕓  {VoiceModule.DurationAsString(Request.VideoMetadata.Duration)}" : string.Empty,
                 },
                 Title = (Request.VideoMetadata.Extractor == "twitch:stream" ? $"*(LIVE)* {Request.VideoMetadata.Description}" : Request.VideoMetadata.Title) + $" *({Request.VideoMetadata.Uploader})*",
                 ThumbnailUrl = Request.VideoMetadata.Thumbnails.FirstOrDefault()?.url,

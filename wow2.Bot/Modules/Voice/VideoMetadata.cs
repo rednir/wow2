@@ -26,7 +26,6 @@ namespace wow2.Bot.Modules.Voice
             Duration = XmlConvert.ToTimeSpan(video.ContentDetails.Duration).TotalSeconds;
             ViewCount = video.Statistics.ViewCount;
             LikeCount = video.Statistics.LikeCount;
-            DislikeCount = video.Statistics.DislikeCount;
             Thumbnails.Add(new() { url = video.Snippet.Thumbnails.Default__?.Url });
         }
 
@@ -95,9 +94,6 @@ namespace wow2.Bot.Modules.Voice
 
         [JsonPropertyName("like_count")]
         public ulong? LikeCount { get; set; }
-
-        [JsonPropertyName("dislike_count")]
-        public ulong? DislikeCount { get; set; }
 
         [JsonPropertyName("thumbnails")]
         public List<VideoMetadataThumbnails> Thumbnails { get; set; } = new();
