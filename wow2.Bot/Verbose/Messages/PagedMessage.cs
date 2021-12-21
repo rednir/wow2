@@ -35,7 +35,7 @@ namespace wow2.Bot.Verbose.Messages
 
         public virtual int TotalNumberOfPages => (int)Math.Ceiling((float)AllFieldBuilders.Count / MaxFieldsPerPage);
 
-        public string StoppedByUsername { get; set; }
+        public string FrozenByUsername { get; set; }
 
         protected override ActionButton[] ActionButtons => Page == null ? Array.Empty<ActionButton>() : new[]
         {
@@ -69,11 +69,11 @@ namespace wow2.Bot.Verbose.Messages
             },
             new ActionButton()
             {
-                Label = StoppedByUsername == null ? "Stop" : $"Stopped by {StoppedByUsername}",
+                Label = FrozenByUsername == null ? "Freeze" : $"Frozen by {FrozenByUsername}",
                 Style = ButtonStyle.Danger,
                 Action = async component =>
                 {
-                    StoppedByUsername = component.User.Username;
+                    FrozenByUsername = component.User.Username;
                     await StopAsync();
                 },
             },
