@@ -95,7 +95,7 @@ namespace wow2.Bot.Modules.Voice
 
                 string successText = metadataList.Count > 1 ?
                     $"Added a playlist with {metadataList.Count} items.\nYou can clear this queue with `{Context.Guild.GetCommandPrefix()} vc clear`, or save it for later with `{Context.Guild.GetCommandPrefix()} vc save-queue [NAME]`" :
-                    $"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadataList[0].title}**\n{metadataList[0].webpage_url}";
+                    $"Added song request to the number `{Config.CurrentSongRequestQueue.Count}` spot in the queue:\n\n**{metadataList[0].Title}**\n{metadataList[0].WebpageUrl}";
 
                 bool isDisconnected = CheckIfAudioClientDisconnected(Config.AudioClient);
                 if (isDisconnected && !Config.IsAutoJoinOn)
@@ -488,7 +488,7 @@ namespace wow2.Bot.Modules.Voice
             }
             catch (Exception ex)
             {
-                string errorText = $"Displaying metadata failed for the following video:\n{Config.CurrentlyPlayingSongRequest?.VideoMetadata?.webpage_url}";
+                string errorText = $"Displaying metadata failed for the following video:\n{Config.CurrentlyPlayingSongRequest?.VideoMetadata?.WebpageUrl}";
                 Logger.LogException(ex, errorText);
                 await new ErrorMessage(errorText)
                     .SendAsync(Context.Channel);
@@ -537,7 +537,7 @@ namespace wow2.Bot.Modules.Voice
         {
             if (request.VideoMetadata.LookupTitleOnYoutube)
             {
-                string searchTerm = request.VideoMetadata.title + " audio";
+                string searchTerm = request.VideoMetadata.Title + " audio";
                 Logger.Log($"About to lookup spotify request {searchTerm} on youtube.", LogSeverity.Debug);
 
                 try
@@ -547,22 +547,22 @@ namespace wow2.Bot.Modules.Voice
                     request.VideoMetadata = new VideoMetadata(video)
                     {
                         // Remember what the original source was.
-                        extractor = request.VideoMetadata.extractor,
+                        Extractor = request.VideoMetadata.Extractor,
                         DirectAudioUrl = await YouTubeService.GetYoutubeAudioUrlAsync(video.Id),
                     };
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogException(ex, $"Lookup failed for {request.VideoMetadata.title}");
-                    await new ErrorMessage($"```{request.VideoMetadata.title}```", "Couldn't lookup song.")
+                    Logger.LogException(ex, $"Lookup failed for {request.VideoMetadata.Title}");
+                    await new ErrorMessage($"```{request.VideoMetadata.Title}```", "Couldn't lookup song.")
                         .SendAsync(Context.Channel);
                     _ = ContinueAsync();
                     return;
                 }
             }
 
-            if (DateTime.Now + TimeSpan.FromSeconds(request.VideoMetadata.duration) > request.VideoMetadata.DirectAudioExpiryDate)
-                request.VideoMetadata.DirectAudioUrl = await YouTubeService.GetYoutubeAudioUrlAsync(request.VideoMetadata.id);
+            if (DateTime.Now + TimeSpan.FromSeconds(request.VideoMetadata.Duration) > request.VideoMetadata.DirectAudioExpiryDate)
+                request.VideoMetadata.DirectAudioUrl = await YouTubeService.GetYoutubeAudioUrlAsync(request.VideoMetadata.Id);
 
             Config.CurrentlyPlayingSongRequest = request;
             if (Config.IsAutoNpOn)
@@ -589,10 +589,10 @@ namespace wow2.Bot.Modules.Voice
                     await output.CopyToAsync(discord, cancellationToken);
 
                     stopwatch.Stop();
-                    if (retry && stopwatch.ElapsedMilliseconds * 4 < Config.CurrentlyPlayingSongRequest.VideoMetadata.duration * 1000)
+                    if (retry && stopwatch.ElapsedMilliseconds * 4 < Config.CurrentlyPlayingSongRequest.VideoMetadata.Duration * 1000)
                     {
-                        Logger.Log($"Audio playback was too short for request '{Config.CurrentlyPlayingSongRequest.VideoMetadata.title}' ({stopwatch.ElapsedMilliseconds}/{Config.CurrentlyPlayingSongRequest.VideoMetadata.duration * 1000}ms) and the direct audio URL will be refetched.", LogSeverity.Info);
-                        Config.CurrentlyPlayingSongRequest.VideoMetadata.DirectAudioUrl = await YouTubeService.GetYoutubeAudioUrlAsync(Config.CurrentlyPlayingSongRequest.VideoMetadata.id);
+                        Logger.Log($"Audio playback was too short for request '{Config.CurrentlyPlayingSongRequest.VideoMetadata.Title}' ({stopwatch.ElapsedMilliseconds}/{Config.CurrentlyPlayingSongRequest.VideoMetadata.Duration * 1000}ms) and the direct audio URL will be refetched.", LogSeverity.Info);
+                        Config.CurrentlyPlayingSongRequest.VideoMetadata.DirectAudioUrl = await YouTubeService.GetYoutubeAudioUrlAsync(Config.CurrentlyPlayingSongRequest.VideoMetadata.Id);
                         await play(false);
                     }
                 }

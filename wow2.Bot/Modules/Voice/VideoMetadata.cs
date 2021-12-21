@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Xml;
+using System.Text.Json.Serialization;
 using Google.Apis.YouTube.v3.Data;
 using SpotifyAPI.Web;
 
@@ -16,37 +17,37 @@ namespace wow2.Bot.Modules.Voice
 
         public VideoMetadata(Video video)
         {
-            title = video.Snippet.Title;
-            id = video.Id;
-            uploader = video.Snippet.ChannelTitle;
-            webpage_url = "https://www.youtube.com/watch?v=" + video.Id;
-            description = video.Snippet.Description;
-            extractor = "youtube";
-            duration = XmlConvert.ToTimeSpan(video.ContentDetails.Duration).TotalSeconds;
-            view_count = video.Statistics.ViewCount;
-            like_count = video.Statistics.LikeCount;
-            dislike_count = video.Statistics.DislikeCount;
-            thumbnails.Add(new() { url = video.Snippet.Thumbnails.Default__?.Url });
+            Title = video.Snippet.Title;
+            Id = video.Id;
+            Uploader = video.Snippet.ChannelTitle;
+            WebpageUrl = "https://www.youtube.com/watch?v=" + video.Id;
+            Description = video.Snippet.Description;
+            Extractor = "youtube";
+            Duration = XmlConvert.ToTimeSpan(video.ContentDetails.Duration).TotalSeconds;
+            ViewCount = video.Statistics.ViewCount;
+            LikeCount = video.Statistics.LikeCount;
+            DislikeCount = video.Statistics.DislikeCount;
+            Thumbnails.Add(new() { url = video.Snippet.Thumbnails.Default__?.Url });
         }
 
         public VideoMetadata(FullTrack spotifyTrack)
         {
             LookupTitleOnYoutube = true;
-            title = $"{spotifyTrack.Artists.FirstOrDefault()?.Name} - {spotifyTrack.Name}";
-            uploader = "Spotify";
-            webpage_url = "https://open.spotify.com/track/" + spotifyTrack.Id;
-            extractor = "spotify";
-            duration = spotifyTrack.DurationMs / 1000;
+            Title = $"{spotifyTrack.Artists.FirstOrDefault()?.Name} - {spotifyTrack.Name}";
+            Uploader = "Spotify";
+            WebpageUrl = "https://open.spotify.com/track/" + spotifyTrack.Id;
+            Extractor = "spotify";
+            Duration = spotifyTrack.DurationMs / 1000;
         }
 
         public VideoMetadata(SimpleTrack spotifyTrack)
         {
             LookupTitleOnYoutube = true;
-            title = $"{spotifyTrack.Artists.FirstOrDefault()?.Name} - {spotifyTrack.Name}";
-            uploader = "Spotify";
-            webpage_url = "https://open.spotify.com/track/" + spotifyTrack.Id;
-            extractor = "spotify";
-            duration = spotifyTrack.DurationMs / 1000;
+            Title = $"{spotifyTrack.Artists.FirstOrDefault()?.Name} - {spotifyTrack.Name}";
+            Uploader = "Spotify";
+            WebpageUrl = "https://open.spotify.com/track/" + spotifyTrack.Id;
+            Extractor = "spotify";
+            Duration = spotifyTrack.DurationMs / 1000;
         }
 
         public bool LookupTitleOnYoutube { get; set; }
@@ -68,26 +69,37 @@ namespace wow2.Bot.Modules.Voice
             }
         }
 
-        public string title { get; set; }
+        [JsonPropertyName("title")]
+        public string Title { get; set; }
 
-        public string id { get; set; }
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
 
-        public string uploader { get; set; }
+        [JsonPropertyName("uploader")]
+        public string Uploader { get; set; }
 
-        public string webpage_url { get; set; }
+        [JsonPropertyName("webpage_url")]
+        public string WebpageUrl { get; set; }
 
-        public string description { get; set; }
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
 
-        public string extractor { get; set; }
+        [JsonPropertyName("extractor")]
+        public string Extractor { get; set; }
 
-        public double duration { get; set; }
+        [JsonPropertyName("duration")]
+        public double Duration { get; set; }
 
-        public ulong? view_count { get; set; }
+        [JsonPropertyName("view_count")]
+        public ulong? ViewCount { get; set; }
 
-        public ulong? like_count { get; set; }
+        [JsonPropertyName("like_count")]
+        public ulong? LikeCount { get; set; }
 
-        public ulong? dislike_count { get; set; }
+        [JsonPropertyName("dislike_count")]
+        public ulong? DislikeCount { get; set; }
 
-        public List<VideoMetadataThumbnails> thumbnails { get; set; } = new();
+        [JsonPropertyName("thumbnails")]
+        public List<VideoMetadataThumbnails> Thumbnails { get; set; } = new();
     }
 }

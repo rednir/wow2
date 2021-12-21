@@ -16,7 +16,7 @@ namespace wow2.Bot.Modules.Voice
             {
                 Label = "More details",
                 Style = ButtonStyle.Link,
-                Url = Request.VideoMetadata.webpage_url,
+                Url = Request.VideoMetadata.WebpageUrl,
             },
             new ActionButton()
             {
@@ -37,9 +37,9 @@ namespace wow2.Bot.Modules.Voice
             SkipButtonAction = skipButton;
 
             string iconUrl;
-            if (Request.VideoMetadata.extractor.StartsWith("twitch"))
+            if (Request.VideoMetadata.Extractor.StartsWith("twitch"))
                 iconUrl = twitchIconUrl;
-            else if (Request.VideoMetadata.extractor.StartsWith("spotify"))
+            else if (Request.VideoMetadata.Extractor.StartsWith("spotify"))
                 iconUrl = spotifyIconUrl;
             else
                 iconUrl = youtubeIconUrl;
@@ -50,15 +50,15 @@ namespace wow2.Bot.Modules.Voice
                 {
                     Name = "Now Playing",
                     IconUrl = iconUrl,
-                    Url = Request.VideoMetadata.webpage_url,
+                    Url = Request.VideoMetadata.WebpageUrl,
                 },
                 Footer = new EmbedFooterBuilder()
                 {
-                    Text = Request.VideoMetadata.extractor.StartsWith("youtube") || Request.VideoMetadata.extractor.StartsWith("spotify") ?
-                        $"👁️  {Request.VideoMetadata.view_count?.Humanize() ?? "0"}      |      👍  {Request.VideoMetadata.like_count?.Humanize() ?? "0"}      |      👎  {Request.VideoMetadata.dislike_count?.Humanize() ?? "0"}      |      🕓  {VoiceModule.DurationAsString(Request.VideoMetadata.duration)}" : string.Empty,
+                    Text = Request.VideoMetadata.Extractor.StartsWith("youtube") || Request.VideoMetadata.Extractor.StartsWith("spotify") ?
+                        $"👁️  {Request.VideoMetadata.ViewCount?.Humanize() ?? "0"}      |      👍  {Request.VideoMetadata.LikeCount?.Humanize() ?? "0"}      |      👎  {Request.VideoMetadata.DislikeCount?.Humanize() ?? "0"}      |      🕓  {VoiceModule.DurationAsString(Request.VideoMetadata.Duration)}" : string.Empty,
                 },
-                Title = (Request.VideoMetadata.extractor == "twitch:stream" ? $"*(LIVE)* {Request.VideoMetadata.description}" : Request.VideoMetadata.title) + $" *({Request.VideoMetadata.uploader})*",
-                ThumbnailUrl = Request.VideoMetadata.thumbnails.FirstOrDefault()?.url,
+                Title = (Request.VideoMetadata.Extractor == "twitch:stream" ? $"*(LIVE)* {Request.VideoMetadata.Description}" : Request.VideoMetadata.Title) + $" *({Request.VideoMetadata.Uploader})*",
+                ThumbnailUrl = Request.VideoMetadata.Thumbnails.FirstOrDefault()?.url,
                 Description = $"Requested {Request.TimeRequested.ToDiscordTimestamp("R")} by {Request.RequestedByMention}",
                 Color = Color.LightGrey,
             };
