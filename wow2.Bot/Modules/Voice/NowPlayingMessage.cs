@@ -57,7 +57,8 @@ namespace wow2.Bot.Modules.Voice
                     Text = Request.VideoMetadata.Extractor.StartsWith("youtube") || Request.VideoMetadata.Extractor.StartsWith("spotify") ?
                         $"👁️  {Request.VideoMetadata.ViewCount?.Humanize() ?? "0"}      |      👍  {Request.VideoMetadata.LikeCount?.Humanize() ?? "0"}      |      🕓  {VoiceModule.DurationAsString(Request.VideoMetadata.Duration)}" : string.Empty,
                 },
-                Title = (Request.VideoMetadata.Extractor == "twitch:stream" ? $"*(LIVE)* {Request.VideoMetadata.Description}" : Request.VideoMetadata.Title) + $" *({Request.VideoMetadata.Uploader})*",
+                Title = (Request.VideoMetadata.Extractor == "twitch:stream" ? $"*(LIVE)* {Request.VideoMetadata.Description}" : Request.VideoMetadata.Title)
+                    + (request.VideoMetadata.Extractor == "spotify" ? string.Empty : $" *({Request.VideoMetadata.Uploader})*"),
                 ThumbnailUrl = Request.VideoMetadata.Thumbnails.FirstOrDefault()?.url,
                 Description = $"Requested {Request.TimeRequested.ToDiscordTimestamp("R")} by {Request.RequestedByMention}",
                 Color = Color.LightGrey,

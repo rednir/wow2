@@ -547,6 +547,7 @@ namespace wow2.Bot.Modules.Voice
                     request.VideoMetadata = new VideoMetadata(video)
                     {
                         // Remember what the original source was.
+                        Title = request.VideoMetadata.Title,
                         Extractor = request.VideoMetadata.Extractor,
                         DirectAudioUrl = await YouTubeService.GetYoutubeAudioUrlAsync(video.Id),
                     };
