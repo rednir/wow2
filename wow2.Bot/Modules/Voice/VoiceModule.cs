@@ -32,9 +32,9 @@ namespace wow2.Bot.Modules.Voice
         public static bool CheckIfAudioClientDisconnected(IAudioClient audioClient)
             => audioClient == null || audioClient?.ConnectionState == ConnectionState.Disconnected;
 
-        // Doesn't display hours if less than 1 hour.
+        // Doesn't display days if less than 1 day.
         public static string DurationAsString(double? duration) =>
-            TimeSpan.FromSeconds(duration ?? 0).ToString((duration ?? 0) >= 3600 ? @"hh\:mm\:ss" : @"mm\:ss");
+            TimeSpan.FromSeconds(duration ?? 0).ToString((duration ?? 0) >= 86400 ? @"dd'd 'hh'h 'mm'm'" : @"hh'h 'mm'm 'ss's'");
 
         [Command("list")]
         [Alias("queue", "upnext")]
