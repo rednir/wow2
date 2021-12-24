@@ -13,11 +13,7 @@ namespace wow2.Bot.Data
     public static class DataManager
     {
         public static readonly string AppDataDirPath = Environment.GetEnvironmentVariable("WOW2_APPDATA_FOLDER") ?? $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/wow2";
-        private static readonly JsonSerializerOptions SerializerOptions = new()
-        {
-            WriteIndented = true,
-            ReferenceHandler = ReferenceHandler.Preserve,
-        };
+        private static readonly JsonSerializerOptions SerializerOptions = new() { WriteIndented = true };
 
         public static Dictionary<ulong, GuildData> AllGuildData { get; set; } = new Dictionary<ulong, GuildData>();
 
