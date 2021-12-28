@@ -537,7 +537,7 @@ namespace wow2.Bot.Modules.Voice
         {
             if (request.VideoMetadata.LookupTitleOnYoutube)
             {
-                string searchTerm = request.VideoMetadata.Title + " audio";
+                string searchTerm = request.VideoMetadata.Title;
                 Logger.Log($"About to lookup spotify request {searchTerm} on youtube.", LogSeverity.Debug);
 
                 try
