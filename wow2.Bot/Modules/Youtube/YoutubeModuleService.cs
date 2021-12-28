@@ -13,7 +13,6 @@ using Google.Apis.YouTube.v3.Data;
 using wow2.Bot.Data;
 using wow2.Bot.Verbose;
 using YoutubeExplode;
-using YoutubeExplode.Videos.Streams;
 
 namespace wow2.Bot.Modules.YouTube
 {
@@ -249,7 +248,7 @@ namespace wow2.Bot.Modules.YouTube
         public async Task<string> GetYoutubeAudioUrlAsync(string videoId)
         {
             var streams = await ExplodeClient.Videos.Streams.GetManifestAsync(videoId);
-            return streams.GetAudioOnlyStreams().TryGetWithHighestBitrate()?.Url;
+            return streams.GetAudioOnlyStreams().LastOrDefault(v => v.AudioCodec == "opus")?.Url;
         }
 
         public async Task CheckForNewVideosAsync()
