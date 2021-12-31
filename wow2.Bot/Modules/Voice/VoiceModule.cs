@@ -460,8 +460,8 @@ namespace wow2.Bot.Modules.Voice
             {
                 Config.AudioClient = await channel.ConnectAsync();
 
-                var nextRequest = Config.CurrentSongRequestQueue.Peek();
-                if (DateTime.Now - nextRequest.TimeRequested > TimeSpan.FromHours(24))
+                Config.CurrentSongRequestQueue.TryPeek(out UserSongRequest nextRequest);
+                if (nextRequest != null && DateTime.Now - nextRequest?.TimeRequested > TimeSpan.FromHours(24))
                 {
                     await new InfoMessage($"You might want to clear the current queue with `{Context.Guild.GetCommandPrefix()} vc clear`", $"The queue has some requests from over {nextRequest.TimeRequested.ToDiscordTimestamp("R")}")
                         .SendAsync(Context.Channel);
