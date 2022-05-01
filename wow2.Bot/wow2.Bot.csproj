@@ -5,7 +5,7 @@
     <CodeAnalysisRuleSet>..\wow2.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4"/>
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.1"/>
     <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta15"/>
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta13"/>
     <PackageReference Include="Google.Apis.YouTube.v3" Version="1.55.0.2449"/>
