@@ -8,7 +8,7 @@
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4"/>
     <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta15"/>
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta13"/>
-    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.55.0.2449"/>
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.57.0.2693"/>
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333"/>
     <PackageReference Include="Reddit" Version="1.5.0"/>
     <PackageReference Include="CliOptions" Version="0.1.0"/>
