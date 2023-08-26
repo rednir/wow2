@@ -34,6 +34,7 @@ namespace wow2.Bot
         public static DiscordSocketClient Client { get; set; } = new DiscordSocketClient(new DiscordSocketConfig()
         {
             AlwaysDownloadUsers = true,
+            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent,
         });
 
         public static RestApplication ApplicationInfo { get; set; }
