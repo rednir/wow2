@@ -92,7 +92,7 @@ namespace wow2.Bot.Modules.Voice
             return Process.Start(new ProcessStartInfo
             {
                 FileName = isWindows ? "cmd" : "bash",
-                Arguments = $"{(isWindows ? "/c" : "-c")} \"{shellCommand}\"",
+                Arguments = isWindows ? "/c \"{shellCommand}\"" : "-c \'{shellCommand}\'",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
             });
