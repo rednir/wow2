@@ -1,3 +1,8 @@
 bin/
 obj/
 DebugAppdata/
+
+ffmpeg.exe
+libsodium.dll
+youtube-dl.exe
+opus.dll
