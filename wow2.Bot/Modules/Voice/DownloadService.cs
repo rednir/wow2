@@ -86,7 +86,7 @@ namespace wow2.Bot.Modules.Voice
             // Use direct audio url if it exists.
             string shellCommand = metadata.DirectAudioUrl == null ?
                 $"{YouTubeDlPath} {metadata.WebpageUrl} -q -f worstaudio --no-playlist --no-warnings -o - | {FFmpegPath} -hide_banner -loglevel panic -i - -ac 2 -f s16le -ar 48000 pipe:1" :
-                $"{FFmpegPath} -hide_banner -loglevel panic -i '{metadata.DirectAudioUrl}' -ac 2 -f s16le -ar 48000 pipe:1";
+                $"{FFmpegPath} -hide_banner -loglevel panic -i \"{metadata.DirectAudioUrl}\" -ac 2 -f s16le -ar 48000 pipe:1";
 
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             return Process.Start(new ProcessStartInfo
