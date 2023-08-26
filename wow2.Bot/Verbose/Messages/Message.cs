@@ -43,7 +43,7 @@ namespace wow2.Bot.Verbose.Messages
                 embed: EmbedBuilder?.Build(),
                 allowedMentions: AllowMentions ? AllowedMentions.All : AllowedMentions.None,
                 messageReference: MessageReference,
-                component: Components?.Build());
+                components: Components?.Build());
             return SentMessage;
         }
 
@@ -53,7 +53,7 @@ namespace wow2.Bot.Verbose.Messages
                 text: (!string.IsNullOrWhiteSpace(EmbedBuilder.Title) ? $"**{EmbedBuilder.Title}**\n\n" : null) + EmbedBuilder.Description,
                 allowedMentions: AllowMentions ? AllowedMentions.All : AllowedMentions.None,
                 messageReference: MessageReference,
-                component: Components?.Build());
+                components: Components?.Build());
             return SentMessage;
         }
 
