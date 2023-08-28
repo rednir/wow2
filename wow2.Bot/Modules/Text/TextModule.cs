@@ -137,6 +137,18 @@ namespace wow2.Bot.Modules.Text
                 .SendAsync(Context.Channel);
         }
 
+        [Command("reverse")]
+        [Alias("backwards")]
+        [Summary("Reverses words in a sentence.")]   
+        public async Task ReverseAsync([Name("text")][Remainder] string text)
+        {
+             string[] words = text.Split(' ');
+             var reversedWords = words.Reverse();
+             string reverseText = String.Join(" ", reversedWords);
+             await new GenericMessage(reverseText)
+                .SendAsync(Context.Channel);
+        }
+
         private static Dictionary<string, Stream> GetQuoteTemplateImages()
         {
             const string parentFolder = "QuoteTemplates.";
