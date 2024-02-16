@@ -12,6 +12,9 @@
     </a>
 </p>
 
+> [!IMPORTANT]  
+> This bot is no longer maintained and may no longer work correctly.
+
 ## Using the bot
 Invite the bot to a server with this link:
  - https://discord.com/api/oauth2/authorize?client_id=818156344594792451&permissions=8&scope=bot
